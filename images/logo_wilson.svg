@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="193.53973pt"
+   height="151.84686pt"
+   viewBox="0 0 193.53973 151.84686"
+   version="1.1"
+   id="svg2"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="logo_wilson.svg">
+  <metadata
+     id="metadata28">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs26" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="790"
+     inkscape:window-height="480"
+     id="namedview24"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="0.62933333"
+     inkscape:cx="-191.06081"
+     inkscape:cy="43.242955"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <path
+     inkscape:connector-curvature="0"
+     style="opacity:1;fill:#000000;fill-opacity:1"
+     id="path14"
+     d="m 0.00305118,0.01249957 c 18.91000082,-0.02 37.83000082,-0.01 56.75000082,-0.01 0.01,34.11000043 -0.01,68.22000043 0.01,102.33000043 0,4.04 0.58,8.43 3.5,11.47 4.82,4.8 13.27,5.88 18.87,1.83 3.52,-2.62 5.31,-7.07 5.37,-11.38 0,-26.16 -0.01,-52.33 0.01,-78.49 -5.5,-0.01 -11,-0.01 -16.51,0 0,-8.59 0,-17.1700004 0,-25.76000043 18.92,0 37.829998,0 56.749998,0 0.01,35.42000043 -0.02,70.84000043 0.01,106.27000043 -0.3,4.9 2.3,10.22 7.35,11.5 6.74,1.58 13.05,-3.48 16.29,-9 7.29,-13.17 9.81,-28.63 8.57,-43.53 -0.75,-13.39 -3.06,-26.71 -7.15,-39.49 -4.68,0 -9.37,-0.01 -14.05,0.02 -0.04,-8.59 -0.01,-17.1800004 -0.02,-25.77000043 15.69,0 31.37,0 47.06,0 6.68,17.94000043 8.87,37.16000043 10.26,56.14000043 1.62,22.97 -0.67,47.07 -11.76,67.63 -6.51,12 -16.95,22.86 -30.53,26.34 -7.82,2.02 -16.11,2.21 -24.07,0.91 -9.82,-2.03 -18.35,-8.41 -24.15,-16.45 -8.829998,11.92 -24.099998,18.14 -38.739998,17.08 -10.21,-0.53 -20.58,-3.36 -28.75,-9.71 -11.28,-8.6 -17.3,-22.73 -18.29,-36.63 -0.08,-26.52 0.01,-53.04 -0.04,-79.57 -5.57,0.02 -11.1500009,0 -16.72000082,0.03 -0.05,-8.59 0,-17.1800004 -0.02,-25.76000043 z" />
+</svg>

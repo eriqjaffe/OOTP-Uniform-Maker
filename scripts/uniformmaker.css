@@ -1,0 +1,541 @@
+/*@import url('http://fonts.googleapis.com/css?family=Quicksand:400,700');*/
+@import url(https://fonts.googleapis.com/css?family=Quicksand:400,700|Lobster|Pacifico|Kaushan+Script|Courgette|Lobster+Two|Playball|Satisfy|Cookie|Damion|Berkshire+Swash|Oleo+Script|Yellowtail|Lily+Script+One|Grand+Hotel|Leckerli+One|Norican|Engagement|Graduate|Oleo+Script+Swash+Caps|UnifrakturMaguntia|Vibur|Trade+Winds|Condiment|Wellfleet|UnifrakturCook:700|Miniver|Pirata+One|Molle:400italic|New+Rocker|Germania+One|Chela+One|Croissant+One|Metal+Mania|Rubik+Mono+One|Rubik+One|Seymour+One|Rum+Raisin|Wendy+One|Cantora+One|Acme|Jockey+One|Viga|Alegreya+Sans+SC:400,700|Rowdies|Maiden+Orange|BenchNine);
+
+
+body {
+	font-family: 'BenchNine', sans-serif;
+	font-size: 1em;
+	background-image: url("../images/jersey_bg.jpg");
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-position: center bottom;	
+}
+
+.button {
+	font-family: 'BenchNine', sans-serif;
+	font-weight: bold;
+}
+
+input {
+	font-family: 'BenchNine', sans-serif;
+}
+
+select {
+	font-family: 'BenchNine', sans-serif;
+}
+
+table {
+	border-collapse: collapse;
+	background-color:rgba(255, 255, 255, 0.8);
+}
+
+.color_tr:hover {
+	background-color: #C3DFF4;
+}
+
+td {
+	padding: 5px;
+}
+
+.checkCell {
+	text-align: center;
+}
+.header {
+	font-family: "Rowdies", sans-serif;
+	color:#FFFFFF;
+	font-size:3em;
+	font-size:2vw;
+	color: white;
+	-webkit-text-stroke: 1px black;
+	text-shadow:
+    2px 2px 0 #000,
+    /* Simulated effect for Firefox and Opera
+       and nice enhancement for WebKit */
+   -1px -1px 0 #000,  
+    1px -1px 0 #000,
+   -1px  1px 0 #000,
+    1px  1px 0 #000;
+}
+
+.title{
+	text-align:center;
+	width:60%;
+	margin:0 auto;
+	background:#103959;
+	-moz-border-radius:20px;  
+	border-radius: 20px;  
+	-webkit-border-radius: 20px;
+	border: 2px solid white;
+	margin-top:10px;
+}
+
+.accord-header {
+	font-size: 16px;
+	background: #ebebeb;
+	margin: 5px 0 0 0;
+	padding: 5px 20px;
+	border: 1px solid #cccccc;
+	cursor: pointer;
+	color: #666666;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	font-weight: bold;
+}
+
+.locked-accord-header {
+	font-size: 16px;
+	background: #ebebeb;
+	padding: 5px 20px;
+	border: 1px solid #cccccc;
+	cursor: pointer;
+	color: #666666;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	font-weight: bold;
+}
+
+.locked-header{
+	-moz-border-radius: 5px 5px 0 0;
+	-webkit-border-radius: 5px 5px 0 0;
+	border-radius: 5px 5px 0 0;
+ 	background: #103959;
+/*	background-repeat: no-repeat;
+	background-position: right 50%; */
+}
+
+.active-header {
+	-moz-border-radius: 5px 5px 0 0;
+	-webkit-border-radius: 5px 5px 0 0;
+	border-radius: 5px 5px 0 0;
+	background: url(../images/active-header.gif) #103959;
+	color: #FFFFFF;
+	background-repeat: no-repeat;
+	background-position: right 50%;
+}
+
+.active-header:hover {
+	background: url(../images/active-header.gif) #3C6686;
+	background-repeat: no-repeat;
+	background-position: right 50%;
+}
+
+.inactive-header {
+	background: url(../images/inactive-header.gif) #ebebeb;
+	background-repeat: no-repeat;
+	background-position: right 50%;
+}
+
+.inactive-header:hover {
+	background: url(../images/inactive-header.gif) #f5f5f5;
+	background-repeat: no-repeat;
+	background-position: right 50%;
+}
+
+.locked {
+	background-color: #999999;
+}
+
+.moveable {
+	background-color: #CCCCCC;	
+}
+
+.accord-content { display: none; }
+
+.question {
+	font-family: "Rowdies", sans-serif;
+	color:#000000;
+	margin-top:10px;
+	display:inline-block;
+}
+
+.answer {
+	font-family: 'BenchNine', sans-serif;
+	width:95%;
+	float:right;
+	margin-top:5px;
+	display:inline-block;
+}
+
+#canvasContainer {
+	-moz-background-clip: padding;
+	-webkit-background-clip: padding;
+	background-clip: padding-box;
+	background: rgba(255,255,255,0.5);			 
+	border: 8px solid rgba(255,255,255,0.0);
+				
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px; 
+}
+
+#text {
+	background-color: rgba(255,255,255,0.5);
+	-moz-background-clip: padding;
+	-webkit-background-clip: padding; 
+	background-clip: padding-box;
+				 
+	border: 8px solid rgba(255,255,255,0.5);
+				
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px; 
+}
+
+fieldset {
+	margin-top:20px;
+	width: 512px;
+	height: 50px;
+	background-color: rgba(255,255,255,0.5);
+	
+	-moz-background-clip: padding; 
+	-webkit-background-clip: padding; 
+	background-clip: padding-box;
+				 
+	border: 8px solid rgba(255,255,255,0.5);
+				
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px; 
+}
+
+legend {
+	background: #103959;
+	color: #000000;
+	-moz-border-radius:5px;  
+	border-radius: 5px;  
+	-webkit-border-radius: 5px;
+	padding: 0px 4px 0px 4px;
+	font-weight: bold;
+}
+
+@font-face {
+    font-family: 'rawlings_old_englishmedium';
+    src: url('../fonts/rawlingsoldenglish-webfont.eot');
+    src: url('../fonts/rawlingsoldenglish-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/rawlingsoldenglish-webfont.woff2') format('woff2'),
+         url('../fonts/rawlingsoldenglish-webfont.woff') format('woff'),
+         url('../fonts/rawlingsoldenglish-webfont.ttf') format('truetype'),
+         url('../fonts/rawlingsoldenglish-webfont.svg#rawlings_old_englishmedium') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'rawlings_fancy_blockregular';
+    src: url('../fonts/rawlingsfancyblock-regular-webfont.eot');
+    src: url('../fonts/rawlingsfancyblock-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/rawlingsfancyblock-regular-webfont.woff2') format('woff2'),
+         url('../fonts/rawlingsfancyblock-regular-webfont.woff') format('woff'),
+         url('../fonts/rawlingsfancyblock-regular-webfont.ttf') format('truetype'),
+         url('../fonts/rawlingsfancyblock-regular-webfont.svg#rawlings_fancy_blockregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'mlb_tuscan_newmedium';
+    src: url('../fonts/mlb_tuscan_new-webfont.eot');
+    src: url('../fonts/mlb_tuscan_new-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/mlb_tuscan_new-webfont.woff2') format('woff2'),
+         url('../fonts/mlb_tuscan_new-webfont.woff') format('woff'),
+         url('../fonts/mlb_tuscan_new-webfont.ttf') format('truetype'),
+         url('../fonts/mlb_tuscan_new-webfont.svg#mlb_tuscan_newmedium') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'athletic_gothic_shadowregular';
+    src: url('../fonts/athletic_gothic_shadow-webfont.eot');
+    src: url('../fonts/athletic_gothic_shadow-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/athletic_gothic_shadow-webfont.woff2') format('woff2'),
+         url('../fonts/athletic_gothic_shadow-webfont.woff') format('woff'),
+         url('../fonts/athletic_gothic_shadow-webfont.ttf') format('truetype'),
+         url('../fonts/athletic_gothic_shadow-webfont.svg#athletic_gothic_shadowregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'athletic_gothicregular';
+    src: url('../fonts/athletic_gothic-webfont.eot');
+    src: url('../fonts/athletic_gothic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/athletic_gothic-webfont.woff2') format('woff2'),
+         url('../fonts/athletic_gothic-webfont.woff') format('woff'),
+         url('../fonts/athletic_gothic-webfont.ttf') format('truetype'),
+         url('../fonts/athletic_gothic-webfont.svg#athletic_gothicregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'beaverton_scriptregular';
+    src: url('../fonts/beaverton_script-webfont.eot');
+    src: url('../fonts/beaverton_script-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/beaverton_script-webfont.woff2') format('woff2'),
+         url('../fonts/beaverton_script-webfont.woff') format('woff'),
+         url('../fonts/beaverton_script-webfont.ttf') format('truetype'),
+         url('../fonts/beaverton_script-webfont.svg#beaverton_scriptregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'caxton_romanregular';
+    src: url('../fonts/caxton_roman-webfont.eot');
+    src: url('../fonts/caxton_roman-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/caxton_roman-webfont.woff2') format('woff2'),
+         url('../fonts/caxton_roman-webfont.woff') format('woff'),
+         url('../fonts/caxton_roman-webfont.ttf') format('truetype'),
+         url('../fonts/caxton_roman-webfont.svg#caxton_romanregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'russell_circusregular';
+    src: url('../fonts/circus-webfont.eot');
+    src: url('../fonts/circus-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/circus-webfont.woff2') format('woff2'),
+         url('../fonts/circus-webfont.woff') format('woff'),
+         url('../fonts/circus-webfont.ttf') format('truetype'),
+         url('../fonts/circus-webfont.svg#russell_circusregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'pro_full_blockregular';
+    src: url('../fonts/pro_full_block-webfont.eot');
+    src: url('../fonts/pro_full_block-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/pro_full_block-webfont.woff2') format('woff2'),
+         url('../fonts/pro_full_block-webfont.woff') format('woff'),
+         url('../fonts/pro_full_block-webfont.ttf') format('truetype'),
+         url('../fonts/pro_full_block-webfont.svg#pro_full_blockregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'richardson_fancy_blockregular';
+    src: url('../fonts/richardson_fancy_block-webfont.eot');
+    src: url('../fonts/richardson_fancy_block-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/richardson_fancy_block-webfont.woff2') format('woff2'),
+         url('../fonts/richardson_fancy_block-webfont.woff') format('woff'),
+         url('../fonts/richardson_fancy_block-webfont.ttf') format('truetype'),
+         url('../fonts/richardson_fancy_block-webfont.svg#richardson_fancy_blockregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'spl28scriptregular';
+    src: url('../fonts/spl28script-webfont.eot');
+    src: url('../fonts/spl28script-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/spl28script-webfont.woff2') format('woff2'),
+         url('../fonts/spl28script-webfont.woff') format('woff'),
+         url('../fonts/spl28script-webfont.ttf') format('truetype'),
+         url('../fonts/spl28script-webfont.svg#spl28scriptregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'ua_tiffanyregular';
+    src: url('../fonts/tiffany-webfont.eot');
+    src: url('../fonts/tiffany-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/tiffany-webfont.woff2') format('woff2'),
+         url('../fonts/tiffany-webfont.woff') format('woff'),
+         url('../fonts/tiffany-webfont.ttf') format('truetype'),
+         url('../fonts/tiffany-webfont.svg#ua_tiffanyregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'kansasregular';
+    src: url('../fonts/tuscan-webfont.eot');
+    src: url('../fonts/tuscan-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/tuscan-webfont.woff2') format('woff2'),
+         url('../fonts/tuscan-webfont.woff') format('woff'),
+         url('../fonts/tuscan-webfont.ttf') format('truetype'),
+         url('../fonts/tuscan-webfont.svg#kansasregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+.Acme { font-family: "Acme"; font-size: 1.1em;}
+.AthleticGothic  { font-family: 'athletic_gothicregular'; font-size: 1.1em; }
+.AthleticGothicShadow { font-family: 'athletic_gothic_shadowregular'; font-size: 1.1em; }
+.BeavertonScript { font-family: 'beaverton_scriptregular'; font-size: 1.1em; }
+.Berkshire_Swash { font-family: "Berkshire Swash"; font-size: 1.1em;}
+.Cantora_One { font-family: "Cantora One"; font-size: 1.1em;}
+.CaxtonRoman { font-family: 'caxton_romanregular'; font-size: 1.1em; }
+.Chela_One { font-family: "Chela One"; font-size: 1.1em;}
+.Circus { font-family: 'russell_circusregular'; font-size: 1.1em; }
+.Condiment { font-family: "Condiment"; font-size: 1.1em;}
+.Cookie { font-family: "Cookie"; font-size: 1.1em;}
+.Courgette { font-family: "Courgette"; font-size: 1.1em;}
+.Croissant_One { font-family: "Croissant One"; font-size: 1.1em;}
+.Damion { font-family: "Damion"; font-size: 1.1em;}
+.Engagement { font-family: "Engagement"; font-size: 1.1em;}
+.RawlingsFancyBlock  { font-family: 'rawlings_fancy_blockregular'; font-size: .9em; }
+.RichardsonFancyBlock { font-family: 'richardson_fancy_blockregular'; font-size: 1.1em; }
+.Germania_One { font-family: "Germania One"; font-size: 1.1em;}
+.Graduate { font-family: "Graduate"; font-size: 1.1em;}
+.Grand_Hotel { font-family: "Grand Hotel"; font-size: 1.1em;}
+.Jockey_One { font-family: "Jockey One"; font-size: 1.1em;}
+.Kansas { font-family: 'kansasregular'; font-size: 1.1em; }
+.Kaushan_Script { font-family: "Kaushan Script"; font-size: 1.1em;}
+.Leckerli_One { font-family: "Leckerli One"; font-size: 1.1em;}
+.Lily_Script_One { font-family: "Lily Script One"; font-size: 1.1em;}
+.Lobster { font-family: Lobster; font-size: 1.1em;}
+.Lobster_Two { font-family: "Lobster Two"; font-size: 1.1em;}
+.Metal_Mania { font-family: "Metal Mania"; font-size: 1.1em;}
+.Miniver { font-family: "Miniver"; font-size: 1.1em;}
+.Molle  { font-family: Molle, italic; font-size: 1.1em;}
+.New_Rocker { font-family: "New Rocker"; font-size: 1.1em;}
+.Norican { font-family: "Norican"; font-size: 1.1em;}
+.OldEnglish { font-family: "rawlings_old_englishmedium"; font-size: 1.1em;}
+.Oleo_Script { font-family: "Oleo Script"; font-size: 1.1em;}
+.Oleo_Script_Swash_Caps { font-family: "Oleo Script Swash Caps"; font-size: 1.1em;}
+.Pacifico { font-family: Pacifico; font-size: 1.1em; }  
+.Pirata_One { font-family: "Pirata One"; font-size: 1.1em;}
+.Playball { font-family: "Playball"; font-size: 1.1em;}
+.ProFullBlock { font-family: 'pro_full_blockregular'; font-size: 1.1em; }
+.Quicksand { font-family: Quicksand; font-size: 1.1em; }
+.Rubik_Mono_One { font-family: "Rubik Mono One"; font-size: 1.1em;}
+.Rubik_One { font-family: "Rubik One"; font-size: 1.1em;}
+.Rum_Raisin { font-family: "Rum Raisin"; font-size: 1.1em;}
+.Satisfy { font-family: "Satisfy"; font-size: 1.1em;}
+.Seymour_One { font-family: "Seymour One"; font-size: 1.1em;}
+.TiffanyRegular { font-family: 'ua_tiffanyregular'; font-size: 1.1em; }
+.Trade_Winds { font-family: "Trade Winds"; font-size: 1.1em;}
+.Tuscan  { font-family: "mlb_tuscan_newmedium"; font-size: 0.9em;}
+.UnifrakturCook { font-family: "UnifrakturCook"; font-size: 1.1em;}
+.UnifrakturMaguntia { font-family: "UnifrakturMaguntia"; font-size: 1.1em;}
+.Vibur { font-family: "Vibur"; font-size: 1.1em;}
+.Viga { font-family: "Viga"; font-size: 1.1em;}
+.Wellfleet { font-family: "Wellfleet"; font-size: 1.1em;}
+.Wendy_One { font-family: "Wendy One"; font-size: 1.1em;}
+.Yellowtail { font-family: "Yellowtail"; font-size: 1.1em;}
+.spl28 { font-family: 'spl28scriptregular'; font-size: 1.1em; }
+.alegreya { font-family: 'Alegreya Sans SC'; font-size: 1.1em }
+
+/*  SECTIONS  */
+.section {
+	clear: both;
+	padding: 0px;
+	margin: 0px;
+}
+
+/*  COLUMN SETUP  */
+.col {
+	display: block;
+	float:left;
+	margin: 1% 0 1% 1.6%;
+}
+.col:first-child { margin-left: 0; }
+
+/*  GROUPING  */
+.group:before,
+.group:after { content:""; display:table; }
+.group:after { clear:both;}
+.group { zoom:1; /* For IE 6/7 */ }
+
+/*  GRID OF THREE  */
+.span_3_of_3 { width: 100%; }
+.span_2_of_3 { width: 66.13%; }
+.span_1_of_3 { width: 32.26%; }
+
+/*  GO FULL WIDTH BELOW 480 PIXELS */
+@media only screen and (max-width: 480px) {
+	.col {  margin: 1% 0 1% 0%; }
+	.span_3_of_3, .span_2_of_3, .span_1_of_3 { width: 100%; }
+}
+
+.colorSquare {
+	font-family: 'BenchNine', sans-serif;
+	border: 1px solid #CCCCCC;
+	-moz-border-radius: 3px;  
+	border-radius: 3px;  
+	-webkit-border-radius: 20px;
+	width: 85px;
+	font-size: .8em;
+	cursor: pointer;
+}
+
+.colorSquare:hover {
+	border: 1px solid #0078D7;
+}
+
+.colorSquareActive {
+	border: 2px solid #FF0000;!important;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+
+    -webkit-box-shadow: 0px 0px 4px #FF0000;
+    -moz-box-shadow: 0px 0px 4px #FF0000;
+    box-shadow: 0px 0px 4px #FF0000;
+}
+
+.colorSquareSelected {
+	border: 2px solid #4CBB17;!important;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+
+    -webkit-box-shadow: 0px 0px 4px #4CBB17;
+    -moz-box-shadow: 0px 0px 4px #4CBB17;
+    box-shadow: 0px 0px 4px #4CBB17;
+}
+
+.linkActive {
+	cursor: pointer;
+	margin-left: 4px;
+	width:20px;
+	height:20px;
+	position: relative;
+	float: right;
+	background: url("../images/link_active.png") no-repeat;
+}
+
+.linkInactive {
+	cursor: pointer;
+	margin-left: 4px;
+	width:20px;
+	height:20px;
+	position: relative;
+	float: right;
+	background: url("../images/link_inactive.png") no-repeat;
+}
+
+.sample {
+	background: rgba(0,0,0,0.75);
+	background-position: center;
+	background-repeat: no-repeat;
+	position:absolute;
+	top:10;
+	left:10;
+	height:512px;
+	width:512px;
+	z-index: 4;
+	pointer-events:none;          /* THIS IS THE TRICK YOU SEEK */
+	display: none;
+}
