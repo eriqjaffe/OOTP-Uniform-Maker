@@ -80,217 +80,215 @@
                                 </tr>	
                             <table>
                         </div>
-                        <div class="locked-accord-header locked-active-header" style="margin-top:5px;">Uniform Components</div>
-                        <div class="accord-content" id="uniformComponents">
-                            <table style="width:100%;"><tr><td>
-                            <div class="skltbs-theme-light" data-skeletabs='{ "panelHeight": "adaptive" }'>
-                                <ul class="skltbs-tab-group">
-                                    <li class="skltbs-tab-item">
-                                    <button class="skltbs-tab">Jersey</button>
-                                    </li>
-                                    <li class="skltbs-tab-item">
-                                    <button class="skltbs-tab">Pants</button>
-                                    </li>
-                                    <li class="skltbs-tab-item">
-                                    <button class="skltbs-tab">Cap</button>
-                                    </li>
-                                </ul>
-                                <div class="skltbs-panel-group">
-                                    <div class="skltbs-panel">
-                                        <div class="accord-header active-header">Main Jersey Elements</div>
-                                        <div class="accord-content" style="display:inline;" id="jerseyElements">
-                                            <table style="width:100%;">
-                                                <tr class="color_tr">
-                                                    <td><input type="checkbox" id="gridToggle" class="gridToggle" data-canvas="guideCanvas" checked></td>
-                                                    <td><label>Grid (Will Be Hidden On Export)</label></td>
-                                                    <td style="text-align:right;">
-                                                        
-                                                    </td>
-                                                </tr>
-                                                <tr class="color_tr">
-                                                    <td>&nbsp;</td>
-                                                    <td><label>Jersey Color: </label></td>
-                                                    <td style="text-align:right;">
-                                                        <input class="baseSelector" type="text" id="jerseyColor" data-element="jerseyColor" data-linkname="jersey">
-                                                    </td>
-                                                </tr>
-                                                <tr class="color_tr">
-                                                    <td class="checkCell">&nbsp;</td>
-                                                    <td><label>Sleeves: </label></td>
-                                                    <td style="text-align:right;">
-                                                        <select id="sleeveType">
-                                                            <option value="short" selected>Short</option>
-                                                            <option value="long">Long</option>
-                                                        </select>
-                                                        <input class="selector" type="text" id="leftSleeveColor" data-element="leftSleeveColor" data-link="leftSleeveLong">
-                                                        <input class="selector" type="text" id="rightSleeveColor" data-element="rightSleeveColor" data-link="rightSleeveLong">
-                                                    </td>
-                                                </tr>
-                                                <tr class="color_tr">
-                                                    <td class="checkCell">&nbsp;</td>
-                                                    <td><label class="linkLabel" data-linkname="undershirt">Undershirt Sleeves: </label></td>
-                                                    <td style="text-align:right;">
-                                                        <input class="undershirtSelector" type="text" id="undershirtColor" data-element="undershirtColor">
-                                                    </td>
-                                                </tr>
-                                                <tr class="color_tr">
-                                                    <td class="checkCell">&nbsp;</td>
-                                                    <td><label>Undershirt Collar: </label></td>
-                                                    <td style="text-align:right;">
-                                                        <input class="selector" type="text" id="collarColor" data-element="collarColor">
-                                                    </td>
-                                                </tr>
-                                                <tr class="color_tr">
-                                                    <td class="checkCell"><input type="checkbox" id="buttonPadCheck" class="multiToggle" data-canvas="below" data-id="buttonPadFillColor,buttonPad" checked></td>
-                                                    <td><label>Button Pad: </label></td>
-                                                    <td style="text-align:right;">
-                                                        <input class="selector" type="text" id="buttonPadFillColor" data-element="buttonPadFillColor">
-                                                    </td>
-                                                </tr>
-                                                <tr class="color_tr">
-                                                    <td class="checkCell"><input type="checkbox" id="buttonsColorCheck" class="multiToggle" data-canvas="aboveCanvas" data-id="buttonsColor" checked></td>
-                                                    <td><label>Buttons (Opacity: <span id="buttonOpacitySpan"></span>%: </label>)</td>
-                                                    <td style="text-align:right;">
-                                                        <input type="button" class="button rangeButton" value="-" data-span="buttonOpacitySpan">
-                                                        <input type="range" class="range" id="buttonOpacity" value=buttonOpacity min="0" max="100">
-                                                        <input type="button" class="button rangeButton" value="+" data-span="buttonOpacitySpan">
-                                                        <input class="selector" type="text" id="buttonsColor" data-element="buttonsColor">
-                                                    </td>
-                                                </tr>
-                                                <tr class="color_tr">
-                                                    <td class="checkCell"><input type="checkbox" id="stitchingCheck" class="belowTextureToggle" data-id="stitching"></td>
-                                                    <td><label>Stitching / Seams</label></td>
-                                                    <td style="text-align:right;">&nbsp;</td>
-                                                </tr>
-                                                <tr class="color_tr">
-                                                    <td class="checkCell"><input type="checkbox" id="jerseyFrontColorCheck" class="belowTextureToggle" data-id="jerseyFrontColor"></td>
-                                                    <td><label>Jersey Front: </label></td>
-                                                    <td style="text-align:right;"><input class="selector" type="text" id="jerseyFrontColor" data-element="jerseyFrontColor"></td>
-                                                </tr>
-                                                <tr class="color_tr">
-                                                    <td class="checkCell"><input type="checkbox" id="jerseyBackColorCheck" class="belowTextureToggle" data-id="jerseyBackColor"></td>
-                                                    <td><label>Jersey Back: </label></td>
-                                                    <td style="text-align:right;"><input class="selector" type="text" id="jerseyBackColor" data-element="jerseyBackColor"></td>
-                                                </tr>
-                                                <!--<tr class="color_tr">
-                                                    <td>&nbsp;</td>
-                                                    <td>
-                                                    <label>Texture: </label>
-                                                    </td>
-                                                    <td style="text-align:right;">
-                                                        <select id="textureSelect" style="width:100%;">
-                                                            <option value="default_jersey_texture.png">Default</option>
-                                                            <option value="jm_modern_2.png">Modern #2</option>
-                                                            <option value="jm_flannel.png">Flannel #1</option>
-                                                            <option value="jm_flannel_2.png">Flannel #2</option>
-                                                            <option value="jm_baggy_flannel.png">Baggy</option>
-                                                            <option value="jm_mesh_texture.png">Mesh</option>
-                                                            <option value="jm_reds1.png">Reds 1 / skyballer455</option>
-                                                            <option id="customTexture" value="custom">Custom</option>
-                                                        </select>
-                                                        <input type="file" id="uploadedTexture" accept="image/png" style="display:none;"/>
-                                                    </td>
-                                                </tr>-->
-                                                <tr class="color_tr">
-                                                    <td class="checkCell"><input type="checkbox" id="makersMarkCheck" class="aboveTextureToggle" data-canvas="guideCanvas" data-id="makersMark"></td>
-                                                    <td><label>Manufacturer's Mark: </label></td>
-                                                    <td style="text-align:right;">
-                                                        <select id="makersMarkSelect">
-                                                            <option value="logo_adidas.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Adidas</option>
-                                                            <option value="logo_asics.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="10" data-original-angle="0">Asics</option>
-                                                            <option value="logo_demarini.svg" data-top="345.25" data-left="400.25" data-angle="0" data-height="15" data-original-angle="0">DeMarini</option>
-                                                            <option value="logo_macron.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="7" data-original-angle="0">Macron</option>
-                                                            <option value="logo_majestic.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="25" data-original-angle="300.7032582977242">Majestic 1</option>
-                                                            <option value="logo_majestic_2.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="25" data-original-angle="300.7032582977242">Majestic 2</option>
-                                                            <option value="logo_maxim.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Maxim</option>
-                                                            <option value="logo_mizuno.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Mizuno</option>
-                                                            <option value="logo_new_balance.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">New Balance</option>
-                                                            <option value="logo_nike.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="10" data-original-angle="0" selected>Nike</option>
-                                                            <option value="logo_puma.svg" data-top="345.25" data-left="308.25" data-angle="0" data-height="15" data-original-angle="0">Puma</option>
-                                                            <option value="logo_rawlings.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="25" data-original-angle="300.7032582977242">Rawlings 1</option>
-                                                            <option value="logo_rawlings_2.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="25" data-original-angle="300.7032582977242">Rawlings 2</option>
-                                                            <option value="logo_reebok.svg" data-top="345.25" data-left="400.25" data-angle="0" data-height="7" data-original-angle="0">Reebok</option>
-                                                            <option value="logo_rbk.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Reebok RBK</option>
-                                                            <option value="logo_russell.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Russell</option>
-                                                            <option value="logo_spalding_2.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="25" data-original-angle="300.7032582977242">Spalding</option>
-                                                            <option value="logo_ssk.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">SSK</option>
-                                                            <option value="logo_umbro.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Umbro</option>
-                                                            <option value="logo_under_armour.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Under Armour</option>
-                                                            <option value="logo_wilson.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="20" data-original-angle="300.7032582977242">Wilson</option>
-                                                        </select>
-                                                        <input class="makerSelector" type="text" id="makersMarkColor" data-element="makersMark">
-                                                    </td>
-                                                </tr>
-                                                <tr class="color_tr">
-                                                    <input type="file" id="uploadedLayer" accept="image/*" style="display:none;"/>
-                                                    <td class="checkCell"><input id="customLayerCheck" type="checkbox" class="multiToggle" data-canvas="below" data-id="uploadedLayer"></td>
-                                                    <td><label>Custom Layer: </label></td>
-                                                    <td style="text-align:right;">
-                                                    <span id="customLayerName"></span>
-                                                    <input type="button" class="button" id="fakeLayerButton" value="Upload Custom Layer" disabled>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="skltbs-panel">
-                                        <div class="accord-header active-header">Main Pants Elements</div>
-                                        <div class="accord-content" style="display:inline;">  
-                                            <table style="width:100%;">
-                                                <tr class="color_tr">
-                                                    <td>&nbsp;</td>
-                                                    <td><label>Pants Color: </label></td>
-                                                    <td style="text-align:right;">
-                                                        <input class="baseSelector" type="text" id="pantsColor" data-element="pantsColor">
-                                                    </td>
-                                                </tr>
-                                                <tr class="color_tr">
-                                                    <td>&nbsp;</td>
-                                                    <td>
-                                                        <label>Belt: </label>
-                                                        <select id="beltSelect">
-                                                            <option value="belt" selected>Leather Belt</option>
-                                                            <option value="elastic">Elastic Waistband</option>
-                                                        </select>
-                                                    </td>
-                                                    <td style="text-align:right;">
-                                                        <div id="beltSelector" style="display: inline-block;">
-                                                            <input class="selector" type="text" id="belt" data-element="belt">
-                                                        </div>
-                                                        <div id="elasticSelector" style="display: none;">
-                                                            <input class="selector" type="text" id="elasticTop" data-element="elasticTop">
-                                                            <input class="selector" type="text" id="elasticMiddle" data-element="elasticMiddle">
-                                                            <input class="selector" type="text" id="elasticBottom" data-element="elasticBottom">
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="skltbs-panel">
-                                        <div class="accord-header active-header">Main Cap Elements</div>
-                                        <div class="accord-content" style="display:inline;">  
-                                            <table style="width:100%;">
-                                                <tr class="color_tr">
-                                                    <td>&nbsp;</td>
-                                                    <td><label>Cap Color: </label></td>
-                                                    <td style="text-align:right;">
-                                                        <input class="baseSelector" type="text" id="capColor" data-element="capColor">
-                                                    </td>
-                                                </tr>
-                                                <tr class="color_tr">
-                                                    <td class="checkCell"><input type="checkbox" class="belowCapTextureToggle" data-id="underBrimColor" id="underBrimColorCheck" checked></td>
-                                                    <td><label>Brim Underside: </label></td>
-                                                    <td style="text-align:right;"><input class="capSelector" type="text" id="underBrimColor" data-element="underBrimColor" data-canvas="belowCap"></td>
-                                                </tr>
-                                            </table>
-                                        </div>
+
+                        <table style="width:100%;"><tr><td>
+                        <div class="skltbs-theme-light" data-skeletabs='{ "panelHeight": "adaptive" }'>
+                            <ul class="skltbs-tab-group">
+                                <li class="skltbs-tab-item">
+                                <button class="skltbs-tab">Jersey</button>
+                                </li>
+                                <li class="skltbs-tab-item">
+                                <button class="skltbs-tab">Pants</button>
+                                </li>
+                                <li class="skltbs-tab-item">
+                                <button class="skltbs-tab">Cap</button>
+                                </li>
+                            </ul>
+                            <div class="skltbs-panel-group">
+                                <div class="skltbs-panel">
+                                    <div class="accord-header active-header">Main Jersey Elements</div>
+                                    <div class="accord-content" style="display:inline;" id="jerseyElements">
+                                        <table style="width:100%;">
+                                            <tr class="color_tr">
+                                                <td><input type="checkbox" id="gridToggle" class="gridToggle" data-canvas="guideCanvas" checked></td>
+                                                <td><label>Grid (Will Be Hidden On Export)</label></td>
+                                                <td style="text-align:right;">
+                                                    
+                                                </td>
+                                            </tr>
+                                            <tr class="color_tr">
+                                                <td>&nbsp;</td>
+                                                <td><label>Jersey Color: </label></td>
+                                                <td style="text-align:right;">
+                                                    <input class="baseSelector" type="text" id="jerseyColor" data-element="jerseyColor" data-linkname="jersey">
+                                                </td>
+                                            </tr>
+                                            <tr class="color_tr">
+                                                <td class="checkCell">&nbsp;</td>
+                                                <td><label>Sleeves: </label></td>
+                                                <td style="text-align:right;">
+                                                    <select id="sleeveType">
+                                                        <option value="short" selected>Short</option>
+                                                        <option value="long">Long</option>
+                                                    </select>
+                                                    <input class="selector" type="text" id="leftSleeveColor" data-element="leftSleeveColor" data-link="leftSleeveLong">
+                                                    <input class="selector" type="text" id="rightSleeveColor" data-element="rightSleeveColor" data-link="rightSleeveLong">
+                                                </td>
+                                            </tr>
+                                            <tr class="color_tr">
+                                                <td class="checkCell">&nbsp;</td>
+                                                <td><label class="linkLabel" data-linkname="undershirt">Undershirt Sleeves: </label></td>
+                                                <td style="text-align:right;">
+                                                    <input class="undershirtSelector" type="text" id="undershirtColor" data-element="undershirtColor">
+                                                </td>
+                                            </tr>
+                                            <tr class="color_tr">
+                                                <td class="checkCell">&nbsp;</td>
+                                                <td><label>Undershirt Collar: </label></td>
+                                                <td style="text-align:right;">
+                                                    <input class="selector" type="text" id="collarColor" data-element="collarColor">
+                                                </td>
+                                            </tr>
+                                            <tr class="color_tr">
+                                                <td class="checkCell"><input type="checkbox" id="buttonPadCheck" class="multiToggle" data-canvas="below" data-id="buttonPadFillColor,buttonPad" checked></td>
+                                                <td><label>Button Pad: </label></td>
+                                                <td style="text-align:right;">
+                                                    <input class="selector" type="text" id="buttonPadFillColor" data-element="buttonPadFillColor">
+                                                </td>
+                                            </tr>
+                                            <tr class="color_tr">
+                                                <td class="checkCell"><input type="checkbox" id="buttonsColorCheck" class="multiToggle" data-canvas="aboveCanvas" data-id="buttonsColor" checked></td>
+                                                <td><label>Buttons (Opacity: <span id="buttonOpacitySpan"></span>%: </label>)</td>
+                                                <td style="text-align:right;">
+                                                    <input type="button" class="button rangeButton" value="-" data-span="buttonOpacitySpan">
+                                                    <input type="range" class="range" id="buttonOpacity" value=buttonOpacity min="0" max="100">
+                                                    <input type="button" class="button rangeButton" value="+" data-span="buttonOpacitySpan">
+                                                    <input class="selector" type="text" id="buttonsColor" data-element="buttonsColor">
+                                                </td>
+                                            </tr>
+                                            <tr class="color_tr">
+                                                <td class="checkCell"><input type="checkbox" id="stitchingCheck" class="belowTextureToggle" data-id="stitching"></td>
+                                                <td><label>Stitching / Seams</label></td>
+                                                <td style="text-align:right;">&nbsp;</td>
+                                            </tr>
+                                            <tr class="color_tr">
+                                                <td class="checkCell"><input type="checkbox" id="jerseyFrontColorCheck" class="belowTextureToggle" data-id="jerseyFrontColor"></td>
+                                                <td><label>Jersey Front: </label></td>
+                                                <td style="text-align:right;"><input class="selector" type="text" id="jerseyFrontColor" data-element="jerseyFrontColor"></td>
+                                            </tr>
+                                            <tr class="color_tr">
+                                                <td class="checkCell"><input type="checkbox" id="jerseyBackColorCheck" class="belowTextureToggle" data-id="jerseyBackColor"></td>
+                                                <td><label>Jersey Back: </label></td>
+                                                <td style="text-align:right;"><input class="selector" type="text" id="jerseyBackColor" data-element="jerseyBackColor"></td>
+                                            </tr>
+                                            <!--<tr class="color_tr">
+                                                <td>&nbsp;</td>
+                                                <td>
+                                                <label>Texture: </label>
+                                                </td>
+                                                <td style="text-align:right;">
+                                                    <select id="textureSelect" style="width:100%;">
+                                                        <option value="default_jersey_texture.png">Default</option>
+                                                        <option value="jm_modern_2.png">Modern #2</option>
+                                                        <option value="jm_flannel.png">Flannel #1</option>
+                                                        <option value="jm_flannel_2.png">Flannel #2</option>
+                                                        <option value="jm_baggy_flannel.png">Baggy</option>
+                                                        <option value="jm_mesh_texture.png">Mesh</option>
+                                                        <option value="jm_reds1.png">Reds 1 / skyballer455</option>
+                                                        <option id="customTexture" value="custom">Custom</option>
+                                                    </select>
+                                                    <input type="file" id="uploadedTexture" accept="image/png" style="display:none;"/>
+                                                </td>
+                                            </tr>-->
+                                            <tr class="color_tr">
+                                                <td class="checkCell"><input type="checkbox" id="makersMarkCheck" class="aboveTextureToggle" data-canvas="guideCanvas" data-id="makersMark"></td>
+                                                <td><label>Manufacturer's Mark: </label></td>
+                                                <td style="text-align:right;">
+                                                    <select id="makersMarkSelect">
+                                                        <option value="logo_adidas.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Adidas</option>
+                                                        <option value="logo_asics.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="10" data-original-angle="0">Asics</option>
+                                                        <option value="logo_demarini.svg" data-top="345.25" data-left="400.25" data-angle="0" data-height="15" data-original-angle="0">DeMarini</option>
+                                                        <option value="logo_macron.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="7" data-original-angle="0">Macron</option>
+                                                        <option value="logo_majestic.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="25" data-original-angle="300.7032582977242">Majestic 1</option>
+                                                        <option value="logo_majestic_2.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="25" data-original-angle="300.7032582977242">Majestic 2</option>
+                                                        <option value="logo_maxim.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Maxim</option>
+                                                        <option value="logo_mizuno.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Mizuno</option>
+                                                        <option value="logo_new_balance.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">New Balance</option>
+                                                        <option value="logo_nike.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="10" data-original-angle="0" selected>Nike</option>
+                                                        <option value="logo_puma.svg" data-top="345.25" data-left="308.25" data-angle="0" data-height="15" data-original-angle="0">Puma</option>
+                                                        <option value="logo_rawlings.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="25" data-original-angle="300.7032582977242">Rawlings 1</option>
+                                                        <option value="logo_rawlings_2.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="25" data-original-angle="300.7032582977242">Rawlings 2</option>
+                                                        <option value="logo_reebok.svg" data-top="345.25" data-left="400.25" data-angle="0" data-height="7" data-original-angle="0">Reebok</option>
+                                                        <option value="logo_rbk.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Reebok RBK</option>
+                                                        <option value="logo_russell.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Russell</option>
+                                                        <option value="logo_spalding_2.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="25" data-original-angle="300.7032582977242">Spalding</option>
+                                                        <option value="logo_ssk.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">SSK</option>
+                                                        <option value="logo_umbro.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Umbro</option>
+                                                        <option value="logo_under_armour.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Under Armour</option>
+                                                        <option value="logo_wilson.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="20" data-original-angle="300.7032582977242">Wilson</option>
+                                                    </select>
+                                                    <input class="makerSelector" type="text" id="makersMarkColor" data-element="makersMark">
+                                                </td>
+                                            </tr>
+                                            <tr class="color_tr">
+                                                <input type="file" id="uploadedLayer" accept="image/*" style="display:none;"/>
+                                                <td class="checkCell"><input id="customLayerCheck" type="checkbox" class="multiToggle" data-canvas="below" data-id="uploadedLayer"></td>
+                                                <td><label>Custom Layer: </label></td>
+                                                <td style="text-align:right;">
+                                                <span id="customLayerName"></span>
+                                                <input type="button" class="button" id="fakeLayerButton" value="Upload Custom Layer" disabled>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
+                                <div class="skltbs-panel">
+                                    <div class="accord-header active-header">Main Pants Elements</div>
+                                    <div class="accord-content" style="display:inline;">  
+                                        <table style="width:100%;">
+                                            <tr class="color_tr">
+                                                <td>&nbsp;</td>
+                                                <td><label>Pants Color: </label></td>
+                                                <td style="text-align:right;">
+                                                    <input class="baseSelector" type="text" id="pantsColor" data-element="pantsColor">
+                                                </td>
+                                            </tr>
+                                            <tr class="color_tr">
+                                                <td>&nbsp;</td>
+                                                <td>
+                                                    <label>Belt: </label>
+                                                    <select id="beltSelect">
+                                                        <option value="belt" selected>Leather Belt</option>
+                                                        <option value="elastic">Elastic Waistband</option>
+                                                    </select>
+                                                </td>
+                                                <td style="text-align:right;">
+                                                    <div id="beltSelector" style="display: inline-block;">
+                                                        <input class="selector" type="text" id="belt" data-element="belt">
+                                                    </div>
+                                                    <div id="elasticSelector" style="display: none;">
+                                                        <input class="selector" type="text" id="elasticTop" data-element="elasticTop">
+                                                        <input class="selector" type="text" id="elasticMiddle" data-element="elasticMiddle">
+                                                        <input class="selector" type="text" id="elasticBottom" data-element="elasticBottom">
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="skltbs-panel">
+                                    <div class="accord-header active-header">Main Cap Elements</div>
+                                    <div class="accord-content" style="display:inline;">  
+                                        <table style="width:100%;">
+                                            <tr class="color_tr">
+                                                <td>&nbsp;</td>
+                                                <td><label>Cap Color: </label></td>
+                                                <td style="text-align:right;">
+                                                    <input class="baseSelector" type="text" id="capColor" data-element="capColor">
+                                                </td>
+                                            </tr>
+                                            <tr class="color_tr">
+                                                <td class="checkCell"><input type="checkbox" class="belowCapTextureToggle" data-id="underBrimColor" id="underBrimColorCheck" checked></td>
+                                                <td><label>Brim Underside: </label></td>
+                                                <td style="text-align:right;"><input class="capSelector" type="text" id="underBrimColor" data-element="underBrimColor" data-canvas="belowCap"></td>
+                                            </tr>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
-                            </td></tr></table>
+                            </div>
                         </div>
+                        </td></tr></table>
                     </div>
                     <div style="text-align:center; margin-top:5px;">
                         <input type="button" class="button" id="straightenObject" value="Reset Object Rotation" style="display:none;">
