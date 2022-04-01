@@ -8,13 +8,14 @@
 	<script type="text/javascript" src="./scripts/spectrum.js"></script>
 	<script type="text/javascript" src="./scripts/fabric.min.js"></script>
 	<script type="text/javascript" src="./scripts/context_blender.js"></script>
-	<script type="text/javascript" src="./scripts/modernizr.custom.68502.js"></script>
-	<script type="text/javascript" src="./scripts/jquery.magnific-popup.min.js"></script>
+	<!--<script type="text/javascript" src="./scripts/modernizr.custom.68502.js"></script>-->
+    <script type="text/javascript" src="./scripts/jquery.magnific-popup.min.js"></script>
 	<script type="text/javascript" src="./scripts/jquery.dd.min.js"></script>
 	<script type="text/javascript" src="./scripts/jquery.range-min.js"></script>
 	<script type="text/javascript" src="./scripts/jquery.mousewheel.min.js"></script>
 	<script type="text/javascript" src="./scripts/spin.min.js"></script>
 	<script type="text/javascript" src="./scripts/fontfaceobserver.js"></script>
+    <script type="text/javascript" src="./scripts/skeletabs.js"></script>
 	<script>if (window.module) module = window.module;</script>
 	<link href='./scripts/uniformmaker.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/spectrum.css' rel='stylesheet' type='text/css'>
@@ -22,28 +23,282 @@
 	<link href='./scripts/magnific-popup.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/dd.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/jquery.range.css' rel='stylesheet' type='text/css'>
-
+    <link href='./scripts/skeletabs.css' rel='stylesheet' type='text/css'>
+    <script>
+        const initialJerseyColors = {jerseyColor:"#FFFFFF",jerseyFrontColor:"#008800",jerseyBackColor:"#880000",buttonPadFillColor:"transparent",buttonPadColor:"#000000",collarColor:"#103959",leftSleeveColor:"#FFFFFF",rightSleeveColor:"#FFFFFF",leftSleeveLongColor:"#FFFFFF",rightSleeveLongColor:"#FFFFFF",jerseyPinstripesColor:"#000000",jerseyPinstripesStrokeColor:"transparent",undershirtColor:"#103959",sleeveSeamAngledColor:"#0202f0",sleeveSeamAngledStrokeColor:"#000000",racingStripeLargeColor:"#ff0000",racingStripeSmallColor:"#00FF00",sleeveSeamXLColor:"#971717",sleeveSeamXLStrokeColor:"#000000",smallTopShouldersColor:"#999999",smallTopShouldersStrokeColor:"#000000",bigTopShouldersColor:"#00FF00",bigTopShouldersStrokeColor:"#000000",sidePanelSmallColor:"#FF0000",sidePanelSmallStrokeColor:"#0000FF",sidePanelSmallRoundedColor:"#0000FF",sidePanelSmallRoundedStrokeColor:"#FF0000",sidePanelLargeRoundedColor:"#00FF00",sidePanelLargeRoundedStrokeColor:"yellow",sidePanelVColor:"yellow",sidePanelVStrokeColor:"#00FF00",arcedStripeColor:"#003399",placketPipingInnerColor:"#FF0000",placketPipingMiddleColor:"#00FF00",placketPipingOuterColor:"#0000FF",widePlacketPipingInnerColor:"#FF0000",widePlacketPipingMiddleColor:"#00FF00",widePlacketPipingOuterColor:"#0000FF",tequilaSunrise1Color:"#ef7212",tequilaSunrise2Color:"#ffcf00",tequilaSunrise3Color:"#ff7900",tequilaSunrise4Color:"#d70039",sleevePipingInnerColor:"#FF0000",sleevePipingMiddleColor:"#FFFFFF",sleevePipingOuterColor:"#0000FF",thinCuffInnerColor:"#FF0000",thinCuffMiddleColor:"#FFFFFF",thinCuffOuterColor:"#0000FF",sleeveCuffInnerColor:"#FF0000",sleeveCuffMiddleColor:"#FFFFFF",sleeveCuffOuterColor:"#0000FF",shoulderPipingInnerColor:"#FF0000",shoulderPipingMiddleColor:"#FFFFFF",shoulderPipingOuterColor:"#0000FF",swashFillColor:"#000000",swashStrokeColor:"#FF0000",wordmarkTextColor:"#103959",wordmarkTextStroke1Color:"#FFFFFF",wordmarkTextStroke2Color:"#FF0000",beachBlanketTopColor:"#FF0000",beachBlanketMiddleColor:"#0000FF",beachBlanketBottomColor:"#FF0000",vNeckThinInnerColor:"#FF0000",vNeckThinMiddleColor:"#FFFFFF",vNeckThinOuterColor:"#0000FF",vNeckOffsetInnerColor:"#FF0000",vNeckOffsetMiddleColor:"#FFFFFF",vNeckOffsetOuterColor:"#0000FF",vNeckThickInnerColor:"#FF0000",vNeckThickMiddleColor:"#FFFFFF",vNeckThickOuterColor:"#0000FF",buttonsColor:"#FFFFFF",camoBaseColor:"#4a551e",camoLayer1Color:"#052503",camoLayer2Color:"#beb585",digiCamoBaseColor:"#9a8b62",digiCamoLayer1Color:"#372900",digiCamoLayer2Color:"#736632",butterflyColor:"#103959",cadetCollarColor:"#FF0000",fullCollarColor:"#00FF00",neckCollarColor:"#0000FF",sunCollar1Color:"#FF0000",sunCollar2Color:"#00FF00",buttonDownCollarColor:"#00FFFF",jerseyFlapColor:"#191970",jerseyFlapTrimColor:"#800000",jerseyFlapButtonsColor:"#FFFFFF",jerseyShield1WideStrokeColor:"#FF0000",jerseyShield1WideColor:"#0000FF",jerseyShield1InnerStrokeColor:"#000000",jerseyShield1InnerColor:"#00FF00",jerseyShield1ButtonsColor:"#FFFFFF",jerseyShield2StrokeColor:"#FF0000",jerseyShield2InnerColor:"#0000FF",jerseyShield2ButtonsColor:"#FFFFFF",jerseyPanelStrokeColor:"#FF0000",jerseyPanelFillColor:"#00FF00",jerseyPanelButtonColor:"#FFFFFF",bowTie1Color:"#0000FF",bowTie2Color:"#FF0000",tieColor:"#272A26",pocketFillColor:"#fffdd0",xLacesColor:"#0000FF",vLacesColor:"#FF0000",hockeyLacesColor:"#CFCFCF",suspendersColor:"#228b22",nikeHornsColor:"#FF9933",shoulderLoops1Color:"#6600CC",shoulderLoops2Color:"#339933",ncaaShoulderColor:"#996633",makersMarkColor:"#000000",snakeskinColor:"#A41E20",rainbowShoulder1Color:"#041E42",rainbowShoulder2Color:"#D50032",rainbowShoulder3Color:"#FA4616",rainbowShoulder4Color:"#FFCD00"}
+        const initialPantsColors = {pantsColor:"#ffffff", belt:"#3c3c3c", pantsPinstripes:"#0c2340", singleStripe:"#ff0000", doubleStripeOuter:"#ff0000", doubleStripeInner:"#0000ff", tuxedoStripeBack:"#3c3c3c", tuxedoStripeFront:"#00ff00", elasticBottom:"#0000ff", elasticMiddle:"#ffffff", elasticTop:"#ff0000"}
+        const initialCapColors = {capColor:"#c6011f",underBrimColor:"#656765",topsideBrimColor:"#1d1654",squatcheeColor:"yellow",frontPanelColor:"#FFFFFF",smallFrontPanelColor:"yellow",capPinstripeColor:"blue",capPinstripe2Color:"cyan", horizontalPinstripeColor:"yellow",capLogoTextColor:"white",capLogoStroke1Color:"green",capLogoStroke2Color:"black",capLogo2TextColor:"white",capLogo2Stroke1Color:"green",capLogo2Stroke2Color:"black",bandBoxSingleThickColor:"orange",bandBoxDoubleThickColor:"greenyellow",jockeyColor:"brown",braidStripeInnerColor:"red",braidStripeOuterColor:"blue",frontPanelBorderColor:"cyan",bostonColor:"yellowgreen",smallPanelBorderColor:"cyan",curvedBrimColor:"cyan",curvedBrimBorderColor:"blue",peakBandColor:"orange",stingyBrimColor:"red",lidPinstripesColor:"blue",stingyLidPinstripesColor:"yellow",eyeletFillColor:"black",eyeletStrokeColor:"yellow",snakeskinColor:"#000000",scrambledEggColor:"#FED141",makersMarkColor:"#FFFFFF"}
+        var prefColorFormat = "hex"
+    </script>
 </head>
 <body>
 <div class="title">
 	<span class="header">Welcome To The OOTP23 Uniform Maker!</span>
 </div>
 <div id="page">
-    <div style="width: 1600px; margin:0 auto;">
+    <div style="width: 1300px; margin:0 auto;">
         <div class="section group" style="position:relative;">
-            <div class="col span_2_of_3" style="float:left;">
+            <div class="col span_3_of_5">
                 <div id="hiddenContainer" style="display:none;">
-                    <canvas id="jerseyTexture" width="384" height="768"></canvas>
-                    <canvas id="jerseyBelow" width="384" height="768"></canvas>
-                    <canvas id="pantsTexture" width="384" height="384"></canvas>
-                    <canvas id="pantsBelow" width="384" height="384"></canvas>  
-                    <canvas id="capTexture" width="384" height="384"></canvas>  
-                    <canvas id="capBelow" width="384" height="384"></canvas>  
+                    <canvas id="jerseyTexture" width="512" height="1024"></canvas>
+                    <canvas id="jerseyBelow" width="512" height="1024"></canvas>
+                    <canvas id="pantsTexture" width="512" height="512"></canvas>
+                    <canvas id="pantsBelow" width="512" height="512"></canvas>  
+                    <canvas id="capTexture" width="512" height="512"></canvas>  
+                    <canvas id="capBelow" width="512" height="512"></canvas>  
                 </div>
                 <div id="canvasContainer" style="position:absolute; height:828px; width:768px;">
                     <canvas id="jerseyComposite" width="384" height="768" style="position:relative; top:0; float:left; z-index:1;"></canvas>
                     <canvas id="pantsComposite" width="384" height="384" style="position:relative; top:0; float:right; z-index:1;"></canvas>
                     <canvas id="capComposite" width="384" height="384" styyle="position:absolute; top:384; float:right; z-index:1;"></canvas>
+                </div>
+            </div>
+            <div class="col span_2_of_5" style="max-height:500px;">
+                <div id="text">
+                    <div class="accordion">
+                        <div class="locked-accord-header locked-active-header">Main Uniform Elements</div>
+                        <div class="accord-content" style="display:inline-block; width:100%;">
+                            <table style="width:100%;">
+                                <tr>
+                                    <td>
+                                        Team Name: <input type="text" id="teamName">
+                                    </td>
+                                    <td>
+                                        Uniform Type: <select id="capType">
+                                            <option value="Home">Home</option>
+                                            <option value="Away">Away</option>
+                                            <option value="Alternate">Alternate</option>
+                                            <option value="Throwback">Throwback</option>
+                                        </select>
+                                    </td>
+                                    <td><label for="startYear">Start:</label>
+                                        <input type="number" class="year" id="startYear" name="startYear" onkeypress="return isNumberKey(event)" style="width:50px;">
+                                    </td>
+                                    <td><label for="endYear">End:</label>
+                                        <input type="number" class="year" id="endYear" name="endYear" onkeypress="return isNumberKey(event)" style="width:50px;">
+                                    </td>
+                                </tr>	
+                            <table>
+                        </div>
+                        <div class="locked-accord-header locked-active-header" style="margin-top:5px;">Uniform Components</div>
+                        <div class="accord-content" id="uniformComponents">
+                            <table style="width:100%;"><tr><td>
+                            <div class="skltbs-theme-light" data-skeletabs='{ "panelHeight": "adaptive" }'>
+                                <ul class="skltbs-tab-group">
+                                    <li class="skltbs-tab-item">
+                                    <button class="skltbs-tab">Jersey</button>
+                                    </li>
+                                    <li class="skltbs-tab-item">
+                                    <button class="skltbs-tab">Pants</button>
+                                    </li>
+                                    <li class="skltbs-tab-item">
+                                    <button class="skltbs-tab">Cap</button>
+                                    </li>
+                                </ul>
+                                <div class="skltbs-panel-group">
+                                    <div class="skltbs-panel">
+                                        <div class="accord-header active-header">Main Jersey Elements</div>
+                                        <div class="accord-content" style="display:inline;" id="jerseyElements">
+                                            <table style="width:100%;">
+                                                <tr class="color_tr">
+                                                    <td><input type="checkbox" id="gridToggle" class="gridToggle" data-canvas="guideCanvas" checked></td>
+                                                    <td><label>Grid (Will Be Hidden On Export)</label></td>
+                                                    <td style="text-align:right;">
+                                                        
+                                                    </td>
+                                                </tr>
+                                                <tr class="color_tr">
+                                                    <td>&nbsp;</td>
+                                                    <td><label>Jersey Color: </label></td>
+                                                    <td style="text-align:right;">
+                                                        <input class="baseSelector" type="text" id="jerseyColor" data-element="jerseyColor" data-linkname="jersey">
+                                                    </td>
+                                                </tr>
+                                                <tr class="color_tr">
+                                                    <td class="checkCell">&nbsp;</td>
+                                                    <td><label>Sleeves: </label></td>
+                                                    <td style="text-align:right;">
+                                                        <select id="sleeveType">
+                                                            <option value="short" selected>Short</option>
+                                                            <option value="long">Long</option>
+                                                        </select>
+                                                        <input class="selector" type="text" id="leftSleeveColor" data-element="leftSleeveColor" data-link="leftSleeveLong">
+                                                        <input class="selector" type="text" id="rightSleeveColor" data-element="rightSleeveColor" data-link="rightSleeveLong">
+                                                    </td>
+                                                </tr>
+                                                <tr class="color_tr">
+                                                    <td class="checkCell">&nbsp;</td>
+                                                    <td><label class="linkLabel" data-linkname="undershirt">Undershirt Sleeves: </label></td>
+                                                    <td style="text-align:right;">
+                                                        <input class="undershirtSelector" type="text" id="undershirtColor" data-element="undershirtColor">
+                                                    </td>
+                                                </tr>
+                                                <tr class="color_tr">
+                                                    <td class="checkCell">&nbsp;</td>
+                                                    <td><label>Undershirt Collar: </label></td>
+                                                    <td style="text-align:right;">
+                                                        <input class="selector" type="text" id="collarColor" data-element="collarColor">
+                                                    </td>
+                                                </tr>
+                                                <tr class="color_tr">
+                                                    <td class="checkCell"><input type="checkbox" id="buttonPadCheck" class="multiToggle" data-canvas="below" data-id="buttonPadFillColor,buttonPad" checked></td>
+                                                    <td><label>Button Pad: </label></td>
+                                                    <td style="text-align:right;">
+                                                        <input class="selector" type="text" id="buttonPadFillColor" data-element="buttonPadFillColor">
+                                                    </td>
+                                                </tr>
+                                                <tr class="color_tr">
+                                                    <td class="checkCell"><input type="checkbox" id="buttonsColorCheck" class="multiToggle" data-canvas="aboveCanvas" data-id="buttonsColor" checked></td>
+                                                    <td><label>Buttons (Opacity: <span id="buttonOpacitySpan"></span>%: </label>)</td>
+                                                    <td style="text-align:right;">
+                                                        <input type="button" class="button rangeButton" value="-" data-span="buttonOpacitySpan">
+                                                        <input type="range" class="range" id="buttonOpacity" value=buttonOpacity min="0" max="100">
+                                                        <input type="button" class="button rangeButton" value="+" data-span="buttonOpacitySpan">
+                                                        <input class="selector" type="text" id="buttonsColor" data-element="buttonsColor">
+                                                    </td>
+                                                </tr>
+                                                <tr class="color_tr">
+                                                    <td class="checkCell"><input type="checkbox" id="stitchingCheck" class="belowTextureToggle" data-id="stitching"></td>
+                                                    <td><label>Stitching / Seams</label></td>
+                                                    <td style="text-align:right;">&nbsp;</td>
+                                                </tr>
+                                                <tr class="color_tr">
+                                                    <td class="checkCell"><input type="checkbox" id="jerseyFrontColorCheck" class="belowTextureToggle" data-id="jerseyFrontColor"></td>
+                                                    <td><label>Jersey Front: </label></td>
+                                                    <td style="text-align:right;"><input class="selector" type="text" id="jerseyFrontColor" data-element="jerseyFrontColor"></td>
+                                                </tr>
+                                                <tr class="color_tr">
+                                                    <td class="checkCell"><input type="checkbox" id="jerseyBackColorCheck" class="belowTextureToggle" data-id="jerseyBackColor"></td>
+                                                    <td><label>Jersey Back: </label></td>
+                                                    <td style="text-align:right;"><input class="selector" type="text" id="jerseyBackColor" data-element="jerseyBackColor"></td>
+                                                </tr>
+                                                <!--<tr class="color_tr">
+                                                    <td>&nbsp;</td>
+                                                    <td>
+                                                    <label>Texture: </label>
+                                                    </td>
+                                                    <td style="text-align:right;">
+                                                        <select id="textureSelect" style="width:100%;">
+                                                            <option value="default_jersey_texture.png">Default</option>
+                                                            <option value="jm_modern_2.png">Modern #2</option>
+                                                            <option value="jm_flannel.png">Flannel #1</option>
+                                                            <option value="jm_flannel_2.png">Flannel #2</option>
+                                                            <option value="jm_baggy_flannel.png">Baggy</option>
+                                                            <option value="jm_mesh_texture.png">Mesh</option>
+                                                            <option value="jm_reds1.png">Reds 1 / skyballer455</option>
+                                                            <option id="customTexture" value="custom">Custom</option>
+                                                        </select>
+                                                        <input type="file" id="uploadedTexture" accept="image/png" style="display:none;"/>
+                                                    </td>
+                                                </tr>-->
+                                                <tr class="color_tr">
+                                                    <td class="checkCell"><input type="checkbox" id="makersMarkCheck" class="aboveTextureToggle" data-canvas="guideCanvas" data-id="makersMark"></td>
+                                                    <td><label>Manufacturer's Mark: </label></td>
+                                                    <td style="text-align:right;">
+                                                        <select id="makersMarkSelect">
+                                                            <option value="logo_adidas.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Adidas</option>
+                                                            <option value="logo_asics.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="10" data-original-angle="0">Asics</option>
+                                                            <option value="logo_demarini.svg" data-top="345.25" data-left="400.25" data-angle="0" data-height="15" data-original-angle="0">DeMarini</option>
+                                                            <option value="logo_macron.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="7" data-original-angle="0">Macron</option>
+                                                            <option value="logo_majestic.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="25" data-original-angle="300.7032582977242">Majestic 1</option>
+                                                            <option value="logo_majestic_2.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="25" data-original-angle="300.7032582977242">Majestic 2</option>
+                                                            <option value="logo_maxim.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Maxim</option>
+                                                            <option value="logo_mizuno.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Mizuno</option>
+                                                            <option value="logo_new_balance.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">New Balance</option>
+                                                            <option value="logo_nike.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="10" data-original-angle="0" selected>Nike</option>
+                                                            <option value="logo_puma.svg" data-top="345.25" data-left="308.25" data-angle="0" data-height="15" data-original-angle="0">Puma</option>
+                                                            <option value="logo_rawlings.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="25" data-original-angle="300.7032582977242">Rawlings 1</option>
+                                                            <option value="logo_rawlings_2.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="25" data-original-angle="300.7032582977242">Rawlings 2</option>
+                                                            <option value="logo_reebok.svg" data-top="345.25" data-left="400.25" data-angle="0" data-height="7" data-original-angle="0">Reebok</option>
+                                                            <option value="logo_rbk.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Reebok RBK</option>
+                                                            <option value="logo_russell.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Russell</option>
+                                                            <option value="logo_spalding_2.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="25" data-original-angle="300.7032582977242">Spalding</option>
+                                                            <option value="logo_ssk.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">SSK</option>
+                                                            <option value="logo_umbro.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Umbro</option>
+                                                            <option value="logo_under_armour.svg" data-top="345.25" data-left="303.25" data-angle="0" data-height="13" data-original-angle="0">Under Armour</option>
+                                                            <option value="logo_wilson.svg" data-top="156.25" data-left="61.25" data-angle="300.7032582977242" data-height="20" data-original-angle="300.7032582977242">Wilson</option>
+                                                        </select>
+                                                        <input class="makerSelector" type="text" id="makersMarkColor" data-element="makersMark">
+                                                    </td>
+                                                </tr>
+                                                <tr class="color_tr">
+                                                    <input type="file" id="uploadedLayer" accept="image/*" style="display:none;"/>
+                                                    <td class="checkCell"><input id="customLayerCheck" type="checkbox" class="multiToggle" data-canvas="below" data-id="uploadedLayer"></td>
+                                                    <td><label>Custom Layer: </label></td>
+                                                    <td style="text-align:right;">
+                                                    <span id="customLayerName"></span>
+                                                    <input type="button" class="button" id="fakeLayerButton" value="Upload Custom Layer" disabled>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="skltbs-panel">
+                                        <div class="accord-header active-header">Main Pants Elements</div>
+                                        <div class="accord-content" style="display:inline;">  
+                                            <table style="width:100%;">
+                                                <tr class="color_tr">
+                                                    <td>&nbsp;</td>
+                                                    <td><label>Pants Color: </label></td>
+                                                    <td style="text-align:right;">
+                                                        <input class="baseSelector" type="text" id="pantsColor" data-element="pantsColor">
+                                                    </td>
+                                                </tr>
+                                                <tr class="color_tr">
+                                                    <td>&nbsp;</td>
+                                                    <td>
+                                                        <label>Belt: </label>
+                                                        <select id="beltSelect">
+                                                            <option value="belt" selected>Leather Belt</option>
+                                                            <option value="elastic">Elastic Waistband</option>
+                                                        </select>
+                                                    </td>
+                                                    <td style="text-align:right;">
+                                                        <div id="beltSelector" style="display: inline-block;">
+                                                            <input class="selector" type="text" id="belt" data-element="belt">
+                                                        </div>
+                                                        <div id="elasticSelector" style="display: none;">
+                                                            <input class="selector" type="text" id="elasticTop" data-element="elasticTop">
+                                                            <input class="selector" type="text" id="elasticMiddle" data-element="elasticMiddle">
+                                                            <input class="selector" type="text" id="elasticBottom" data-element="elasticBottom">
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="skltbs-panel">
+                                        <div class="accord-header active-header">Main Cap Elements</div>
+                                        <div class="accord-content" style="display:inline;">  
+                                            <table style="width:100%;">
+                                                <tr class="color_tr">
+                                                    <td>&nbsp;</td>
+                                                    <td><label>Cap Color: </label></td>
+                                                    <td style="text-align:right;">
+                                                        <input class="baseSelector" type="text" id="capColor" data-element="capColor">
+                                                    </td>
+                                                </tr>
+                                                <tr class="color_tr">
+                                                    <td class="checkCell"><input type="checkbox" class="belowCapTextureToggle" data-id="underBrimColor" id="underBrimColorCheck" checked></td>
+                                                    <td><label>Brim Underside: </label></td>
+                                                    <td style="text-align:right;"><input class="capSelector" type="text" id="underBrimColor" data-element="underBrimColor" data-canvas="belowCap"></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            </td></tr></table>
+                        </div>
+                    </div>
+                    <div style="text-align:center; margin-top:5px;">
+                        <input type="button" class="button" id="straightenObject" value="Reset Object Rotation" style="display:none;">
+                        <input type="button" class="button" id="save" value="Save Uniform">
+                        <input type="button" class="button" id="load" value="Load Uniform">
+                        <input type="file" id="uploadedJSON" accept=".rink" style="display:none;"/>
+                        <input type="button" class="button" id="aboutUniformFactory" value="About Uniform Factory">
+                    </div>
                 </div>
             </div>
         </div>
@@ -53,7 +308,7 @@
 
 </body>
 <script>
-
+    
     const jerseyTextureCanvas = document.getElementById('jerseyTexture');
 	const jerseyTextureContext = jerseyTextureCanvas.getContext('2d');
 
@@ -73,52 +328,421 @@
     var jerseyBelow = new fabric.StaticCanvas('jerseyBelow',{
 		enableRetinaScaling: false,
 		preserveObjectStacking: true,
-		backgroundColor: '#ffffff',
+		backgroundColor: initialJerseyColors['jerseyColor'],
 	});
 
     var pantsBelow = new fabric.StaticCanvas('pantsBelow',{
 		enableRetinaScaling: false,
 		preserveObjectStacking: true,
-		backgroundColor: '#cccccc',
+		backgroundColor: initialPantsColors['pantsColor'],
 	});
 
     var capBelow = new fabric.StaticCanvas('capBelow',{
 		enableRetinaScaling: false,
 		preserveObjectStacking: true,
-		backgroundColor: '#ff0000',
+		backgroundColor: initialCapColors['capColor'],
 	});
 
+    const scaleRatio = Math.min(384/512, 768/1024)
+    jerseyBelow.setDimensions({ width: jerseyBelow.getWidth() * 0.75, height: jerseyBelow.getHeight() * 0.75 });
+    jerseyBelow.setZoom(scaleRatio)
+    pantsBelow.setDimensions({ width: pantsBelow.getWidth() * 0.75, height: pantsBelow.getHeight() * 0.75 });
+    pantsBelow.setZoom(scaleRatio)
+    capBelow.setDimensions({ width: capBelow.getWidth() * 0.75, height: capBelow.getHeight() * 0.75 });
+    capBelow.setZoom(scaleRatio)
+
+    $(document).ready(function() {
+        $(".accordion .accord-header").click(function() {
+            console.log($(this).next("div").attr("id"))
+            console.log($(this).next("div").is(":visible"))
+            /* if($(this).next("div").is(":visible")){
+				$(this).next("div").slideUp("fast");
+				$(this).removeClass("active-header").addClass("inactive-header");
+			} else {
+				$(".accordion .accord-content").slideUp("fast");
+				$(this).next("div").slideToggle("fast");
+				$(".active-header").each(function() {
+					$(this).removeClass("active-header").addClass("inactive-header");
+				}) 
+				$(this).removeClass("inactive-header").addClass("active-header");
+			}  */
+		});
+    })
+    
     initializeCanvas()
+
+    $("#jerseyColor").spectrum({
+		showInput: true,
+		preferredFormat: "hex",
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		showSelectionPalette: true,
+		palette: [ ],
+		color: initialJerseyColors["jerseyColor"],
+		show: function(color) {
+			original_color = color;
+			$(this).data('changed', false);
+		},
+		move: function(color) {
+			$(this).data('changed', true);
+			jerseyBelow.setBackgroundColor(color.toHexString(), jerseyBelow.renderAll.bind(jerseyBelow))
+			reRenderBG("jersey")
+		},
+		change: function(color) {
+			$(this).data('changed', true);
+			jerseyBelow.setBackgroundColor(color.toHexString(), jerseyBelow.renderAll.bind(jerseyBelow))
+			reRenderBG("jersey")
+		},
+		hide: function(color) {
+			$(this).data('changed', false);
+			jerseyBelow.setBackgroundColor(color.toHexString(), jerseyBelow.renderAll.bind(jerseyBelow))
+			reRenderBG("jersey")
+		}
+	})
+
+    $("#pantsColor").spectrum({
+		showInput: true,
+		preferredFormat: "hex",
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		showSelectionPalette: true,
+		palette: [ ],
+		color: initialPantsColors["pantsColor"],
+		show: function(color) {
+			original_color = color;
+			$(this).data('changed', false);
+		},
+		move: function(color) {
+			$(this).data('changed', true);
+			pantsBelow.setBackgroundColor(color.toHexString(), pantsBelow.renderAll.bind(pantsBelow))
+			reRenderBG("pants")
+		},
+		change: function(color) {
+			$(this).data('changed', true);
+			pantsBelow.setBackgroundColor(color.toHexString(), pantsBelow.renderAll.bind(pantsBelow))
+			reRenderBG("pants")
+		},
+		hide: function(color) {
+			$(this).data('changed', false);
+			pantsBelow.setBackgroundColor(color.toHexString(), pantsBelow.renderAll.bind(pantsBelow))
+			reRenderBG("pants")
+		}
+	})
+
+    $("#capColor").spectrum({
+		showInput: true,
+		preferredFormat: "hex",
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		showSelectionPalette: true,
+		palette: [ ],
+		color: initialCapColors["capColor"],
+		show: function(color) {
+			original_color = color;
+			$(this).data('changed', false);
+		},
+		move: function(color) {
+			$(this).data('changed', true);
+			capBelow.setBackgroundColor(color.toHexString(), capBelow.renderAll.bind(capBelow))
+			reRenderBG("cap")
+		},
+		change: function(color) {
+			$(this).data('changed', true);
+			capBelow.setBackgroundColor(color.toHexString(), capBelow.renderAll.bind(capBelow))
+			reRenderBG("cap")
+		},
+		hide: function(color) {
+			$(this).data('changed', false);
+			capBelow.setBackgroundColor(color.toHexString(), capBelow.renderAll.bind(capBelow))
+			reRenderBG("cap")
+		}
+	})
+
+    $(".capSelector").each(function() {
+		var color = $(this).attr('id');
+		$(this).spectrum({
+			showInput: true,
+			preferredFormat: prefColorFormat,
+			showInitial: true,
+			showPalette: true,
+			showButtons: true,
+			showSelectionPalette: true,
+			localStorageKey: "spectrum.capmaker",
+			palette: [ ],
+			color: initialCapColors[$(this).attr('id')],
+			show: function(color) {
+				var original_color = color;
+				$(this).data('changed', false);
+			},
+			move: function(color) {
+				$(this).data('changed', true);
+				var id = $(this).data('element');
+				var objects = capBelow.getObjects().forEach(function(o) {
+                    if (o.get('type') == "group") {
+						var groupObjects = objects[x].getObjects().forEach(function(p) {
+                            if (p.id == id) {
+								p.set("fill", color.toHexString());
+								p.set("stroke", color.toHexString());
+							}
+                        });
+					} else {
+						if (o.id == id) {
+							o.set("fill", color.toHexString());
+						} 						
+					} 
+                });
+                capBelow.renderAll()
+				reRenderBG("cap");
+			},
+			change: function(color) {
+				$(this).data('changed', true);
+				var id = $(this).data('element');
+				var objects = capBelow.getObjects().forEach(function(o) {
+                    if (o.get('type') == "group") {
+						var groupObjects = objects[x].getObjects().forEach(function(p) {
+                            if (p.id == id) {
+								p.set("fill", color.toHexString());
+								p.set("stroke", color.toHexString());
+							}
+                        });
+					} else {
+						if (o.id == id) {
+							o.set("fill", color.toHexString());
+						} 						
+					} 
+                });
+                capBelow.renderAll()
+				reRenderBG("cap");
+			},
+			hide: function(color) {
+				$(this).data('changed', true);
+				var id = $(this).data('element');
+				var objects = capBelow.getObjects().forEach(function(o) {
+                    if (o.get('type') == "group") {
+						var groupObjects = objects[x].getObjects().forEach(function(p) {
+                            if (p.id == id) {
+								p.set("fill", color.toHexString());
+								p.set("stroke", color.toHexString());
+							}
+                        });
+					} else {
+						if (o.id == id) {
+							o.set("fill", color.toHexString());
+						} 						
+					} 
+                });
+                capBelow.renderAll()
+				reRenderBG("cap");
+			}
+		})
+	})
+
+    $(".belowCapTextureToggle").on("click",function() {
+		if ($(this).is(':checked')) {
+			state = true;
+		} else {
+			state = false;
+		}
+		var id = $(this).data("id");
+		capBelow.getObjects().forEach(function(o) {
+            if (o.id == id) {
+				if (state == true) {
+					o.visible = true;
+				} else {
+					o.visible = false;
+				}
+			}
+        });
+		reRenderBG("cap");
+	})
 
     function initializeCanvas() {
 
-        var rect = new fabric.Rect({
-            top: 200,
-            left: 200,
-            width: 50,
-            height: 50,
-            fill: 'blue'
-        })
+        // CAP
+        underBrimColor = new fabric.Rect({
+			top: -1,
+			left: -1,
+			fill: initialCapColors['underBrimColor'],
+			width: 203,
+			height: 159,
+			id: 'underBrimColor',
+			selectable: false
+		})
 
-        var rect2 = new fabric.Rect({
-            top: 200,
-            left: 200,
-            width: 50,
-            height: 50,
-            fill: 'blue'
-        })
+        topsideBrimColor = new fabric.Rect({
+			top: 119,
+			left: 208,
+			fill: initialCapColors["topsideBrimColor"],
+			width: 221,
+			height: 159,
+			id: 'topsideBrimColor',
+			visible: false,
+			selectable: false
+		})
 
-        var rect3 = new fabric.Rect({
-            top: 200,
-            left: 200,
-            width: 50,
-            height: 50,
-            fill: 'blue'
-        })
+        topsideBrimColor = new fabric.Rect({
+			top: 119,
+			left: 208,
+			fill: initialCapColors["topsideBrimColor"],
+			width: 221,
+			height: 159,
+			id: 'topsideBrimColor',
+			visible: false,
+			selectable: false
+		})
+		
+		curvedBrimColor = new fabric.Path("m 422.49162,136.28551 c 0,0 -9.46969,21.71619 -49.08699,40.59627 0,0 39.24543,50.47812 -20.4308,92.86728 -1.08159,0.76827 -1.2466,4.43397 0,3.98003 22.18436,-8.07825 70.11134,-17.94723 68.19111,-109.31805 -0.0897,-4.26649 1.32668,-28.12553 1.32668,-28.12553 m -205.71285,0 c 0,0 9.46969,21.71619 49.08699,40.59627 0,0 -39.24543,50.47812 20.4308,92.86728 1.08159,0.76827 1.2466,4.43397 0,3.98003 -22.18436,-8.07825 -70.11134,-17.94723 -68.19111,-109.31805 0.0897,-4.26649 -1.32668,-28.12553 -1.32668,-28.12553",{
+			fill: initialCapColors["curvedBrimColor"],
+			id: 'curvedBrimColor',
+			visible: false,
+			selectable:false
+		});
+		
+		curvedBrimBorderColor = new fabric.Path("m 374.61608,175.36549 a 1.50015,1.50015 0 0 0 -0.96875,2.40625 c 0,0 9.52396,13.01418 11.59375,31.09375 2.06979,18.07957 -3.11558,41.10385 -33.25,61.78125 a 1.50015,1.50015 0 1 0 1.6875,2.46875 c 30.86848,-21.18109 36.70078,-45.64297 34.53125,-64.59375 -2.16953,-18.95078 -12.15625,-32.53125 -12.15625,-32.53125 a 1.50015,1.50015 0 0 0 -1.4375,-0.625 z m -110.1875,0 a 1.50015,1.50015 0 0 0 -1.09375,0.625 c 0,0 -9.98672,13.58047 -12.15625,32.53125 -2.16953,18.95078 3.66277,43.41266 34.53125,64.59375 a 1.50015,1.50015 0 1 0 1.6875,-2.46875 c -30.13442,-20.6774 -35.28854,-43.70168 -33.21875,-61.78125 2.06979,-18.07957 11.5625,-31.09375 11.5625,-31.09375 a 1.50015,1.50015 0 0 0 -1.3125,-2.40625 z",{
+			fill: initialCapColors["curvedBrimBorderColor"],
+			id: 'curvedBrimBorderColor',
+			visible: false,
+			selectable:false
+		});
+		
+		peakBandColor = new fabric.Path("m 308,277.41496 c -23.38658,-3.00015 -47.03506,-10.96101 -65.09789,-26.54598 -15.51452,-13.50592 -20.98254,-34.44788 -23.22493,-54.10868 -3.19257,-20.91819 -3.1482,-42.12267 -5.0022,-63.15121 -0.90256,-4.15376 4.88976,7.65947 5.39908,9.67731 3.37513,8.04103 1.75867,17.06571 3.38811,25.52364 3.02631,21.51557 4.64073,44.19401 15.86345,63.3445 15.03456,20.61546 40.26349,31.23682 64.76263,35.3972 27.71098,4.46979 56.68463,-3.70319 79.65409,-19.34752 7.10471,-5.82536 14.5605,-11.99121 18.91561,-20.20422 10.14115,-21.89447 11.7455,-46.34708 13.92501,-70.03764 -0.39442,-7.16053 1.48111,-23.44176 5.89899,-23.04002 -1.07219,25.10955 -2.55545,50.34325 -7.11352,75.09725 -3.06317,18.12713 -11.98342,35.89937 -27.71085,46.16605 -23.0328,15.54135 -51.90827,23.57158 -79.65758,21.22932 z",{
+			fill: initialCapColors["peakBandColor"],
+			id: 'peakBandColor',
+			visible: false
+		});
+		
+		stingyBrimColor = new fabric.Path("m 307.45368,277.5459 c -19.50073,-1.5634 -34.79772,-16.23212 -46.45802,-30.72317 -23.61266,-31.05915 -35.73534,-69.09082 -44.23134,-106.70531 -1.55884,-9.99124 4.85549,6.50941 7.84763,8.1693 13.94976,15.42193 32.98339,25.22637 52.00344,32.97397 19.0103,7.25633 39.94856,11.81949 60.1539,7.02976 26.44632,-5.76794 52.01331,-17.73162 72.16941,-35.96366 4.55318,-4.21764 8.28733,-9.25135 11.00309,-14.82679 -6.26764,37.86579 -17.67158,75.79387 -39.68594,107.63953 -11.43835,15.93156 -27.69044,30.86242 -48.24009,32.13657 -8.19469,0.8926 -16.36789,1.72491 -24.56208,0.2698 z",{
+			fill: initialCapColors["stingyBrimColor"],
+			id: 'stingyBrimColor',
+			visible: false,
+			selectable:false
+		});
+		
+		lidPinstripesColor = new fabric.Path("m 404.08203,154.09766 a 1.50015,1.50015 0 0 0 -1.4707,1.52734 l 0.35351,83.79102 a 1.50015,1.50015 0 1 0 3,-0.0117 l -0.35351,-83.79297 a 1.50015,1.50015 0 0 0 -1.5293,-1.51367 z m -26.49805,16.61523 a 1.50015,1.50015 0 0 0 -1.48828,1.50977 l -0.70703,90.50976 a 1.50015,1.50015 0 1 0 3,0.0234 l 0.70703,-90.50977 a 1.50015,1.50015 0 0 0 -1.51172,-1.5332 z m -27.93554,12.72852 a 1.50015,1.50015 0 0 0 -1.48438,1.51562 l -0.35351,88.03516 a 1.50015,1.50015 0 1 0 3,0.0117 l 0.35351,-88.03516 a 1.50015,1.50015 0 0 0 -1.51562,-1.52734 z m -30.75391,5.30273 a 1.50015,1.50015 0 0 0 -1.49023,1.50977 l -0.70703,88.03515 a 1.50015,1.50015 0 1 0 3,0.0234 l 0.70703,-88.0332 a 1.50015,1.50015 0 0 0 -1.50977,-1.53516 z m -30.41211,-4.5957 A 1.50015,1.50015 0 0 0 287,185.66406 l -0.35352,88.38867 a 1.50015,1.50015 0 1 0 3,0.0117 L 290,185.67578 a 1.50015,1.50015 0 0 0 -1.51758,-1.52734 z m -27.92383,-11.66602 a 1.50015,1.50015 0 0 0 -1.49023,1.50781 l -0.70703,89.44922 a 1.50015,1.50015 0 1 0 3,0.0234 l 0.70703,-89.44727 a 1.50015,1.50015 0 0 0 -1.50977,-1.5332 z m -26.86914,-16.26367 a 1.50015,1.50015 0 0 0 -1.49023,1.50781 l -0.70703,83.79297 a 1.50015,1.50015 0 1 0 3,0.0254 l 0.70703,-83.79297 a 1.50015,1.50015 0 0 0 -1.50977,-1.5332 z",{
+			fill: initialCapColors["lidPinstripesColor"],
+			id: 'lidPinstripesColor',
+			visible: false,
+			selectable:false
+		});
+		
+		stingyLidPinstripesColor = new fabric.Path("m 404.10156,155.51172 a 1.50015,1.50015 0 0 0 -1.49023,1.50781 l -0.35352,42.07227 a 1.50015,1.50015 0 1 0 3,0.0254 l 0.35352,-42.07227 a 1.50015,1.50015 0 0 0 -1.50977,-1.5332 z m -26.52929,16.26367 a 1.50015,1.50015 0 0 0 -1.47657,1.51953 l 0,76.01563 a 1.50015,1.50015 0 1 0 3,0 l 0,-76.01563 a 1.50015,1.50015 0 0 0 -1.52343,-1.51953 z m -27.5586,12.37305 a 1.50015,1.50015 0 0 0 -1.49609,1.5039 l -1.06055,87.32813 a 1.50015,1.50015 0 1 0 3,0.0351 l 1.06055,-87.32812 a 1.50015,1.50015 0 0 0 -1.50391,-1.53906 z m -31.11914,5.30468 a 1.50015,1.50015 0 0 0 -1.49023,1.50782 l -0.70703,87.68164 a 1.50015,1.50015 0 1 0 3,0.0234 l 0.70703,-87.67969 a 1.50015,1.50015 0 0 0 -1.50977,-1.53321 z m -29.69141,-4.59765 a 1.50015,1.50015 0 0 0 -1.49609,1.50195 l -1.06055,83.79297 a 1.50015,1.50015 0 1 0 3,0.0371 l 1.06055,-83.79102 a 1.50015,1.50015 0 0 0 -1.50391,-1.54101 z m -27.92578,-11.3125 a 1.50015,1.50015 0 0 0 -1.50195,1.49805 l -1.06055,70.0039 a 1.5001681,1.5001681 0 1 0 3,0.0449 l 1.06055,-70.0039 a 1.50015,1.50015 0 0 0 -1.49805,-1.54297 z m -27.60156,-16.61719 a 1.50015,1.50015 0 0 0 -1.47656,1.52149 l 0,37.47656 a 1.50015,1.50015 0 1 0 3,0 l 0,-37.47656 a 1.50015,1.50015 0 0 0 -1.52344,-1.52149 z",{
+			fill: initialCapColors["stingyLidPinstripesColor"],
+			id: 'stingyLidPinstripesColor',
+			visible: false,
+			selectable:false
+		});
 
-        jerseyBelow.add(rect)
-        pantsBelow.add(rect2)
-        capBelow.add(rect3)
+		squatcheeColor = new fabric.Circle({
+			radius: 13,
+			fill: initialCapColors["squatcheeColor"],
+			offsetX: 'center',
+			offsetY: 'center',
+			left: 472,
+			top: 486,
+			id: 'squatcheeColor',
+			visible: true,
+			selectable: false
+		})
+		
+		frontPanelColor = new fabric.Path("m 214,317.5 -7,5.5 c 0,0 -88.01039,-3.8368 -199.5,0 -3.1604067,0.10876 -6.56066017,-4.46447 -6.56066017,-4.46447 0,0 7.31329767,-45.16732 28.56066017,-93.03553 7.578247,-17.07304 66.062182,-68.71766 66,-66 -0.08092,3.53675 19.42298,8.62318 23,-0.5 1.73648,-4.42889 65,60.5 66,65.5 1,5 23.5,53 29.5,93 z",{
+			fill: initialCapColors["frontPanelColor"],
+			id: 'frontPanelColor',
+			visible: false,
+			selectable:false
+		});
+		
+		smallFrontPanelColor = new fabric.Path("m 207,323 c 0,0 -88.01039,-3.8368 -199.5,0 69.556081,-78.49296 59.287036,-129.7935 64,-142.5 11.135472,-10.83817 24.072819,-23.72526 24,-21 -0.09449,3.53641 18.24324,8.9927 23,-0.5 0,0 21,16.75 24.25,21.5 5.63161,21.04385 -3.50549,69.79002 64.25,142.5 z",{
+			fill: initialCapColors["smallFrontPanelColor"],
+			id: 'smallFrontPanelColor',
+			visible: false,
+			selectable:false
+		});
+		
+		jockeyColor = new fabric.Rect({
+			top: 307,
+			left: 0,
+			fill: initialCapColors["jockeyColor"],
+			width: 213.85262,
+			height: 10.792462,
+			id: 'jockeyColor',
+            visible: false
+		});
+		
+		bandBoxSingleThickColor = new fabric.Path("M 11.40625 273.75 C 11.40625 273.75 1.0096444 304.55891 3.875 304.5625 L 210.8125 304.8125 C 210.8125 304.8125 207.73784 273.75 202.78125 273.75 L 11.40625 273.75 z M 396.5 285.40625 C 307.425 343.88549 256.8656 501.16065 264.65625 492.84375 C 270.18476 486.94179 297.8125 497.5 297.8125 497.5 C 297.8125 497.5 326.38892 395.56143 415.65625 311.28125 C 418.66116 308.44422 396.5 285.40625 396.5 285.40625 z M 208.5625 340 C 159.34796 339.89436 70.611332 348.95495 8.28125 395.71875 C 7.5727655 396.2503 25.625 424.71875 25.625 424.71875 C 25.625 424.71875 96.663118 367.32843 240.3125 378.875 L 245 343.15625 C 245.15016 342.00505 230.93275 340.04802 208.5625 340 z",{
+			fill: initialCapColors["bandBoxSingleThickColor"],
+			id: 'bandBoxSingleThickColor',
+			visible: false,
+			selectable:false
+		});
+		
+		bandBoxDoubleThickColor = new fabric.Path("m 428.97902,329.73426 -12.08391,-16.61538 c 0,0 -99.36987,101.43488 -117.31469,183.77622 -0.77311,3.5475 18.12588,6.54546 18.12588,6.54546 0,0 20.13986,-76.53147 111.27272,-173.7063 z m -35.92654,-44.87872 14.59705,16.37719 c 0,0 -90.66967,75.68421 -122.82889,192.25393 -0.41848,1.51688 -20.6495,-1.78013 -20.6495,-1.78013 0,0 13.42703,-95.88803 128.88134,-206.85099 z M 37.382708,437.94663 23.853728,419.78932 c 0,0 78.186782,-55.53979 214.683552,-44.1472 0.70959,0.0592 0,19.93745 0,19.93745 0,0 -131.37352,-16.02117 -201.154572,42.36706 z M 7.4765417,393.79944 16.733212,407.32842 c 0,0 66.336527,-59.51412 225.364328,-48.41951 0.79418,0.0554 2.84821,-19.58142 2.84821,-19.58142 0,0 -161.635714,-17.08924 -237.4692083,54.47195 z m 0,-103.60351 199.3744483,-0.35603 4.27231,19.58142 -207.9190679,0.35603 z M 18.157315,254.94938 195.81419,255.3054 c 0,0 7.49268,18.86868 7.12051,18.86937 L 11.748851,274.5308 z",{
+			fill: initialCapColors["bandBoxDoubleThickColor"],
+			id: 'bandBoxDoubleThickColor',
+			visible: false,
+			selectable:false
+		});
+		
+		capPinstripeColor = new fabric.Path("M 115.34375 152.59375 L 113.9375 154 L 182.625 224.65625 L 212.84375 321.8125 L 214.75 321.21875 L 184.5 223.84375 L 184.40625 223.625 L 184.25 223.46875 L 115.34375 152.59375 z M 111.5 153.0625 L 109.9375 154.28125 L 162.875 222.5 L 189.5 323.75 L 191.4375 323.21875 L 164.75 221.75 L 164.6875 221.5625 L 164.5625 221.40625 L 111.5 153.0625 z M 108.59375 153.90625 L 106.8125 154.84375 L 146.09375 228.40625 L 163.5 324.375 L 165.46875 324.03125 L 148.03125 227.90625 L 148 227.75 L 147.90625 227.59375 L 108.59375 153.90625 z M 101.4375 155.71875 L 99.59375 159.625 L 98.15625 158.59375 L 51.875 223.75 L 51.78125 223.875 L 51.71875 224.03125 L 21.8125 323.90625 L 23.75 324.46875 L 53.625 224.71875 L 99.09375 160.71875 L 69.40625 224.09375 L 69.34375 224.1875 L 69.34375 224.3125 L 50.46875 324 L 52.4375 324.375 L 71.28125 224.78125 L 103.25 156.5625 L 101.4375 155.71875 z M 105.4375 157.40625 L 105.4375 157.84375 L 104.0625 157.5 L 85.5625 226.75 L 85.53125 226.8125 L 85.53125 226.90625 L 76.4375 324.28125 L 78.4375 324.46875 L 87.46875 227.25 L 87.5 227.15625 L 87.5 227.09375 L 105.4375 160.09375 L 105.4375 327.21875 L 107.4375 327.21875 L 107.4375 161.9375 L 125.03125 230.125 L 125.0625 230.28125 L 134.28125 325.53125 L 136.28125 325.34375 L 127.03125 229.9375 L 127.03125 229.84375 L 127 229.78125 L 109.1875 160.71875 L 107.4375 161.15625 L 107.4375 157.40625 L 105.4375 157.40625 z M 94.90625 159 L 30.8125 221.125 L 30.625 221.3125 L 30.5625 221.53125 C 30.5625 221.53125 22.68977 246.50654 14.8125 271.5625 C 10.87386 284.09048 6.92305 296.62997 3.96875 306.09375 C 2.4916 310.82564 1.26857 314.79242 0.40625 317.59375 C -0.02491 318.99441 -0.36155 320.0997 -0.59375 320.875 C -0.70985 321.26265 -0.81292 321.56275 -0.875 321.78125 C -0.906 321.8905 -0.9186 321.98919 -0.9375 322.0625 C -0.9465 322.0992 -0.96035 322.11755 -0.96875 322.15625 C -0.97675 322.19505 -1 322.17025 -1 322.40625 L 1 322.40625 C 1 322.49996 1.0062283 322.53866 1 322.5625 C 1.0114 322.5182 1.0339 322.44434 1.0625 322.34375 C 1.1197 322.14257 1.19782 321.85165 1.3125 321.46875 C 1.54185 320.70295 1.88211 319.58567 2.3125 318.1875 C 3.17329 315.39116 4.39825 311.41811 5.875 306.6875 C 8.8285 297.22628 12.78032 284.68358 16.71875 272.15625 C 24.5511 247.24317 32.28672 222.68605 32.375 222.40625 L 96.28125 160.4375 L 94.90625 159 z M 379.4375 278.53125 L 377.84375 279.71875 L 434.84375 355.84375 L 468.28125 476.28125 L 470.21875 475.71875 L 436.75 355.15625 L 436.6875 354.96875 L 436.5625 354.8125 L 379.4375 278.53125 z M 355.21875 302.90625 L 353.71875 304.21875 L 418.3125 378.09375 L 461.28125 478.40625 L 463.125 477.625 L 420.09375 377.1875 L 420.03125 377.03125 L 419.90625 376.90625 L 355.21875 302.90625 z M 246.21875 322.09375 L 236.1875 430.0625 L 180.6875 506.375 L 182.3125 507.5625 L 237.96875 431.03125 L 238.125 430.8125 L 238.15625 430.53125 L 248.21875 322.28125 L 246.21875 322.09375 z M 177.46875 323.8125 L 175.46875 324.0625 L 187.3125 421.375 L 178.5 503.84375 L 180.4375 504.3125 L 213.40625 422.75 L 213.46875 422.5625 L 213.46875 422.34375 L 209.1875 325.15625 L 207.1875 325.25 L 211.46875 422.25 L 181.28125 496.875 L 189.3125 421.46875 L 189.3125 421.375 L 189.3125 421.25 L 177.46875 323.8125 z M 148.25 326 L 146.3125 326.4375 L 168.4375 424.875 L 173.21875 502 L 175.21875 501.875 L 170.4375 424.59375 L 170.40625 424.5 L 170.40625 424.4375 L 148.25 326 z M 116.75 328.6875 L 114.84375 329.28125 L 169.21875 505 L 171.125 504.40625 L 116.75 328.6875 z M 327.1875 332.53125 L 325.84375 334 L 399.5625 402.1875 L 399.59375 402.21875 L 454.84375 478.84375 L 456.46875 477.6875 L 401.09375 400.90625 L 401.03125 400.8125 L 400.96875 400.75 L 327.1875 332.53125 z M 81.46875 338.15625 L 79.625 338.9375 L 116.125 427.03125 L 116.15625 427.125 L 116.21875 427.1875 L 164.90625 504.3125 L 92.90625 433.3125 L 45.6875 350.875 L 43.9375 351.875 L 91.28125 434.46875 L 91.34375 434.5625 L 91.4375 434.65625 L 165.96875 508.1875 L 167.375 506.75 L 166.15625 505.53125 L 167.5 504.65625 L 118 426.28125 L 118 426.25 L 81.46875 338.15625 z M 305.21875 358.625 L 304.03125 360.25 L 387.5 421.59375 L 387.59375 421.6875 L 451.71875 481.25 L 453.0625 479.8125 L 388.875 420.125 L 388.84375 420.09375 L 388.78125 420.0625 L 305.21875 358.625 z M 15.90625 363.875 L 14.28125 365.0625 L 73.71875 446.625 L 73.8125 446.75 L 73.9375 446.84375 L 161.5625 508.78125 L 162.6875 507.15625 L 75.15625 445.28125 L 15.90625 363.875 z M 290.3125 387.3125 L 289.21875 388.96875 L 370.78125 443.84375 L 370.8125 443.875 L 370.84375 443.90625 L 448.40625 485.4375 L 449.34375 483.6875 L 371.8125 442.125 L 290.3125 387.3125 z M 0.8125 391.5625 L -0.8125 392.78125 L 49.5625 459.71875 L 49.65625 459.875 L 49.8125 459.96875 L 94.625 489.1875 L 94.71875 489.25 L 94.8125 489.28125 L 157.75 511.9375 L 158.4375 510.0625 L 95.71875 487.5 L 95.65625 487.46875 L 51.03125 458.375 L 0.8125 391.5625 z M 275.125 416.46875 L 274.1875 418.21875 L 367.5625 469.0625 L 367.6875 469.125 L 367.8125 469.15625 L 449.125 490.8125 L 449.625 488.875 L 368.40625 467.25 L 275.125 416.46875 z M 260.71875 442.09375 L 259.90625 443.9375 L 361.625 488.5 L 361.78125 488.5625 L 361.96875 488.59375 L 440.75 493.21875 L 364.3125 511.28125 L 364.75 513.21875 L 447.84375 493.59375 L 447.65625 491.625 L 362.28125 486.59375 L 260.71875 442.09375 z M 247.96875 484.59375 L 247.46875 486.53125 L 346.90625 512.96875 L 347.40625 511.03125 L 247.96875 484.59375 z",{
+			fill:initialCapColors["capPinstripeColor"],
+			id:'capPinstripeColor',
+			visible: false,
+			selectable:false
+		})
+		
+		capPinstripe2Color = new fabric.Path("M 104.625 157.375 L 44.28125 219.875 L 44.0625 220.09375 L 44 220.40625 L 25.4375 327.1875 L 27.40625 327.53125 L 45.9375 221.03125 L 102.46875 162.5 L 77.3125 219.4375 L 77.21875 219.625 L 77.21875 219.8125 L 72.5625 326.59375 L 74.5625 326.6875 L 79.21875 220.0625 L 106.28125 158.84375 L 106.90625 157.4375 L 105.34375 157.4375 L 105 157.4375 L 105 157.75 L 104.625 157.375 z M 108.21875 159.15625 L 106.78125 160.53125 L 106.8125 160.5625 L 106.15625 160.5625 L 106.84375 324.875 L 108.84375 324.84375 L 108.15625 164.28125 L 131.5 220.125 L 139.375 324.9375 L 141.34375 324.78125 L 133.5 219.78125 L 133.5 219.625 L 133.4375 219.46875 L 110.375 164.3125 L 165.15625 222.125 L 180.4375 325.71875 L 182.40625 325.4375 L 167.0625 221.5 L 167 221.1875 L 166.8125 220.96875 L 108.21875 159.15625 z M 365.34375 292.375 L 363.9375 293.78125 L 434.78125 366.375 L 455.5625 478.03125 L 411.25 396.15625 L 411.125 396 L 410.96875 395.84375 L 328.125 330.5 L 326.875 332.0625 L 409.5625 397.28125 L 453.84375 479.09375 L 300.5625 372.59375 L 299.4375 374.25 L 454.71875 482.15625 L 362.03125 458.875 L 275.4375 417.15625 L 274.5625 418.96875 L 361.34375 460.75 L 361.4375 460.8125 L 361.53125 460.8125 L 450.125 483.0625 L 352.34375 489.21875 L 256.375 457.46875 L 255.75 459.375 L 351.84375 491.15625 L 352 491.21875 L 352.21875 491.21875 L 454.71875 484.78125 L 454.6875 484.21875 L 455.46875 484.40625 L 455.84375 482.9375 L 455.9375 483 L 456.25 483.5625 L 457 483.15625 L 458.46875 482.875 L 436.6875 365.75 L 436.65625 365.4375 L 436.4375 365.21875 L 365.34375 292.375 z M 213.15625 320.875 L 211.15625 320.96875 L 215.4375 418.90625 L 172.71875 501.25 L 179.21875 416.375 L 179.21875 416.21875 L 179.1875 416.0625 L 157.40625 326.0625 L 155.46875 326.53125 L 177.21875 416.34375 L 170.53125 503.53125 L 115.59375 329.90625 L 113.6875 330.53125 L 167.9375 502.09375 L 108.71875 434.6875 L 73.4375 341.28125 L 71.5625 342 L 106.90625 435.5625 L 107 435.75 L 107.09375 435.875 L 164.59375 501.3125 L 71.875 447.03125 L 32.71875 355.90625 L 30.875 356.6875 L 70.15625 448.09375 L 70.28125 448.40625 L 70.5625 448.5625 L 168.78125 506.0625 L 168.90625 506.21875 L 170.0625 505.1875 L 170.78125 504.96875 L 170.53125 505.46875 L 172.3125 506.375 L 217.3125 419.59375 L 217.4375 419.375 L 217.4375 419.09375 L 213.15625 320.875 z",{
+			fill:initialCapColors["capPinstripe2Color"],
+			id:'capPinstripe2Color',
+			visible: false,
+			selectable:false
+		})
+		
+		horizontalPinstripeColor = new fabric.Path("M 57.59375 189.78125 L 57.5625 191.78125 L 158.59375 192.78125 L 158.59375 190.78125 L 57.59375 189.78125 z M 30.8125 219.5625 L 30.8125 221.5625 L 182.84375 222.59375 L 182.84375 220.59375 L 30.8125 219.5625 z M 193.4375 248.875 L 19.6875 249.875 L 19.71875 251.875 L 193.4375 250.875 L 193.4375 248.875 z M 204.5625 276.65625 L 11.09375 277.15625 L 11.125 279.15625 L 204.5625 278.65625 L 204.5625 276.65625 z M 395.125 284.1875 L 270.875 491.78125 L 272.59375 492.8125 L 396.84375 285.21875 L 395.125 284.1875 z M 407.75 301.375 L 292.09375 494.8125 L 293.8125 495.84375 L 409.46875 302.40625 L 407.75 301.375 z M 3.03125 301.40625 L 3.03125 303.40625 L 211.125 305.90625 L 211.125 303.90625 L 3.03125 301.40625 z M 422.375 321.59375 L 320.875 503.4375 L 322.59375 504.40625 L 424.125 322.59375 L 422.375 321.59375 z M 246.25 338.28125 L 8.34375 394.34375 L 8.8125 396.3125 L 246.71875 340.25 L 246.25 338.28125 z M 440.5625 353.40625 L 349.65625 511.5 L 351.375 512.5 L 442.3125 354.40625 L 440.5625 353.40625 z M 242.21875 364.5625 L 22.5 417.09375 L 22.96875 419.03125 L 242.65625 366.5 L 242.21875 364.5625 z M 239.65625 385.25 L 35.125 435.78125 L 35.59375 437.71875 L 240.15625 387.21875 L 239.65625 385.25 z M 454.71875 404.90625 L 396.625 502.40625 L 398.34375 503.40625 L 456.4375 405.9375 L 454.71875 404.90625 z M 237.15625 408.5 L 53.28125 454.96875 L 53.78125 456.90625 L 237.625 410.4375 L 237.15625 408.5 z M 224 443.875 L 89.125 480.71875 L 89.65625 482.65625 L 224.53125 445.78125 L 224 443.875 z",{
+			fill:initialCapColors["horizontalPinstripeColor"],
+			id:'horizontalPinstripeColor',
+			visible: false,
+			selectable:false
+		});
+
+        snakeskinColor = new fabric.Path("M 69.542969 192.38086 L 66.759766 198.0918 L 69.542969 203.80273 L 72.326172 198.0918 L 69.542969 192.38086 z M 81.513672 192.38086 L 78.730469 198.0918 L 81.513672 203.80273 L 84.296875 198.0918 L 81.513672 192.38086 z M 93.484375 192.38086 L 90.701172 198.0918 L 93.484375 203.80273 L 96.267578 198.0918 L 93.484375 192.38086 z M 105.45508 192.38086 L 102.67188 198.0918 L 105.45508 203.80273 L 108.23828 198.0918 L 105.45508 192.38086 z M 117.42578 192.38086 L 114.64258 198.0918 L 117.42578 203.80273 L 120.20898 198.0918 L 117.42578 192.38086 z M 129.39844 192.38086 L 126.61523 198.0918 L 129.39844 203.80273 L 132.18164 198.0918 L 129.39844 192.38086 z M 141.36914 192.38086 L 138.58594 198.0918 L 141.36914 203.80273 L 144.15234 198.0918 L 141.36914 192.38086 z M 153.33984 192.38086 L 150.55664 198.0918 L 153.33984 203.80273 L 156.12305 198.0918 L 153.33984 192.38086 z M 58.146484 193.55664 C 57.393465 194.31154 56.638022 195.06578 55.896484 195.81836 L 54.789062 198.0918 L 57.572266 203.80273 L 60.355469 198.0918 L 58.146484 193.55664 z M 164.41211 201.95898 L 165.31055 203.80273 L 165.58789 203.23438 C 165.19087 202.8075 164.81167 202.38574 164.41211 201.95898 z M 51.587891 205.0293 L 48.984375 210.37305 L 51.587891 215.71484 L 54.191406 210.37305 L 51.587891 205.0293 z M 63.558594 205.0293 L 60.955078 210.37305 L 63.558594 215.71484 L 66.162109 210.37305 L 63.558594 205.0293 z M 75.529297 205.0293 L 72.925781 210.37305 L 75.529297 215.71484 L 78.132812 210.37305 L 75.529297 205.0293 z M 87.5 205.0293 L 84.896484 210.37305 L 87.5 215.71484 L 90.103516 210.37305 L 87.5 205.0293 z M 99.470703 205.0293 L 96.867188 210.37305 L 99.470703 215.71484 L 102.07422 210.37305 L 99.470703 205.0293 z M 111.44141 205.0293 L 108.83789 210.37305 L 111.44141 215.71484 L 114.04492 210.37305 L 111.44141 205.0293 z M 123.41211 205.0293 L 120.80859 210.37305 L 123.41211 215.71484 L 126.01562 210.37305 L 123.41211 205.0293 z M 135.38281 205.0293 L 132.7793 210.37305 L 135.38281 215.71484 L 137.98633 210.37305 L 135.38281 205.0293 z M 147.35352 205.0293 L 144.75 210.37305 L 147.35352 215.71484 L 149.95703 210.37305 L 147.35352 205.0293 z M 159.32422 205.0293 L 156.7207 210.37305 L 159.32422 215.71484 L 161.92773 210.37305 L 159.32422 205.0293 z M 169.88867 207.91406 L 168.69141 210.37305 L 171.29492 215.71484 L 173.26758 211.66602 C 172.41599 210.7116 171.57215 209.76661 170.59375 208.68164 C 170.36516 208.42815 170.11905 208.16834 169.88867 207.91406 z M 42.216797 210.36523 C 41.026282 211.70772 39.928299 212.98303 38.886719 214.2168 L 39.617188 215.71484 L 42.220703 210.37305 L 42.216797 210.36523 z M 45.601562 217.67969 L 43.177734 222.6543 L 45.601562 227.62891 L 48.025391 222.6543 L 45.601562 217.67969 z M 57.572266 217.67969 L 55.148438 222.6543 L 57.572266 227.62891 L 59.996094 222.6543 L 57.572266 217.67969 z M 69.542969 217.67969 L 67.119141 222.6543 L 69.542969 227.62891 L 71.966797 222.6543 L 69.542969 217.67969 z M 81.513672 217.67969 L 79.089844 222.6543 L 81.513672 227.62891 L 83.9375 222.6543 L 81.513672 217.67969 z M 93.484375 217.67969 L 91.060547 222.6543 L 93.484375 227.62891 L 95.910156 222.6543 L 93.484375 217.67969 z M 105.45508 217.67969 L 103.03125 222.6543 L 105.45508 227.62891 L 107.88086 222.6543 L 105.45508 217.67969 z M 117.42578 217.67969 L 115.00195 222.6543 L 117.42578 227.62891 L 119.85156 222.6543 L 117.42578 217.67969 z M 129.39844 217.67969 L 126.97266 222.6543 L 129.39844 227.62891 L 131.82227 222.6543 L 129.39844 217.67969 z M 141.36914 217.67969 L 138.94336 222.6543 L 141.36914 227.62891 L 143.79297 222.6543 L 141.36914 217.67969 z M 153.33984 217.67969 L 150.91602 222.6543 L 153.33984 227.62891 L 155.76367 222.6543 L 153.33984 217.67969 z M 165.31055 217.67969 L 162.88672 222.6543 L 165.31055 227.62891 L 167.73438 222.6543 L 165.31055 217.67969 z M 177.28125 217.67969 L 174.85742 222.6543 L 177.28125 227.62891 L 179.70508 222.6543 L 177.28125 217.67969 z M 34.578125 219.62305 C 33.552114 221.02192 32.631277 222.40042 31.777344 223.82227 L 33.630859 227.62891 L 36.054688 222.6543 L 34.578125 219.62305 z M 39.617188 230.33008 L 37.371094 234.93555 L 39.617188 239.54102 L 41.861328 234.93555 L 39.617188 230.33008 z M 51.587891 230.33008 L 49.341797 234.93555 L 51.587891 239.54102 L 53.832031 234.93555 L 51.587891 230.33008 z M 63.558594 230.33008 L 61.314453 234.93555 L 63.558594 239.54102 L 65.802734 234.93555 L 63.558594 230.33008 z M 75.529297 230.33008 L 73.285156 234.93555 L 75.529297 239.54102 L 77.773438 234.93555 L 75.529297 230.33008 z M 87.5 230.33008 L 85.255859 234.93555 L 87.5 239.54102 L 89.744141 234.93555 L 87.5 230.33008 z M 99.470703 230.33008 L 97.226562 234.93555 L 99.470703 239.54102 L 101.71484 234.93555 L 99.470703 230.33008 z M 111.44141 230.33008 L 109.19727 234.93555 L 111.44141 239.54102 L 113.68555 234.93555 L 111.44141 230.33008 z M 123.41211 230.33008 L 121.16797 234.93555 L 123.41211 239.54102 L 125.65625 234.93555 L 123.41211 230.33008 z M 135.38281 230.33008 L 133.13867 234.93555 L 135.38281 239.54102 L 137.62695 234.93555 L 135.38281 230.33008 z M 147.35352 230.33008 L 145.10938 234.93555 L 147.35352 239.54102 L 149.59766 234.93555 L 147.35352 230.33008 z M 159.32422 230.33008 L 157.08008 234.93555 L 159.32422 239.54102 L 161.56836 234.93555 L 159.32422 230.33008 z M 171.29492 230.33008 L 169.05078 234.93555 L 171.29492 239.54102 L 173.53906 234.93555 L 171.29492 230.33008 z M 183.26562 230.33008 L 181.02148 234.93555 L 183.26562 239.54102 L 185.50977 234.93555 L 183.26562 230.33008 z M 28.046875 231.15039 C 27.485335 232.42421 26.912702 233.76459 26.302734 235.27734 C 26.196333 235.54122 26.082053 235.84311 25.974609 236.11133 L 27.646484 239.54102 L 29.890625 234.93555 L 28.046875 231.15039 z M 33.630859 242.98047 L 31.566406 247.2168 L 33.630859 251.45508 L 35.695312 247.2168 L 33.630859 242.98047 z M 45.601562 242.98047 L 43.537109 247.2168 L 45.601562 251.45508 L 47.666016 247.2168 L 45.601562 242.98047 z M 57.572266 242.98047 L 55.507812 247.2168 L 57.572266 251.45508 L 59.636719 247.2168 L 57.572266 242.98047 z M 69.542969 242.98047 L 67.478516 247.2168 L 69.542969 251.45508 L 71.609375 247.2168 L 69.542969 242.98047 z M 81.513672 242.98047 L 79.449219 247.2168 L 81.513672 251.45508 L 83.580078 247.2168 L 81.513672 242.98047 z M 93.484375 242.98047 L 91.419922 247.2168 L 93.484375 251.45508 L 95.550781 247.2168 L 93.484375 242.98047 z M 105.45508 242.98047 L 103.39062 247.2168 L 105.45508 251.45508 L 107.52148 247.2168 L 105.45508 242.98047 z M 117.42578 242.98047 L 115.36133 247.2168 L 117.42578 251.45508 L 119.49219 247.2168 L 117.42578 242.98047 z M 129.39844 242.98047 L 127.33203 247.2168 L 129.39844 251.45508 L 131.46289 247.2168 L 129.39844 242.98047 z M 141.36914 242.98047 L 139.30273 247.2168 L 141.36914 251.45508 L 143.43359 247.2168 L 141.36914 242.98047 z M 153.33984 242.98047 L 151.27344 247.2168 L 153.33984 251.45508 L 155.4043 247.2168 L 153.33984 242.98047 z M 165.31055 242.98047 L 163.24414 247.2168 L 165.31055 251.45508 L 167.375 247.2168 L 165.31055 242.98047 z M 177.28125 242.98047 L 175.21484 247.2168 L 177.28125 251.45508 L 179.3457 247.2168 L 177.28125 242.98047 z M 189.25195 242.98047 L 187.1875 247.2168 L 189.25195 251.45508 L 191.31641 247.2168 L 189.25195 242.98047 z M 22.576172 244.85938 C 21.977586 246.4388 21.382849 248.02278 20.78125 249.64844 L 21.660156 251.45508 L 23.724609 247.2168 L 22.576172 244.85938 z M 27.646484 255.63086 L 25.759766 259.49805 L 27.646484 263.36719 L 29.53125 259.49805 L 27.646484 255.63086 z M 39.617188 255.63086 L 37.730469 259.49805 L 39.617188 263.36719 L 41.501953 259.49805 L 39.617188 255.63086 z M 51.587891 255.63086 L 49.701172 259.49805 L 51.587891 263.36719 L 53.472656 259.49805 L 51.587891 255.63086 z M 63.558594 255.63086 L 61.671875 259.49805 L 63.558594 263.36719 L 65.443359 259.49805 L 63.558594 255.63086 z M 75.529297 255.63086 L 73.642578 259.49805 L 75.529297 263.36719 L 77.414062 259.49805 L 75.529297 255.63086 z M 87.5 255.63086 L 85.615234 259.49805 L 87.5 263.36719 L 89.384766 259.49805 L 87.5 255.63086 z M 99.470703 255.63086 L 97.585938 259.49805 L 99.470703 263.36719 L 101.35547 259.49805 L 99.470703 255.63086 z M 111.44141 255.63086 L 109.55664 259.49805 L 111.44141 263.36719 L 113.32617 259.49805 L 111.44141 255.63086 z M 123.41211 255.63086 L 121.52734 259.49805 L 123.41211 263.36719 L 125.29688 259.49805 L 123.41211 255.63086 z M 135.38281 255.63086 L 133.49805 259.49805 L 135.38281 263.36719 L 137.26758 259.49805 L 135.38281 255.63086 z M 147.35352 255.63086 L 145.46875 259.49805 L 147.35352 263.36719 L 149.23828 259.49805 L 147.35352 255.63086 z M 159.32422 255.63086 L 157.43945 259.49805 L 159.32422 263.36719 L 161.20898 259.49805 L 159.32422 255.63086 z M 171.29492 255.63086 L 169.41016 259.49805 L 171.29492 263.36719 L 173.18164 259.49805 L 171.29492 255.63086 z M 183.26562 255.63086 L 181.38086 259.49805 L 183.26562 263.36719 L 185.15234 259.49805 L 183.26562 255.63086 z M 195.23633 255.63086 L 193.35156 259.49805 L 195.23633 263.36719 L 197.05273 259.64258 C 196.9396 259.31464 196.82868 258.98876 196.71484 258.66016 L 195.23633 255.63086 z M 17.361328 259.08984 C 17.008673 260.08501 16.661859 261.06378 16.318359 262.04688 L 17.560547 259.49805 L 17.361328 259.08984 z M 21.660156 268.2793 L 19.955078 271.78125 L 21.660156 275.28125 L 23.365234 271.78125 L 21.660156 268.2793 z M 33.630859 268.2793 L 31.925781 271.78125 L 33.630859 275.28125 L 35.335938 271.78125 L 33.630859 268.2793 z M 45.601562 268.2793 L 43.896484 271.78125 L 45.601562 275.28125 L 47.308594 271.78125 L 45.601562 268.2793 z M 57.572266 268.2793 L 55.867188 271.78125 L 57.572266 275.28125 L 59.279297 271.78125 L 57.572266 268.2793 z M 81.513672 268.2793 L 79.808594 271.78125 L 81.513672 275.28125 L 83.220703 271.78125 L 81.513672 268.2793 z M 93.484375 268.2793 L 91.779297 271.78125 L 93.484375 275.28125 L 95.191406 271.78125 L 93.484375 268.2793 z M 117.42578 268.2793 L 115.7207 271.78125 L 117.42578 275.28125 L 119.13281 271.78125 L 117.42578 268.2793 z M 129.39844 268.2793 L 127.69141 271.78125 L 129.39844 275.28125 L 131.10352 271.78125 L 129.39844 268.2793 z M 141.36914 268.2793 L 139.66211 271.78125 L 141.36914 275.28125 L 143.07422 271.78125 L 141.36914 268.2793 z M 165.31055 268.2793 L 163.60352 271.78125 L 165.31055 275.28125 L 167.01562 271.78125 L 165.31055 268.2793 z M 177.28125 268.2793 L 175.57422 271.78125 L 177.28125 275.28125 L 178.98633 271.78125 L 177.28125 268.2793 z M 69.542969 268.28125 L 67.837891 271.78125 L 69.542969 275.28125 L 71.25 271.78125 L 69.542969 268.28125 z M 105.45508 268.28125 L 103.75 271.78125 L 105.45508 275.28125 L 107.16211 271.78125 L 105.45508 268.28125 z M 153.33984 268.28125 L 151.63281 271.78125 L 153.33984 275.28125 L 155.04492 271.78125 L 153.33984 268.28125 z M 189.25195 268.28125 L 187.54492 271.78125 L 189.25195 275.28125 L 190.95703 271.78125 L 189.25195 268.28125 z M 200.48047 269.80078 L 199.51562 271.78125 L 201.22266 275.28125 L 201.84961 273.99609 C 201.40235 272.60947 200.94643 271.21504 200.48047 269.80078 z M 386.88477 279 C 386.54372 279 385.88146 279.27961 384.97656 279.7832 L 386.96875 282.05664 L 390.45898 281.86328 C 388.63671 280.05317 387.36199 279 386.88477 279 z M 15.675781 280.92969 L 14.148438 284.0625 L 15.675781 287.19336 L 17.201172 284.0625 L 15.675781 280.92969 z M 27.646484 280.92969 L 26.119141 284.0625 L 27.646484 287.19336 L 29.171875 284.0625 L 27.646484 280.92969 z M 39.617188 280.92969 L 38.089844 284.0625 L 39.617188 287.19336 L 41.142578 284.0625 L 39.617188 280.92969 z M 51.587891 280.92969 L 50.060547 284.0625 L 51.587891 287.19336 L 53.113281 284.0625 L 51.587891 280.92969 z M 63.558594 280.92969 L 62.03125 284.0625 L 63.558594 287.19336 L 65.083984 284.0625 L 63.558594 280.92969 z M 75.529297 280.92969 L 74.001953 284.0625 L 75.529297 287.19336 L 77.054688 284.0625 L 75.529297 280.92969 z M 87.5 280.92969 L 85.972656 284.0625 L 87.5 287.19336 L 89.025391 284.0625 L 87.5 280.92969 z M 99.470703 280.92969 L 97.943359 284.0625 L 99.470703 287.19336 L 100.99609 284.0625 L 99.470703 280.92969 z M 111.44141 280.92969 L 109.91406 284.0625 L 111.44141 287.19336 L 112.9668 284.0625 L 111.44141 280.92969 z M 123.41211 280.92969 L 121.88672 284.0625 L 123.41211 287.19336 L 124.9375 284.0625 L 123.41211 280.92969 z M 135.38281 280.92969 L 133.85742 284.0625 L 135.38281 287.19336 L 136.91016 284.0625 L 135.38281 280.92969 z M 147.35352 280.92969 L 145.82812 284.0625 L 147.35352 287.19336 L 148.88086 284.0625 L 147.35352 280.92969 z M 159.32422 280.92969 L 157.79883 284.0625 L 159.32422 287.19336 L 160.85156 284.0625 L 159.32422 280.92969 z M 171.29492 280.92969 L 169.76953 284.0625 L 171.29492 287.19336 L 172.82227 284.0625 L 171.29492 280.92969 z M 183.26562 280.92969 L 181.74023 284.0625 L 183.26562 287.19336 L 184.79297 284.0625 L 183.26562 280.92969 z M 195.23633 280.92969 L 193.71094 284.0625 L 195.23633 287.19336 L 196.76367 284.0625 L 195.23633 280.92969 z M 397.11328 289.03906 L 393.06445 289.26367 L 395.90039 292.5 L 399.90625 292.27734 C 398.96965 291.19036 397.99171 290.03365 397.11328 289.03906 z M 383.65039 289.94727 L 379.76172 290.16211 L 382.32812 293.0918 L 386.21484 292.87695 L 383.65039 289.94727 z M 369.93945 290.86914 L 369.76562 290.87891 C 369.09193 291.42572 368.42157 291.96439 367.74219 292.52734 L 368.75586 293.68359 L 372.23438 293.49023 L 369.93945 290.86914 z M 9.6894531 293.58008 L 8.3417969 296.34375 L 9.6894531 299.10742 L 11.037109 296.34375 L 9.6894531 293.58008 z M 21.660156 293.58008 L 20.314453 296.34375 L 21.660156 299.10742 L 23.007812 296.34375 L 21.660156 293.58008 z M 33.630859 293.58008 L 32.285156 296.34375 L 33.630859 299.10742 L 34.978516 296.34375 L 33.630859 293.58008 z M 45.601562 293.58008 L 44.255859 296.34375 L 45.601562 299.10742 L 46.949219 296.34375 L 45.601562 293.58008 z M 57.572266 293.58008 L 56.226562 296.34375 L 57.572266 299.10742 L 58.919922 296.34375 L 57.572266 293.58008 z M 69.542969 293.58008 L 68.197266 296.34375 L 69.542969 299.10742 L 70.890625 296.34375 L 69.542969 293.58008 z M 81.513672 293.58008 L 80.167969 296.34375 L 81.513672 299.10742 L 82.861328 296.34375 L 81.513672 293.58008 z M 93.484375 293.58008 L 92.138672 296.34375 L 93.484375 299.10742 L 94.832031 296.34375 L 93.484375 293.58008 z M 105.45508 293.58008 L 104.10938 296.34375 L 105.45508 299.10742 L 106.80273 296.34375 L 105.45508 293.58008 z M 117.42578 293.58008 L 116.08008 296.34375 L 117.42578 299.10742 L 118.77344 296.34375 L 117.42578 293.58008 z M 129.39844 293.58008 L 128.05078 296.34375 L 129.39844 299.10742 L 130.74414 296.34375 L 129.39844 293.58008 z M 141.36914 293.58008 L 140.02148 296.34375 L 141.36914 299.10742 L 142.71484 296.34375 L 141.36914 293.58008 z M 153.33984 293.58008 L 151.99219 296.34375 L 153.33984 299.10742 L 154.68555 296.34375 L 153.33984 293.58008 z M 165.31055 293.58008 L 163.96289 296.34375 L 165.31055 299.10742 L 166.65625 296.34375 L 165.31055 293.58008 z M 177.28125 293.58008 L 175.93359 296.34375 L 177.28125 299.10742 L 178.62695 296.34375 L 177.28125 293.58008 z M 189.25195 293.58008 L 187.9043 296.34375 L 189.25195 299.10742 L 190.59766 296.34375 L 189.25195 293.58008 z M 201.22266 293.58008 L 199.875 296.34375 L 201.22266 299.10742 L 202.56836 296.34375 L 201.22266 293.58008 z M 405.72656 299.17578 L 401.72656 299.39844 L 404.83203 302.94336 L 408.66211 302.73242 C 407.6772 301.51912 406.70749 300.36188 405.72656 299.17578 z M 392.7207 300.05859 L 388.42383 300.29883 L 391.25977 303.53516 L 395.55664 303.29688 L 392.7207 300.05859 z M 379.00977 300.98242 L 375.12305 301.19727 L 377.6875 304.12695 L 381.57617 303.91211 L 379.00977 300.98242 z M 365.29883 301.9043 L 361.82031 302.09766 L 364.11523 304.71875 L 367.59375 304.52539 L 365.29883 301.9043 z M 15.675781 306.23047 L 14.507812 308.625 L 15.675781 311.01953 L 16.841797 308.625 L 15.675781 306.23047 z M 27.646484 306.23047 L 26.478516 308.625 L 27.646484 311.01953 L 28.8125 308.625 L 27.646484 306.23047 z M 39.617188 306.23047 L 38.449219 308.625 L 39.617188 311.01953 L 40.783203 308.625 L 39.617188 306.23047 z M 51.587891 306.23047 L 50.419922 308.625 L 51.587891 311.01953 L 52.753906 308.625 L 51.587891 306.23047 z M 63.558594 306.23047 L 62.390625 308.625 L 63.558594 311.01953 L 64.724609 308.625 L 63.558594 306.23047 z M 75.529297 306.23047 L 74.361328 308.625 L 75.529297 311.01953 L 76.695312 308.625 L 75.529297 306.23047 z M 87.5 306.23047 L 86.332031 308.625 L 87.5 311.01953 L 88.666016 308.625 L 87.5 306.23047 z M 99.470703 306.23047 L 98.302734 308.625 L 99.470703 311.01953 L 100.63672 308.625 L 99.470703 306.23047 z M 111.44141 306.23047 L 110.27344 308.625 L 111.44141 311.01953 L 112.60938 308.625 L 111.44141 306.23047 z M 123.41211 306.23047 L 122.24414 308.625 L 123.41211 311.01953 L 124.58008 308.625 L 123.41211 306.23047 z M 135.38281 306.23047 L 134.21484 308.625 L 135.38281 311.01953 L 136.55078 308.625 L 135.38281 306.23047 z M 147.35352 306.23047 L 146.1875 308.625 L 147.35352 311.01953 L 148.52148 308.625 L 147.35352 306.23047 z M 159.32422 306.23047 L 158.1582 308.625 L 159.32422 311.01953 L 160.49219 308.625 L 159.32422 306.23047 z M 171.29492 306.23047 L 170.12891 308.625 L 171.29492 311.01953 L 172.46289 308.625 L 171.29492 306.23047 z M 183.26562 306.23047 L 182.09961 308.625 L 183.26562 311.01953 L 184.43359 308.625 L 183.26562 306.23047 z M 195.23633 306.23047 L 194.07031 308.625 L 195.23633 311.01953 L 196.4043 308.625 L 195.23633 306.23047 z M 207.20703 306.23047 L 206.04102 308.625 L 207.20703 311.01953 L 208.375 308.625 L 207.20703 306.23047 z M 3.7246094 306.27344 C 3.450918 307.45191 3.2261819 308.45403 2.9804688 309.53516 L 3.703125 311.01953 L 4.8710938 308.625 L 3.7246094 306.27344 z M 413.91992 309.33789 L 410.38672 309.5332 L 413.76367 313.38867 L 416.92969 313.21289 C 415.95687 311.94019 414.94483 310.64623 413.91992 309.33789 z M 401.79297 310.17188 L 397.08594 310.43359 L 400.19141 313.97852 L 404.89844 313.71875 L 401.79297 310.17188 z M 388.08008 311.09375 L 383.7832 311.33203 L 386.61914 314.57031 L 390.91602 314.33203 L 388.08008 311.09375 z M 361.34766 311.79492 L 357.86914 311.98828 L 360.16406 314.60938 L 363.64453 314.41602 L 361.34766 311.79492 z M 374.36914 312.01758 L 370.48242 312.23242 L 373.04688 315.16211 L 376.93555 314.94531 L 374.36914 312.01758 z M 347.63672 312.71875 L 346.1875 312.79883 C 345.89093 313.10716 345.59002 313.40974 345.29492 313.71875 L 346.59375 315.20117 L 349.66211 315.03125 L 347.63672 312.71875 z M 9.6894531 318.88086 L 8.7011719 320.90625 L 9.6894531 322.93359 L 10.677734 320.90625 L 9.6894531 318.88086 z M 21.660156 318.88086 L 20.671875 320.90625 L 21.660156 322.93359 L 22.648438 320.90625 L 21.660156 318.88086 z M 33.630859 318.88086 L 32.642578 320.90625 L 33.630859 322.93359 L 34.619141 320.90625 L 33.630859 318.88086 z M 45.601562 318.88086 L 44.615234 320.90625 L 45.587891 322.90625 C 45.596839 322.90615 45.606283 322.90635 45.615234 322.90625 L 46.589844 320.90625 L 45.601562 318.88086 z M 57.572266 318.88086 L 56.585938 320.90625 L 57.496094 322.77539 C 57.551849 322.77488 57.594581 322.77395 57.650391 322.77344 L 58.560547 320.90625 L 57.572266 318.88086 z M 69.542969 318.88086 L 68.556641 320.90625 L 69.421875 322.68555 C 69.503403 322.68494 69.584429 322.6842 69.666016 322.68359 L 70.53125 320.90625 L 69.542969 318.88086 z M 81.513672 318.88086 L 80.527344 320.90625 L 81.349609 322.59766 C 81.462219 322.59698 81.567055 322.59638 81.679688 322.5957 L 82.501953 320.90625 L 81.513672 318.88086 z M 93.484375 318.88086 L 92.498047 320.90625 L 93.292969 322.54102 C 93.4214 322.54043 93.547429 322.53964 93.675781 322.53906 L 94.472656 320.90625 L 93.484375 318.88086 z M 105.45508 318.88086 L 104.46875 320.90625 L 105.23828 322.48828 C 105.37972 322.48785 105.53264 322.48675 105.67383 322.48633 L 106.44336 320.90625 L 105.45508 318.88086 z M 117.42578 318.88086 L 116.43945 320.90625 L 117.20117 322.47266 C 117.35194 322.4725 117.50014 322.47085 117.65039 322.4707 L 118.41406 320.90625 L 117.42578 318.88086 z M 129.39844 318.88086 L 128.41016 320.90625 L 129.16992 322.46484 C 129.34604 322.46513 129.45015 322.46649 129.625 322.4668 L 130.38477 320.90625 L 129.39844 318.88086 z M 141.36914 318.88086 L 140.38086 320.90625 L 141.16797 322.52148 C 141.28827 322.52234 141.4494 322.52256 141.56836 322.52344 L 142.35547 320.90625 L 141.36914 318.88086 z M 153.33984 318.88086 L 152.35156 320.90625 L 153.22656 322.70312 C 153.29037 322.70571 153.3889 322.70635 153.44922 322.70898 L 154.32617 320.90625 L 153.33984 318.88086 z M 165.31055 318.88086 L 164.32227 320.90625 L 165.31055 322.93359 L 166.29688 320.90625 L 165.31055 318.88086 z M 177.28125 318.88086 L 176.29297 320.90625 L 177.28125 322.93359 L 178.26758 320.90625 L 177.28125 318.88086 z M 189.25195 318.88086 L 188.26367 320.90625 L 189.25195 322.93359 L 190.23828 320.90625 L 189.25195 318.88086 z M 201.22266 318.88086 L 200.23438 320.90625 L 201.22266 322.93359 L 202.20898 320.90625 L 201.22266 318.88086 z M 213.19336 318.88086 L 212.35547 320.59766 L 213.66797 319.85156 L 213.19336 318.88086 z M 421.63086 319.52539 L 419.04883 319.66797 L 422.69531 323.83203 L 424.58984 323.72656 C 423.70827 322.42661 422.70103 321.00588 421.63086 319.52539 z M 410.86328 320.28516 L 405.74805 320.56836 L 409.12305 324.42188 L 414.23828 324.13867 L 410.86328 320.28516 z M 384.13086 320.98633 L 379.83398 321.22461 L 382.66797 324.46094 L 386.96484 324.22266 L 384.13086 320.98633 z M 397.15234 321.20703 L 392.44531 321.46875 L 395.55078 325.01367 L 400.25781 324.75391 L 397.15234 321.20703 z M 370.41992 321.9082 L 366.53125 322.12305 L 369.09766 325.05273 L 372.98438 324.83789 L 370.41992 321.9082 z M 356.70898 322.83008 L 353.23047 323.02344 L 355.52539 325.64453 L 359.00391 325.45117 L 356.70898 322.83008 z M 342.99805 323.75391 L 339.92773 323.92383 L 341.95312 326.23633 L 345.02148 326.06641 L 342.99805 323.75391 z M 428.5957 329.75586 L 427.71094 329.80469 L 431.0625 333.63086 C 430.25689 332.35293 429.45774 331.07964 428.5957 329.75586 z M 406.91211 330.17578 L 401.79688 330.45898 L 405.17188 334.31445 L 410.28711 334.0293 L 406.91211 330.17578 z M 419.93359 330.39648 L 414.41016 330.70312 L 418.05469 334.86719 L 423.58008 334.56055 L 419.93359 330.39648 z M 393.20117 331.09766 L 388.49414 331.35938 L 391.59961 334.90625 L 396.30664 334.64453 L 393.20117 331.09766 z M 379.49023 332.02148 L 375.19336 332.25977 L 378.0293 335.49609 L 382.32617 335.25781 L 379.49023 332.02148 z M 365.7793 332.94336 L 361.89062 333.1582 L 364.45703 336.08789 L 368.34375 335.87305 L 365.7793 332.94336 z M 352.06836 333.86523 L 348.58984 334.05859 L 350.88477 336.67969 L 354.36328 336.48633 L 352.06836 333.86523 z M 116.53906 333.89453 L 115.25195 335.74414 L 115.91406 337.89844 L 117.20312 336.04883 L 116.53906 333.89453 z M 338.35742 334.78711 L 335.28711 334.95898 L 337.3125 337.27148 L 340.38281 337.09961 L 338.35742 334.78711 z M 104.42188 335.57031 C 104.27852 335.60151 104.14405 335.63549 104 335.66602 C 103.9913 335.66786 103.97943 335.67002 103.9707 335.67188 L 104.08789 336.05078 L 104.42188 335.57031 z M 128.36719 335.74219 L 127.07812 337.5918 L 127.74219 339.74609 L 129.0293 337.89648 L 128.36719 335.74219 z M 325.53125 336.7207 C 325.2368 337.08796 324.94518 337.45212 324.6543 337.81055 L 326.40039 337.71484 L 325.53125 336.7207 z M 140.19531 337.58984 L 138.90625 339.43945 L 139.56836 341.59375 L 140.85742 339.74414 L 140.19531 337.58984 z M 429.69531 339.36523 L 423.75977 339.69531 L 427.67578 344.16602 L 433.60938 343.83594 L 429.69531 339.36523 z M 152.02148 339.4375 L 150.73242 341.28711 L 151.39648 343.44141 L 152.68555 341.5918 L 152.02148 339.4375 z M 415.98438 340.28906 L 410.45898 340.5957 L 414.10352 344.75781 L 419.62891 344.45117 L 415.98438 340.28906 z M 85.132812 341.04492 L 83.609375 343.23047 L 84.392578 345.77734 L 85.916016 343.5918 L 85.132812 341.04492 z M 402.27148 341.21094 L 397.15625 341.49414 L 400.53125 345.34961 L 405.64844 345.06445 L 402.27148 341.21094 z M 163.84961 341.28516 L 162.56055 343.13477 L 163.22266 345.29102 L 164.51172 343.44141 L 163.84961 341.28516 z M 388.56055 342.13281 L 383.85547 342.39453 L 386.96094 345.93945 L 391.66602 345.67969 L 388.56055 342.13281 z M 96.960938 342.89258 L 95.4375 345.07812 L 96.220703 347.625 L 97.744141 345.43945 L 96.960938 342.89258 z M 374.84961 343.05469 L 370.55273 343.29297 L 373.38867 346.53125 L 377.68555 346.29297 L 374.84961 343.05469 z M 175.67578 343.13281 L 174.38867 344.98438 L 175.05078 347.13867 L 176.33984 345.28906 L 175.67578 343.13281 z M 361.13867 343.97852 L 357.25195 344.19336 L 359.81641 347.12305 L 363.70508 346.9082 L 361.13867 343.97852 z M 108.78711 344.74023 L 107.26367 346.92578 L 108.04883 349.47266 L 109.57031 347.28711 L 108.78711 344.74023 z M 347.42773 344.90039 L 343.94922 345.09375 L 346.24414 347.71484 L 349.72266 347.52148 L 347.42773 344.90039 z M 187.50391 344.98242 L 186.21484 346.83203 L 186.87891 348.98633 L 188.16602 347.13672 L 187.50391 344.98242 z M 333.7168 345.82227 L 330.64844 345.99219 L 332.67188 348.30469 L 335.74219 348.13477 L 333.7168 345.82227 z M 120.61523 346.58789 L 119.0918 348.77539 L 119.875 351.32031 L 121.39844 349.13477 L 120.61523 346.58789 z M 320.00586 346.74609 L 317.3457 346.89258 L 319.10156 348.89648 L 321.76172 348.75 L 320.00586 346.74609 z M 199.33203 346.83008 L 198.04297 348.67969 L 198.70508 350.83398 L 199.99414 348.98438 L 199.33203 346.83008 z M 132.44141 348.43555 L 130.91992 350.62305 L 131.70312 353.16797 L 133.22461 350.98242 L 132.44141 348.43555 z M 211.1582 348.67773 L 209.86914 350.52734 L 210.5332 352.68164 L 211.82227 350.83203 L 211.1582 348.67773 z M 438.76562 349.47852 L 432.42188 349.83008 L 436.60742 354.60938 L 442.45312 354.28516 C 442.25948 353.86021 442.05801 353.43574 441.85938 353.01172 L 438.76562 349.47852 z M 65.552734 350.04297 L 63.794922 352.56641 L 64.699219 355.50391 L 66.457031 352.98047 L 65.552734 350.04297 z M 144.26953 350.2832 L 142.74609 352.4707 L 143.5293 355.01562 L 145.05273 352.83008 L 144.26953 350.2832 z M 425.05469 350.40039 L 419.12109 350.73047 L 423.03516 355.20117 L 428.9707 354.87109 L 425.05469 350.40039 z M 222.98633 350.52539 L 221.69727 352.375 L 222.35938 354.5293 L 223.64844 352.67969 L 222.98633 350.52539 z M 54.470703 350.62109 C 53.688035 350.91514 52.963168 351.19469 52.205078 351.48438 L 52.873047 353.65625 L 54.628906 351.13281 L 54.470703 350.62109 z M 411.34375 351.32227 L 405.81836 351.62891 L 409.46484 355.79297 L 414.98828 355.48633 L 411.34375 351.32227 z M 77.380859 351.89062 L 75.623047 354.41406 L 76.527344 357.35156 L 78.283203 354.83008 L 77.380859 351.89062 z M 156.0957 352.13281 L 154.57422 354.31836 L 155.35742 356.86523 L 156.88086 354.67773 L 156.0957 352.13281 z M 397.63281 352.24609 L 392.51758 352.5293 L 395.89258 356.38281 L 401.00781 356.09961 L 397.63281 352.24609 z M 234.8125 352.37305 L 233.52539 354.22266 L 234.1875 356.37695 L 235.47656 354.52734 L 234.8125 352.37305 z M 383.92188 353.16797 L 379.21484 353.42969 L 382.32031 356.97461 L 387.02734 356.71484 L 383.92188 353.16797 z M 89.207031 353.73828 L 87.449219 356.26172 L 88.353516 359.19922 L 90.111328 356.67773 L 89.207031 353.73828 z M 167.92383 353.98047 L 166.40039 356.16602 L 167.18359 358.71289 L 168.70703 356.52734 L 167.92383 353.98047 z M 370.20898 354.08984 L 365.91211 354.32812 L 368.74805 357.56641 L 373.04492 357.32812 L 370.20898 354.08984 z M 356.49805 355.01367 L 352.61133 355.22852 L 355.17578 358.1582 L 359.06445 357.94141 L 356.49805 355.01367 z M 101.03516 355.58789 L 99.277344 358.10938 L 100.18164 361.04688 L 101.93945 358.52539 L 101.03516 355.58789 z M 179.75195 355.82812 L 178.22852 358.01367 L 179.01172 360.56055 L 180.53516 358.375 L 179.75195 355.82812 z M 342.78711 355.93555 L 339.30859 356.12891 L 341.60547 358.75 L 345.08398 358.55664 L 342.78711 355.93555 z M 329.07617 356.85742 L 326.00781 357.02734 L 328.0332 359.33984 L 331.10156 359.16992 L 329.07617 356.85742 z M 112.86133 357.43555 L 111.10547 359.95703 L 112.00977 362.89453 L 113.76562 360.37305 L 112.86133 357.43555 z M 191.57812 357.67578 L 190.05469 359.86133 L 190.83984 362.4082 L 192.36133 360.22266 L 191.57812 357.67578 z M 315.36523 357.7793 L 312.70508 357.92773 L 314.46094 359.93164 L 317.12109 359.78516 L 315.36523 357.7793 z M 35.857422 358.42969 C 35.242603 358.72431 34.637114 359.01099 34.013672 359.31641 L 33.490234 360.06641 L 34.513672 363.39648 L 36.505859 360.53711 L 35.857422 358.42969 z M 45.972656 359.04102 L 43.980469 361.90039 L 45.005859 365.23047 L 46.998047 362.37109 L 45.972656 359.04102 z M 124.68945 359.2832 L 122.93164 361.80469 L 123.83594 364.74219 L 125.59375 362.2207 L 124.68945 359.2832 z M 203.40625 359.52344 L 201.88281 361.70898 L 202.66602 364.25586 L 204.18945 362.07031 L 203.40625 359.52344 z M 434.125 360.51367 L 427.78125 360.86523 L 431.9668 365.64453 L 438.31055 365.29297 L 434.125 360.51367 z M 57.800781 360.88867 L 55.808594 363.74805 L 56.833984 367.07812 L 58.824219 364.21875 L 57.800781 360.88867 z M 136.51758 361.13086 L 134.75977 363.65234 L 135.66406 366.5918 L 137.41992 364.06836 L 136.51758 361.13086 z M 215.23242 361.37109 L 213.71094 363.55859 L 214.49414 366.10352 L 216.01758 363.91797 L 215.23242 361.37109 z M 420.41406 361.43555 L 414.48047 361.76562 L 418.39648 366.23633 L 424.33008 365.90625 L 420.41406 361.43555 z M 406.70312 362.35742 L 401.17773 362.66406 L 404.82422 366.82812 L 410.34961 366.52148 L 406.70312 362.35742 z M 69.626953 362.73828 L 67.636719 365.5957 L 68.660156 368.92578 L 70.652344 366.06641 L 69.626953 362.73828 z M 148.34375 362.97852 L 146.58594 365.5 L 147.49023 368.43945 L 149.24805 365.91602 L 148.34375 362.97852 z M 227.06055 363.21875 L 225.53711 365.40625 L 226.32031 367.95117 L 227.84375 365.76562 L 227.06055 363.21875 z M 392.99219 363.28125 L 387.87695 363.56445 L 391.25195 367.41797 L 396.36719 367.13477 L 392.99219 363.28125 z M 379.28125 364.20312 L 374.57422 364.46484 L 377.67969 368.00977 L 382.38672 367.74805 L 379.28125 364.20312 z M 81.455078 364.58594 L 79.462891 367.44336 L 80.488281 370.77344 L 82.478516 367.91602 L 81.455078 364.58594 z M 160.17188 364.82617 L 158.41406 367.34961 L 159.31836 370.28711 L 161.07617 367.76367 L 160.17188 364.82617 z M 238.88867 365.06836 L 237.36523 367.25391 L 238.14844 369.80078 L 239.67188 367.61328 L 238.88867 365.06836 z M 365.57031 365.125 L 361.27344 365.36328 L 364.10742 368.60156 L 368.4043 368.36328 L 365.57031 365.125 z M 351.85938 366.04688 L 347.9707 366.26367 L 350.53711 369.19336 L 354.42383 368.97656 L 351.85938 366.04688 z M 93.28125 366.43359 L 91.291016 369.29297 L 92.314453 372.62109 L 94.306641 369.76367 L 93.28125 366.43359 z M 171.99805 366.67383 L 170.24219 369.19727 L 171.14453 372.13477 L 172.90234 369.61328 L 171.99805 366.67383 z M 338.14844 366.9707 L 334.66992 367.16406 L 336.96484 369.78516 L 340.44336 369.5918 L 338.14844 366.9707 z M 324.4375 367.89258 L 321.36719 368.0625 L 323.39258 370.375 L 326.46289 370.20508 L 324.4375 367.89258 z M 27.728516 368.05469 L 25.501953 371.25 L 26.648438 374.9707 L 28.873047 371.77539 L 27.728516 368.05469 z M 105.10938 368.28125 L 103.11719 371.14062 L 104.14258 374.4707 L 106.13477 371.61133 L 105.10938 368.28125 z M 183.82617 368.52148 L 182.06836 371.04492 L 182.97266 373.98242 L 184.73047 371.46094 L 183.82617 368.52148 z M 16.642578 368.62109 C 15.717301 369.16163 14.803584 369.69843 13.929688 370.22656 L 14.820312 373.12305 L 17.044922 369.92773 L 16.642578 368.62109 z M 310.72461 368.81445 L 308.06641 368.96289 L 309.82031 370.9668 L 312.48047 370.81836 L 310.72461 368.81445 z M 39.554688 369.90234 L 37.330078 373.09766 L 38.474609 376.81836 L 40.701172 373.62305 L 39.554688 369.90234 z M 116.9375 370.12891 L 114.94531 372.98828 L 115.96875 376.31836 L 117.96094 373.45898 L 116.9375 370.12891 z M 195.65234 370.37109 L 193.89648 372.89258 L 194.80078 375.83008 L 196.55664 373.30859 L 195.65234 370.37109 z M 429.48438 371.54883 L 423.14258 371.90039 L 427.32812 376.67969 L 433.66992 376.32812 L 429.48438 371.54883 z M 50.046875 371.73633 L 47.822266 374.93164 L 48.966797 378.65234 L 51.193359 375.45703 L 50.046875 371.73633 z M 128.76367 371.97656 L 126.77344 374.83594 L 127.79688 378.16602 L 129.78906 375.30664 L 128.76367 371.97656 z M 207.48047 372.21875 L 205.72266 374.74023 L 206.62695 377.67773 L 208.38477 375.15625 L 207.48047 372.21875 z M 415.77344 372.4707 L 409.83984 372.80078 L 413.75586 377.27148 L 419.68945 376.94141 L 415.77344 372.4707 z M 402.0625 373.39258 L 396.53906 373.69922 L 400.18359 377.86133 L 405.70898 377.55664 L 402.0625 373.39258 z M 61.875 373.58398 L 59.648438 376.7793 L 60.794922 380.5 L 63.019531 377.30469 L 61.875 373.58398 z M 140.5918 373.82422 L 138.59961 376.68359 L 139.625 380.01367 L 141.61523 377.1543 L 140.5918 373.82422 z M 219.30859 374.06641 L 217.55078 376.58789 L 218.45508 379.52734 L 220.21094 377.00391 L 219.30859 374.06641 z M 388.35156 374.31641 L 383.23633 374.59961 L 386.61133 378.45312 L 391.72656 378.16992 L 388.35156 374.31641 z M 374.64062 375.23828 L 369.93359 375.49805 L 373.04102 379.04492 L 377.74609 378.7832 L 374.64062 375.23828 z M 73.701172 375.43164 L 71.476562 378.62695 L 72.621094 382.34766 L 74.847656 379.1543 L 73.701172 375.43164 z M 152.41797 375.67383 L 150.42773 378.53125 L 151.45117 381.86133 L 153.44336 379.00195 L 152.41797 375.67383 z M 231.13477 375.91406 L 229.37891 378.43555 L 230.28125 381.375 L 232.03906 378.85156 L 231.13477 375.91406 z M 360.92969 376.16016 L 356.63281 376.39844 L 359.46875 379.63672 L 363.76562 379.39844 L 360.92969 376.16016 z M 8.1484375 377.05273 L 5.6875 380.58398 L 6.953125 384.69727 L 9.4140625 381.16602 L 8.1484375 377.05273 z M 347.21875 377.08203 L 343.33008 377.29883 L 345.89648 380.22852 L 349.7832 380.01172 L 347.21875 377.08203 z M 85.529297 377.2793 L 83.302734 380.47461 L 84.449219 384.19727 L 86.673828 381.00195 L 85.529297 377.2793 z M 164.24609 377.52148 L 162.25391 380.37891 L 163.2793 383.70898 L 165.26953 380.84961 L 164.24609 377.52148 z M 333.50781 378.00586 L 330.0293 378.19727 L 332.32422 380.81836 L 335.80273 380.625 L 333.50781 378.00586 z M 19.974609 378.90039 L 17.515625 382.43164 L 18.78125 386.54492 L 21.240234 383.01367 L 19.974609 378.90039 z M 319.79688 378.92773 L 316.72656 379.09766 L 318.75195 381.41016 L 321.82227 381.24023 L 319.79688 378.92773 z M 97.357422 379.12695 L 95.130859 382.32227 L 96.275391 386.04492 L 98.501953 382.84961 L 97.357422 379.12695 z M 176.07227 379.36914 L 174.08203 382.22656 L 175.10547 385.55664 L 177.09766 382.69922 L 176.07227 379.36914 z M 306.08594 379.84961 L 303.42578 379.99805 L 305.17969 382.00195 L 307.83984 381.85352 L 306.08594 379.84961 z M 241.42969 379.96094 L 241.20508 380.28516 L 241.34375 380.73633 C 241.37331 380.47559 241.40029 380.22124 241.42969 379.96094 z M 31.802734 380.74805 L 29.34375 384.2793 L 30.607422 388.39258 L 33.068359 384.86133 L 31.802734 380.74805 z M 109.18359 380.97461 L 106.95898 384.16992 L 108.10352 387.89258 L 110.32812 384.69727 L 109.18359 380.97461 z M 187.90039 381.2168 L 185.9082 384.07617 L 186.93359 387.4043 L 188.92578 384.54688 L 187.90039 381.2168 z M 42.294922 382.58203 L 39.833984 386.11328 L 41.099609 390.22656 L 43.560547 386.69531 L 42.294922 382.58203 z M 424.8457 382.58398 L 418.50195 382.93555 L 422.6875 387.71484 L 429.03125 387.36328 L 424.8457 382.58398 z M 121.01172 382.82422 L 118.78516 386.01758 L 119.92969 389.74023 L 122.15625 386.54492 L 121.01172 382.82422 z M 199.72852 383.06445 L 197.73633 385.92383 L 198.76172 389.25391 L 200.75195 386.39453 L 199.72852 383.06445 z M 411.13477 383.50586 L 405.19922 383.83398 L 409.11523 388.30664 L 415.04883 387.97656 L 411.13477 383.50586 z M 397.42383 384.42773 L 391.89844 384.73438 L 395.54297 388.89648 L 401.06836 388.58984 L 397.42383 384.42773 z M 54.121094 384.42969 L 51.662109 387.96094 L 52.927734 392.07422 L 55.386719 388.54297 L 54.121094 384.42969 z M 132.83789 384.67188 L 130.61328 387.86719 L 131.75781 391.58789 L 133.98438 388.39258 L 132.83789 384.67188 z M 211.55469 384.91211 L 209.56445 387.77148 L 210.58789 391.10156 L 212.58008 388.24219 L 211.55469 384.91211 z M 383.71094 385.34961 L 378.5957 385.63477 L 381.97266 389.48828 L 387.08789 389.20508 L 383.71094 385.34961 z M 370 386.27344 L 365.29492 386.5332 L 368.40039 390.08008 L 373.10547 389.81836 L 370 386.27344 z M 65.949219 386.27734 L 63.490234 389.80859 L 64.755859 393.92188 L 67.214844 390.39062 L 65.949219 386.27734 z M 144.66602 386.51953 L 142.43945 389.71484 L 143.58594 393.43555 L 145.81055 390.24023 L 144.66602 386.51953 z M 223.38281 386.75977 L 221.39062 389.61914 L 222.41602 392.94922 L 224.40625 390.08984 L 223.38281 386.75977 z M 356.28906 387.19531 L 351.99219 387.43359 L 354.82812 390.67188 L 359.125 390.43359 L 356.28906 387.19531 z M 342.57812 388.11719 L 338.69141 388.33398 L 341.25586 391.26172 L 345.14453 391.04688 L 342.57812 388.11719 z M 77.777344 388.12695 L 75.316406 391.6582 L 76.582031 395.77148 L 79.042969 392.24023 L 77.777344 388.12695 z M 156.49414 388.36719 L 154.26758 391.5625 L 155.41211 395.2832 L 157.63867 392.08789 L 156.49414 388.36719 z M 235.20898 388.60742 L 233.21875 391.4668 L 234.24219 394.79688 L 236.23438 391.9375 L 235.20898 388.60742 z M 328.86719 389.04102 L 325.38867 389.23242 L 327.68359 391.85352 L 331.16211 391.66016 L 328.86719 389.04102 z M 12.222656 389.74805 L 9.5292969 393.61523 L 10.914062 398.11914 L 13.609375 394.25195 L 12.222656 389.74805 z M 315.15625 389.96289 L 312.08789 390.13281 L 314.11328 392.44531 L 317.18164 392.27539 L 315.15625 389.96289 z M 89.603516 389.97461 L 87.144531 393.50586 L 88.410156 397.61914 L 90.869141 394.08789 L 89.603516 389.97461 z M 168.32031 390.21484 L 166.0957 393.41016 L 167.24023 397.13086 L 169.46484 393.9375 L 168.32031 390.21484 z M 301.44531 390.88477 L 298.78516 391.0332 L 300.54102 393.03711 L 303.20117 392.88867 L 301.44531 390.88477 z M 24.050781 391.5957 L 21.355469 395.46289 L 22.742188 399.96875 L 25.435547 396.09961 L 24.050781 391.5957 z M 101.43164 391.82227 L 98.970703 395.35352 L 100.23633 399.4668 L 102.69727 395.93555 L 101.43164 391.82227 z M 180.14844 392.0625 L 177.92188 395.25781 L 179.06641 398.98047 L 181.29297 395.78516 L 180.14844 392.0625 z M 288.23633 392.38086 C 288.00931 392.78584 287.78465 393.18638 287.55664 393.5957 L 289.21875 393.50391 L 288.23633 392.38086 z M 35.876953 393.44336 L 33.183594 397.31055 L 34.568359 401.81641 L 37.263672 397.94727 L 35.876953 393.44336 z M 420.20508 393.61719 L 413.86133 393.9707 L 418.04688 398.75 L 424.39062 398.39648 L 420.20508 393.61719 z M 113.25781 393.66992 L 110.79883 397.20117 L 112.06445 401.31445 L 114.52344 397.7832 L 113.25781 393.66992 z M 191.97461 393.91016 L 189.75 397.10547 L 190.89453 400.82812 L 193.12109 397.63281 L 191.97461 393.91016 z M 406.49414 394.54102 L 400.56055 394.86914 L 404.47461 399.33984 L 410.41016 399.01172 L 406.49414 394.54102 z M 46.369141 395.27734 L 43.675781 399.14453 L 45.060547 403.65039 L 47.755859 399.78125 L 46.369141 395.27734 z M 392.7832 395.46289 L 387.25781 395.76953 L 390.9043 399.93164 L 396.42773 399.625 L 392.7832 395.46289 z M 125.08594 395.51758 L 122.625 399.04883 L 123.89062 403.16211 L 126.35156 399.63086 L 125.08594 395.51758 z M 203.80273 395.75977 L 201.57617 398.95312 L 202.72266 402.67578 L 204.94727 399.48047 L 203.80273 395.75977 z M 379.07227 396.38477 L 373.95703 396.66992 L 377.33203 400.52344 L 382.44727 400.24023 L 379.07227 396.38477 z M 58.197266 397.125 L 55.501953 400.99219 L 56.888672 405.49805 L 59.582031 401.62891 L 58.197266 397.125 z M 365.36133 397.30859 L 360.6543 397.56836 L 363.75977 401.11523 L 368.4668 400.85352 L 365.36133 397.30859 z M 136.91406 397.36523 L 134.45312 400.89648 L 135.71875 405.00977 L 138.17969 401.47852 L 136.91406 397.36523 z M 215.62891 397.60742 L 213.4043 400.80273 L 214.54883 404.52344 L 216.77539 401.32812 L 215.62891 397.60742 z M 351.65039 398.23047 L 347.35156 398.46875 L 350.1875 401.70703 L 354.48438 401.4668 L 351.65039 398.23047 z M 70.023438 398.97266 L 67.330078 402.83984 L 68.716797 407.3457 L 71.410156 403.47852 L 70.023438 398.97266 z M 337.9375 399.15234 L 334.05078 399.36914 L 336.61523 402.29688 L 340.50391 402.08203 L 337.9375 399.15234 z M 148.74023 399.21289 L 146.28125 402.74414 L 147.54688 406.85742 L 150.00586 403.32617 L 148.74023 399.21289 z M 227.45703 399.45508 L 225.23047 402.65039 L 226.37695 406.37109 L 228.60156 403.17578 L 227.45703 399.45508 z M 324.22656 400.07422 L 320.74805 400.26758 L 323.04492 402.88867 L 326.52344 402.69531 L 324.22656 400.07422 z M 81.851562 400.82031 L 79.15625 404.6875 L 80.542969 409.19336 L 83.238281 405.32617 L 81.851562 400.82031 z M 310.51562 400.99805 L 307.44727 401.16797 L 309.47266 403.48047 L 312.54102 403.31055 L 310.51562 400.99805 z M 160.56836 401.06055 L 158.10742 404.5918 L 159.37305 408.70703 L 161.83398 405.17578 L 160.56836 401.06055 z M 296.80469 401.91992 L 294.14453 402.06836 L 295.90039 404.07227 L 298.56055 403.92383 L 296.80469 401.91992 z M 238.8125 401.98047 L 237.05859 404.49805 L 238.06836 407.7793 C 238.31348 405.89477 238.5587 404.0018 238.8125 401.98047 z M 16.296875 402.44141 L 14.626953 404.83984 C 15.374033 406.12097 16.140344 407.37343 16.904297 408.63086 L 17.804688 407.33789 L 16.296875 402.44141 z M 93.677734 402.66797 L 90.984375 406.53516 L 92.371094 411.04102 L 95.064453 407.17383 L 93.677734 402.66797 z M 283.09375 402.8418 L 282.49805 402.875 C 282.27804 403.28747 282.05744 403.68966 281.83789 404.10352 L 282.32812 404.66211 L 284.58008 404.53711 L 283.09375 402.8418 z M 172.39453 402.91016 L 169.93555 406.44141 L 171.20117 410.55469 L 173.66016 407.02344 L 172.39453 402.91016 z M 28.125 404.28906 L 25.195312 408.49414 L 26.703125 413.39062 L 29.630859 409.18555 L 28.125 404.28906 z M 105.50586 404.51562 L 102.8125 408.38477 L 104.19727 412.88867 L 106.89258 409.02148 L 105.50586 404.51562 z M 415.56445 404.65234 L 409.2207 405.00586 L 413.40625 409.78516 L 419.75 409.43164 L 415.56445 404.65234 z M 184.22266 404.75781 L 181.76172 408.28906 L 183.02734 412.40234 L 185.48828 408.87109 L 184.22266 404.75781 z M 401.85352 405.57617 L 395.91992 405.9043 L 399.83594 410.375 L 405.76953 410.04688 L 401.85352 405.57617 z M 38.617188 406.12305 L 35.6875 410.32617 L 37.195312 415.22461 L 40.123047 411.01953 L 38.617188 406.12305 z M 117.33398 406.36328 L 114.63867 410.23242 L 116.02539 414.73633 L 118.71875 410.86914 L 117.33398 406.36328 z M 388.14258 406.49805 L 382.61719 406.80469 L 386.26367 410.9668 L 391.78906 410.66016 L 388.14258 406.49805 z M 196.04883 406.60547 L 193.58984 410.13672 L 194.85547 414.25 L 197.31445 410.71875 L 196.04883 406.60547 z M 374.43164 407.41992 L 369.31641 407.70312 L 372.69141 411.55859 L 377.80664 411.27539 L 374.43164 407.41992 z M 50.443359 407.9707 L 47.515625 412.17578 L 49.021484 417.07227 L 51.951172 412.86719 L 50.443359 407.9707 z M 129.16016 408.21289 L 126.4668 412.08008 L 127.85156 416.58398 L 130.54688 412.7168 L 129.16016 408.21289 z M 360.7207 408.3418 L 356.01367 408.60352 L 359.11914 412.15039 L 363.82617 411.88867 L 360.7207 408.3418 z M 207.87695 408.45312 L 205.41797 411.98438 L 206.68359 416.09766 L 209.14258 412.56641 L 207.87695 408.45312 z M 347.00977 409.26562 L 342.71289 409.50391 L 345.54688 412.74023 L 349.8457 412.50195 L 347.00977 409.26562 z M 62.271484 409.81836 L 59.341797 414.02344 L 60.849609 418.91992 L 63.777344 414.71484 L 62.271484 409.81836 z M 140.98828 410.06055 L 138.29297 413.92773 L 139.67969 418.43359 L 142.375 414.56445 L 140.98828 410.06055 z M 333.29883 410.1875 L 329.41016 410.40234 L 331.97656 413.33203 L 335.86328 413.11719 L 333.29883 410.1875 z M 219.70508 410.30078 L 217.24414 413.83203 L 218.50977 417.94531 L 220.9707 414.41406 L 219.70508 410.30078 z M 319.58789 411.10938 L 316.10938 411.30273 L 318.4043 413.92383 L 321.88281 413.73047 L 319.58789 411.10938 z M 74.099609 411.66602 L 71.169922 415.87109 L 72.675781 420.76758 L 75.605469 416.56445 L 74.099609 411.66602 z M 152.81445 411.9082 L 150.12109 415.77539 L 151.50781 420.28125 L 154.20117 416.41211 L 152.81445 411.9082 z M 305.87695 412.0332 L 302.80664 412.20312 L 304.83203 414.51562 L 307.90234 414.3457 L 305.87695 412.0332 z M 231.53125 412.14844 L 229.07227 415.67969 L 230.33789 419.79297 L 232.79688 416.26172 L 231.53125 412.14844 z M 292.16602 412.95508 L 289.50586 413.10156 L 291.25977 415.10742 L 293.91992 414.95898 L 292.16602 412.95508 z M 85.925781 413.51562 L 82.998047 417.71875 L 84.503906 422.61523 L 87.433594 418.41211 L 85.925781 413.51562 z M 164.64258 413.75586 L 161.94727 417.62305 L 163.33398 422.12891 L 166.0293 418.26172 L 164.64258 413.75586 z M 278.45312 413.87695 L 276.70703 413.97461 C 276.64313 414.10046 276.57545 414.22778 276.51172 414.35352 L 277.6875 415.69727 L 279.93945 415.57227 L 278.45312 413.87695 z M 97.753906 415.36328 L 94.824219 419.56641 L 96.332031 424.46289 L 99.259766 420.25977 L 97.753906 415.36328 z M 176.4707 415.60352 L 173.77539 419.4707 L 175.16211 423.97656 L 177.85547 420.10938 L 176.4707 415.60352 z M 410.92383 415.6875 L 404.58203 416.03906 L 408.76758 420.81836 L 415.11133 420.4668 L 410.92383 415.6875 z M 397.21289 416.61133 L 391.2793 416.93945 L 395.19531 421.41016 L 401.12891 421.08203 L 397.21289 416.61133 z M 32.199219 416.98438 L 29.037109 421.52344 L 30.664062 426.8125 L 33.826172 422.27148 L 32.199219 416.98438 z M 109.58008 417.21094 L 106.65234 421.41406 L 108.1582 426.31055 L 111.08789 422.10742 L 109.58008 417.21094 z M 188.29688 417.45117 L 185.60352 421.31836 L 186.98828 425.82422 L 189.68359 421.95703 L 188.29688 417.45117 z M 383.50195 417.5332 L 377.97852 417.83984 L 381.62305 422.00195 L 387.14844 421.69531 L 383.50195 417.5332 z M 369.79102 418.45508 L 364.67578 418.73828 L 368.05078 422.59375 L 373.16797 422.30859 L 369.79102 418.45508 z M 42.691406 418.81836 L 39.529297 423.35742 L 41.15625 428.64648 L 44.318359 424.10547 L 42.691406 418.81836 z M 121.4082 419.05859 L 118.47852 423.26172 L 119.98633 428.16016 L 122.91406 423.95508 L 121.4082 419.05859 z M 200.125 419.29883 L 197.42969 423.16797 L 198.81641 427.67188 L 201.50977 423.80469 L 200.125 419.29883 z M 356.08008 419.37695 L 351.375 419.63867 L 354.48047 423.18555 L 359.18555 422.92383 L 356.08008 419.37695 z M 342.36914 420.30078 L 338.07227 420.53906 L 340.9082 423.77539 L 345.20508 423.53711 L 342.36914 420.30078 z M 54.519531 420.66602 L 51.355469 425.20508 L 52.982422 430.49414 L 56.146484 425.95312 L 54.519531 420.66602 z M 133.23438 420.90625 L 130.30664 425.10938 L 131.8125 430.00781 L 134.74219 425.80273 L 133.23438 420.90625 z M 211.95117 421.14648 L 209.25781 425.01562 L 210.64453 429.51953 L 213.33789 425.65234 L 211.95117 421.14648 z M 328.6582 421.22266 L 324.76953 421.4375 L 327.33594 424.36719 L 331.22461 424.15234 L 328.6582 421.22266 z M 314.94727 422.14453 L 311.46875 422.33789 L 313.76367 424.95898 L 317.24219 424.76562 L 314.94727 422.14453 z M 66.345703 422.51367 L 63.183594 427.05273 L 64.810547 432.3418 L 67.972656 427.80273 L 66.345703 422.51367 z M 145.0625 422.75391 L 142.13477 426.95898 L 143.64062 431.85547 L 146.56836 427.65039 L 145.0625 422.75391 z M 223.7793 422.99609 L 221.08398 426.86328 L 222.4707 431.36719 L 225.16602 427.5 L 223.7793 422.99609 z M 301.23633 423.06641 L 298.16602 423.23828 L 300.19141 425.55078 L 303.26172 425.37891 L 301.23633 423.06641 z M 287.52539 423.99023 L 284.86523 424.13672 L 286.62109 426.14062 L 289.2793 425.99414 L 287.52539 423.99023 z M 78.173828 424.36133 L 75.009766 428.90039 L 76.636719 434.18945 L 79.800781 429.65039 L 78.173828 424.36133 z M 156.89062 424.60156 L 153.96094 428.80664 L 155.46875 433.70312 L 158.39648 429.5 L 156.89062 424.60156 z M 235.60547 424.84375 L 232.91211 428.71094 L 233.58789 430.9043 C 234.66359 428.72023 235.20214 426.96376 235.60938 424.85547 L 235.60547 424.84375 z M 273.81445 424.91211 L 271.5625 425.03711 L 273.04883 426.73242 L 275.29883 426.60742 L 273.81445 424.91211 z M 90 426.20898 L 86.837891 430.75 L 88.464844 436.03711 L 91.626953 431.49805 L 90 426.20898 z M 168.7168 426.44922 L 165.78906 430.6543 L 167.29492 435.55078 L 170.22461 431.34766 L 168.7168 426.44922 z M 406.28516 426.72266 L 399.94141 427.07422 L 404.12695 431.85352 L 410.4707 431.50195 L 406.28516 426.72266 z M 392.57422 427.64453 L 386.63867 427.97461 L 390.55469 432.44531 L 396.48828 432.11719 L 392.57422 427.64453 z M 101.82812 428.05664 L 98.664062 432.59766 L 100.29297 437.88672 L 103.45508 433.3457 L 101.82812 428.05664 z M 180.54492 428.29883 L 177.61523 432.50195 L 179.12305 437.39844 L 182.05078 433.19531 L 180.54492 428.29883 z M 378.86328 428.56836 L 373.33789 428.875 L 376.98242 433.03711 L 382.50781 432.73047 L 378.86328 428.56836 z M 365.15234 429.49023 L 360.03516 429.77344 L 363.41211 433.62891 L 368.52734 433.34375 L 365.15234 429.49023 z M 34.939453 429.66406 L 33.15625 432.22266 C 34.127652 433.48533 35.1556 434.78089 36.177734 436.07227 L 36.685547 435.34375 L 34.939453 429.66406 z M 113.6543 429.9043 L 110.49219 434.44531 L 112.11914 439.73438 L 115.2832 435.19336 L 113.6543 429.9043 z M 192.37109 430.14648 L 189.44336 434.34961 L 190.94922 439.24609 L 193.87891 435.04297 L 192.37109 430.14648 z M 351.43945 430.41211 L 346.73438 430.67383 L 349.83984 434.21875 L 354.54492 433.95898 L 351.43945 430.41211 z M 337.72852 431.33398 L 333.43164 431.57422 L 336.26758 434.81055 L 340.56445 434.57227 L 337.72852 431.33398 z M 46.765625 431.51172 L 43.369141 436.38867 L 45.117188 442.06836 L 48.513672 437.19141 L 46.765625 431.51172 z M 125.48242 431.75195 L 122.32031 436.29297 L 123.94727 441.58203 L 127.10938 437.04102 L 125.48242 431.75195 z M 204.19922 431.99414 L 201.27148 436.19727 L 202.77734 441.09375 L 205.70508 436.89062 L 204.19922 431.99414 z M 324.01758 432.25781 L 320.13086 432.47266 L 322.69531 435.40234 L 326.58398 435.1875 L 324.01758 432.25781 z M 310.30664 433.17969 L 306.82812 433.37305 L 309.12305 435.99414 L 312.60156 435.80078 L 310.30664 433.17969 z M 58.59375 433.35938 L 55.195312 438.23633 L 56.943359 443.91602 L 60.341797 439.03906 L 58.59375 433.35938 z M 137.31055 433.60156 L 134.14648 438.14062 L 135.77344 443.42969 L 138.9375 438.88867 L 137.31055 433.60156 z M 216.02734 433.8418 L 213.09766 438.04492 L 214.60352 442.94336 L 217.5332 438.73828 L 216.02734 433.8418 z M 296.5957 434.10156 L 293.52734 434.27344 L 295.55273 436.58398 L 298.62109 436.41406 L 296.5957 434.10156 z M 282.88477 435.02539 L 280.22461 435.17188 L 281.98047 437.17578 L 284.64062 437.0293 L 282.88477 435.02539 z M 70.419922 435.20703 L 67.023438 440.08398 L 68.771484 445.76367 L 72.167969 440.88867 L 70.419922 435.20703 z M 149.13672 435.44922 L 145.97461 439.98828 L 147.60156 445.27734 L 150.76367 440.73633 L 149.13672 435.44922 z M 227.85352 435.68945 L 224.92578 439.89453 L 225.95117 443.22852 C 227.03505 441.60476 227.98916 440.15855 228.83203 438.86523 L 227.85352 435.68945 z M 269.17383 435.94727 L 266.92383 436.07227 L 268.4082 437.76758 L 270.6582 437.64258 L 269.17383 435.94727 z M 82.248047 437.05469 L 78.851562 441.93164 L 80.597656 447.61328 L 83.996094 442.73633 L 82.248047 437.05469 z M 160.96484 437.29688 L 157.80078 441.83594 L 159.42969 447.125 L 162.5918 442.58594 L 160.96484 437.29688 z M 401.64453 437.75781 L 395.30078 438.10938 L 399.48633 442.88867 L 405.83008 442.53711 L 401.64453 437.75781 z M 387.93359 438.67969 L 382 439.00977 L 385.91406 443.48047 L 391.84961 443.15039 L 387.93359 438.67969 z M 94.076172 438.9043 L 90.677734 443.7793 L 92.425781 449.46094 L 95.822266 444.58398 L 94.076172 438.9043 z M 172.79102 439.14453 L 169.62891 443.68555 L 171.25586 448.97266 L 174.41992 444.43359 L 172.79102 439.14453 z M 374.22266 439.60352 L 368.69727 439.9082 L 372.34375 444.07227 L 377.86719 443.76562 L 374.22266 439.60352 z M 360.51172 440.52539 L 355.39648 440.80859 L 358.77148 444.66406 L 363.88672 444.37891 L 360.51172 440.52539 z M 105.90234 440.75195 L 102.50586 445.62695 L 104.25391 451.30859 L 107.65039 446.43164 L 105.90234 440.75195 z M 184.61914 440.99219 L 181.45703 445.5332 L 183.08398 450.82031 L 186.24609 446.28125 L 184.61914 440.99219 z M 346.80078 441.44727 L 342.09375 441.70898 L 345.19922 445.25391 L 349.90625 444.99414 L 346.80078 441.44727 z M 333.08984 442.36914 L 328.79297 442.60742 L 331.62695 445.8457 L 335.92383 445.60742 L 333.08984 442.36914 z M 117.73047 442.59961 L 114.33203 447.47656 L 116.08008 453.15625 L 119.47852 448.2793 L 117.73047 442.59961 z M 196.44727 442.83984 L 193.2832 447.38086 L 194.91016 452.66992 L 198.07422 448.12891 L 196.44727 442.83984 z M 319.37891 443.29297 L 315.49023 443.50781 L 318.05469 446.4375 L 321.94336 446.2207 L 319.37891 443.29297 z M 50.839844 444.20703 L 47.210938 449.41602 C 48.396484 450.76466 49.537065 452.02205 50.65625 453.22266 L 52.708984 450.27734 L 50.839844 444.20703 z M 305.66602 444.21484 L 302.1875 444.4082 L 304.48438 447.0293 L 307.96289 446.83594 L 305.66602 444.21484 z M 129.55664 444.44727 L 126.16016 449.32422 L 127.9082 455.00391 L 131.30469 450.12695 L 129.55664 444.44727 z M 208.27344 444.6875 L 205.11133 449.22852 L 206.73828 454.51758 L 209.90039 449.97656 L 208.27344 444.6875 z M 291.95508 445.13672 L 288.88672 445.30664 L 290.91211 447.61914 L 293.98047 447.44922 L 291.95508 445.13672 z M 62.667969 446.05469 L 59.037109 451.26758 L 60.904297 457.33984 L 64.537109 452.12695 L 62.667969 446.05469 z M 278.24414 446.05859 L 275.58398 446.20703 L 277.33984 448.21094 L 280 448.06445 L 278.24414 446.05859 z M 141.38477 446.29492 L 137.98828 451.17188 L 139.73438 456.85156 L 143.13281 451.97461 L 141.38477 446.29492 z M 220.10156 446.53711 L 216.9375 451.07617 L 218.06836 454.75391 C 219.14855 453.19929 220.25183 451.61784 221.22852 450.19727 L 220.10156 446.53711 z M 264.5332 446.98242 L 262.2832 447.10742 L 263.76758 448.80273 L 266.01953 448.67773 L 264.5332 446.98242 z M 74.496094 447.90234 L 70.863281 453.11523 L 72.732422 459.1875 L 76.363281 453.97461 L 74.496094 447.90234 z M 153.21094 448.14258 L 149.81445 453.01953 L 151.5625 458.69922 L 154.95898 453.82422 L 153.21094 448.14258 z M 397.00391 448.79297 L 390.66016 449.14453 L 394.84766 453.92383 L 401.18945 453.57227 L 397.00391 448.79297 z M 383.29297 449.71484 L 377.35938 450.04492 L 381.27539 454.51562 L 387.20898 454.18555 L 383.29297 449.71484 z M 86.322266 449.75 L 82.691406 454.96289 L 84.558594 461.03516 L 88.191406 455.82227 L 86.322266 449.75 z M 165.03906 449.99023 L 161.64258 454.86719 L 163.39062 460.54688 L 166.78711 455.67188 L 165.03906 449.99023 z M 369.58203 450.63672 L 364.05664 450.94336 L 367.70312 455.10742 L 373.22852 454.80078 L 369.58203 450.63672 z M 355.87109 451.56055 L 350.75586 451.84375 L 354.13086 455.69727 L 359.24609 455.41406 L 355.87109 451.56055 z M 98.150391 451.59766 L 94.517578 456.81055 L 96.386719 462.88281 L 100.01758 457.66992 L 98.150391 451.59766 z M 176.86719 451.83789 L 173.46875 456.71484 L 175.2168 462.39648 L 178.61328 457.51953 L 176.86719 451.83789 z M 342.16016 452.48242 L 337.45312 452.74414 L 340.55859 456.28906 L 345.26562 456.02734 L 342.16016 452.48242 z M 328.44922 453.4043 L 324.15234 453.64258 L 326.98633 456.88086 L 331.28516 456.64258 L 328.44922 453.4043 z M 109.97656 453.44531 L 106.3457 458.6582 L 108.21484 464.73047 L 111.8457 459.51758 L 109.97656 453.44531 z M 188.69336 453.6875 L 185.29688 458.5625 L 187.04492 464.24414 L 190.44141 459.36719 L 188.69336 453.6875 z M 314.73828 454.32812 L 310.84961 454.54297 L 313.41602 457.47266 L 317.30273 457.25586 L 314.73828 454.32812 z M 301.02734 455.25 L 297.54883 455.44336 L 299.84375 458.06445 L 303.32227 457.87109 L 301.02734 455.25 z M 121.80469 455.29297 L 118.17383 460.50586 L 120.04102 466.57812 L 123.67188 461.36523 L 121.80469 455.29297 z M 200.52148 455.53516 L 197.12305 460.41211 L 198.87109 466.0918 L 202.26953 461.21484 L 200.52148 455.53516 z M 287.31641 456.17188 L 284.24609 456.3418 L 286.27148 458.6543 L 289.3418 458.48438 L 287.31641 456.17188 z M 273.60547 457.09375 L 270.94531 457.24219 L 272.69922 459.24609 L 275.35938 459.09766 L 273.60547 457.09375 z M 133.63086 457.14062 L 130 462.35352 L 131.86914 468.42578 L 135.5 463.21289 L 133.63086 457.14062 z M 212.34766 457.38281 L 208.95117 462.25977 L 210.12109 466.06055 C 211.27343 464.43094 212.3956 462.84341 213.53125 461.22656 L 212.34766 457.38281 z M 259.89453 458.01758 L 258.44727 458.09766 C 258.38004 458.34278 258.31625 458.58851 258.25 458.83398 L 259.12891 459.83789 L 261.37891 459.71289 L 259.89453 458.01758 z M 145.45898 458.98828 L 141.82812 464.20117 L 143.69531 470.27344 L 147.32812 465.06055 L 145.45898 458.98828 z M 392.36523 459.82812 L 386.02148 460.17969 L 390.20703 464.95898 L 396.55078 464.60742 L 392.36523 459.82812 z M 378.65234 460.75 L 372.71875 461.08008 L 376.63477 465.55078 L 382.56836 465.2207 L 378.65234 460.75 z M 157.28711 460.83789 L 153.6543 466.05078 L 155.52344 472.12305 L 159.1543 466.91016 L 157.28711 460.83789 z M 364.94141 461.67188 L 359.41797 461.97852 L 363.0625 466.14258 L 368.58789 465.83594 L 364.94141 461.67188 z M 351.23047 462.5957 L 346.11523 462.87891 L 349.49023 466.73242 L 354.60742 466.44922 L 351.23047 462.5957 z M 169.11328 462.68555 L 165.48242 467.89844 L 167.35156 473.9707 L 170.98242 468.75781 L 169.11328 462.68555 z M 337.51953 463.51758 L 332.81445 463.7793 L 335.91992 467.32422 L 340.625 467.0625 L 337.51953 463.51758 z M 323.80859 464.43945 L 319.51172 464.67773 L 322.34766 467.91602 L 326.64453 467.67773 L 323.80859 464.43945 z M 180.94141 464.5332 L 177.31055 469.74609 L 179.17773 475.81836 L 182.80859 470.60547 L 180.94141 464.5332 z M 310.09766 465.36133 L 306.21094 465.57812 L 308.77539 468.50781 L 312.66406 468.29102 L 310.09766 465.36133 z M 296.38672 466.28516 L 292.9082 466.47852 L 295.20312 469.09766 L 298.68164 468.90625 L 296.38672 466.28516 z M 192.76758 466.38086 L 189.13672 471.59375 L 191.00586 477.66602 L 194.63672 472.45312 L 192.76758 466.38086 z M 282.67578 467.20703 L 279.60547 467.37695 L 281.63086 469.68945 L 284.70117 469.51953 L 282.67578 467.20703 z M 268.96484 468.12891 L 266.30469 468.27734 L 268.06055 470.28125 L 270.7207 470.13281 L 268.96484 468.12891 z M 204.5957 468.22852 L 200.96484 473.44141 L 202.14453 477.28125 C 203.33817 475.62089 204.53309 473.95881 205.80859 472.16992 L 204.5957 468.22852 z M 255.67969 469.53711 C 255.59127 469.96562 255.49845 470.39655 255.41406 470.82227 L 256.73828 470.74805 L 255.67969 469.53711 z M 387.72461 470.86328 L 381.38086 471.21484 L 385.56641 475.99414 L 391.91016 475.64258 L 387.72461 470.86328 z M 374.01367 471.78516 L 368.07812 472.11328 L 371.99414 476.58594 L 377.92969 476.25586 L 374.01367 471.78516 z M 360.30273 472.70703 L 354.77734 473.01367 L 358.42188 477.17578 L 363.94727 476.86914 L 360.30273 472.70703 z M 346.5918 473.62891 L 341.47461 473.91406 L 344.85156 477.76758 L 349.9668 477.48438 L 346.5918 473.62891 z M 332.88086 474.55273 L 328.17383 474.8125 L 331.2793 478.35938 L 335.98438 478.09766 L 332.88086 474.55273 z M 319.16797 475.47461 L 314.87109 475.71289 L 317.70703 478.95117 L 322.00391 478.71289 L 319.16797 475.47461 z M 305.45703 476.39648 L 301.57031 476.61328 L 304.13477 479.54102 L 308.02344 479.32617 L 305.45703 476.39648 z M 291.74609 477.32031 L 288.26758 477.51172 L 290.5625 480.13281 L 294.04297 479.93945 L 291.74609 477.32031 z M 278.03516 478.24219 L 274.9668 478.41211 L 276.99219 480.72461 L 280.06055 480.55469 L 278.03516 478.24219 z M 264.32422 479.16406 L 261.66406 479.3125 L 263.41992 481.31641 L 266.08008 481.16797 L 264.32422 479.16406 z M 383.08398 481.89648 L 376.74023 482.25 L 380.92578 487.0293 L 387.26953 486.67578 L 383.08398 481.89648 z M 369.37305 482.82031 L 363.43945 483.14844 L 367.35547 487.62109 L 373.28906 487.29102 L 369.37305 482.82031 z M 355.66211 483.74219 L 350.13672 484.04883 L 353.7832 488.21094 L 359.30664 487.9043 L 355.66211 483.74219 z M 341.95117 484.66406 L 336.83594 484.94922 L 340.21094 488.80273 L 345.32617 488.51953 L 341.95117 484.66406 z M 328.24023 485.58789 L 323.5332 485.84766 L 326.63867 489.39453 L 331.3457 489.13281 L 328.24023 485.58789 z M 314.5293 486.50977 L 310.23242 486.74805 L 313.06641 489.98633 L 317.36328 489.74609 L 314.5293 486.50977 z M 300.81836 487.43164 L 296.92969 487.64844 L 299.49414 490.57617 L 303.38281 490.36133 L 300.81836 487.43164 z M 287.10742 488.35352 L 283.62891 488.54688 L 285.92383 491.16797 L 289.40234 490.97461 L 287.10742 488.35352 z M 273.39453 489.27734 L 270.32617 489.44727 L 272.35156 491.75977 L 275.41992 491.58984 L 273.39453 489.27734 z M 258.18555 490.2832 L 257.02344 490.34766 L 257.46484 490.84961 L 258.18555 490.2832 z M 378.44336 492.93164 L 372.10156 493.28516 L 376.28711 498.06445 L 382.62891 497.71094 L 378.44336 492.93164 z M 364.73242 493.85547 L 358.79883 494.18359 L 362.71484 498.6543 L 368.64844 498.32617 L 364.73242 493.85547 z M 351.02148 494.77734 L 345.49609 495.08398 L 349.14258 499.24609 L 354.66797 498.93945 L 351.02148 494.77734 z M 337.31055 495.69922 L 332.19531 495.98438 L 335.57031 499.83789 L 340.68555 499.55469 L 337.31055 495.69922 z M 323.59961 496.62109 L 318.89258 496.88281 L 321.99805 500.42969 L 326.70508 500.16797 L 323.59961 496.62109 z M 309.88867 497.54492 L 305.5918 497.7832 L 308.42773 501.01953 L 312.72461 500.78125 L 309.88867 497.54492 z M 373.80469 503.9668 L 367.46094 504.31836 L 371.19531 508.58203 C 372.99974 508.22404 374.89707 507.83032 376.83008 507.42188 L 373.80469 503.9668 z M 360.0918 504.88867 L 354.1582 505.21875 L 358.07422 509.68945 L 364.00781 509.36133 L 360.0918 504.88867 z M 346.38086 505.8125 L 340.85742 506.11914 L 344.50195 510.28125 L 350.02734 509.97461 L 346.38086 505.8125 z M 332.66992 506.73438 L 328.91211 506.94336 C 330.65565 507.36612 332.31324 507.76136 333.88867 508.12695 L 332.66992 506.73438 z",{
+			fill:initialCapColors["snakeskinColor"],
+			id:'snakeskinColor',
+			visible: false,
+			selectable:true
+		});
+		
+		bostonColor = new fabric.Path("M 138.33801,505.51078 C 106.23756,492.45618 73.571293,477.19075 48.980532,452.18609 27.457379,432.44658 14.88466,405.70834 0.25287129,381.06979 2.7262486,371.90135 27.18438,359.81744 33.900785,363.37324 47.367321,391.11303 57.794657,420.90328 72.667894,447.59689 103.55292,466.56027 134.56099,485.35419 166,503.38383 147.09495,479.87849 126.39278,457.6057 107.63878,434.09198 95.992523,404.01416 83.389687,374.27651 72.920884,343.76673 c 13.109654,-2.38957 32.161156,-13.38781 43.203906,-8.06792 17.96628,56.13903 36.1406,112.21245 53.85959,168.42987 -10.26309,10.93084 -19.41634,6.84584 -31.64637,1.3821 z M 347.5,510.00135 c -26.21584,-1.77979 -49.86079,-16.7599 -75.95,-17.91785 -8.55178,3.29829 -13.35751,-11.63452 -17.51631,2.4165 -0.17374,-10.56017 2.0822,-25.36954 6.56879,-32.79981 30.69986,9.26469 61.26715,19.65553 92.04956,28.21904 30.85918,-1.71952 62.00968,-5.10288 92.6482,-5.38748 -7.50796,16.84755 -36.70382,11.32095 -53.16129,18.86115 -14.80197,2.32356 -29.54319,9.09941 -44.63895,6.60845 z M 171,501.36327 c 1.7182,-28.76028 5.30007,-57.57474 6.76678,-86.26517 C 170.82787,386.43745 163.65634,357.8314 157,329.10364 c 16.0984,-4.11905 32.98328,-4.2584 49.5,-5.9868 -11.64859,-0.0271 -29.4976,5.26243 -27.20355,-12.46646 -5.00889,-30.34842 -9.60191,-60.76319 -14.3671,-91.15038 -18.37041,-18.39838 -36.74082,-36.79676 -55.11124,-55.19513 13.65989,-12.64152 24.93338,11.07988 36.23831,17.80974 19.27768,17.81668 39.81375,36.62968 46.42147,63.10306 7.14679,16.63448 10.86577,36.22723 18.34337,51.54324 3.30213,18.95722 -1.09902,26.44108 2.98652,44.9806 1.19134,25.46209 2.18615,50.93293 3.2754,76.39955 -14.85704,28.65836 -28.56408,57.96557 -44.83318,85.85068 l -0.88281,-0.76853 -0.36719,-1.85994 0,0 z m 232.39894,-30.43028 c -20.50049,-6.1473 -42.0064,-9.5726 -60.85978,-20.17917 -21.87412,-10.27546 -43.70253,-20.64961 -65.65538,-30.75629 8.44473,-14.48087 15.27369,-29.92155 24.34138,-43.99753 49.17087,33.65159 98.01268,67.80635 146.53462,102.38783 -6.49463,8.06146 -32.25421,-6.64486 -44.36084,-7.45484 z m 30.84459,-32.70785 c -11.34317,-17.1854 -16.06987,-40.056 -34.7272,-51.22638 C 376.29525,368.9054 351.93463,352.29917 329,333.8423 c 11.28051,-14.35905 24.61273,-26.95012 37.5233,-39.82987 22.84848,22.85568 45.69696,45.71136 68.54544,68.56704 7.18152,37.75866 15.6068,75.47589 21.68697,113.2926 -9.54284,-10.45578 -15.11354,-25.36335 -22.51218,-37.64693 z M 26,322.72493 c 6.280501,-34.41841 12.962776,-68.77335 20.013469,-103.04245 17.255893,-19.95736 35.489474,-39.22515 54.736841,-57.2655 -6.095287,20.27907 -16.050212,39.53188 -21.807604,59.77412 -1.98372,32.76014 -3.013081,65.62864 -5.915683,98.29634 C 58.617145,324.8884 41.333694,323.15444 26,322.72493 z m 82.25,-1.38721 c -2.61902,-43.82801 -0.17304,-87.96112 -0.0939,-131.90667 0.11462,-8.04161 0.22925,-16.08323 0.34387,-24.12485 8.04581,18.94192 17.1187,37.6275 24.5346,56.72664 2.59494,33.32153 4.73686,66.68437 7.77509,99.96716 -10.85117,-0.16506 -21.73765,0.21225 -32.55969,-0.66228 z",{
+			fill:initialCapColors["bostonColor"],
+			id:'bostonColor',
+			visible: false,
+			selectable:true
+		});
+
+        capBelow.add(underBrimColor);
+		capBelow.add(topsideBrimColor);
+		capBelow.add(curvedBrimColor);
+		capBelow.add(curvedBrimBorderColor);
+		capBelow.add(peakBandColor);
+		capBelow.add(stingyBrimColor);
+		capBelow.add(lidPinstripesColor);
+		capBelow.add(stingyLidPinstripesColor);
+		capBelow.add(frontPanelColor);
+		capBelow.add(smallFrontPanelColor);
+		capBelow.add(squatcheeColor);
+		capBelow.add(bostonColor);
+		capBelow.add(jockeyColor);
+		capBelow.add(bandBoxDoubleThickColor);
+		capBelow.add(bandBoxSingleThickColor);
+		capBelow.add(snakeskinColor);
+		capBelow.add(capPinstripeColor);
+		capBelow.add(capPinstripe2Color);
+		capBelow.add(horizontalPinstripeColor);
+		//capBelow.add(braidStripeInnerColor);
+		//capBelow.add(braidStripeOuterColor);
+		//capBelow.add(frontPanelBorderColor);
+		//capBelow.add(smallPanelBorderColor);
         
         jerseyBelow.renderAll()
         pantsBelow.renderAll()
@@ -165,38 +789,17 @@
                 var textureFile = './images/texture_pants_default.png'
                 break;
         }
-         
 		canvas.renderAll();
 		var img = new Image; 
 		img.onload = function(){
-			textureCanvas.drawImage(img,0,0);
+            textureCanvas.drawImage(img, 0, 0, img.width*scaleRatio, img.height*scaleRatio);
 			composite.clearRect(0, 0, width, height);
-			if (Modernizr.canvasblending == true) {
-				composite.globalCompositeOperation = "multiply";
-				composite.drawImage(can, 0, 0);
-				composite.drawImage(can2, 0, 0);
-			} else {
-				textureCanvas.drawImage(img,0,0);
-				composite.drawImage(can, 0, 0);
-				textureCanvas.blendOnto(composite,'multiply');
-			}
+			composite.globalCompositeOperation = "multiply";
+			composite.drawImage(can, 0, 0);
+			composite.drawImage(can2, 0, 0);
 		};
         img.src = textureFile;
 	}
-
-    Modernizr.addTest('canvasblending', function() {
-		if ( ! Modernizr.canvas ) return false;
-		var canvas = document.createElement('canvas');
-		canvas.width = 1;
-		canvas.height = 1;
-		var ctx = canvas.getContext('2d');
-		ctx.fillStyle = '#000';
-		ctx.fillRect(0,0,1,1);
-		ctx.globalCompositeOperation = 'multiply';
-		ctx.fillStyle = '#fff';
-		ctx.fillRect(0,0,1,1);
-		return ctx.getImageData(0,0,1,1).data[0] === 0;
-	});
-    
+   
 </script>
 </html>

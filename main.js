@@ -20,8 +20,8 @@ app2.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit: 5000
 
 function createWindow () {
     const mainWindow = new BrowserWindow({
-      width: 1280,
-      height: 760,
+      width: 1400,
+      height: 1000,
       icon: (__dirname + '/images/ballcap.png'),
       webPreferences: {
           nodeIntegration: true,
