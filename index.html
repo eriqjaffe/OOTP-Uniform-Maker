@@ -1,2 +1,202 @@
 <!DOCTYPE html>
-HELLO WORLD
+<meta charset="utf-8">
+<html>
+<head>
+    <title>OOTP23 Uniform Maker</title>
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+	<script type="text/javascript" src="./scripts/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="./scripts/spectrum.js"></script>
+	<script type="text/javascript" src="./scripts/fabric.min.js"></script>
+	<script type="text/javascript" src="./scripts/context_blender.js"></script>
+	<script type="text/javascript" src="./scripts/modernizr.custom.68502.js"></script>
+	<script type="text/javascript" src="./scripts/jquery.magnific-popup.min.js"></script>
+	<script type="text/javascript" src="./scripts/jquery.dd.min.js"></script>
+	<script type="text/javascript" src="./scripts/jquery.range-min.js"></script>
+	<script type="text/javascript" src="./scripts/jquery.mousewheel.min.js"></script>
+	<script type="text/javascript" src="./scripts/spin.min.js"></script>
+	<script type="text/javascript" src="./scripts/fontfaceobserver.js"></script>
+	<script>if (window.module) module = window.module;</script>
+	<link href='./scripts/uniformmaker.css' rel='stylesheet' type='text/css'>
+	<link href='./scripts/spectrum.css' rel='stylesheet' type='text/css'>
+	<link href='./scripts/menu.css' rel='stylesheet' type='text/css'>
+	<link href='./scripts/magnific-popup.css' rel='stylesheet' type='text/css'>
+	<link href='./scripts/dd.css' rel='stylesheet' type='text/css'>
+	<link href='./scripts/jquery.range.css' rel='stylesheet' type='text/css'>
+
+</head>
+<body>
+<div class="title">
+	<span class="header">Welcome To The OOTP23 Uniform Maker!</span>
+</div>
+<div id="page">
+    <div style="width: 1600px; margin:0 auto;">
+        <div class="section group" style="position:relative;">
+            <div class="col span_2_of_3" style="float:left;">
+                <div id="hiddenContainer" style="display:none;">
+                    <canvas id="jerseyTexture" width="384" height="768"></canvas>
+                    <canvas id="jerseyBelow" width="384" height="768"></canvas>
+                    <canvas id="pantsTexture" width="384" height="384"></canvas>
+                    <canvas id="pantsBelow" width="384" height="384"></canvas>  
+                    <canvas id="capTexture" width="384" height="384"></canvas>  
+                    <canvas id="capBelow" width="384" height="384"></canvas>  
+                </div>
+                <div id="canvasContainer" style="position:absolute; height:828px; width:768px;">
+                    <canvas id="jerseyComposite" width="384" height="768" style="position:relative; top:0; float:left; z-index:1;"></canvas>
+                    <canvas id="pantsComposite" width="384" height="384" style="position:relative; top:0; float:right; z-index:1;"></canvas>
+                    <canvas id="capComposite" width="384" height="384" styyle="position:absolute; top:384; float:right; z-index:1;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+<script>
+
+    const jerseyTextureCanvas = document.getElementById('jerseyTexture');
+	const jerseyTextureContext = jerseyTextureCanvas.getContext('2d');
+
+    const pantsTextureCanvas = document.getElementById('pantsTexture');
+	const pantsTextureContext = pantsTextureCanvas.getContext('2d');
+
+    const capTextureCanvas = document.getElementById('capTexture');
+	const capTextureContext = capTextureCanvas.getContext('2d');
+
+    fabric.Object.prototype.set({
+    	borderColor: 'red',
+		cornerColor: 'yellow',
+		cornerSize: 12,
+		transparentCorners: true
+	});
+
+    var jerseyBelow = new fabric.StaticCanvas('jerseyBelow',{
+		enableRetinaScaling: false,
+		preserveObjectStacking: true,
+		backgroundColor: '#ffffff',
+	});
+
+    var pantsBelow = new fabric.StaticCanvas('pantsBelow',{
+		enableRetinaScaling: false,
+		preserveObjectStacking: true,
+		backgroundColor: '#cccccc',
+	});
+
+    var capBelow = new fabric.StaticCanvas('capBelow',{
+		enableRetinaScaling: false,
+		preserveObjectStacking: true,
+		backgroundColor: '#ff0000',
+	});
+
+    initializeCanvas()
+
+    function initializeCanvas() {
+
+        var rect = new fabric.Rect({
+            top: 200,
+            left: 200,
+            width: 50,
+            height: 50,
+            fill: 'blue'
+        })
+
+        var rect2 = new fabric.Rect({
+            top: 200,
+            left: 200,
+            width: 50,
+            height: 50,
+            fill: 'blue'
+        })
+
+        var rect3 = new fabric.Rect({
+            top: 200,
+            left: 200,
+            width: 50,
+            height: 50,
+            fill: 'blue'
+        })
+
+        jerseyBelow.add(rect)
+        pantsBelow.add(rect2)
+        capBelow.add(rect3)
+        
+        jerseyBelow.renderAll()
+        pantsBelow.renderAll()
+        capBelow.renderAll()
+
+        reRenderBG("jersey")
+        reRenderBG("pants")
+        reRenderBG("cap")
+    }
+
+    function reRenderBG(target) {
+        switch (target) {
+            case "jersey":
+                var canvas = jerseyBelow 
+                var textureCanvas = jerseyTextureContext
+                var can = document.getElementById('jerseyBelow')
+                var can2 = document.getElementById('jerseyTexture')
+                var can3 = document.getElementById('jerseyComposite');
+                var composite = can3.getContext('2d')
+                var width = 384
+                var height = 768
+                var textureFile = './images/texture_jersey_default.png'
+                break;
+            case "cap":
+                var canvas = capBelow 
+                var textureCanvas = capTextureContext
+                var can = document.getElementById('capBelow')
+                var can2 = document.getElementById('capTexture')
+                var can3 = document.getElementById('capComposite');
+                var composite = can3.getContext('2d')
+                var width = 384
+                var height = 384
+                var textureFile = './images/texture_cap_default.png'
+                break;
+            case "pants":
+                var canvas = pantsBelow 
+                var textureCanvas = pantsTextureContext
+                var can = document.getElementById('pantsBelow')
+                var can2 = document.getElementById('pantsTexture')
+                var can3 = document.getElementById('pantsComposite');
+                var composite = can3.getContext('2d')
+                var width = 384
+                var height = 384
+                var textureFile = './images/texture_pants_default.png'
+                break;
+        }
+         
+		canvas.renderAll();
+		var img = new Image; 
+		img.onload = function(){
+			textureCanvas.drawImage(img,0,0);
+			composite.clearRect(0, 0, width, height);
+			if (Modernizr.canvasblending == true) {
+				composite.globalCompositeOperation = "multiply";
+				composite.drawImage(can, 0, 0);
+				composite.drawImage(can2, 0, 0);
+			} else {
+				textureCanvas.drawImage(img,0,0);
+				composite.drawImage(can, 0, 0);
+				textureCanvas.blendOnto(composite,'multiply');
+			}
+		};
+        img.src = textureFile;
+	}
+
+    Modernizr.addTest('canvasblending', function() {
+		if ( ! Modernizr.canvas ) return false;
+		var canvas = document.createElement('canvas');
+		canvas.width = 1;
+		canvas.height = 1;
+		var ctx = canvas.getContext('2d');
+		ctx.fillStyle = '#000';
+		ctx.fillRect(0,0,1,1);
+		ctx.globalCompositeOperation = 'multiply';
+		ctx.fillStyle = '#fff';
+		ctx.fillRect(0,0,1,1);
+		return ctx.getImageData(0,0,1,1).data[0] === 0;
+	});
+    
+</script>
+</html>
