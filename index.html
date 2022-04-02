@@ -47,40 +47,48 @@
                     <canvas id="capTexture" width="512" height="512"></canvas>  
                     <canvas id="capBelow" width="512" height="512"></canvas>  
                 </div>
-                <div id="canvasContainer" style="position:absolute; height:828px; width:768px;">
-                    <canvas id="jerseyComposite" width="384" height="768" style="position:relative; top:0; float:left; z-index:1;"></canvas>
-                    <canvas id="pantsComposite" width="384" height="384" style="position:relative; top:0; float:right; z-index:1;"></canvas>
-                    <canvas id="capComposite" width="384" height="384" styyle="position:absolute; top:384; float:right; z-index:1;"></canvas>
+                <div id="canvasContainer" style="position:absolute; height:828px; width:771px;">
+					<div id="jerseyContainer">
+						<canvas id="jerseyComposite" width="384" height="768" style="position:relative; top:0; float:left; z-index:1;"></canvas>
+						<canvas id="jerseyAbove" width="512" height="1024" style="position:relative; top:0; float:left; z-index:2;"></canvas>
+					</div>
+					<div id="pantsContainer">
+						<canvas id="pantsComposite" width="384" height="384" style="position:relative; top:0; float:right; z-index:1;"></canvas>
+						<canvas id="pantsAbove" width="512" height="512" style="position:relative; top:0; float:right; z-index:2;"></canvas>
+					</div>
+					<div id="capContainer">
+						<canvas id="capComposite" width="384" height="384" style="position:absolute; top:0; float:right; z-index:1;"></canvas>
+						<canvas id="capAbove" width="512" height="512" style="position:absolute; top:0; float:right; z-index:2;"></canvas>
+					</div>
+                    <!-- 
+                    
+                     -->
                 </div>
             </div>
-            <div class="col span_2_of_5" style="max-height:500px;">
-                <div id="text">
-                    <div class="accordion">
-                        <div class="locked-accord-header locked-active-header">Main Uniform Elements</div>
-                        <div class="accord-content" style="display:inline-block; width:100%;">
-                            <table style="width:100%;">
-                                <tr>
-                                    <td>
-                                        Team Name: <input type="text" id="teamName">
-                                    </td>
-                                    <td>
-                                        Uniform Type: <select id="capType">
-                                            <option value="Home">Home</option>
-                                            <option value="Away">Away</option>
-                                            <option value="Alternate">Alternate</option>
-                                            <option value="Throwback">Throwback</option>
-                                        </select>
-                                    </td>
-                                    <td><label for="startYear">Start:</label>
-                                        <input type="number" class="year" id="startYear" name="startYear" onkeypress="return isNumberKey(event)" style="width:50px;">
-                                    </td>
-                                    <td><label for="endYear">End:</label>
-                                        <input type="number" class="year" id="endYear" name="endYear" onkeypress="return isNumberKey(event)" style="width:50px;">
-                                    </td>
-                                </tr>	
-                            <table>
-                        </div>
-
+            <div class="col span_2_of_5" style="max-height:800px;">
+                <div id="text">   
+					<table style="width:100%;">
+						<tr>
+							<td>
+								Team Name: <input type="text" id="teamName">
+							</td>
+							<td>
+								Uniform Type: <select id="capType">
+									<option value="Home">Home</option>
+									<option value="Away">Away</option>
+									<option value="Alternate">Alternate</option>
+									<option value="Throwback">Throwback</option>
+								</select>
+							</td>
+							<td><label for="startYear">Start:</label>
+								<input type="number" class="year" id="startYear" name="startYear" onkeypress="return isNumberKey(event)" style="width:50px;">
+							</td>
+							<td><label for="endYear">End:</label>
+								<input type="number" class="year" id="endYear" name="endYear" onkeypress="return isNumberKey(event)" style="width:50px;">
+							</td>
+						</tr>	
+					<table>
+					<div class="accordion">	
                         <table style="width:100%;"><tr><td>
                         <div class="skltbs-theme-light" data-skeletabs='{ "panelHeight": "adaptive" }'>
                             <ul class="skltbs-tab-group">
@@ -100,7 +108,7 @@
                                     <div class="accord-content" style="display:inline;" id="jerseyElements">
                                         <table style="width:100%;">
                                             <tr class="color_tr">
-                                                <td><input type="checkbox" id="gridToggle" class="gridToggle" data-canvas="guideCanvas" checked></td>
+                                                <td><input type="checkbox" id="toggleJerseyGrid" checked></td>
                                                 <td><label>Grid (Will Be Hidden On Export)</label></td>
                                                 <td style="text-align:right;">
                                                     
@@ -236,6 +244,13 @@
                                     <div class="accord-header active-header">Main Pants Elements</div>
                                     <div class="accord-content" style="display:inline;">  
                                         <table style="width:100%;">
+											<tr class="color_tr">
+                                                <td><input type="checkbox" id="togglePantsGrid" checked></td>
+                                                <td><label>Grid (Will Be Hidden On Export)</label></td>
+                                                <td style="text-align:right;">
+                                                    
+                                                </td>
+                                            </tr>
                                             <tr class="color_tr">
                                                 <td>&nbsp;</td>
                                                 <td><label>Pants Color: </label></td>
@@ -270,6 +285,11 @@
                                     <div class="accord-header active-header">Main Cap Elements</div>
                                     <div class="accord-content" style="display:inline;">  
                                         <table style="width:100%;">
+											<tr class="color_tr">
+                                                <td class="checkCell"><input type="checkbox" id="toggleCapGuides" checked></td>
+                                                <td><label>Guides (Will be hidden on export)</label></td>
+                                                <td style="text-align:right;">&nbsp;</td>
+                                            </tr>
                                             <tr class="color_tr">
                                                 <td>&nbsp;</td>
                                                 <td><label>Cap Color: </label></td>
@@ -278,10 +298,58 @@
                                                 </td>
                                             </tr>
                                             <tr class="color_tr">
-                                                <td class="checkCell"><input type="checkbox" class="belowCapTextureToggle" data-id="underBrimColor" id="underBrimColorCheck" checked></td>
+                                                <td class="checkCell"><input type="checkbox" class="capTextureToggle" data-id="underBrimColor" id="underBrimColorCheck" data-canvas="below" checked></td>
                                                 <td><label>Brim Underside: </label></td>
-                                                <td style="text-align:right;"><input class="capSelector" type="text" id="underBrimColor" data-element="underBrimColor" data-canvas="belowCap"></td>
+                                                <td style="text-align:right;"><input class="capSelector" type="text" id="underBrimColor" data-element="underBrimColor" data-canvas="below"></td>
                                             </tr>
+											<tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" class="capTextureToggle" data-id="topsideBrimColor" id="topsideBrimColorCheck" data-canvas="below"></td>
+												<td><label>Brim Topside: </label></td>
+												<td style="text-align:right;"><input class="capSelector" type="text" id="topsideBrimColor" data-element="topsideBrimColor" data-canvas="below"></td>
+											</tr>
+											<tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" class="capTextureToggle" data-id="squatcheeColor" id="squatcheeColorCheck"  data-canvas="below" checked></td>
+												<td><label>Button: </label></td>
+												<td style="text-align:right;"><input class="capSelector" type="text" id="squatcheeColor" data-element="squatcheeColor" data-canvas="below"></td>
+											</tr>
+											<tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" class="capTextureToggle" data-id="eyeletGroup" id="eyeletGroupCheck"  data-canvas="above" checked></td>
+												<td><label>Eyelets: </label></td>
+												<td style="text-align:right;"><input class="capSelector" type="text" id="eyeletStrokeColor" data-element="eyeletStrokeColor" data-canvas="above"><input class="capSelector" type="text" id="eyeletFillColor" data-element="eyeletFillColor" data-canvas="above"></td>
+											</tr>
+											<tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" id="capMakersMarkCheck" class="aboveCapTextureToggle" data-canvas="logoCanvas" data-id="makersMark2"></td>
+												<td><label>Manufacturer's Mark: </label></td>
+												<td style="text-align:right;">
+													<select id="makersMarkSelect">
+														<option value="logo_47brand">47 Brand</option>
+														<option value="logo_adidas_3">Adidas</option>
+														<option value="logo_asics2">Asics</option>
+														<option value="logo_demarini">DeMarini</option>
+														<option value="logo_macron2">Macron</option>
+														<option value="logo_majestic">Majestic 1</option>
+														<option value="logo_majestic_2">Majestic 2</option>
+														<option value="logo_mizuno">Mizuno</option>
+														<option value="logo_new_balance">New Balance</option>
+														<option value="logo_newera" selected>New Era</option>
+														<option value="logo_nike">Nike</option>
+														<!-- <option value="logo_rawlings">Rawlings 1</option> -->
+														<option value="logo_oneill">O'Neill</option>
+														<option value="logo_rawlings_2">Rawlings</option>
+														<!-- <option value="logo_reebok">Reebok</option> -->
+														<option value="logo_rbk">Reebok</option>
+														<option value="logo_russell_2">Russell</option>
+														<option value="logo_spalding_2">Spalding</option>
+														<option value="logo_under_armour">Under Armour</option>
+														<option value="logo_wilson">Wilson</option>
+													</select>
+													<select id="makersMarkSide">
+														<option value="left" selected>Cap Left</option>
+														<option value="right">Cap Right</option>
+													</select>
+													<input class="capMakerSelector" type="text" id="capMkersMarkColor" data-element="capMakersMark">
+												</td>
+											</tr>
                                         </table>
                                     </div>
                                 </div>
@@ -316,6 +384,8 @@
     const capTextureCanvas = document.getElementById('capTexture');
 	const capTextureContext = capTextureCanvas.getContext('2d');
 
+	
+
     fabric.Object.prototype.set({
     	borderColor: 'red',
 		cornerColor: 'yellow',
@@ -341,19 +411,38 @@
 		backgroundColor: initialCapColors['capColor'],
 	});
 
+	var jerseyLogoCanvas = new fabric.Canvas('jerseyAbove',{
+		enableRetinaScaling:false,
+		controlsAboveOverlay:true,
+	});
+
+	var pantsLogoCanvas = new fabric.Canvas('pantsAbove',{
+		enableRetinaScaling:false,
+		controlsAboveOverlay:true,
+	});
+
+	var capLogoCanvas = new fabric.Canvas('capAbove',{
+		enableRetinaScaling:false,
+		controlsAboveOverlay:true,
+	});
+
     const scaleRatio = Math.min(384/512, 768/1024)
     jerseyBelow.setDimensions({ width: jerseyBelow.getWidth() * 0.75, height: jerseyBelow.getHeight() * 0.75 });
     jerseyBelow.setZoom(scaleRatio)
+	jerseyLogoCanvas.setDimensions({ width: jerseyLogoCanvas.getWidth() * 0.75, height: jerseyLogoCanvas.getHeight() * 0.75 });
+    jerseyLogoCanvas.setZoom(scaleRatio)
     pantsBelow.setDimensions({ width: pantsBelow.getWidth() * 0.75, height: pantsBelow.getHeight() * 0.75 });
     pantsBelow.setZoom(scaleRatio)
+	pantsLogoCanvas.setDimensions({ width: pantsLogoCanvas.getWidth() * 0.75, height: pantsLogoCanvas.getHeight() * 0.75 });
+    pantsLogoCanvas.setZoom(scaleRatio)
     capBelow.setDimensions({ width: capBelow.getWidth() * 0.75, height: capBelow.getHeight() * 0.75 });
     capBelow.setZoom(scaleRatio)
+	capLogoCanvas.setDimensions({ width: capLogoCanvas.getWidth() * 0.75, height: capLogoCanvas.getHeight() * 0.75 });
+    capLogoCanvas.setZoom(scaleRatio)
 
     $(document).ready(function() {
-        $(".accordion .accord-header").click(function() {
-            console.log($(this).next("div").attr("id"))
-            console.log($(this).next("div").is(":visible"))
-            /* if($(this).next("div").is(":visible")){
+/* 		$(".accordion .accord-header").click(function() {
+			if($(this).next("div").is(":visible")){
 				$(this).next("div").slideUp("fast");
 				$(this).removeClass("active-header").addClass("inactive-header");
 			} else {
@@ -363,7 +452,20 @@
 					$(this).removeClass("active-header").addClass("inactive-header");
 				}) 
 				$(this).removeClass("inactive-header").addClass("active-header");
-			}  */
+			}
+		}); */
+		$(".accord-header").click(function() {
+			if($(this).next("div").is(":visible")){
+				$(this).next("div").slideUp("fast");
+				$(this).removeClass("active-header").addClass("inactive-header");
+			} else {
+				$(".accordion .accord-content").slideUp("fast");
+				$(this).next("div").slideToggle("fast");
+				$(".active-header").each(function() {
+					$(this).removeClass("active-header").addClass("inactive-header");
+				}) 
+				$(this).removeClass("inactive-header").addClass("active-header");
+			}
 		});
     })
     
@@ -477,10 +579,11 @@
 			},
 			move: function(color) {
 				$(this).data('changed', true);
-				var id = $(this).data('element');
-				var objects = capBelow.getObjects().forEach(function(o) {
+				const id = $(this).data('element');
+				const canvas = $(this).data('canvas') == 'below' ? capBelow : capLogoCanvas
+				canvas.getObjects().forEach(function(o) {
                     if (o.get('type') == "group") {
-						var groupObjects = objects[x].getObjects().forEach(function(p) {
+						var groupObjects = o.getObjects().forEach(function(p) {
                             if (p.id == id) {
 								p.set("fill", color.toHexString());
 								p.set("stroke", color.toHexString());
@@ -492,15 +595,16 @@
 						} 						
 					} 
                 });
-                capBelow.renderAll()
+                canvas.renderAll()
 				reRenderBG("cap");
 			},
 			change: function(color) {
 				$(this).data('changed', true);
-				var id = $(this).data('element');
-				var objects = capBelow.getObjects().forEach(function(o) {
+				const id = $(this).data('element');
+				const canvas = $(this).data('canvas') == 'below' ? capBelow : capLogoCanvas
+				canvas.getObjects().forEach(function(o) {
                     if (o.get('type') == "group") {
-						var groupObjects = objects[x].getObjects().forEach(function(p) {
+						var groupObjects = o.getObjects().forEach(function(p) {
                             if (p.id == id) {
 								p.set("fill", color.toHexString());
 								p.set("stroke", color.toHexString());
@@ -512,15 +616,16 @@
 						} 						
 					} 
                 });
-                capBelow.renderAll()
+                canvas.renderAll()
 				reRenderBG("cap");
 			},
 			hide: function(color) {
 				$(this).data('changed', true);
-				var id = $(this).data('element');
-				var objects = capBelow.getObjects().forEach(function(o) {
+				const id = $(this).data('element');
+				const canvas = $(this).data('canvas') == 'below' ? capBelow : capLogoCanvas
+				canvas.getObjects().forEach(function(o) {
                     if (o.get('type') == "group") {
-						var groupObjects = objects[x].getObjects().forEach(function(p) {
+						var groupObjects = o.getObjects().forEach(function(p) {
                             if (p.id == id) {
 								p.set("fill", color.toHexString());
 								p.set("stroke", color.toHexString());
@@ -532,29 +637,47 @@
 						} 						
 					} 
                 });
-                capBelow.renderAll()
+                canvas.renderAll()
 				reRenderBG("cap");
 			}
 		})
 	})
 
-    $(".belowCapTextureToggle").on("click",function() {
-		if ($(this).is(':checked')) {
-			state = true;
-		} else {
-			state = false;
-		}
-		var id = $(this).data("id");
-		capBelow.getObjects().forEach(function(o) {
+    $(".capTextureToggle").on("click",function() {
+		const id = $(this).data("id");
+		const state = $(this).is(':checked') ? true : false
+		const canvas = $(this).data('canvas') == 'below' ? capBelow : capLogoCanvas
+		canvas.getObjects().forEach(function(o) {
             if (o.id == id) {
-				if (state == true) {
-					o.visible = true;
-				} else {
-					o.visible = false;
-				}
+				o.set("visible", state)
 			}
         });
+		canvas.renderAll()
 		reRenderBG("cap");
+	})
+
+	$("#toggleCapGuides").on("click",function() {
+		if($(this).is(':checked')){
+			capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
+		}else{
+			capLogoCanvas.setOverlayImage(null,capLogoCanvas.renderAll.bind(capLogoCanvas));;
+		}
+	})
+
+	$("#toggleJerseyGrid").on("click",function() {
+		if($(this).is(':checked')){
+			jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		}else{
+			jerseyLogoCanvas.setOverlayImage(null,jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));;
+		}
+	})
+
+	$("#togglePantsGrid").on("click",function() {
+		if($(this).is(':checked')){
+			pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+		}else{
+			pantsLogoCanvas.setOverlayImage(null,pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));;
+		}
 	})
 
     function initializeCanvas() {
@@ -718,6 +841,24 @@
 			selectable:true
 		});
 
+		eyeletFillColor = new fabric.Path("m 141.20252,252.54544 c 0,1.99661 -1.61857,3.61519 -3.61519,3.61519 -1.99661,0 -3.61519,-1.61858 -3.61519,-3.61519 0,-1.99662 1.61858,-3.61519 3.61519,-3.61519 1.99662,0 3.61519,1.61857 3.61519,3.61519 z m -61.999996,0 c 0,1.99661 -1.618576,3.61519 -3.61519,3.61519 -1.996615,0 -3.615191,-1.61858 -3.615191,-3.61519 0,-1.99662 1.618576,-3.61519 3.615191,-3.61519 1.996614,0 3.61519,1.61857 3.61519,3.61519 z",{
+			fill:initialCapColors["eyeletFillColor"],
+			id:'eyeletFillColor'
+		});
+		
+		eyeletStrokeColor = new fabric.Path("m 75.59375,248.0625 c -2.469498,0 -4.5,1.99925 -4.5,4.46875 0,2.4695 2.030499,4.5 4.5,4.5 2.4695,0 4.46875,-2.0305 4.46875,-4.5 0,-2.4695 -1.999252,-4.46875 -4.46875,-4.46875 z m 62,0 c -2.46949,0 -4.5,1.99924 -4.5,4.46875 0,2.4695 2.0305,4.5 4.5,4.5 2.46951,0 4.46875,-2.03051 4.46875,-4.5 0,-2.4695 -1.99925,-4.46875 -4.46875,-4.46875 z m -62,1.75 c 1.52373,0 2.71875,1.19501 2.71875,2.71875 0,1.52372 -1.195022,2.75 -2.71875,2.75 -1.523729,0 -2.75,-1.22628 -2.75,-2.75 0,-1.52374 1.226268,-2.71875 2.75,-2.71875 z m 62,0 c 1.52374,0 2.71875,1.19501 2.71875,2.71875 0,1.52373 -1.19502,2.75 -2.71875,2.75 -1.52372,0 -2.75,-1.22628 -2.75,-2.75 0,-1.52373 1.22627,-2.71875 2.75,-2.71875 z",{
+			fill:initialCapColors["eyeletStrokeColor"],
+			id:'eyeletStrokeColor',
+			shadow:{ color:"rgb(0,0,0)",blur:4,offsetX:0,offsetY:1 }
+		});
+		
+		var eyeletGroup = new fabric.Group ([eyeletFillColor, eyeletStrokeColor])
+		eyeletGroup.set({
+			visible:true,
+			selectable:false,
+			id:'eyeletGroup'
+		});
+
         capBelow.add(underBrimColor);
 		capBelow.add(topsideBrimColor);
 		capBelow.add(curvedBrimColor);
@@ -737,6 +878,7 @@
 		capBelow.add(capPinstripeColor);
 		capBelow.add(capPinstripe2Color);
 		capBelow.add(horizontalPinstripeColor);
+		capLogoCanvas.add(eyeletGroup);
 		//capBelow.add(braidStripeInnerColor);
 		//capBelow.add(braidStripeOuterColor);
 		//capBelow.add(frontPanelBorderColor);
@@ -745,6 +887,10 @@
         jerseyBelow.renderAll()
         pantsBelow.renderAll()
         capBelow.renderAll()
+
+		jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png', pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+		capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png', capLogoCanvas.renderAll.bind(capLogoCanvas));
 
         reRenderBG("jersey")
         reRenderBG("pants")

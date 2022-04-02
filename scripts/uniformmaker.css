@@ -193,6 +193,30 @@ td {
 	border-radius: 5px; 
 }
 
+#jerseyContainer {
+	width:384px; 
+	height:768px; 
+	top:0px;
+	left:0px;
+	position:absolute; 
+}
+
+#pantsContainer {
+	width:384px;
+	height:384px;
+	top:0px;
+	left:384px;
+	position:absolute; 
+}
+
+#capContainer {
+	width:384px;
+	height:384px;
+	top:384px;
+	left:384px;
+	position:absolute; 
+}
+
 fieldset {
 	margin-top:20px;
 	width: 512px;
