@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.2"
+   width="319.1712"
+   height="319.138"
+   id="svg2"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04, custom)"
+   sodipodi:docname="logo_macron2.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1414"
+     inkscape:window-height="785"
+     id="namedview27"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="0.24756139"
+     inkscape:cx="-842.21534"
+     inkscape:cy="-20.197011"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2"
+     inkscape:pagecheckerboard="0" />
+  <defs
+     id="defs4" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     id="path3277"
+     style="fill:#000000;stroke:none"
+     d="m 195.0419,140.97721 c 31.3319,-14.23306 44.274,-51.10475 28.2634,-80.5215 -11.0187,-20.24496 -29.4521,-31.36762 -51.9852,-31.36762 -15.2605,0 -26.2303,4.41896 -38.51,15.51298 -30.7772,27.80537 -23.0662,77.59593 14.7439,95.20263 14.7338,6.86093 33.9241,7.33515 47.4879,1.17351 z m -54.9298,21.27458 c -21.7783,-10.20582 -36.3763,-26.44102 -53.083802,-59.0372 -13.3327,-26.01212 -26.8101,-68.50036 -23.1336,-72.93022 5.0236,-6.05317 31.2284,-19.26598 49.435602,-24.9261398 14.8,-4.60096996 22.6719,-5.48955996 47.3386,-5.34361996 25.8356,0.15285 31.9844,1.00015996 48.4994,6.68334996 C 242.4369,18.14645 271.4352,39.48954 289.6456,65.93032 l 8.9361,12.97472 -9.814,11.72171 c -22.6426,27.04408 -56.5974,53.99274 -84.4553,67.02902 -21.1398,9.8925 -48.6895,11.86475 -64.2003,4.59602 z M 70.224698,292.31646 c -29.9252,-20.0281 -50.7026,-46.849 -62.7702004,-81.02791 -4.7205,-13.36974 -6.3808,-23.42854 -7.22229997,-43.75744 C -1.1173024,134.9306 3.3073976,112.73089 16.347098,86.67826 c 10.7398,-21.45744 24.8553,-39.09025 26.8838,-33.58271 2.7205,7.38619 46.6824,244.27891 45.9813,247.77411 -0.5586,2.7847 -5.1107,0.7341 -18.9875,-8.5532 z m 74.270102,26.4261 c -7.5168,-0.6171 -9.9231,-1.7115 -9.0077,-4.097 3.0085,-7.84 172.6619,-209.69397 174.6075,-207.74835 3.7865,3.78647 9.0766,34.50761 9.0766,52.71031 0,72.95654 -49.7705,137.30184 -119.5848,154.60414 -15.5916,3.8641 -39.3807,5.8205 -55.0916,4.5309 z"
+     inkscape:connector-curvature="0" />
+</svg>
