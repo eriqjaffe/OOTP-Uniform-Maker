@@ -95,7 +95,7 @@
 					<table>
 					<div class="accordion">	
                         <table style="width:100%;"><tr><td>
-                        <div class="skltbs-theme-light" data-skeletabs='{ "panelHeight": "adaptive" }'>
+                        <div class="skltbs-theme-light" data-skeletabs='{ "panelHeight": "adaptive", "keyboard": false }'>
                             <ul class="skltbs-tab-group">
                                 <li class="skltbs-tab-item">
                                 <button class="skltbs-tab">Jersey</button>
@@ -502,28 +502,28 @@
 										<div class="accord-content">
 											<table style="width:100%;">
 												<tr>
-													<td class="checkCell"><input type="checkbox" class="aboveTextureToggle textActiveToggle" data-id="textLogo" data-checkbox="textToggle" data-selector="textColorSelector" id="textLogoCheck"></td>
-													<td colspan="2"><label>Text: </label><input type="text" id="capText" value="L" style="width:79%; text-align:center;" disabled/></td>
+													<td class="checkCell"><input type="checkbox" class="capTextureToggle textActiveToggle" data-id="textLogo" data-textbox="capText" data-checkbox="capTextToggle" data-selector="textColorSelector" id="textLogoCheck"></td>
+													<td colspan="2"><label>Text: </label><input type="text" class="capText" id="capText" data-id="capText" value="L" style="width:79%; text-align:center;" disabled/></td>
 												</tr>
 											</table>
 											<table style="width:100%;" id="tableOne">
 												<tr>
-													<td style="text-align:center;"><input type="checkbox" class="textToggle" data-id="capLogoText" checked><input class="selector textColorSelector" type="text" id="capLogoTextColor" data-element="capLogoText" data-canvas="above"></td>
-													<td style="text-align:center;"><input type="checkbox" class="textToggle" data-id="capLogoTextStroke1" checked><input class="selector textColorSelector" type="text" id="capLogoStroke1Color" data-element="capLogoTextStroke1" data-canvas="above"></td>
-													<td style="text-align:center;"><input type="checkbox" class="textToggle" data-id="capLogoTextStroke2" checked><input class="selector textColorSelector" type="text" id="capLogoStroke2Color" data-element="capLogoTextStroke2" data-canvas="above"></td>
+													<td style="text-align:center;"><input type="checkbox" class="capTextToggle" data-group="textLogo" data-id="capLogoText" checked><input class="capSelector textColorSelector" type="text" id="capLogoTextColor" data-element="capLogoText" data-canvas="above"></td>
+													<td style="text-align:center;"><input type="checkbox" class="capTextToggle" data-group="textLogo" data-id="capLogoTextStroke1" checked><input class="capSelector textColorSelector" type="text" id="capLogoStroke1Color" data-element="capLogoTextStroke1" data-canvas="above"></td>
+													<td style="text-align:center;"><input type="checkbox" class="capTextToggle" data-group="textLogo" data-id="capLogoTextStroke2" checked><input class="capSelector textColorSelector" type="text" id="capLogoStroke2Color" data-element="capLogoTextStroke2" data-canvas="above"></td>
 												<tr>
 											</table>
 											<table style="width:100%;">
 												<tr>
-													<td class="checkCell"><input type="checkbox" class="aboveTextureToggle textActiveToggle" data-id="textLogo2" data-checkbox="text2Toggle" data-selector="text2ColorSelector" id="textLogo2Check"></td>
-													<td colspan="2"><label>Text: </label><input type="text" id="capText2" value="A" style="width:79%; text-align:center;" disabled/></td>
+													<td class="checkCell"><input type="checkbox" class="capTextureToggle textActiveToggle" data-id="textLogo2" data-textbox="capText2" data-checkbox="text2Toggle" data-selector="text2ColorSelector" id="textLogo2Check"></td>
+													<td colspan="2"><label>Text: </label><input type="text" class="capText" id="capText2" data-id="capText2" value="A" style="width:79%; text-align:center;" disabled/></td>
 												</tr>
 											</table>
 											<table style="width:100%;" id="tableTwo">
 												<tr>
-													<td style="text-align:center;"><input type="checkbox" class="text2Toggle" data-id="capLogo2Text" checked><input class="selector text2ColorSelector" type="text" id="capLogo2TextColor" data-element="capLogo2Text" data-canvas="above"></td>
-													<td style="text-align:center;"><input type="checkbox" class="text2Toggle" data-id="capLogo2TextStroke1" checked><input class="selector text2ColorSelector" type="text" id="capLogo2Stroke1Color" data-element="capLogo2TextStroke1" data-canvas="above"></td>
-													<td style="text-align:center;"><input type="checkbox" class="text2Toggle" data-id="capLogo2TextStroke2" checked><input class="selector text2ColorSelector" type="text" id="capLogo2Stroke2Color" data-element="capLogo2TextStroke2" data-canvas="above"></td>
+													<td style="text-align:center;"><input type="checkbox" class="capText2Toggle" data-group="textLogo2" data-id="capLogo2Text" checked><input class="capSelector text2ColorSelector" type="text" id="capLogo2TextColor" data-element="capLogo2Text" data-canvas="above"></td>
+													<td style="text-align:center;"><input type="checkbox" class="capText2Toggle" data-group="textLogo2" data-id="capLogo2TextStroke1" checked><input class="capSelector text2ColorSelector" type="text" id="capLogo2Stroke1Color" data-element="capLogo2TextStroke1" data-canvas="above"></td>
+													<td style="text-align:center;"><input type="checkbox" class="capText2Toggle" data-group="textLogo2" data-id="capLogo2TextStroke2" checked><input class="capSelector text2ColorSelector" type="text" id="capLogo2Stroke2Color" data-element="capLogo2TextStroke2" data-canvas="above"></td>
 												<tr>
 											</table>
 											<table style="width:100%;">
@@ -1016,6 +1016,75 @@
         });
 		canvas.renderAll()
 		reRenderBG("cap");
+	})
+
+	$(".capText").on("keyup",function() {
+		const txt = $(this).val()
+		const g = ($(this).attr("id") == "capText") ? capLogoCanvas.getObjects().find(o => o.id === 'textLogo') : capLogoCanvas.getObjects().find(o => o.id === 'textLogo2')
+		g.getObjects().forEach(function(o) {
+			o.set("text", txt)
+		})
+		capLogoCanvas.renderAll()
+	})
+
+	$(".textActiveToggle").on("click",function(e){
+		console.log("hello world")
+		var state = false;
+		$(".textActiveToggle").each(function(e) {
+			if ($(this).is(":checked")) {
+				state = true;
+			}
+		})
+		if (state == true) {
+			$(".textOption").each(function() {
+				$(this).prop( "disabled", false );
+			})
+			$("#fontTypeCombo").prop("disabled",false);
+		} else {
+			$("#fontTypeCombo").prop("disabled",true);
+			$(".textOption").each(function() {
+				$(this).prop( "disabled", true );
+			})
+		}
+
+		state = false;
+		var checkbox = $(this).data("checkbox");
+		var selector = $(this).data("selector");
+		var textbox = $(this).data("textbox")
+		if ($(this).is(":checked")) {
+			$("#"+textbox).prop("disabled",false)
+			$("."+checkbox).each(function(e) {
+				$(this).prop("disabled",false)
+			})
+			$("."+selector).each(function(e) {
+				$(this).spectrum('enable');
+			})
+		} else {
+			$("#"+textbox).prop("disabled",true)
+			$("."+checkbox).each(function(e) {
+				$(this).prop("disabled",true)
+			})
+			$("."+selector).each(function(e) {
+				$(this).spectrum('disable');
+			})
+		}
+
+	})
+
+	$(".capTextToggle").on("click",function() {
+		//var id = $(this).data("id");
+		var g = capLogoCanvas.getObjects().find(o => o.id === $(this).data("group"));
+		var o = g.getObjects().find(o => o.id === $(this).data("id"));
+		o.set("visible", $(this).is(':checked'))
+		capLogoCanvas.renderAll();
+	})
+
+	$(".capText2Toggle").on("click",function() {
+		//var id = $(this).data("id");
+		var g = capLogoCanvas.getObjects().find(o => o.id === $(this).data("group"));
+		var o = g.getObjects().find(o => o.id === $(this).data("id"));
+		o.set("visible", $(this).is(':checked'))
+		capLogoCanvas.renderAll();
 	})
 
 	$("#toggleCapGuides").on("click",function() {
