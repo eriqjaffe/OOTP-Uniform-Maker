@@ -20,6 +20,9 @@
     "electron": "^18.0.1"
   },
   "dependencies": {
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "imagemagick-cli": "^0.5.0",
+    "jimp": "^0.16.1",
+    "sharp": "^0.30.3"
   }
 }

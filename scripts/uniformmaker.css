@@ -217,6 +217,14 @@ td {
 	position:absolute; 
 }
 
+#tipContainer {
+	width:768px;
+	height:60px;
+	top:768px;
+	left:0px;
+	position:absolute;
+}
+
 fieldset {
 	margin-top:20px;
 	width: 512px;

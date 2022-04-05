@@ -25,6 +25,9 @@
 	<link href='./scripts/jquery.range.css' rel='stylesheet' type='text/css'>
     <link href='./scripts/skeletabs.css' rel='stylesheet' type='text/css'>
     <script>
+		const params = new URLSearchParams(window.location.search)
+		const port = params.get('port')
+
         const initialJerseyColors = {jerseyColor:"#FFFFFF",jerseyFrontColor:"#008800",jerseyBackColor:"#880000",buttonPadFillColor:"transparent",buttonPadColor:"#000000",collarColor:"#103959",leftSleeveColor:"#FFFFFF",rightSleeveColor:"#FFFFFF",leftSleeveLongColor:"#FFFFFF",rightSleeveLongColor:"#FFFFFF",jerseyPinstripesColor:"#000000",jerseyPinstripesStrokeColor:"transparent",undershirtColor:"#103959",sleeveSeamAngledColor:"#0202f0",sleeveSeamAngledStrokeColor:"#000000",racingStripeLargeColor:"#ff0000",racingStripeSmallColor:"#00FF00",sleeveSeamXLColor:"#971717",sleeveSeamXLStrokeColor:"#000000",smallTopShouldersColor:"#999999",smallTopShouldersStrokeColor:"#000000",bigTopShouldersColor:"#00FF00",bigTopShouldersStrokeColor:"#000000",sidePanelSmallColor:"#FF0000",sidePanelSmallStrokeColor:"#0000FF",sidePanelSmallRoundedColor:"#0000FF",sidePanelSmallRoundedStrokeColor:"#FF0000",sidePanelLargeRoundedColor:"#00FF00",sidePanelLargeRoundedStrokeColor:"yellow",sidePanelVColor:"yellow",sidePanelVStrokeColor:"#00FF00",arcedStripeColor:"#003399",placketPipingInnerColor:"#FF0000",placketPipingMiddleColor:"#00FF00",placketPipingOuterColor:"#0000FF",widePlacketPipingInnerColor:"#FF0000",widePlacketPipingMiddleColor:"#00FF00",widePlacketPipingOuterColor:"#0000FF",tequilaSunrise1Color:"#ef7212",tequilaSunrise2Color:"#ffcf00",tequilaSunrise3Color:"#ff7900",tequilaSunrise4Color:"#d70039",sleevePipingInnerColor:"#FF0000",sleevePipingMiddleColor:"#FFFFFF",sleevePipingOuterColor:"#0000FF",thinCuffInnerColor:"#FF0000",thinCuffMiddleColor:"#FFFFFF",thinCuffOuterColor:"#0000FF",sleeveCuffInnerColor:"#FF0000",sleeveCuffMiddleColor:"#FFFFFF",sleeveCuffOuterColor:"#0000FF",shoulderPipingInnerColor:"#FF0000",shoulderPipingMiddleColor:"#FFFFFF",shoulderPipingOuterColor:"#0000FF",swashFillColor:"#000000",swashStrokeColor:"#FF0000",wordmarkTextColor:"#103959",wordmarkTextStroke1Color:"#FFFFFF",wordmarkTextStroke2Color:"#FF0000",beachBlanketTopColor:"#FF0000",beachBlanketMiddleColor:"#0000FF",beachBlanketBottomColor:"#FF0000",vNeckThinInnerColor:"#FF0000",vNeckThinMiddleColor:"#FFFFFF",vNeckThinOuterColor:"#0000FF",vNeckOffsetInnerColor:"#FF0000",vNeckOffsetMiddleColor:"#FFFFFF",vNeckOffsetOuterColor:"#0000FF",vNeckThickInnerColor:"#FF0000",vNeckThickMiddleColor:"#FFFFFF",vNeckThickOuterColor:"#0000FF",buttonsColor:"#FFFFFF",camoBaseColor:"#4a551e",camoLayer1Color:"#052503",camoLayer2Color:"#beb585",digiCamoBaseColor:"#9a8b62",digiCamoLayer1Color:"#372900",digiCamoLayer2Color:"#736632",butterflyColor:"#103959",cadetCollarColor:"#FF0000",fullCollarColor:"#00FF00",neckCollarColor:"#0000FF",sunCollar1Color:"#FF0000",sunCollar2Color:"#00FF00",buttonDownCollarColor:"#00FFFF",jerseyFlapColor:"#191970",jerseyFlapTrimColor:"#800000",jerseyFlapButtonsColor:"#FFFFFF",jerseyShield1WideStrokeColor:"#FF0000",jerseyShield1WideColor:"#0000FF",jerseyShield1InnerStrokeColor:"#000000",jerseyShield1InnerColor:"#00FF00",jerseyShield1ButtonsColor:"#FFFFFF",jerseyShield2StrokeColor:"#FF0000",jerseyShield2InnerColor:"#0000FF",jerseyShield2ButtonsColor:"#FFFFFF",jerseyPanelStrokeColor:"#FF0000",jerseyPanelFillColor:"#00FF00",jerseyPanelButtonColor:"#FFFFFF",bowTie1Color:"#0000FF",bowTie2Color:"#FF0000",tieColor:"#272A26",pocketFillColor:"#fffdd0",xLacesColor:"#0000FF",vLacesColor:"#FF0000",hockeyLacesColor:"#CFCFCF",suspendersColor:"#228b22",nikeHornsColor:"#FF9933",shoulderLoops1Color:"#6600CC",shoulderLoops2Color:"#339933",ncaaShoulderColor:"#996633",makersMarkColor:"#000000",snakeskinColor:"#A41E20",rainbowShoulder1Color:"#041E42",rainbowShoulder2Color:"#D50032",rainbowShoulder3Color:"#FA4616",rainbowShoulder4Color:"#FFCD00"}
         const initialPantsColors = {pantsColor:"#ffffff", belt:"#3c3c3c", pantsPinstripes:"#0c2340", singleStripe:"#ff0000", doubleStripeOuter:"#ff0000", doubleStripeInner:"#0000ff", tuxedoStripeBack:"#3c3c3c", tuxedoStripeFront:"#00ff00", elasticBottom:"#0000ff", elasticMiddle:"#ffffff", elasticTop:"#ff0000"}
         const initialCapColors = {capColor:"#c6011f",underBrimColor:"#656765",topsideBrimColor:"#1d1654",squatcheeColor:"yellow",frontPanelColor:"#FFFFFF",smallFrontPanelColor:"yellow",capPinstripeColor:"blue",capPinstripe2Color:"cyan", horizontalPinstripeColor:"yellow",capLogoTextColor:"white",capLogoStroke1Color:"green",capLogoStroke2Color:"black",capLogo2TextColor:"white",capLogo2Stroke1Color:"green",capLogo2Stroke2Color:"black",bandBoxSingleThickColor:"orange",bandBoxDoubleThickColor:"greenyellow",jockeyColor:"brown",braidStripeInnerColor:"red",braidStripeOuterColor:"blue",frontPanelBorderColor:"cyan",bostonColor:"yellowgreen",smallPanelBorderColor:"cyan",curvedBrimColor:"cyan",curvedBrimBorderColor:"blue",peakBandColor:"orange",stingyBrimColor:"red",lidPinstripesColor:"blue",stingyLidPinstripesColor:"yellow",eyeletFillColor:"black",eyeletStrokeColor:"yellow",snakeskinColor:"#000000",scrambledEggColor:"#FED141",capMakersMarkColor:"#FFFFFF"}
@@ -34,6 +37,7 @@
 		var capMakersMarkX = capMakersMarkCoords['capLeftX']
 		var capMakersMarkY = capMakersMarkCoords['capLeftY']
 		var capMakersMarkA = capMakersMarkCoords['capLeftA']
+		var activeCanvas = null;
     </script>
 </head>
 <body>
@@ -65,9 +69,9 @@
 						<canvas id="capComposite" width="384" height="384" style="position:absolute; top:0; float:right; z-index:1;"></canvas>
 						<canvas id="capAbove" width="512" height="512" style="position:absolute; top:0; float:right; z-index:2;"></canvas>
 					</div>
-                    <!-- 
-                    
-                     -->
+                    <div id="tipContainer">
+						<span id="tipSpan"></span>
+					</div>
                 </div>
             </div>
             <div class="col span_2_of_5" style="max-height:800px;">
@@ -450,51 +454,51 @@
 										</div>
 										<div class="accord-header inactive-header">Logo Image</div>
 										<div class="accord-content">
-											<div id="uploadImageDiv">
+											<div id="capUploadImageDiv">
 											<table style="width:100%;">
 												<tr>
 													<!--<input type="file" id="uploadedImg" accept="image/*" style="display:none;"/>-->
 													<td><center>
-														<input type="button" class="button" id="fakeImageButton" value="Upload An Image">
+														<input type="button" class="button fakeImageButton" id="capImageButton" data-canvas='cap' value="Upload An Image">
 													</td>
 												</tr>
 											</table>
 											</div>
-											<div id="selectedImageDiv" style="display:none;">
+											<div id="capSelectedImageDiv" style="display:none;">
 												<table style="width:100%;"><tr><td><center>
 												<b>Selected Image:</b> <span id="fileName"></span>
 												</td></tr></table>
 											</div>
-											<div id="trimImageDiv" style="display:none;">
+											<div id="capTrimImageDiv" style="display:none;">
 												<table style="width:100%;">
 													<tr>
 														<td><center>
-															<input type="button" id="colorSquare" class="colorSquare" value="Pick Color" style="margin-right:10px;"><span id="chosenCoordinates" style="margin-right:5px;"></span>
+															<input type="button" id="capColorSquare" class="colorSquare" value="Pick Color" style="margin-right:10px;" data-canvas="capLogoCanvas"><span id="chosenCoordinates" style="margin-right:5px;">hello</span>
 															Fuzz %:
 															<input type="button" class="button rangeButton" value="-">
-															<input type="range" class="range" id="colorFuzz" value="50" min="1" max="100" style="margin-left:5px; margin-right:5px;">
+															<input type="range" class="range" id="capColorFuzz" value="50" min="1" max="100" style="margin-left:5px; margin-right:5px;">
 															<input type="button" class="button rangeButton" value="+">
 															<span id="fuzzAmount">50</span>%
 														</td>
 													</tr>
 													<tr>
 														<td><center>
-															<input type="button" class="button" id="border" value="Remove Border">
-															<input type="button" class="button removeColor" id="removeColorRange" value="Remove Section" data-x="0" data-y="0">
-															<input type="button" class="button removeColor" id="removeAllColor" value="Remove All" data-x="0" data-y="0">
-															<input type="button" class="button replaceColor" id="replaceColorRange" value="Replace Section" data-x="0" data-y="0">
-															<input type="button" class="button replaceColor" id="replaceAllColor" value="Replace All" data-x="0" data-y="0">
-															<input type="button" id="autoSize" class="button" value="Auto-Size Logo">
+															<input type="button" class="button border" id="capBorder" value="Remove Border" data-canvas="capLogoCanvas">
+															<input type="button" class="button removeColor removeColorRange" id="capRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="capLogoCanvas">
+															<input type="button" class="button removeColor removeAllColor" id="capRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="capLogoCanvas">
+															<input type="button" class="button replaceColor replaceColorRange" id="capReplaceColorRange" value="Replace Section" data-x="0" data-y="0" data-canvas="capLogoCanvas">
+															<input type="button" class="button replaceColor replaceAllColor" id="capReplaceAllColor" value="Replace All" data-x="0" data-y="0" data-canvas="capLogoCanvas">
+															<input type="button" id="capAutoSize" class="button" value="Auto-Size Logo" data-canvas="capLogoCanvas">
 														</td>
 													</tr>
 												</table>
 											</div>
-											<div id="replaceColorDiv" style="display:none;">
+											<div id="capReplaceColorDiv" class="replaceColorDiv" style="display:none;">
 												<table style="width:100%;"><tr>
 												<td><center>
 												Select Replacement Color:
-												<input class="colorSelector" type="text" id="replacementColor" value="#FF0000">
-												<input type="button" class="button" id="replaceColorSubmit" value="Replace Color" data-x="0" data-y="0" data-action="null">
+												<input class="colorSelector" type="text" id="capReplacementColor" value="#FF0000">
+												<input type="button" class="button replaceColorSubmit removeColor" id="capReplaceColorSubmit" value="Replace Color" data-x="0" data-y="0" data-action="null" data-canvas="capLogoCanvas">
 												</tr></table>
 											</div>
 										</div>
@@ -821,7 +825,7 @@
 			}
 		});
     })
-    
+
     initializeCanvas()
 
     $("#jerseyColor").spectrum({
@@ -1005,6 +1009,17 @@
 		})
 	})
 
+	$("#capReplacementColor").spectrum({
+		showInput: true,
+		preferredFormat: prefColorFormat,
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		showSelectionPalette: true,
+		palette: [ ],
+		color: "#FF0000"
+	})
+
     $(".capTextureToggle").on("click",function() {
 		const id = $(this).data("id");
 		const state = $(this).is(':checked') ? true : false
@@ -1124,6 +1139,56 @@
 		}
 		o.setCoords();	
 		capLogoCanvas.renderAll();
+	})
+
+	$(".fakeImageButton").on("click",function() {
+		if ($(this).data("canvas") == "cap") {
+			var canvas = capLogoCanvas
+			var imLeft = 256
+			var imTop = 256
+		}
+		if ($(this).data("canvas") == "jersey") {
+			var canvas = jerseyLogoCanvas
+		}
+		if ($(this).data("canvas") == "pants") {
+			var canvas = pantsLogoCanvas
+		}
+		$.ajax({
+			type: "GET",
+			url: "http://127.0.0.1:"+port+"/uploadImage",
+			success: function(data) {
+				var imgObj = new Image();
+				imgObj.src = data.image;
+				$("#fileName").html(data.filename);
+				imgObj.onload = function () {
+					var image = new fabric.Image(imgObj);
+					image.set({
+						originX: 'center',
+						originY: 'center',
+						left: imLeft,
+						top: imTop,
+						perPixelTargetFind: true,
+						centeredScaling: true,
+						centeredRotation: true,
+						name: data.filename,
+						id: data.filename
+					});
+					image.filters.push(new fabric.Image.filters.Resize({
+						resizeType: 'lanczos', // typo fixed
+						lanczosLobes: 2 // typo fixed
+					}));
+					image.on('object:modified',function() {
+						imLeft = image.get('left')
+						imTop = image.get('top');
+					})
+					var h = image.height;
+					var w = image.width;
+					canvas.add(image);
+					canvas.centerObject(image)
+					canvas.renderAll();
+				}
+			}
+		});
 	})
 
     function initializeCanvas() {
@@ -1574,6 +1639,578 @@
 			canvas.add(makersMark);
 			canvas.renderAll();
 		})
+	}
+
+	capLogoCanvas.on('selection:created', function(e) {
+		activeCanvas = capLogoCanvas;
+		$("#straightenObject").css("display","inline-block");
+		var obj = e.selected[0];
+		if (obj.id == 'wordmark') {
+			$("#tipSpan").html("If you're trying to select an image instead of the text, you have to hide the text first.");
+		}
+		if (obj.type == 'image') {
+			$("#fileName").html(obj.get('name'));
+			if ($("#capTrimImageDiv").css("display") == "none") {
+				$("#capTrimImageDiv").css("display","block");
+				$("#capUploadImageDiv").css("display","none");
+				$("#capSelectedImageDiv").css("display","block");
+			}
+			$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+		}
+	})
+
+	capLogoCanvas.on('selection:cleared', function(e) {
+		$("#straightenObject").css("display","none");
+		if ($("#replaceColorDiv").css("display") == "block") {
+			$("#replaceColorDiv").slideToggle();
+		}
+		if ($("#capTrimImageDiv").css("display") == "block") {		
+			$("#capTrimImageDiv").slideToggle();
+			$("#colorSquare").val("Select Color");
+			$("#colorSquare").css("background","#FFFFFF");
+			$("#colorSquare").css("color","#000000");
+			$("#chosenCoordinates").html("");
+		}
+		$("#capUploadImageDiv").css("display","block");
+		$("#capSelectedImageDiv").css("display","none");
+		$("#capReplaceColorDiv").css("display", "none")
+		$("#fileName").html("");
+		$("#tipSpan").html("");
+	})
+
+	$("#capAutoSize").on("click",function(e) {
+		var object = capLogoCanvas.getActiveObject();
+		if (object.get('type') == "image") {
+			var imageHeight = object.get("height");
+			var imageWidth = object.get("width")
+			object.scaleToHeight(50);
+			object.set({"left":106.5,"top":284,"angle":0});
+			object.setCoords();
+		}
+		capLogoCanvas.renderAll();
+	})
+
+	$(".colorSquare").on("click",function(e) {
+		if ($(this).data("canvas") == "capLogoCanvas") {
+			var canvas = capLogoCanvas
+			var fuzz = parseInt($("#capColorFuzz").val());
+			var square = $("#capColorSquare")
+		}
+		if ($(this).data("canvas") == "jerseyLogoCanvas") {
+			var canvas = jerseyLogoCanvas
+			var fuzz = parseInt($("#jerseyColorFuzz").val());
+			var square = $("#jerseyColorSquare")
+		}
+		if ($(this).data("canvas") == "pantsLogoCanvas") {
+			var canvas = pantsLogoCanvas
+			var fuzz = parseInt($("#pantsColorFuzz").val());
+			var square = $("#pantsColorSquare")
+		}
+		canvas.renderAll();
+		$(this).removeClass("colorSquareSelected").addClass("colorSquareActive");
+		var object = canvas.getActiveObject();
+		canvas.hoverCursor='url(./images/eyedropper.cur),default';
+	})
+
+	$(".border").on("click",function(e) {
+		if ($(this).data("canvas") == "capLogoCanvas") {
+			var canvas = capLogoCanvas
+			var fuzz = parseInt($("#capColorFuzz").val());
+		}
+		if ($(this).data("canvas") == "jerseyLogoCanvas") {
+			var canvas = jerseyLogoCanvas
+			var fuzz = parseInt($("#jerseyColorFuzz").val());
+		}
+		if ($(this).data("canvas") == "pantsLogoCanvas") {
+			var canvas = pantsLogoCanvas
+			var fuzz = parseInt($("#pantsColorFuzz").val());
+		}
+		var action = $(this).data("action");
+		if (canvas.getActiveObject()) {
+			//$("#overlay").css("display","inline-block");
+			var object = canvas.getActiveObject()
+			var idx = canvas.getObjects().indexOf(object)
+			if (object.get('type') == "image") {
+				var imLeft = object.get("left");
+				var imTop = object.get("top");
+				var pictureName = object.get('name');
+				$("#colorSquare").removeClass("colorSquareActive").removeClass("colorSquareSelected");
+				var theImage = object._originalElement.currentSrc;	
+				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
+				$.ajax({
+					type: "POST",
+					url: "http://127.0.0.1:"+port+"/removeBorder",
+					data: {imgdata: theImage, x: "1", y: "1", action: "removeBorder", color: "null", newcolor: "null", fuzz: fuzz, filename: pictureName},
+					success: function(data) {
+						console.log(data)
+						//$("#overlay").css("display","none");
+						//$("#testImage").attr("src","data:image/png;base64,"+data);
+						var imgObj = new Image();
+						imgObj.src = data;
+						imgObj.onload = function () {
+							var image = new fabric.Image(imgObj);
+							image.set({
+								originX: 'center',
+								originY: 'center',
+								left: imLeft,
+								top: imTop,
+								perPixelTargetFind: true,
+								centeredScaling: true,
+								centeredRotation: true,
+								name: pictureName,
+								id: pictureName
+							});
+							
+							image.filters.push(new fabric.Image.filters.Resize({
+								resizeType: 'lanczos', // typo fixed
+								lanczosLobes: 2 // typo fixed
+							}));
+							
+							image.on('object:modified',function() {
+								imLeft = image.get('left')
+								imTop = image.get('top');
+							});
+							
+							canvas.remove(object);
+							canvas.add(image);
+							image.moveTo(idx);
+							canvas.renderAll();
+							imLeft = image.get('left')
+							imTop = image.get('top');
+						}
+					}
+				})
+				return false;
+			}
+		}	
+	})
+
+	capLogoCanvas.on('mouse:move', function(e) {
+		if (capLogoCanvas.hoverCursor != "move") {
+			var ctx = capLogoCanvas.contextContainer;
+			var mouse = capLogoCanvas.getPointer(e.e);
+			var mouse = capLogoCanvas.getPointer(e.originalEvent);
+			var x = Math.round((mouse.x+capLogoCanvas.viewportTransform[4])* fabric.devicePixelRatio*capLogoCanvas.getZoom())
+			var y = Math.round((mouse.y+capLogoCanvas.viewportTransform[5])* fabric.devicePixelRatio*capLogoCanvas.getZoom())
+			var px = ctx.getImageData(x, y, 1, 1).data;
+			color = 'rgb('+px[0]+', '+px[1]+', '+px[2]+')';
+			var hex = rgb2hex(px[0],px[1],px[2])
+			$("#capColorSquare").css("background",hex);
+			$("#capColorSquare").css("color",idealTextColor(hex));
+			$("#capColorSquare").val(hex);			
+		}
+	});
+	
+	capLogoCanvas.on("mouse:down",function(e) {
+		if (capLogoCanvas.hoverCursor != "move") {
+			var ctx = capLogoCanvas.contextContainer;
+			$("#colorSquare").removeClass("colorSquareActive").addClass("colorSquareSelected");
+			capLogoCanvas.hoverCursor='move';
+			capLogoCanvas.off('mouse:move');
+			var object = capLogoCanvas.getActiveObject();
+			var mouse = object.getLocalPointer(e.e);
+			console.log(mouse.x)
+			console.log(mouse.y)
+			var imageX = parseInt(mouse.x);
+			var imageY = parseInt(mouse.y);
+			$("#chosenCoordinates").html("(X:"+imageX+", Y:"+imageY+")");
+			var mouse2 = capLogoCanvas.getPointer(e.e);
+			var x = parseInt(mouse2.x);
+			var y = parseInt(mouse2.y);
+			var px = ctx.getImageData(x, y, 1, 1).data;
+			var hex = rgb2hex(px[0],px[1],px[2]);
+			$("#xPos").html(imageX);
+			$("#yPos").html(imageY);
+			$(".removeColor").each(function(e) {
+				$(this).data("x",imageX);
+				$(this).data("y",imageY);
+			})
+			$(".replaceColor").each(function(e) {
+				$(this).data("x",imageX);
+				$(this).data("y",imageY);
+			})
+		}
+	})
+
+	$(".removeColorRange").on("click",function(e) {
+		if ($(this).data("canvas") == "capLogoCanvas") {
+			var canvas = capLogoCanvas
+			var fuzz = parseInt($("#capColorFuzz").val());
+			var colorSquare = $("#capColorSquare")
+		}
+		if ($(this).data("canvas") == "jerseyLogoCanvas") {
+			var canvas = jerseyLogoCanvas
+			var fuzz = parseInt($("#jerseyColorFuzz").val());
+		}
+		if ($(this).data("canvas") == "pantsLogoCanvas") {
+			var canvas = pantsLogoCanvas
+			var fuzz = parseInt($("#pantsColorFuzz").val());
+		}
+		var x = $(this).data("x");
+		var y = $(this).data("y");
+		var action = $(this).attr("id");
+		var color = $("#colorSquare").val();
+		if (canvas.getActiveObject()) {
+			var object = canvas.getActiveObject()
+			var idx = canvas.getObjects().indexOf(object)
+			if (object.get('type') == "image") {
+				//$("#overlay").css("display","inline-block");
+				var pictureName = object.get('name');
+				var pLeft = object.get('left')
+				var pTop = object.get('top')
+				var pScaleX = object.get('scaleX')
+				var pScaleY = object.get('scaleY')
+				var pX = x / pScaleX
+				var pY = y / pScaleY
+				colorSquare.removeClass("colorSquareActive").removeClass("colorSquareSelected");
+				var theImage = object._originalElement.currentSrc;
+				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();			
+				$.ajax({
+					type: "POST",
+					url: "http://127.0.0.1:"+port+"/removeColorRange",
+					data: {imgdata: theImage, x: pX, y: pY, color: color, action: action, fuzz: fuzz, filename: pictureName},
+					success: function(data) {
+						var imgObj = new Image();
+						imgObj.src = data;
+						imgObj.onload = function () {
+							var image = new fabric.Image(imgObj);
+							image.set({
+								originX: 'center',
+								originY: 'center',
+								left: pLeft,
+								top: pTop,
+								scaleX: pScaleX,
+								scaleY: pScaleY,
+								perPixelTargetFind: true,
+								centeredScaling: true,
+								centeredRotation: true,
+								name: pictureName,
+								id: pictureName
+							});
+							
+							image.filters.push(new fabric.Image.filters.Resize({
+								resizeType: 'lanczos', // typo fixed
+								lanczosLobes: 2 // typo fixed
+							}));	
+							
+							image.on('object:modified',function() {
+								imLeft = image.get('left');
+								imTop = image.get('top');
+							});
+							
+							canvas.remove(object);
+							canvas.add(image);
+							image.moveTo(idx);
+							canvas.renderAll();
+							imLeft = image.get('left');
+							imTop = image.get('top');
+							colorSquare.val("Select Color");
+							colorSquare.css("background","#FFFFFF");
+							colorSquare.css("color","#000000");
+							$("#overlay").css("display","none");
+						}
+					}
+				})
+				return false;
+			}
+		}
+	})
+
+	$(".removeAllColor").on("click",function(e) {
+		if ($(this).data("canvas") == "capLogoCanvas") {
+			var canvas = capLogoCanvas
+			var fuzz = parseInt($("#capColorFuzz").val());
+			var color = $("#capColorSquare").val();
+			var colorSquare = $("#capColorSquare")
+		}
+		if ($(this).data("canvas") == "jerseyLogoCanvas") {
+			var canvas = jerseyLogoCanvas
+			var fuzz = parseInt($("#jerseyColorFuzz").val());
+			var color = $("#jerseyColorSquare").val();
+			var colorSquare = $("#jerseyColorSquare")
+		}
+		if ($(this).data("canvas") == "pantsLogoCanvas") {
+			var canvas = pantsLogoCanvas
+			var fuzz = parseInt($("#pantsColorFuzz").val());
+			var color = $("#pantsColorSquare").val();
+			var colorSquare = $("#jerseyColorSquare")
+		}
+		var x = $(this).data("x");
+		var y = $(this).data("y");
+		var action = $(this).attr("id");
+		
+		if (canvas.getActiveObject()) {
+			var object = canvas.getActiveObject()
+			var idx = canvas.getObjects().indexOf(object)
+			if (object.get('type') == "image") {
+				$("#overlay").css("display","inline-block");
+				var pictureName = object.get('name');
+				var pLeft = object.get('left')
+				var pTop = object.get('top')
+				var pScaleX = object.get('scaleX')
+				var pScaleY = object.get('scaleY')
+				var pX = x / pScaleX
+				var pY = y / pScaleY
+				colorSquare.removeClass("colorSquareActive").removeClass("colorSquareSelected");
+				var theImage = object._originalElement.currentSrc;
+				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();			
+				$.ajax({
+					type: "POST",
+					//url: "./scripts/changecolor.php",
+					url: "http://127.0.0.1:"+port+"/removeAllColor",
+					data: {imgdata: theImage, x: pX, y: pY, color: color, action: action, fuzz: fuzz, filename: pictureName},
+					success: function(data) {
+						var imgObj = new Image();
+						imgObj.src = data;
+						imgObj.onload = function () {
+							var image = new fabric.Image(imgObj);
+							image.set({
+								originX: 'center',
+								originY: 'center',
+								left: pLeft,
+								top: pTop,
+								scaleX: pScaleX,
+								scaleY: pScaleY,
+								perPixelTargetFind: true,
+								centeredScaling: true,
+								centeredRotation: true,
+								name: pictureName,
+								id: pictureName
+							});
+							
+							image.filters.push(new fabric.Image.filters.Resize({
+								resizeType: 'lanczos',
+								lanczosLobes: 2
+							}));
+							
+							image.on('object:modified',function() {
+								imLeft = image.get('left');
+								imTop = image.get('top');
+							});
+							
+							canvas.remove(object);
+							canvas.add(image);
+							image.moveTo(idx);
+							canvas.renderAll();
+							imLeft = image.get('left');
+							imTop = image.get('top');
+							colorSquare.val("Select Color");
+							colorSquare.css("background","#FFFFFF");
+							colorSquare.css("color","#000000");
+							$("#overlay").css("display","none");
+						}
+					}
+				})
+				return false;
+			}
+		}
+	})
+	
+	$(".replaceColor").on("click",function(e) {
+		console.log($(this).data("canvas"))
+		if ($(this).data("canvas") == "capLogoCanvas") {
+			$("#capReplaceColorSubmit").data("action",$(this).attr("id"))
+			$("#capReplaceColorSubmit").data("x",$(this).data("x"))
+			$("#capReplaceColorSubmit").data("y",$(this).data("y"))
+			var color = $("#capColorSquare").val();
+			if ($("#capReplaceColorDiv").css("display") == "none") {
+				$("#capReplaceColorDiv").slideToggle();
+			}
+		}
+	})
+	
+	$(".replaceColorSubmit").on("click",function(e) {
+		console.log("got here")
+		if ($(this).data("canvas") == "capLogoCanvas") {
+			var canvas = capLogoCanvas
+			var fuzz = parseInt($("#capColorFuzz").val());
+			var color = $("#capColorSquare").val();
+			var newcolor = $("#capReplacementColor").spectrum("get").toHexString();
+			var colorSquare = $("#capColorSquare")
+			var newColorSquare = $("#capReplacemenColor")
+		}
+		if ($(this).data("canvas") == "jerseyLogoCanvas") {
+			var canvas = jerseyLogoCanvas
+			var fuzz = parseInt($("#jerseyColorFuzz").val());
+			var color = $("#jerseyColorSquare").val();
+			var newcolor = $("#jerseyReplacementColor").spectrum("get").toHexString();
+			var colorSquare = $("#jerseyuColorSquare")
+			var newColorSquare = $("#jerseyReplacemenColor")
+		}
+		if ($(this).data("canvas") == "pantsLogoCanvas") {
+			var canvas = pantsLogoCanvas
+			var fuzz = parseInt($("#pantsColorFuzz").val());
+			var color = $("#pantsColorSquare").val();
+			var newcolor = $("#pantsReplacementColor").spectrum("get").toHexString();
+			var colorSquare = $("#pantsColorSquare")
+			var newColorSquare = $("#pantsReplacemenColor")
+		}
+		var action = $(this).data("action");
+		var x = $(this).data("x");
+		var y = $(this).data("y");
+		if (canvas.getActiveObject()) {
+			var object = canvas.getActiveObject()
+			var idx = canvas.getObjects().indexOf(object)
+			if (object.get('type') == "image") {
+				var pictureName = object.get('name');
+				colorSquare.removeClass("colorSquareActive").removeClass("colorSquareSelected");
+				
+				var theImage = object._originalElement.currentSrc;
+
+				var pLeft = object.get('left')
+				var pTop = object.get('top')
+				var pScaleX = object.get('scaleX')
+				var pScaleY = object.get('scaleY')
+				var pX = x / pScaleX
+				var pY = y / pScaleY
+
+				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
+				
+				$.ajax({
+					type: "POST",
+					url: "http://127.0.0.1:"+port+"/replaceColor",
+					data: {imgdata: theImage, x: pX, y: pY, action: action, color: color, newcolor: newcolor, fuzz: fuzz, filename: pictureName},
+					success: function(data) {
+					//$("#testImage").attr("src","data:image/png;base64,"+data);
+						var imgObj = new Image();
+						imgObj.src = data;
+						imgObj.onload = function () {
+							var image = new fabric.Image(imgObj);
+							image.set({
+								originX: 'center',
+								originY: 'center',
+								left: pLeft,
+								top: pTop,
+								scaleX: pScaleX,
+								scaleY: pScaleY,
+								perPixelTargetFind: true,
+								centeredScaling: true,
+								centeredRotation: true,
+								name: pictureName,
+								id: pictureName
+							});
+							
+							image.filters.push(new fabric.Image.filters.Resize({
+								resizeType: 'lanczos',
+								lanczosLobes: 2
+							}));
+							
+							image.on('object:modified',function() {
+								imLeft = image.get('left')
+								imTop = image.get('top');
+								//$("#infoWTF").html("imLeft: "+imLeft+"<br>imTop: "+imTop);
+							});
+							
+							canvas.remove(object);
+							canvas.add(image);
+							image.moveTo(idx);
+							canvas.renderAll();
+							imLeft = image.get('left')
+							imTop = image.get('top');
+							colorSquare.val("Select Color");
+							colorSquare.css("background","#FFFFFF");
+							colorSquare.css("color","#000000");
+							newColorSquare.val("Select Color");
+							newColorSquare.css("background","#FF0000");
+							newColorSquare.css("color","#000000");
+							$("#overlay").css("display","none");
+							//$("#infoWTF").html("imLeft: "+imLeft+"<br>imTop: "+imTop);
+						}
+					}
+				})
+				return false;
+			}
+		}	
+	})
+
+	$(document).keydown(function(e) {   
+		if (activeCanvas != null) {
+			var obj = activeCanvas.getActiveObject();
+			if (e.shiftKey) {
+				var movementDelta = 10;
+			} else {
+				var movementDelta = 1;
+			}
+			switch (e.keyCode) {
+				case 107: // plus
+					if (obj.get('type') == "group") {
+						obj.bringToFront();
+						activeCanvas.renderAll();
+					}
+					return false;
+				case 109: // minus
+					if (obj.get('type') == "group") {
+						obj.sendToBack();
+						activeCanvas.renderAll();
+					}
+					return false;
+				case 37:
+					e.preventDefault();
+					var a = obj.get('left') - movementDelta;
+					obj.set('left', a);
+					obj.setCoords();
+					activeCanvas.renderAll();
+					break;
+				case 38:
+					e.preventDefault();
+					var a = obj.get('top') - movementDelta;
+					obj.set('top', a);
+					obj.setCoords();
+					activeCanvas.renderAll();
+					break;
+				case 39:
+					e.preventDefault();
+					var a = obj.get('left') + movementDelta;
+					obj.set('left', a);
+					obj.setCoords();
+					activeCanvas.renderAll();
+					break;
+				case 40:
+					e.preventDefault();
+					var a = obj.get('top') + movementDelta;
+					obj.set('top', a);
+					obj.setCoords();
+					activeCanvas.renderAll();
+					break;
+				case 46: // delete
+					if (obj.get('type') == "image") {
+						$("#fileName").html("");
+						activeCanvas.remove(obj);
+						activeCanvas.renderAll();
+					}
+					$("#tipSpan").html("");
+					activeCanvas = null;
+				return false;
+			}
+			return;
+		}
+	})
+
+	function rgb2hex(r,g,b) {
+		return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+	}
+	
+	function componentToHex(c) {
+		var hex = c.toString(16);
+		return hex.length == 1 ? "0" + hex : hex;
+	}
+
+	function idealTextColor(bgColor) {
+		var nThreshold = 105;
+		var components = getRGBComponents(bgColor);
+		var bgDelta = (components.R * 0.299) + (components.G * 0.587) + (components.B * 0.114);
+		return ((255 - bgDelta) < nThreshold) ? "#000000" : "#ffffff";   
+	}
+
+	function getRGBComponents(color) {       
+		var r = color.substring(1, 3);
+		var g = color.substring(3, 5);
+		var b = color.substring(5, 7);
+		return {
+		   R: parseInt(r, 16),
+		   G: parseInt(g, 16),
+		   B: parseInt(b, 16)
+		};
 	}
 </script>
 </html>
