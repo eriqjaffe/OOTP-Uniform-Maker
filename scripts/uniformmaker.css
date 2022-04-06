@@ -552,7 +552,8 @@ legend {
 /*  GO FULL WIDTH BELOW 480 PIXELS */
 @media only screen and (max-width: 480px) {
 	.col {  margin: 1% 0 1% 0%; }
-	.span_1_of_5, .span_2_of_5, .span_3_of_5, .span_4_of_5, .span_5_o
+	.span_1_of_5, .span_2_of_5, .span_3_of_5, .span_4_of_5, .span_5_of_5 { width: 100%; }
+}
 
 .colorSquare {
 	font-family: 'BenchNine', sans-serif;

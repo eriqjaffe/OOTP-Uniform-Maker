@@ -1642,6 +1642,7 @@
 	}
 
 	capLogoCanvas.on('selection:created', function(e) {
+		console.log("selection created")
 		activeCanvas = capLogoCanvas;
 		$("#straightenObject").css("display","inline-block");
 		var obj = e.selected[0];
@@ -1666,9 +1667,9 @@
 		}
 		if ($("#capTrimImageDiv").css("display") == "block") {		
 			$("#capTrimImageDiv").slideToggle();
-			$("#colorSquare").val("Select Color");
-			$("#colorSquare").css("background","#FFFFFF");
-			$("#colorSquare").css("color","#000000");
+			$("#capColorSquare").val("Select Color");
+			$("#capCcapColorSquare").css("background","#FFFFFF");
+			$("#capColorSquare").css("color","#000000");
 			$("#chosenCoordinates").html("");
 		}
 		$("#capUploadImageDiv").css("display","block");
@@ -1710,6 +1711,19 @@
 		$(this).removeClass("colorSquareSelected").addClass("colorSquareActive");
 		var object = canvas.getActiveObject();
 		canvas.hoverCursor='url(./images/eyedropper.cur),default';
+		canvas.on('mouse:move', function(e) {	
+			var ctx = canvas.contextContainer;
+			var mouse = canvas.getPointer(e.e);
+			var mouse = canvas.getPointer(e.originalEvent);
+			var x = Math.round((mouse.x+canvas.viewportTransform[4])* fabric.devicePixelRatio*canvas.getZoom())
+			var y = Math.round((mouse.y+canvas.viewportTransform[5])* fabric.devicePixelRatio*canvas.getZoom())
+			var px = ctx.getImageData(x, y, 1, 1).data;
+			color = 'rgb('+px[0]+', '+px[1]+', '+px[2]+')';
+			var hex = rgb2hex(px[0],px[1],px[2])
+			$("#capColorSquare").css("background",hex);
+			$("#capColorSquare").css("color",idealTextColor(hex));
+			$("#capColorSquare").val(hex);	
+		});
 	})
 
 	$(".border").on("click",function(e) {
@@ -1786,6 +1800,7 @@
 	})
 
 	capLogoCanvas.on('mouse:move', function(e) {
+		console.log("move move move")
 		if (capLogoCanvas.hoverCursor != "move") {
 			var ctx = capLogoCanvas.contextContainer;
 			var mouse = capLogoCanvas.getPointer(e.e);
