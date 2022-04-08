@@ -16,6 +16,11 @@ body {
 	font-weight: bold;
 }
 
+.rangeButton {
+	padding-left:5px;
+	padding-right:5px;
+}
+
 input {
 	font-family: 'BenchNine', sans-serif;
 }

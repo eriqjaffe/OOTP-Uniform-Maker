@@ -159,6 +159,35 @@ app2.post('/removeAllColor', (req, res) => {
 	})
 });
 
+app2.post('/saveUniform', (req, res) => {
+	const jerseyLogoCanvas = Buffer.from(req.body.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const jerseyBelow = Buffer.from(req.body.jerseyBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const pantsLogoCanvas = Buffer.from(req.body.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const pantsBelow = Buffer.from(req.body.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+
+	sharp(capBelow)
+		.composite([
+			{ input: __dirname+"/images/texture_cap_default.png", blend: 'multiply' },
+			{ input: capLogoCanvas }
+		])
+		.toFile(tempDir+'/caps_'+req.body.name+".png")
+	
+	sharp(pantsBelow)
+		.composite([
+			{ input: pantsLogoCanvas }
+		])
+		.toFile(tempDir+'/pants_'+req.body.name+"_d.png")
+
+	sharp(jerseyBelow)
+		.composite([
+			{ input: jerseyLogoCanvas }
+		])
+		.toFile(tempDir+'/jersey_'+req.body.name+"_d.png")
+	res.end()
+})
+
 function createWindow () {
     const mainWindow = new BrowserWindow({
       width: 1400,
