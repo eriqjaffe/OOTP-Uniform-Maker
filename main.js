@@ -4,8 +4,8 @@ const os = require('os');
 const fs = require('fs')
 const url = require('url');
 const express = require('express')
-const sharp = require('sharp')
 const Jimp = require('jimp')
+const archiver = require('archiver');
 const imagemagickCli = require('imagemagick-cli')
 
 const isMac = process.platform === 'darwin'
@@ -167,24 +167,34 @@ app2.post('/saveUniform', (req, res) => {
 	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 
-	sharp(capBelow)
-		.composite([
-			{ input: __dirname+"/images/texture_cap_default.png", blend: 'multiply' },
-			{ input: capLogoCanvas }
-		])
-		.toFile(tempDir+'/caps_'+req.body.name+".png")
-	
-	sharp(pantsBelow)
-		.composite([
-			{ input: pantsLogoCanvas }
-		])
-		.toFile(tempDir+'/pants_'+req.body.name+"_d.png")
+	prepareImages()
 
-	sharp(jerseyBelow)
-		.composite([
-			{ input: jerseyLogoCanvas }
-		])
-		.toFile(tempDir+'/jersey_'+req.body.name+"_d.png")
+	async function prepareImages() {
+		// cap
+		let capBase = await Jimp.read(capBelow)
+		let capOverlay = await Jimp.read(capLogoCanvas)
+		let texture = await Jimp.read(__dirname+"/images/texture_cap_default.png")
+		await capBase.composite(texture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+		await capBase.composite(capOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await capBase.writeAsync(tempDir+'/caps_'+req.body.name+".png")
+
+		// pants
+		let pantsBase = await Jimp.read(pantsBelow)
+		let pantsOverlay = await Jimp.read(pantsLogoCanvas)
+		await pantsBase.composite(pantsOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await pantsBase.writeAsync(tempDir+'/pants_'+req.body.name+".png")
+
+		// jersey
+		let jerseyBase = await Jimp.read(jerseyBelow)
+		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
+		let jerseyHeightMap = await Jimp.read(__dirname+"/images/jersey_height_map.png")
+		await jerseyBase.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await jerseyBase.writeAsync(tempDir+'/jersey_'+req.body.name+"_d.png")
+		await jerseyOverlay.grayscale()
+		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_OVERLAY})
+		await jerseyHeightMap.writeAsync(tempDir+'/jersey_'+req.body.name+"_h.png")
+	}
+
 	res.end()
 })
 
