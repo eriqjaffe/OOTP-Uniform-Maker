@@ -167,6 +167,57 @@ app2.post('/saveUniform', (req, res) => {
 	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 
+	const output = fs.createWriteStream(tempDir + '/'+req.body.name+'.zip');
+
+	output.on('close', function() {
+		var data = fs.readFileSync(tempDir + '/'+req.body.name+'.zip');
+		var saveOptions = {
+		  defaultPath: app.getPath('downloads') + '/' + req.body.name+'.zip',
+		}
+		dialog.showSaveDialog(null, saveOptions).then((result) => { 
+		  if (!result.canceled) {
+			fs.writeFile(result.filePath, data, function(err) {
+			  if (err) {
+				res.end("success")
+				fs.unlink(tempDir + '/'+req.body.name+'.zip', (err) => {
+				  if (err) {
+					console.error(err)
+					return
+				  }
+				})
+				res.end("success")
+			  } else {
+				fs.unlink(tempDir + '/'+req.body.name+'.zip', (err) => {
+				  if (err) {
+					console.error(err)
+					return
+				  }
+				})
+				res.end("success")
+			  };
+			})
+		  } else {
+			fs.unlink(tempDir + '/'+req.body.name+'.zip', (err) => {
+			  if (err) {
+				console.error(err)
+				return
+			  }
+			})
+			res.end("success");
+		  }
+		})
+	});
+
+	const archive = archiver('zip', {
+		lib: { level: 9 } // Sets the compression level.
+	});
+		
+	archive.on('error', function(err) {
+		throw err;
+	});
+
+	archive.pipe(output)
+
 	prepareImages()
 
 	async function prepareImages() {
@@ -176,26 +227,33 @@ app2.post('/saveUniform', (req, res) => {
 		let texture = await Jimp.read(__dirname+"/images/texture_cap_default.png")
 		await capBase.composite(texture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await capBase.composite(capOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		await capBase.writeAsync(tempDir+'/caps_'+req.body.name+".png")
+		let capBuffer = await capBase.getBufferAsync(Jimp.MIME_PNG)
+		archive.append(capBuffer, {name: "cap_"+req.body.name+".png"})
 
 		// pants
 		let pantsBase = await Jimp.read(pantsBelow)
 		let pantsOverlay = await Jimp.read(pantsLogoCanvas)
 		await pantsBase.composite(pantsOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		await pantsBase.writeAsync(tempDir+'/pants_'+req.body.name+".png")
+		let pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
+		archive.append(pantsBuffer, {name: "pants_"+req.body.name+".png"})
 
 		// jersey
 		let jerseyBase = await Jimp.read(jerseyBelow)
 		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
 		let jerseyHeightMap = await Jimp.read(__dirname+"/images/jersey_height_map.png")
 		await jerseyBase.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		await jerseyBase.writeAsync(tempDir+'/jersey_'+req.body.name+"_d.png")
+		let jerseyBuffer = await jerseyBase.getBufferAsync(Jimp.MIME_PNG)
+		archive.append(jerseyBuffer, {name: "jersey_"+req.body.name+"_d.png"})
+		
+		// jersey heightmap
 		await jerseyOverlay.grayscale()
-		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_OVERLAY})
-		await jerseyHeightMap.writeAsync(tempDir+'/jersey_'+req.body.name+"_h.png")
+		await jerseyOverlay.brightness(.5)
+		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		let jerseyHMBuffer = await jerseyHeightMap.getBufferAsync(Jimp.MIME_PNG)
+		archive.append(jerseyHMBuffer, {name: "jersey_"+req.body.name+"_h.png"})
+		
+	    archive.finalize()
 	}
-
-	res.end()
 })
 
 function createWindow () {
