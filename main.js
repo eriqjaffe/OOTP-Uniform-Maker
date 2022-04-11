@@ -22,6 +22,7 @@ const preferredTexture = "tbd"
 app2.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit: 50000}));
 
 app2.get("/uploadImage", (req, res) => {
+	console.log("GOT THIS FAR")
 	dialog.showOpenDialog(null, {
 		properties: ['openFile'],
 		filters: [
@@ -41,6 +42,8 @@ app2.get("/uploadImage", (req, res) => {
 					})
 				}
 			});
+		  } else {
+			  console.log("cancelled")
 		  }
 	  }).catch(err => {
 		  console.log(err)

@@ -74,20 +74,6 @@ td {
 	margin-top:10px;
 }
 
-.accord-header {
-	font-size: 16px;
-	background: #ebebeb;
-	margin: 5px 0 0 0;
-	padding: 5px 20px;
-	border: 1px solid #cccccc;
-	cursor: pointer;
-	color: #666666;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
-	font-weight: bold;
-}
-
 .locked-accord-header {
 	font-size: 16px;
 	background: #ebebeb;
@@ -110,16 +96,6 @@ td {
 	background-position: right 50%; */
 }
 
-.active-header {
-	-moz-border-radius: 5px 5px 0 0;
-	-webkit-border-radius: 5px 5px 0 0;
-	border-radius: 5px 5px 0 0;
-	background: url(../images/active-header.gif) #103959;
-	color: #FFFFFF;
-	background-repeat: no-repeat;
-	background-position: right 50%;
-}
-
 .locked-active-header {
 	-moz-border-radius: 5px 5px 0 0;
 	-webkit-border-radius: 5px 5px 0 0;
@@ -130,23 +106,147 @@ td {
 	background-position: right 50%;
 }
 
-.active-header:hover {
+.pants-accord-header {
+	font-size: 16px;
+	background: #ebebeb;
+	margin: 5px 0 0 0;
+	padding: 5px 20px;
+	border: 1px solid #cccccc;
+	cursor: pointer;
+	color: #666666;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	font-weight: bold;
+}
+
+.pants-accord-content { display: none; }
+
+.pants-active-header {
+	-moz-border-radius: 5px 5px 0 0;
+	-webkit-border-radius: 5px 5px 0 0;
+	border-radius: 5px 5px 0 0;
+	background: url(../images/active-header.gif) #103959;
+	color: #FFFFFF;
+	background-repeat: no-repeat;
+	background-position: right 50%;
+}
+
+.pants-active-header:hover {
 	background: url(../images/active-header.gif) #3C6686;
 	background-repeat: no-repeat;
 	background-position: right 50%;
 }
 
-.inactive-header {
+.pants-inactive-header {
 	background: url(../images/inactive-header.gif) #ebebeb;
 	background-repeat: no-repeat;
 	background-position: right 50%;
 }
 
-.inactive-header:hover {
+.pants-inactive-header:hover {
 	background: url(../images/inactive-header.gif) #f5f5f5;
 	background-repeat: no-repeat;
 	background-position: right 50%;
 }
+
+.pants-accord-content { display: none; }
+
+
+
+.jersey-accord-header {
+	font-size: 16px;
+	background: #ebebeb;
+	margin: 5px 0 0 0;
+	padding: 5px 20px;
+	border: 1px solid #cccccc;
+	cursor: pointer;
+	color: #666666;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	font-weight: bold;
+}
+
+.jersey-accord-content { display: none; }
+
+.jersey-active-header {
+	-moz-border-radius: 5px 5px 0 0;
+	-webkit-border-radius: 5px 5px 0 0;
+	border-radius: 5px 5px 0 0;
+	background: url(../images/active-header.gif) #103959;
+	color: #FFFFFF;
+	background-repeat: no-repeat;
+	background-position: right 50%;
+}
+
+.jersey-active-header:hover {
+	background: url(../images/active-header.gif) #3C6686;
+	background-repeat: no-repeat;
+	background-position: right 50%;
+}
+
+.jersey-inactive-header {
+	background: url(../images/inactive-header.gif) #ebebeb;
+	background-repeat: no-repeat;
+	background-position: right 50%;
+}
+
+.jersey-inactive-header:hover {
+	background: url(../images/inactive-header.gif) #f5f5f5;
+	background-repeat: no-repeat;
+	background-position: right 50%;
+}
+
+.jersey-accord-content { display: none; }
+
+
+
+.cap-accord-header {
+	font-size: 16px;
+	background: #ebebeb;
+	margin: 5px 0 0 0;
+	padding: 5px 20px;
+	border: 1px solid #cccccc;
+	cursor: pointer;
+	color: #666666;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	font-weight: bold;
+}
+
+.cap-accord-content { display: none; }
+
+.cap-active-header {
+	-moz-border-radius: 5px 5px 0 0;
+	-webkit-border-radius: 5px 5px 0 0;
+	border-radius: 5px 5px 0 0;
+	background: url(../images/active-header.gif) #103959;
+	color: #FFFFFF;
+	background-repeat: no-repeat;
+	background-position: right 50%;
+}
+
+.cap-active-header:hover {
+	background: url(../images/active-header.gif) #3C6686;
+	background-repeat: no-repeat;
+	background-position: right 50%;
+}
+
+.cap-inactive-header {
+	background: url(../images/inactive-header.gif) #ebebeb;
+	background-repeat: no-repeat;
+	background-position: right 50%;
+}
+
+.cap-inactive-header:hover {
+	background: url(../images/inactive-header.gif) #f5f5f5;
+	background-repeat: no-repeat;
+	background-position: right 50%;
+}
+
+.cap-accord-content { display: none; }
 
 .locked {
 	background-color: #999999;
@@ -155,8 +255,6 @@ td {
 .moveable {
 	background-color: #CCCCCC;	
 }
-
-.accord-content { display: none; }
 
 .question {
 	font-family: "Rowdies", sans-serif;
