@@ -170,19 +170,19 @@ app2.post('/saveUniform', (req, res) => {
 	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 
-	const output = fs.createWriteStream(tempDir + '/'+req.body.name+'.zip');
+	const output = fs.createWriteStream(tempDir + '/uniform_'+req.body.name+'.zip');
 
 	output.on('close', function() {
 		var data = fs.readFileSync(tempDir + '/'+req.body.name+'.zip');
 		var saveOptions = {
-		  defaultPath: app.getPath('downloads') + '/' + req.body.name+'.zip',
+		  defaultPath: app.getPath('downloads') + '/uniform_' + req.body.name+'.zip',
 		}
 		dialog.showSaveDialog(null, saveOptions).then((result) => { 
 		  if (!result.canceled) {
 			fs.writeFile(result.filePath, data, function(err) {
 			  if (err) {
 				res.end("success")
-				fs.unlink(tempDir + '/'+req.body.name+'.zip', (err) => {
+				fs.unlink(tempDir + '/uniform_'+req.body.name+'.zip', (err) => {
 				  if (err) {
 					console.error(err)
 					return
@@ -190,7 +190,7 @@ app2.post('/saveUniform', (req, res) => {
 				})
 				res.end("success")
 			  } else {
-				fs.unlink(tempDir + '/'+req.body.name+'.zip', (err) => {
+				fs.unlink(tempDir + '/uniform_'+req.body.name+'.zip', (err) => {
 				  if (err) {
 					console.error(err)
 					return
@@ -200,7 +200,7 @@ app2.post('/saveUniform', (req, res) => {
 			  };
 			})
 		  } else {
-			fs.unlink(tempDir + '/'+req.body.name+'.zip', (err) => {
+			fs.unlink(tempDir + '/uniform_'+req.body.name+'.zip', (err) => {
 			  if (err) {
 				console.error(err)
 				return
