@@ -7,6 +7,8 @@ const express = require('express')
 const Jimp = require('jimp')
 const archiver = require('archiver');
 const imagemagickCli = require('imagemagick-cli')
+const ttfInfo = require('ttfinfo')
+const font2base64 = require("node-font2base64")
 
 const isMac = process.platform === 'darwin'
 const tempDir = os.tmpdir()
@@ -161,6 +163,129 @@ app2.post('/removeAllColor', (req, res) => {
 		}
 	})
 });
+
+app2.get("/customFont", (req, res) => {
+	dialog.showOpenDialog(null, {
+		properties: ['openFile'],
+		filters: [
+			{ name: 'Fonts', extensions: ['ttf', 'otf'] }
+		]
+	}).then(result => {
+		if(!result.canceled) {
+			ttfInfo(result.filePaths[0], function(err, info) {
+			var ext = getExtension(result.filePaths[0])
+				const dataUrl = font2base64.encodeToDataUrlSync(result.filePaths[0])
+				var fontPath = url.pathToFileURL(tempDir + '/'+path.basename(result.filePaths[0]))
+				fs.copyFile(result.filePaths[0], tempDir + '/'+path.basename(result.filePaths[0]), (err) => {
+					if (err) {
+						console.log(err)
+					} else {
+						res.json({
+							"fontName": info.tables.name[1],
+							"fontStyle": info.tables.name[2],
+							"familyName": info.tables.name[6],
+							"fontFormat": ext,
+							"fontMimetype": 'font/' + ext,
+							"fontData": fontPath.href,
+							'fontBase64': dataUrl
+						});
+						res.end()
+					}
+				})
+			});
+		}
+	}).catch(err => {
+		console.log(err)
+	})
+})
+
+app2.post('/warpText', (req, res)=> {
+	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	var amount = req.body.amount;
+	var deform = req.body.deform;
+	var width;
+	var height;
+	var cmdLine;
+	console.log(req.body.deform)
+	Jimp.read(buffer, (err, image) => {
+		if (err) {
+			console.log(err);
+		} else {
+			image.autocrop();
+			image.write(tempDir+"/temp.png");
+			width = image.bitmap.width;
+			height = image.bitmap.height;
+			console.log(width +'x'+height)
+			switch (deform) {
+				case "arch":
+					cmdLine = 'magick convert -background transparent -wave -'+amount+'x'+width*2+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png'
+					break;
+				case "arc":
+					cmdLine = 'magick convert '+tempDir+'/temp.png -virtual-pixel Background -background transparent -distort Arc '+amount+' -trim +repage '+tempDir+'/'+deform+'.png'
+					break;
+				case "bilinearUp":
+					console.log(amount)
+					console.log(((100-amount)*0.01));
+					var y2=height*((100-amount)*0.01)
+					cmdLine = 'magick convert '+tempDir+'/temp.png -virtual-pixel transparent -interpolate Spline -distort BilinearForward "0,0 0,0 0,'+height+' 0,'+height+' '+width+',0 '+width+',0 '+width+','+height+' '+width+','+y2+'" '+tempDir+'/'+deform+'.png'
+					break;
+				case "bilinearDown":
+					console.log(amount)
+					console.log(((100-amount)*0.01));
+					var y2=height*((100-amount)*0.01)
+					cmdLine = 'magick convert '+tempDir+'/temp.png -virtual-pixel transparent -interpolate Spline -distort BilinearForward "0,0 0,0 0,'+height+' 0,'+y2+' '+width+',0 '+width+',0 '+width+','+height+' '+width+','+height+'" '+tempDir+'/'+deform+'.png'
+					break;
+				case "archUp":
+					imagemagickCli.exec('magick convert '+tempDir+'/temp.png -gravity west -background transparent -extent '+width*2+'x'+height+' '+tempDir+'/temp.png').then(({stdout, stderr }) => {
+						imagemagickCli.exec('magick convert -background transparent -wave -'+amount*2+'x'+width*4+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png').then(({ stdout, stderr }) => {
+							Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
+								if (err) {
+									console.log(err);
+								} else {
+									image.getBase64(Jimp.AUTO, (err, ret) => {
+										res.end(ret);
+									})
+								}
+							})
+						})
+					})
+					break;
+				case "archDown":
+					imagemagickCli.exec('magick convert '+tempDir+'/temp.png -gravity east -background transparent -extent '+width*2+'x'+height+' '+tempDir+'/temp.png').then(({stdout, stderr }) => {
+						imagemagickCli.exec('magick convert -background transparent -wave -'+amount*2+'x'+width*4+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png').then(({ stdout, stderr }) => {
+							Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
+								if (err) {
+									console.log(err);
+								} else {
+									image.getBase64(Jimp.AUTO, (err, ret) => {
+										res.end(ret);
+									})
+								}
+							})
+						})
+					})
+					break;
+				default:
+					image.getBase64(Jimp.AUTO, (err, ret) => {
+						res.end(ret);
+					})
+					break;
+			}
+			console.log(cmdLine);
+			imagemagickCli.exec(cmdLine).then(({ stdout, stderr }) => {
+				Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
+					if (err) {
+						console.log(err);
+					} else {
+						image.getBase64(Jimp.AUTO, (err, ret) => {
+							res.end(ret);
+						})
+					}
+				})
+			})
+		}
+	})
+})
 
 app2.post('/saveUniform', (req, res) => {
 	const jerseyLogoCanvas = Buffer.from(req.body.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
@@ -377,3 +502,8 @@ function createWindow () {
   app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') app.quit()
   })
+
+  function getExtension(filename) {
+	var ext = path.extname(filename||'').split('.');
+	return ext[ext.length - 1];
+}

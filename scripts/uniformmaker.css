@@ -296,12 +296,54 @@ td {
 	border-radius: 5px; 
 }
 
+#overlay {
+	width: 768px;
+	height: 768px;
+	top: 0px;
+	left: 0px;
+	position:absolute;
+	z-index:2;
+	pointer-events:none;    
+	/* background: rgba(0,0,0,0.5);
+	background-position: center;
+	background-repeat: no-repeat;
+	display:none; */
+}
+
+#jerseyOverlay {
+	width:384px; 
+	height:768px; 
+	top:0px;
+	left:0px;
+	position:absolute;
+	z-index:1;
+	background: rgba(0,0,0,0.25);
+	background-position: center;
+	background-repeat: no-repeat;
+	pointer-events:none;    
+	display: none;
+}
+
 #jerseyContainer {
 	width:384px; 
 	height:768px; 
 	top:0px;
 	left:0px;
-	position:absolute; 
+	position:absolute;
+	z-index:1;
+}
+
+#pantsOverlay {
+	width:384px; 
+	height:384px;
+	top:0px;
+	left:384px;
+	position:absolute;
+	z-index:1;
+	background: rgba(0,0,0,0.25);
+	background-position: center;
+	background-repeat: no-repeat;
+	pointer-events:none;    
 }
 
 #pantsContainer {
@@ -310,6 +352,20 @@ td {
 	top:0px;
 	left:384px;
 	position:absolute; 
+	z-index:1;
+}
+
+#capOverlay {
+	width:384px;
+	height:384px;
+	top:384px;
+	left:384px;
+	position:absolute;
+	z-index:1;
+	background: rgba(0,0,0,0.25);
+	background-position: center;
+	background-repeat: no-repeat;
+	pointer-events:none;    
 }
 
 #capContainer {
@@ -318,6 +374,7 @@ td {
 	top:384px;
 	left:384px;
 	position:absolute; 
+	z-index:1;
 }
 
 #tipContainer {
