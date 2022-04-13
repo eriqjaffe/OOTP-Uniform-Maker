@@ -9,6 +9,8 @@ const archiver = require('archiver');
 const imagemagickCli = require('imagemagick-cli')
 const ttfInfo = require('ttfinfo')
 const font2base64 = require("node-font2base64")
+var JSONC = require( 'json-compress' );
+const bodyParser = require('body-parser')
 
 const isMac = process.platform === 'darwin'
 const tempDir = os.tmpdir()
@@ -21,7 +23,7 @@ const server = app2.listen(0, () => {
 const preferredColorFormat = "hex"
 const preferredTexture = "tbd"
 
-app2.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit: 50000}));
+app2.use(express.urlencoded({limit: '100mb', extended: true, parameterLimit: 50000}));
 
 app2.get("/uploadImage", (req, res) => {
 	console.log("GOT THIS FAR")
@@ -295,10 +297,12 @@ app2.post('/saveUniform', (req, res) => {
 	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 
+	fs.writeFileSync(app.getPath('downloads') + '/uniform_' + req.body.name+'.uni', JSONC.pack(req.body.json))
+
 	const output = fs.createWriteStream(tempDir + '/uniform_'+req.body.name+'.zip');
 
 	output.on('close', function() {
-		var data = fs.readFileSync(tempDir + '/'+req.body.name+'.zip');
+		var data = fs.readFileSync(tempDir + '/uniform_'+req.body.name+'.zip');
 		var saveOptions = {
 		  defaultPath: app.getPath('downloads') + '/uniform_' + req.body.name+'.zip',
 		}
@@ -379,9 +383,21 @@ app2.post('/saveUniform', (req, res) => {
 		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyHMBuffer = await jerseyHeightMap.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(jerseyHMBuffer, {name: "jersey_"+req.body.name+"_h.png"})
+
+		archive.append(JSONC.pack(req.body.json), {name: "uniform_"+req.body.name+".uni"})
 		
 	    archive.finalize()
 	}
+})
+
+app2.get("/loadUniform", (req, res) => {
+	const file = dialog.showOpenDialogSync(null, {
+		properties: ['openFile'],
+		filters: [
+			{ name: 'Jersey Files', extensions: ['uni'] }
+		]
+	})
+	res.end(JSON.stringify(JSONC.unpack(fs.readFileSync(file[0]).toString())))
 })
 
 function createWindow () {

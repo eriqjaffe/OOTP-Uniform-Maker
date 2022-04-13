@@ -24,6 +24,7 @@
     "express": "^4.17.3",
     "imagemagick-cli": "^0.5.0",
     "jimp": "^0.16.1",
+    "json-compress": "https://github.com/Alamantus/JSON-Compress.git",
     "node-font2base64": "^0.7.1",
     "promise-synchronizer": "^1.1.8",
     "ttfinfo": "^0.2.0"

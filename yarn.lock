@@ -1031,6 +1031,10 @@ json-buffer@3.0.0:
   resolved "https://registry.yarnpkg.com/json-buffer/-/json-buffer-3.0.0.tgz#5b1f397afc75d677bde8bcfc0e47e1f9a3d9a898"
   integrity sha1-Wx85evx11ne96Lz8Dkfh+aPZqJg=
 
+"json-compress@https://github.com/Alamantus/JSON-Compress.git":
+  version "1.7.0"
+  resolved "https://github.com/Alamantus/JSON-Compress.git#fe5efe96cc3353b03488d9879c11a80c04b73973"
+
 json-stringify-safe@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
