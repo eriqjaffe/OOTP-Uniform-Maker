@@ -16,6 +16,8 @@
 	<script type="text/javascript" src="./scripts/spin.min.js"></script>
 	<script type="text/javascript" src="./scripts/fontfaceobserver.js"></script>
     <script type="text/javascript" src="./scripts/skeletabs.js"></script>
+	<script type="text/javascript" src="./scripts/normalmap.min.js"></script>
+	<script type="text/javascript" src="./scripts/jquery.normalmap.js"></script>
 	<script>if (window.module) module = window.module;</script>
 	<link href='./scripts/uniformmaker.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/spectrum.css' rel='stylesheet' type='text/css'>
@@ -28,9 +30,9 @@
 		const params = new URLSearchParams(window.location.search)
 		const port = params.get('port')
 
-        const initialJerseyColors = {jerseyColor:"#FFFFFF",jerseyFrontColor:"#008800",jerseyBackColor:"#880000",buttonPadFillColor:"transparent",buttonPadColor:"#000000",collarColor:"#103959",leftSleeveColor:"#FFFFFF",rightSleeveColor:"#FFFFFF",leftSleeveRaglanColor:"#FFFFFF",rightSleeveRaglanColor:"#FFFFFF",jerseyPinstripesColor:"#000000",jerseyPinstripesStrokeColor:"transparent",undershirtColor:"#103959",sleeveSeamAngledColor:"#0202f0",sleeveSeamAngledStrokeColor:"#000000",racingStripeLargeColor:"#ff0000",racingStripeSmallColor:"#00FF00",sideRacingStripeLargeColor:"#ff0000",sideRacingStripeSmallColor:"#00FF00",sleeveSeamXLColor:"#971717",sleeveSeamXLStrokeColor:"#000000",smallTopShouldersColor:"#999999",smallTopShouldersStrokeColor:"#000000",bigTopShouldersColor:"#00FF00",bigTopShouldersStrokeColor:"#000000",sidePanelSmallColor:"#FF0000",sidePanelSmallStrokeColor:"#0000FF",sidePanelSmallRoundedColor:"#0000FF",sidePanelSmallRoundedStrokeColor:"#FF0000",sidePanelLargeRoundedColor:"#00FF00",sidePanelLargeRoundedStrokeColor:"yellow",sidePanelVColor:"yellow",sidePanelVStrokeColor:"#00FF00",arcedStripeColor:"#003399",placketPipingInnerColor:"#FF0000",placketPipingMiddleColor:"#00FF00",placketPipingOuterColor:"#0000FF",widePlacketPipingInnerColor:"#FF0000",widePlacketPipingMiddleColor:"#00FF00",widePlacketPipingOuterColor:"#0000FF",tequilaSunrise1Color:"#d50032",tequilaSunrise2Color:"#ff8200",tequilaSunrise3Color:"#ffcd00",tequilaSunrise4Color:"#e87722",sleevePipingInnerColor:"#FF0000",sleevePipingMiddleColor:"#FFFFFF",sleevePipingOuterColor:"#0000FF",thinCuffInnerColor:"#FF0000",thinCuffMiddleColor:"#FFFFFF",thinCuffOuterColor:"#0000FF",sleeveCuffInnerColor:"#FF0000",sleeveCuffMiddleColor:"#FFFFFF",sleeveCuffOuterColor:"#0000FF",shoulderPipingInnerColor:"#FF0000",shoulderPipingMiddleColor:"#FFFFFF",shoulderPipingOuterColor:"#0000FF",swashFillColor:"#000000",swashStrokeColor:"#FF0000",wordmarkTextColor:"#103959",wordmarkTextStroke1Color:"#FFFFFF",wordmarkTextStroke2Color:"#FF0000",beachBlanketTopColor:"#FF0000",beachBlanketMiddleColor:"#0000FF",beachBlanketBottomColor:"#FF0000",vNeckThinInnerColor:"#FF0000",vNeckThinMiddleColor:"#FFFFFF",vNeckThinOuterColor:"#0000FF",vNeckOffsetInnerColor:"#FF0000",vNeckOffsetMiddleColor:"#FFFFFF",vNeckOffsetOuterColor:"#0000FF",vNeckThickInnerColor:"#FF0000",vNeckThickMiddleColor:"#FFFFFF",vNeckThickOuterColor:"#0000FF",vNeck2OuterColor:"#0000FF",vNeck2InnerColor:"#FF0000",buttonsColor:"#FFFFFF",camoBaseColor:"#4a551e",camoLayer1Color:"#052503",camoLayer2Color:"#beb585",digiCamoBaseColor:"#9a8b62",digiCamoLayer1Color:"#372900",digiCamoLayer2Color:"#736632",butterflyColor:"#103959",cadetCollarColor:"#FF0000",fullCollarColor:"#00FF00",neckCollarColor:"#0000FF",sunCollar1Color:"#FF0000",sunCollar2Color:"#00FF00",buttonDownCollarColor:"#00FFFF",jerseyFlapColor:"#191970",jerseyFlapTrimColor:"#800000",jerseyFlapButtonsColor:"#FFFFFF",jerseyShield1WideStrokeColor:"#FF0000",jerseyShield1WideColor:"#0000FF",jerseyShield1InnerStrokeColor:"#000000",jerseyShield1InnerColor:"#00FF00",jerseyShield1ButtonsColor:"#FFFFFF",jerseyShield2StrokeColor:"#FF0000",jerseyShield2InnerColor:"#0000FF",jerseyShield2ButtonsColor:"#FFFFFF",jerseyPanelStrokeColor:"#FF0000",jerseyPanelFillColor:"#00FF00",jerseyPanelButtonColor:"#FFFFFF",bowTie1Color:"#0000FF",bowTie2Color:"#FF0000",tieColor:"#272A26",pocketFillColor:"#fffdd0",xLacesColor:"#0000FF",vLacesColor:"#FF0000",hockeyLacesColor:"#CFCFCF",suspendersColor:"#228b22",nikeHornsColor:"#FF9933",shoulderLoops1Color:"#6600CC",shoulderLoops2Color:"#339933",ncaaShoulderColor:"#996633",makersMarkColor:"#000000",snakeskinColor:"#A41E20",rainbowShoulder1Color:"#041E42",rainbowShoulder2Color:"#D50032",rainbowShoulder3Color:"#FA4616",rainbowShoulder4Color:"#FFCD00",jerseyMakersMarkColor:"#000000"}
+        const initialJerseyColors = {jerseyColor:"#FFFFFF",jerseyFrontColor:"#008800",jerseyBackColor:"#880000",buttonPadFillColor:"transparent",buttonPadColor:"#000000",collarColor:"#103959",leftSleeveColor:"#FFFFFF",rightSleeveColor:"#FFFFFF",leftSleeveRaglanColor:"#FFFFFF",rightSleeveRaglanColor:"#FFFFFF",jerseyPinstripesColor:"#000000",jerseyPinstripesStrokeColor:"transparent",undershirtColor:"#103959",sleeveSeamAngledColor:"#0202f0",sleeveSeamAngledStrokeColor:"#000000",racingStripeLargeColor:"#ff0000",racingStripeSmallColor:"#00FF00",sideRacingStripeLargeColor:"#ff0000",sideRacingStripeSmallColor:"#00FF00",sleeveSeamXLColor:"#971717",sleeveSeamXLStrokeColor:"#000000",smallTopShouldersColor:"#999999",smallTopShouldersStrokeColor:"#000000",bigTopShouldersColor:"#00FF00",bigTopShouldersStrokeColor:"#000000",sidePanelSmallColor:"#FF0000",sidePanelSmallStrokeColor:"#0000FF",sidePanelSmallRoundedColor:"#0000FF",sidePanelSmallRoundedStrokeColor:"#FF0000",sidePanelLargeRoundedColor:"#00FF00",sidePanelLargeRoundedStrokeColor:"yellow",sidePanelVColor:"yellow",sidePanelVStrokeColor:"#00FF00",arcedStripeColor:"#003399",placketPipingInnerColor:"#FF0000",placketPipingMiddleColor:"#00FF00",placketPipingOuterColor:"#0000FF",widePlacketPipingInnerColor:"#FF0000",widePlacketPipingMiddleColor:"#00FF00",widePlacketPipingOuterColor:"#0000FF",tequilaSunrise1Color:"#d50032",tequilaSunrise2Color:"#ff8200",tequilaSunrise3Color:"#ffcd00",tequilaSunrise4Color:"#e87722",sleevePipingInnerColor:"#FF0000",sleevePipingMiddleColor:"#FFFFFF",sleevePipingOuterColor:"#0000FF",thinCuffInnerColor:"#FF0000",thinCuffMiddleColor:"#FFFFFF",thinCuffOuterColor:"#0000FF",sleeveCuffInnerColor:"#FF0000",sleeveCuffMiddleColor:"#FFFFFF",sleeveCuffOuterColor:"#0000FF",shoulderPipingInnerColor:"#FF0000",shoulderPipingMiddleColor:"#FFFFFF",shoulderPipingOuterColor:"#0000FF",swashFillColor:"#000000",swashStrokeColor:"#FF0000",wordmarkTextColor:"#103959",wordmarkTextStroke1Color:"#FFFFFF",wordmarkTextStroke2Color:"#FF0000",beachBlanketTopColor:"#FF0000",beachBlanketMiddleColor:"#0000FF",beachBlanketBottomColor:"#FF0000",vNeckThinInnerColor:"#FF0000",vNeckThinMiddleColor:"#FFFFFF",vNeckThinOuterColor:"#0000FF",vNeckOffsetInnerColor:"#FF0000",vNeckOffsetMiddleColor:"#FFFFFF",vNeckOffsetOuterColor:"#0000FF",vNeckThickInnerColor:"#FF0000",vNeckThickMiddleColor:"#FFFFFF",vNeckThickOuterColor:"#0000FF",vNeck2OuterColor:"#0000FF",vNeck2InnerColor:"#FF0000",buttonsColor:"#FFFFFF",camoBaseColor:"#4a551e",camoLayer1Color:"#052503",camoLayer2Color:"#beb585",digiCamoBaseColor:"#9a8b62",digiCamoLayer1Color:"#372900",digiCamoLayer2Color:"#736632",butterflyColor:"#103959",cadetCollarColor:"#FF0000",fullCollarColor:"#00FF00",neckCollarColor:"#0000FF",sunCollar1Color:"#FF0000",sunCollar2Color:"#00FF00",buttonDownCollarColor:"#00FFFF",jerseyFlapColor:"#191970",jerseyFlapTrimColor:"#800000",jerseyFlapButtonsColor:"#FFFFFF",jerseyShield1WideStrokeColor:"#FF0000",jerseyShield1WideColor:"#0000FF",jerseyShield1InnerStrokeColor:"#000000",jerseyShield1InnerColor:"#00FF00",jerseyShield1ButtonsColor:"#FFFFFF",jerseyShield2StrokeColor:"#FF0000",jerseyShield2InnerColor:"#0000FF",jerseyShield2ButtonsColor:"#FFFFFF",jerseyPanelStrokeColor:"#FF0000",jerseyPanelFillColor:"#00FF00",jerseyPanelButtonColor:"#FFFFFF",bowTie1Color:"#0000FF",bowTie2Color:"#FF0000",tieColor:"#272A26",pocketFillColor:"#fffdd0",xLacesColor:"#0000FF",vLacesColor:"#FF0000",hockeyLacesColor:"#CFCFCF",suspendersColor:"#228b22",nikeHornsColor:"#FF9933",shoulderLoops1Color:"#6600CC",shoulderLoops2Color:"#339933",ncaaShoulderColor:"#996633",makersMarkColor:"#000000",jerseySnakeskinColor:"#A41E20",rainbowShoulder1Color:"#041E42",rainbowShoulder2Color:"#D50032",rainbowShoulder3Color:"#FA4616",rainbowShoulder4Color:"#FFCD00",jerseyMakersMarkColor:"#000000"}
         
-		const initialPantsColors = {pantsColor:"#ffffff", belt:"#050505", pantsPinstripes:"#0c2340", pantsSingleStripe:"#ff0000", pantsDoubleStripeFront:"#ff0000", pantsDoubleStripeMiddle:"#0000ff", pantsDoubleStripeBack:"#00ff00",pantsTuxedoStripeBack:"#3c3c3c", pantsTuxedoStripeFront:"#00ff00", elasticBottom:"#0000ff", elasticMiddle:"#ffffff", elasticTop:"#ff0000", pantsTequila1:"#D50032", pantsTequila2:"#E87722", pantsTequila3:"#FF8200", pantsTequila4:"#FFCD00", atlBelt1:"#FFFFFF", atlBelt2: "#0C2340", atlBelt3: "#BA0C2F", atlBelt4: "#0C2340", pantsMakersMarkColor: "#000000"}
+		const initialPantsColors = {pantsColor:"#ffffff", belt:"#050505", pantsPinstripes:"#0c2340", pantsSingleStripe:"#ff0000", pantsDoubleStripeFront:"#ff0000", pantsDoubleStripeMiddle:"#0000ff", pantsDoubleStripeBack:"#00ff00",pantsTuxedoStripeBack:"#3c3c3c", pantsTuxedoStripeFront:"#00ff00", elasticBottom:"#0000ff", elasticMiddle:"#ffffff", elasticTop:"#ff0000", pantsTequila1:"#D50032", pantsTequila2:"#E87722", pantsTequila3:"#FF8200", pantsTequila4:"#FFCD00", atlBelt1:"#FFFFFF", atlBelt2: "#0C2340", atlBelt3: "#BA0C2F", atlBelt4: "#0C2340", pantsMakersMarkColor: "#000000", pantsSnakeskinColor:"#A41E20"}
 		const elasticObjects = ['elasticBottom', 'elasticMiddle', 'elasticTop', 'elasticRibbing']
         const beltObjects = ['belt', 'buckle']
 		const swashFills = ['swash1Fill', 'swash2Fill', 'swash3Fill', 'swash4Fill', 'swash5Fill', 'swash6Fill']
@@ -301,6 +303,28 @@
                                             </tr> -->
                                         </table>
                                     </div>
+									<div class="jersey-accord-header jersey-inactive-header">Seams</div>
+									<div class="jersey-accord-content">
+										<table style="width:100%;">
+											<tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" id="seamsButtonPadCheck" class="jerseyTextureToggle" data-id="seamsButtonPad" data-canvas="below" checked></td>
+												<td colspan='2'><label>Button Pad Seam</label></td>
+												<td style="text-align:right;">&nbsp;</td>
+											</tr>
+											<tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" id="seamsCheck" class="jerseyTextureToggle" data-id="seams" data-canvas="below" checked></td>
+												<td colspan='2'>
+													<label>Shoulder Seams&nbsp;</label>
+													<select id="seamsType">
+														<option value="seamsStandardToPiping" selected>Standard To Piping</option>
+														<option value="seamsStandardToCollar">Standard To Collar</option>
+														<option value="seamsRaglanToPiping">Raglan To Piping</option>
+														<option value="seamsRaglanToCollar">Raglan To Collar</option>
+												</td>
+												<td style="text-align:right;">&nbsp;</td>
+											</tr>
+										</table>
+									</div>
 									<div class="jersey-accord-header jersey-inactive-header">Basic Striping</div>
 									<div class="jersey-accord-content">
 										<table style="width:100%;">
@@ -312,25 +336,25 @@
 												</td>
 											</tr>
 											<tr class="color_tr">
-												<td class="checkCell"><input type="checkbox" class="jerseyMultiToggle" data-id="placketPipingInnerColor,placketPipingMiddleColor,placketPipingOuterColor" id="placketPipingInnerColorCheck" data-canvas="below"></td>
+												<td class="checkCell"><input type="checkbox" class="jerseyMultiToggle" data-id="placketPipingInnerColor,placketPipingMiddleColor,placketPipingOuterColor" id="placketPipingInnerColorCheck" data-canvas="above"></td>
 												<td><label>Headspoon: </label></td>
 												<td style="text-align:right;">
-													<input class="jerseySelector selector" type="text" id="placketPipingInnerColor" data-element="placketPipingInnerColor" data-canvas="below">
-													<input class="jerseySelector selector" type="text" id="placketPipingMiddleColor" data-element="placketPipingMiddleColor" data-canvas="below">
-													<input class="jerseySelector selector" type="text" id="placketPipingOuterColor" data-element="placketPipingOuterColor" data-canvas="below">
+													<input class="jerseySelector selector" type="text" id="placketPipingInnerColor" data-element="placketPipingInnerColor" data-canvas="above">
+													<input class="jerseySelector selector" type="text" id="placketPipingMiddleColor" data-element="placketPipingMiddleColor" data-canvas="above">
+													<input class="jerseySelector selector" type="text" id="placketPipingOuterColor" data-element="placketPipingOuterColor" data-canvas="above">
 												</td>
 											</tr>
 											<tr class="color_tr">
-												<td class="checkCell"><input type="checkbox" class="jerseyMultiToggle" data-id="shoulderPipingInnerColor,shoulderPipingMiddleColor,shoulderPipingOuterColor" id="shoulderPipingInnerColorCheck" data-canvas="below"></td>
+												<td class="checkCell"><input type="checkbox" class="jerseyMultiToggle" data-id="shoulderPipingInnerColor,shoulderPipingMiddleColor,shoulderPipingOuterColor" id="shoulderPipingInnerColorCheck" data-canvas="above"></td>
 												<td><label>Shoulder Piping: </label></td>
 												<td style="text-align:right;">
-													<input class="jerseySelector selector" type="text" id="shoulderPipingInnerColor" data-element="shoulderPipingInnerColor" data-canvas="below">
-													<input class="jerseySelector selector" type="text" id="shoulderPipingMiddleColor" data-element="shoulderPipingMiddleColor" data-canvas="below">
-													<input class="jerseySelector selector" type="text" id="shoulderPipingOuterColor" data-element="shoulderPipingOuterColor" data-canvas="below">
+													<input class="jerseySelector selector" type="text" id="shoulderPipingInnerColor" data-element="shoulderPipingInnerColor" data-canvas="above">
+													<input class="jerseySelector selector" type="text" id="shoulderPipingMiddleColor" data-element="shoulderPipingMiddleColor" data-canvas="above">
+													<input class="jerseySelector selector" type="text" id="shoulderPipingOuterColor" data-element="shoulderPipingOuterColor" data-canvas="above">
 												</td>
 											</tr>
 											<tr class="color_tr">
-												<td class="checkCell"><input type="checkbox" class="" id="sleeveCuffCheck" data-canvas="below"></td>
+												<td class="checkCell"><input type="checkbox" class="" id="sleeveCuffCheck" data-canvas="above"></td>
 												<td>
 													<label>Cuff Piping: </label>
 													<select id="cuffPipingSelect">
@@ -341,24 +365,24 @@
 												</td>
 												<td style="text-align:right;">
 													<span id="offsetSelectors" style="display:inline-block;">
-														<input class="jerseySelector selector" type="text" id="sleevePipingInnerColor" data-element="sleevePipingInnerColor" data-canvas="below">
-														<input class="jerseySelector selector" type="text" id="sleevePipingMiddleColor" data-element="sleevePipingMiddleColor" data-canvas="below">
-														<input class="jerseySelector selector" type="text" id="sleevePipingOuterColor" data-element="sleevePipingOuterColor" data-canvas="below">
+														<input class="jerseySelector selector" type="text" id="sleevePipingInnerColor" data-element="sleevePipingInnerColor" data-canvas="above">
+														<input class="jerseySelector selector" type="text" id="sleevePipingMiddleColor" data-element="sleevePipingMiddleColor" data-canvas="above">
+														<input class="jerseySelector selector" type="text" id="sleevePipingOuterColor" data-element="sleevePipingOuterColor" data-canvas="above">
 													</span>
 													<span id="edgeSelectors" style="display:none;">
-														<input class="jerseySelector selector" type="text" id="thinCuffInnerColor" data-element="thinCuffInnerColor" data-canvas="below">
-														<input class="jerseySelector selector" type="text" id="thinCuffMiddleColor" data-element="thinCuffMiddleColor" data-canvas="below">
-														<input class="jerseySelector selector" type="text" id="thinCuffOuterColor" data-element="thinCuffOuterColor" data-canvas="below">
+														<input class="jerseySelector selector" type="text" id="thinCuffInnerColor" data-element="thinCuffInnerColor" data-canvas="above">
+														<input class="jerseySelector selector" type="text" id="thinCuffMiddleColor" data-element="thinCuffMiddleColor" data-canvas="above">
+														<input class="jerseySelector selector" type="text" id="thinCuffOuterColor" data-element="thinCuffOuterColor" data-canvas="above">
 													</span>
 													<span id="thickSelectors" style="display:none;">
-														<input class="jerseySelector selector" type="text" id="sleeveCuffInnerColor" data-element="sleeveCuffInnerColor" data-canvas="below">
-														<input class="jerseySelector selector" type="text" id="sleeveCuffMiddleColor" data-element="sleeveCuffMiddleColor" data-canvas="below">
-														<input class="jerseySelector selector" type="text" id="sleeveCuffOuterColor" data-element="sleeveCuffOuterColor" data-canvas="below">
+														<input class="jerseySelector selector" type="text" id="sleeveCuffInnerColor" data-element="sleeveCuffInnerColor" data-canvas="above">
+														<input class="jerseySelector selector" type="text" id="sleeveCuffMiddleColor" data-element="sleeveCuffMiddleColor" data-canvas="above">
+														<input class="jerseySelector selector" type="text" id="sleeveCuffOuterColor" data-element="sleeveCuffOuterColor" data-canvas="above">
 													</span>
 												</td>
 											</tr>
 											<tr class="color-tr">
-												<td class="checkCell"><input type="checkbox" class="" id="vNeckCheck" data-canvas="below"></td>
+												<td class="checkCell"><input type="checkbox" class="" id="vNeckCheck" data-canvas="above"></td>
 												<td>
 													<label>V-Neck Collar: </label>
 													<select id="vNeckSelect">
@@ -369,18 +393,18 @@
 												</td>
 												<td style="text-align:right;">
 													<span id="vNeck3Selectors" style="display:inline-block;">
-														<input class="jerseySelector selector" type="text" id="vNeckThickInnerColor" data-element="vNeckThickInnerColor" data-canvas="below">
-														<input class="jerseySelector selector" type="text" id="vNeckThickMiddleColor" data-element="vNeckThickMiddleColor" data-canvas="below">
-														<input class="jerseySelector selector" type="text" id="vNeckThickOuterColor" data-element="vNeckThickOuterColor" data-canvas="below">
+														<input class="jerseySelector selector" type="text" id="vNeckThickInnerColor" data-element="vNeckThickInnerColor" data-canvas="above">
+														<input class="jerseySelector selector" type="text" id="vNeckThickMiddleColor" data-element="vNeckThickMiddleColor" data-canvas="above">
+														<input class="jerseySelector selector" type="text" id="vNeckThickOuterColor" data-element="vNeckThickOuterColor" data-canvas="above">
 													</span>
 													<span id="vNeck2Selectors" style="display:none;">
-														<input class="jerseySelector selector" type="text" id="vNeck2InnerColor" data-element="vNeck2InnerColor" data-canvas="below">
-														<input class="jerseySelector selector" type="text" id="vNeck2OuterColor" data-element="vNeck2OuterColor" data-canvas="below">
+														<input class="jerseySelector selector" type="text" id="vNeck2InnerColor" data-element="vNeck2InnerColor" data-canvas="above">
+														<input class="jerseySelector selector" type="text" id="vNeck2OuterColor" data-element="vNeck2OuterColor" data-canvas="above">
 													</span>
 													<span id="vNeckOffsetSelectors" style="display:none;">
-														<input class="jerseySelector selector" type="text" id="vNeckOffsetInnerColor" data-element="vNeckOffsetInnerColor" data-canvas="below">
-														<input class="jerseySelector selector" type="text" id="vNeckOffsetMiddleColor" data-element="vNeckOffsetMiddleColor" data-canvas="below">
-														<input class="jerseySelector selector" type="text" id="vNeckOffsetOuterColor" data-element="vNeckOffsetOuterColor" data-canvas="below">
+														<input class="jerseySelector selector" type="text" id="vNeckOffsetInnerColor" data-element="vNeckOffsetInnerColor" data-canvas="above">
+														<input class="jerseySelector selector" type="text" id="vNeckOffsetMiddleColor" data-element="vNeckOffsetMiddleColor" data-canvas="above">
+														<input class="jerseySelector selector" type="text" id="vNeckOffsetOuterColor" data-element="vNeckOffsetOuterColor" data-canvas="above">
 													</span>
 												</td>
 											</tr>							
@@ -409,6 +433,13 @@
 														<input class="jerseySelector selector" type="text" id="digiCamoLayer1Color" data-element="digiCamoLayer1Color" data-canvas="below">
 														<input class="jerseySelector selector" type="text" id="digiCamoLayer2Color" data-element="digiCamoLayer2Color" data-canvas="below">
 													</span>
+												</td>
+											</tr>
+											<tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" class="jerseyTextureToggle" data-id="jerseySnakeskinColor" id="jerseySnakeskinColorCheck" data-canvas="below"></td>
+												<td><label>Snakeskin: </label></td>
+												<td style="text-align:right;">
+													<input class="jerseySelector selector" type="text" id="jerseySnakeskinColor" data-element="jerseySnakeskinColor" data-canvas="below">
 												</td>
 											</tr>
 											<tr class="color_tr">
@@ -839,6 +870,13 @@
 												<td><label>Pinstripes: </label></td>
 												<td style="text-align:right;">
 													<input class="pantsSelector selector" type="text" id="pantsPinstripes" data-element="pantsPinstripes" data-canvas="below">
+												</td>
+											</tr>
+											<tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" class="pantsTextureToggle" data-id="pantsSnakeskinColor" id="pantsSnakeskinColorCheck" data-canvas="below"></td>
+												<td><label>Snakeskin: </label></td>
+												<td style="text-align:right;">
+													<input class="pantsSelector selector" type="text" id="pantsSnakeskinColor" data-element="pantsSnakeskinColor" data-canvas="below">
 												</td>
 											</tr>
 											<tr class="color_tr">
@@ -1700,7 +1738,17 @@
                         });
 					} else {
 						if (o.id == id) {
-							o.set("fill", color.toHexString());
+							if (o.type == 'image') {
+								o.filters[0]['color'] = color.toHexString();
+								o.applyFilters()
+								canvas.requestRenderAll()
+							} else {
+								o.set("fill", color.toHexString());
+								if (o.id == 'jerseyPinstripesColor') {
+									canvas.getObjects().find(o => o.id == 'standardPinstripesColor').set("fill", color.toHexString())
+									canvas.getObjects().find(o => o.id == 'raglanPinstripesColor').set("fill", color.toHexString())
+								}
+							}
 						} 		
 						if (o.id == 'jerseyMakersMark') {
 							jerseyMakersMarkColor = color.toHexString();						
@@ -1735,11 +1783,21 @@
                         });
 					} else {
 						if (o.id == id) {
-							o.set("fill", color.toHexString());
+							if (o.type == 'image') {
+								o.filters[0]['color'] = color.toHexString();
+								o.applyFilters()
+								canvas.requestRenderAll()
+							} else {
+								o.set("fill", color.toHexString());
+								if (o.id == 'jerseyPinstripesColor') {
+									canvas.getObjects().find(o => o.id == 'standardPinstripesColor').set("fill", color.toHexString())
+									canvas.getObjects().find(o => o.id == 'raglanPinstripesColor').set("fill", color.toHexString())
+								}
+							}
 						} 		
 						if (o.id == 'jerseyMakersMark') {
 							jerseyMakersMarkColor = color.toHexString();						
-						}			
+						}				
 					} 
                 });
                 canvas.renderAll()
@@ -1770,11 +1828,21 @@
                         });
 					} else {
 						if (o.id == id) {
-							o.set("fill", color.toHexString());
+							if (o.type == 'image') {
+								o.filters[0]['color'] = color.toHexString();
+								o.applyFilters()
+								canvas.requestRenderAll()
+							} else {
+								o.set("fill", color.toHexString());
+								if (o.id == 'jerseyPinstripesColor') {
+									canvas.getObjects().find(o => o.id == 'standardPinstripesColor').set("fill", color.toHexString())
+									canvas.getObjects().find(o => o.id == 'raglanPinstripesColor').set("fill", color.toHexString())
+								}
+							}
 						} 		
 						if (o.id == 'jerseyMakersMark') {
 							jerseyMakersMarkColor = color.toHexString();						
-						}			
+						}				
 					} 
                 });
                 canvas.renderAll()
@@ -1803,32 +1871,34 @@
 		},
 		move: function(color) {
 			$(this).data('changed', true);
-			var o = jerseyLogoCanvas.getObjects().find(o => o.id == 'buttonsNoScript')
-			var p = jerseyLogoCanvas.getObjects().find(p => p.id == 'buttonsScript')
-			o.filters[0]['color'] = color.toHexString();
-			o.applyFilters()
-			p.filters[0]['color'] = color.toHexString();
-			p.applyFilters()
+			jerseyLogoCanvas.getObjects().find(o => o.id == 'buttons').getObjects().forEach(function(o) {
+				if (o.id != 'zipper') {
+					o.filters[0]['color'] = color.toHexString();
+					o.applyFilters()
+				}
+			})
 			jerseyLogoCanvas.requestRenderAll()
 		},
 		change: function(color) {
 			$(this).data('changed', true);
-			var o = jerseyLogoCanvas.getObjects().find(o => o.id == 'buttonsNoScript')
-			var p = jerseyLogoCanvas.getObjects().find(p => p.id == 'buttonsScript')
-			o.filters[0]['color'] = color.toHexString();
-			o.applyFilters()
-			p.filters[0]['color'] = color.toHexString();
-			p.applyFilters()
+			$(this).data('changed', true);
+			jerseyLogoCanvas.getObjects().find(o => o.id == 'buttons').getObjects().forEach(function(o) {
+				if (o.id != 'zipper') {
+					o.filters[0]['color'] = color.toHexString();
+					o.applyFilters()
+				}
+			})
 			jerseyLogoCanvas.requestRenderAll()
 		},
 		hide: function(color) {
 			$(this).data('changed', false);
-			var o = jerseyLogoCanvas.getObjects().find(o => o.id == 'buttonsNoScript')
-			var p = jerseyLogoCanvas.getObjects().find(p => p.id == 'buttonsScript')
-			o.filters[0]['color'] = color.toHexString();
-			o.applyFilters()
-			p.filters[0]['color'] = color.toHexString();
-			p.applyFilters()
+			$(this).data('changed', true);
+			jerseyLogoCanvas.getObjects().find(o => o.id == 'buttons').getObjects().forEach(function(o) {
+				if (o.id != 'zipper') {
+					o.filters[0]['color'] = color.toHexString();
+					o.applyFilters()
+				}
+			})
 			jerseyLogoCanvas.requestRenderAll()
 		}
 	})
@@ -2043,51 +2113,51 @@
 		if ($(this).is(":checked")) {
 			switch($("#cuffPipingSelect").val()) {
 				case "offset":
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 					break;
 				case "edge":
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 					break;
 				case "thick":
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = true;
 					break;
 			}
 		} else {
-			jerseyBelow.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 		}
-		jerseyBelow.renderAll()
+		jerseyLogoCanvas.renderAll()
 		reRenderBG("jersey")
 	})
 
@@ -2112,51 +2182,51 @@
 		if ($("#sleeveCuffCheck").is(":checked")) {
 			switch( $(this).val()) {
 				case "offset":
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 					break;
 				case "edge":
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 					break;
 				case "thick":
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = true;
 					break;
 				}
 		} else {
-			jerseyBelow.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 		}
-		jerseyBelow.renderAll()
+		jerseyLogoCanvas.renderAll()
 		reRenderBG("jersey")
 	})
 
@@ -2164,67 +2234,67 @@
 		if ($(this).is(":checked")) {
 			switch($("#vNeckSelect").val()) {
 				case "3":
-					jerseyBelow.getObjects().find(o => o.id === 'thickVNeck3').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
 					$("#vNeck3Selectors").show()
 					$("#vNeck2Selectors").hide()
 					$("#vNeckOffsetSelectors").hide()
 					break;
 				case "2":
-					jerseyBelow.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'thickVNeck2').visible = true;
-					jerseyBelow.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
 					$("#vNeck3Selectors").hide()
 					$("#vNeck2Selectors").show()
 					$("#vNeckOffsetSelectors").hide()
 					break;
 				case "offset":
-					jerseyBelow.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
-					jerseyBelow.getObjects().find(o => o.id === 'offsetVNeck').visible = true;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
+					jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = true;
 					$("#vNeck3Selectors").hide()
 					$("#vNeck2Selectors").hide()
 					$("#vNeckOffsetSelectors").show()
 					break;
 			}
 		} else {
-			jerseyBelow.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
-			jerseyBelow.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
+			jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
 		}
-		jerseyBelow.renderAll()
+		jerseyLogoCanvas.renderAll()
 		reRenderBG("jersey")
 	})
 
 	$("#vNeckSelect").on("change",function() {
 		switch($(this).val()) {
 			case "3":
-				jerseyBelow.getObjects().find(o => o.id === 'thickVNeck3').visible = true;
-				jerseyBelow.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
-				jerseyBelow.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
+				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = true;
+				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
+				jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
 				$("#vNeck3Selectors").show()
 				$("#vNeck2Selectors").hide()
 				$("#vNeckOffsetSelectors").hide()
 				break;
 			case "2":
-				jerseyBelow.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
-				jerseyBelow.getObjects().find(o => o.id === 'thickVNeck2').visible = true;
-				jerseyBelow.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
+				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
+				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = true;
+				jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
 				$("#vNeck3Selectors").hide()
 				$("#vNeck2Selectors").show()
 				$("#vNeckOffsetSelectors").hide()
 				break;
 			case "offset":
-				jerseyBelow.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
-				jerseyBelow.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
-				jerseyBelow.getObjects().find(o => o.id === 'offsetVNeck').visible = true;
+				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
+				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
+				jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = true;
 				$("#vNeck3Selectors").hide()
 				$("#vNeck2Selectors").hide()
 				$("#vNeckOffsetSelectors").show()
 				break;
 		}
-		jerseyBelow.renderAll()
+		jerseyLogoCanvas.renderAll()
 		reRenderBG("jersey")
 	})
 
@@ -2269,51 +2339,52 @@
 		reRenderBG("jersey")
 	})
 
+	$("#seamsType").on("change",function() {
+		const g = jerseyBelow.getObjects().find(o => o.id === 'seams')
+		const id = $(this).val()
+		if ($("#seamsCheck").is(":checked")) {
+			g.getObjects().forEach(function(o) {
+				o.set("visible", o.id == id)
+			})
+			g.addWithUpdate()
+		}
+		jerseyBelow.renderAll()
+		reRenderBG('jersey')
+	})
+
 	$("#buttonsType").on("change",function() {
+		const g = jerseyLogoCanvas.getObjects().find(o => o.id === 'buttons')
 		if ($("#buttonsCheck").is(":checked")) {
 			switch ($("#buttonsType").val()) {
 				case "buttonsScript":
-					jerseyLogoCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = true;
-					jerseyLogoCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
-					jerseyLogoCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
+					g.getObjects().find(o => o.id === 'buttonsScript').visible = true;
+					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+					g.getObjects().find(o => o.id === 'zipper').visible = false;
 					break;
 				case "buttonsNoScript":
-					jerseyLogoCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
-					jerseyLogoCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = true;
-					jerseyLogoCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
+					g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
+					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = true;
+					g.getObjects().find(o => o.id === 'zipper').visible = false;
 					break;
 				case "zipper":
-					jerseyLogoCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
-					jerseyLogoCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
-					jerseyLogoCanvas.getObjects().find(o => o.id === 'zipper').visible = true;
+					g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
+					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+					g.getObjects().find(o => o.id === 'zipper').visible = true;
 					break;
 			}
 		} else {
-			jerseyLogoCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
-			jerseyLogoCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
-			jerseyLogoCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
+			g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
+			g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+			g.getObjects().find(o => o.id === 'zipper').visible = false;
 		}
+		g.addWithUpdate()
 		jerseyLogoCanvas.renderAll()
 	})
 
 	$("#buttonsCheck").on("change",function() {
-		switch ($("#buttonsCheck").val()) {
-			case "buttonsScript":
-				jerseyLogoCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = true;
-				jerseyLogoCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
-				jerseyLogoCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
-				break;
-			case "buttonsNoScript":
-				jerseyLogoCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
-				jerseyLogoCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = true;
-				jerseyLogoCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
-				break;
-			case "zipper":
-				jerseyLogoCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
-				jerseyLogoCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
-				jerseyLogoCanvas.getObjects().find(o => o.id === 'zipper').visible = true;
-				break;
-		}
+		const g = jerseyLogoCanvas.getObjects().find(o => o.id === 'buttons')
+		g.set("visible", $(this).is(":checked"))
+		g.addWithUpdate()
 		jerseyLogoCanvas.renderAll()
 	})
 
@@ -2460,7 +2531,7 @@
 							object.scaleToWidth(60);
 						} 
 					}
-					object.set({"left":446,"top":513,"angle":270});
+					object.set({"left":446,"top":526,"angle":270});
 					object.setCoords();
 					break;
 				case "sleeveRight":
@@ -2475,7 +2546,7 @@
 							object.scaleToWidth(60);
 						} 
 					}
-					object.set({"left":66,"top":513,"angle":90});
+					object.set({"left":66,"top":526,"angle":90});
 					object.setCoords();
 					break;
 				case "reset":
@@ -2863,7 +2934,13 @@
                         });
 					} else {
 						if (o.id == id) {
-							o.set("fill", color.toHexString());
+							if (o.type == 'image') {
+								o.filters[0]['color'] = color.toHexString();
+								o.applyFilters()
+								canvas.requestRenderAll()
+							} else {
+								o.set("fill", color.toHexString());
+							}
 						} 		
 						if (o.id == 'pantsMakersMark') {
 							pantsMakersMarkColor = color.toHexString();						
@@ -2887,8 +2964,14 @@
                         });
 					} else {
 						if (o.id == id) {
-							o.set("fill", color.toHexString());
-						} 		
+							if (o.type == 'image') {
+								o.filters[0]['color'] = color.toHexString();
+								o.applyFilters()
+								canvas.requestRenderAll()
+							} else {
+								o.set("fill", color.toHexString());
+							}
+						}		
 						if (o.id == 'pantsMakersMark') {
 							pantsMakersMarkColor = color.toHexString();						
 						}			
@@ -2911,8 +2994,14 @@
                         });
 					} else {
 						if (o.id == id) {
-							o.set("fill", color.toHexString());
-						} 		
+							if (o.type == 'image') {
+								o.filters[0]['color'] = color.toHexString();
+								o.applyFilters()
+								canvas.requestRenderAll()
+							} else {
+								o.set("fill", color.toHexString());
+							}
+						}		
 						if (o.id == 'pantsMakersMark') {
 							pantsMakersMarkColor = color.toHexString();						
 						}			
@@ -3702,6 +3791,7 @@
 			absolutePositioned: true
 		})
 
+
 		camo = new fabric.Group([],{
 			id: 'camo',
 			visible: false,
@@ -3712,6 +3802,51 @@
 			id: 'digiCamo',
 			visible: false,
 			clipPath: clippingPath
+		})
+
+		seams = new fabric.Group([],{
+			id: 'seams',
+			visible: true
+		})
+
+		seamsButtonPad = new fabric.Image.fromURL('./images/seams/seams_button_pad.png', function(oImg) {
+			oImg.set({
+				id: 'seamsButtonPad',
+				visible: true
+			})
+			jerseyBelow.add(oImg)
+		})
+
+		seamsStandardToPiping = new fabric.Image.fromURL('./images/seams/seams_standard_to_piping.png', function(oImg) {
+			oImg.set({
+				id: 'seamsStandardToPiping',
+				visible: true
+			})
+			seams.addWithUpdate(oImg)
+		})
+
+		seamsStandardToCollar = new fabric.Image.fromURL('./images/seams/seams_standard_to_collar.png', function(oImg) {
+			oImg.set({
+				id: 'seamsStandardToCollar',
+				visible: false
+			})
+			seams.addWithUpdate(oImg)
+		})
+
+		seamsRaglanToPiping = new fabric.Image.fromURL('./images/seams/seams_raglan_to_piping.png', function(oImg) {
+			oImg.set({
+				id: 'seamsRaglanToPiping',
+				visible: false
+			})
+			seams.addWithUpdate(oImg)
+		})
+
+		seamsRaglanToCollar = new fabric.Image.fromURL('./images/seams/seams_raglan_to_collar.png', function(oImg) {
+			oImg.set({
+				id: 'seamsRaglanToCollar',
+				visible: false
+			})
+			seams.addWithUpdate(oImg)
 		})
 
 		jerseyBackColor = new fabric.Rect({
@@ -3854,6 +3989,21 @@
 			}))
 			oImg.applyFilters()
 			digiCamo.addWithUpdate(oImg)
+		})
+
+		jerseySnakeskinColor = new fabric.Image.fromURL('./images/snakeskin_jersey.png', function(oImg) {
+			oImg.set({
+				id: 'jerseySnakeskinColor',
+				visible: false,
+				clipPath: clippingPath
+			})
+			oImg.filters.push(new fabric.Image.filters.BlendColor({
+				color: initialJerseyColors['jerseySnakeskinColor'],
+				mode: 'tint',
+				alpha: 1.0
+			}))
+			oImg.applyFilters()
+			jerseyBelow.add(oImg)
 		})
 
 		tequilaSunrise1Color = new fabric.Path("M 56.287109 48.5625 L 56.287109 160.62891 L 455.71289 160.62891 L 455.71289 48.5625 L 56.287109 48.5625 z M 56.287109 258.65039 L 56.287109 281.07422 L 455.71289 281.07422 L 455.71289 258.65039 L 56.287109 258.65039 z M 505.57227 350.89062 L 505.57227 694.56641 L 512.91602 694.56641 L 512.91602 350.89062 L 505.57227 350.89062 z M -0.91601562 351.29297 L -0.91601562 694.96875 L 6.4277344 694.96875 L 6.4277344 351.29297 L -0.91601562 351.29297 z M 56.287109 748.45117 L 56.287109 770.875 L 455.71289 770.875 L 455.71289 748.45117 L 56.287109 748.45117 z M 56.287109 868.89648 L 56.287109 973.82227 L 455.71289 973.82227 L 455.71289 868.89648 L 56.287109 868.89648 z",{
@@ -4208,25 +4358,8 @@
 		jerseyBelow.add(racingStripeSmallColor)
 		jerseyBelow.add(sideRacingStripeLargeColor)
 		jerseyBelow.add(sideRacingStripeSmallColor)
-		jerseyBelow.add(placketPipingInnerColor)
-		jerseyBelow.add(placketPipingMiddleColor)
-		jerseyBelow.add(placketPipingOuterColor)
-		jerseyBelow.add(shoulderPipingInnerColor)
-		jerseyBelow.add(shoulderPipingMiddleColor)
-		jerseyBelow.add(shoulderPipingOuterColor)
-		jerseyBelow.add(sleevePipingInnerColor)
-		jerseyBelow.add(sleevePipingMiddleColor)
-		jerseyBelow.add(sleevePipingOuterColor)
-		jerseyBelow.add(thinCuffInnerColor)
-		jerseyBelow.add(thinCuffMiddleColor)
-		jerseyBelow.add(thinCuffOuterColor)
-		jerseyBelow.add(sleeveCuffInnerColor)
-		jerseyBelow.add(sleeveCuffMiddleColor)
-		jerseyBelow.add(sleeveCuffOuterColor)
 		jerseyBelow.add(collarColor)
-		jerseyBelow.add(thickVNeck3)
-		jerseyBelow.add(thickVNeck2)
-		jerseyBelow.add(offsetVNeck)
+		jerseyBelow.add(seams)
 
 		loadMakersMark("jersey",$("#jerseyMakersMarkSelect").find(':selected').data('top'),$("#jerseyMakersMarkSelect").find(':selected').data('left'),$("#jerseyMakersMarkSelect").find(':selected').data('angle'),$("#jerseyMakersMarkSelect").find(':selected').data('height'));
 
@@ -4446,6 +4579,24 @@
 		swash5Group.scaleToWidth(210)
 		swash6Group.scaleToWidth(210)
 
+		jerseyLogoCanvas.add(placketPipingInnerColor)
+		jerseyLogoCanvas.add(placketPipingMiddleColor)
+		jerseyLogoCanvas.add(placketPipingOuterColor)
+		jerseyLogoCanvas.add(shoulderPipingInnerColor)
+		jerseyLogoCanvas.add(shoulderPipingMiddleColor)
+		jerseyLogoCanvas.add(shoulderPipingOuterColor)
+		jerseyLogoCanvas.add(sleevePipingInnerColor)
+		jerseyLogoCanvas.add(sleevePipingMiddleColor)
+		jerseyLogoCanvas.add(sleevePipingOuterColor)
+		jerseyLogoCanvas.add(thinCuffInnerColor)
+		jerseyLogoCanvas.add(thinCuffMiddleColor)
+		jerseyLogoCanvas.add(thinCuffOuterColor)
+		jerseyLogoCanvas.add(sleeveCuffInnerColor)
+		jerseyLogoCanvas.add(sleeveCuffMiddleColor)
+		jerseyLogoCanvas.add(sleeveCuffOuterColor)
+		jerseyLogoCanvas.add(thickVNeck3)
+		jerseyLogoCanvas.add(thickVNeck2)
+		jerseyLogoCanvas.add(offsetVNeck)
 		jerseyLogoCanvas.add(swash1Group)
 		jerseyLogoCanvas.add(swash2Group)
 		jerseyLogoCanvas.add(swash3Group)
@@ -4453,6 +4604,11 @@
 		jerseyLogoCanvas.add(swash5Group)
 		jerseyLogoCanvas.add(swash6Group)
 		jerseyLogoCanvas.add(wordmark)
+		
+		buttons = new fabric.Group([],{
+			id: 'buttons',
+			visible: true
+		})
 
 		fabric.Image.fromURL("./images/buttons_no_script.png", function (img) {
 			var tmp = img.set({
@@ -4470,8 +4626,8 @@
   				alpha: 1.0
 			}))
 			tmp.applyFilters()
-			jerseyLogoCanvas.add(tmp)
-			jerseyLogoCanvas.renderAll();
+			buttons.addWithUpdate(tmp)
+			//jerseyLogoCanvas.renderAll();
 		})
 
 		fabric.Image.fromURL("./images/buttons_script.png", function (img) {
@@ -4490,8 +4646,8 @@
   				alpha: 1.0
 			}))
 			tmp.applyFilters()
-			jerseyLogoCanvas.add(tmp)
-			jerseyLogoCanvas.renderAll();
+			buttons.addWithUpdate(tmp)
+			//jerseyLogoCanvas.renderAll();
 		})
 
  		fabric.Image.fromURL("./images/zipper.png", function (img) {
@@ -4504,9 +4660,11 @@
 				evented: false,
 				clipPath: clippingPath
 			})
-			jerseyLogoCanvas.add(tmp)
-			jerseyLogoCanvas.renderAll();
+			buttons.addWithUpdate(tmp)
+			//jerseyLogoCanvas.renderAll();
 		})
+
+		jerseyLogoCanvas.add(buttons)
         
 		jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 		reRenderBG("jersey")	
@@ -4520,6 +4678,21 @@
 			selectable:false,
 			evented: false
 		});
+
+		pantsSnakeskinColor = new fabric.Image.fromURL('./images/snakeskin_pants.png', function(oImg) {
+			oImg.set({
+				id: 'pantsSnakeskinColor',
+				visible: false,
+				clipPath: clippingPath
+			})
+			oImg.filters.push(new fabric.Image.filters.BlendColor({
+				color: initialPantsColors['pantsSnakeskinColor'],
+				mode: 'tint',
+				alpha: 1.0
+			}))
+			oImg.applyFilters()
+			pantsBelow.add(oImg)
+		})
 
         pantsSingleStripe = new fabric.Path("M 115.89648 59.96875 L 115.89648 512 L 122.82031 512 L 122.82031 59.96875 L 115.89648 59.96875 z M 350.88281 59.96875 L 350.88281 512 L 357.80664 512 L 357.80664 59.96875 L 350.88281 59.96875 z",{
 			fill: initialPantsColors["pantsSingleStripe"],
@@ -5545,6 +5718,7 @@
 // LOADING AND SAVING FUNCTIONS
 
 	$("#save").on("click",function(e) {
+		showOverlay();
 		const exportMeta = {}
 		const checkboxes = {}
 		const selects = {}
@@ -5593,8 +5767,6 @@
 			jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
 		})
 
-		console.log(jerseySelectors)
-		
 		textBoxes.wordmarkTextBox = $("#wordmarkTextBox").val()
 		textBoxes.capText = $("#capText").val()
 		textBoxes.capText2 = $("#capText2").val()
@@ -5674,9 +5846,10 @@
 		capLogoCanvas.setDimensions({ width: 512, height: 512 });
     	capLogoCanvas.setZoom(1)
 		
-		/* $.ajax({
+		$.ajax({
 		 	type: "POST",
 			url: "http://127.0.0.1:"+port+"/saveUniform",
+			dataType: "json",
 			data: {
 				capLogoCanvas: capLogoCanvas.toDataURL(),
 				capBelow: capBelow.toDataURL(),
@@ -5687,7 +5860,14 @@
 				name: fileName,
 				json: exportMeta
 			},
-			success: function(result) {
+			success: function(data) {
+				if (data.result == "error") {
+					if (data.errno == -4082) {
+						alert("An error occurred saving the file, it appears to already be open.\n\nClose the .zip and try again!")
+					} else {
+						alert("An error occurred saving the file.")
+					}
+				}
 				if ($("#toggleCapGuides").is(":checked")) {
 					capBelow.setDimensions({ width: capBelow.getWidth() * 0.75, height: capBelow.getHeight() * 0.75 });
    					capBelow.setZoom(scaleRatio)
@@ -5716,9 +5896,10 @@
 						pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
 					}
 				}
+				hideOverlay()
 			}
 
-		}) */
+		})
 	})
 
 	$("#load").on("click",function(e){

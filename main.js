@@ -9,8 +9,7 @@ const archiver = require('archiver');
 const imagemagickCli = require('imagemagick-cli')
 const ttfInfo = require('ttfinfo')
 const font2base64 = require("node-font2base64")
-var JSONC = require( 'json-compress' );
-const bodyParser = require('body-parser')
+const JSONC = require( 'json-compress');
 
 const isMac = process.platform === 'darwin'
 const tempDir = os.tmpdir()
@@ -308,34 +307,35 @@ app2.post('/saveUniform', (req, res) => {
 		}
 		dialog.showSaveDialog(null, saveOptions).then((result) => { 
 		  if (!result.canceled) {
+			console.log("OK THEN")
 			fs.writeFile(result.filePath, data, function(err) {
 			  if (err) {
-				res.end("success")
 				fs.unlink(tempDir + '/uniform_'+req.body.name+'.zip', (err) => {
 				  if (err) {
-					console.error(err)
+					console.log(err)
 					return
 				  }
 				})
-				res.end("success")
+				console.log(err)
+				res.json({result: "error", errno: err.errno})
 			  } else {
 				fs.unlink(tempDir + '/uniform_'+req.body.name+'.zip', (err) => {
 				  if (err) {
-					console.error(err)
+					console.log(err)
 					return
 				  }
 				})
-				res.end("success")
+				res.json({result: "success"})
 			  };
 			})
 		  } else {
 			fs.unlink(tempDir + '/uniform_'+req.body.name+'.zip', (err) => {
 			  if (err) {
-				console.error(err)
+				console.log(err)
 				return
 			  }
 			})
-			res.end("success");
+			res.json({result: "success"})
 		  }
 		})
 	});
@@ -519,7 +519,7 @@ function createWindow () {
     if (process.platform !== 'darwin') app.quit()
   })
 
-  function getExtension(filename) {
+function getExtension(filename) {
 	var ext = path.extname(filename||'').split('.');
 	return ext[ext.length - 1];
 }
