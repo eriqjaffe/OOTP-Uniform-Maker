@@ -296,7 +296,7 @@ app2.post('/saveUniform', (req, res) => {
 	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 
-	fs.writeFileSync(app.getPath('downloads') + '/uniform_' + req.body.name+'.uni', JSONC.pack(req.body.json))
+	fs.writeFileSync(app.getPath('downloads') + '/uniform_Unknown_Team_Home/uniform_' + req.body.name+'.uni', JSONC.pack(req.body.json))
 
 	const output = fs.createWriteStream(tempDir + '/uniform_'+req.body.name+'.zip');
 
@@ -361,6 +361,7 @@ app2.post('/saveUniform', (req, res) => {
 		await capBase.composite(capOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let capBuffer = await capBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(capBuffer, {name: "cap_"+req.body.name+".png"})
+		await capBase.write(app.getPath('downloads') + '/uniform_Unknown_Team_Home/cap_' + req.body.name+'.png')
 
 		// pants
 		let pantsBase = await Jimp.read(pantsBelow)
@@ -368,21 +369,24 @@ app2.post('/saveUniform', (req, res) => {
 		await pantsBase.composite(pantsOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(pantsBuffer, {name: "pants_"+req.body.name+".png"})
+		await pantsBase.write(app.getPath('downloads') + '/uniform_Unknown_Team_Home/pants_' + req.body.name+'.png')
 
-		// jersey
+		// jersey diffuse map
 		let jerseyBase = await Jimp.read(jerseyBelow)
 		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
 		let jerseyHeightMap = await Jimp.read(__dirname+"/images/jersey_height_map.png")
 		await jerseyBase.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBuffer = await jerseyBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(jerseyBuffer, {name: "jersey_"+req.body.name+"_d.png"})
+		await jerseyBase.write(app.getPath('downloads') + '/uniform_Unknown_Team_Home/jersey_' + req.body.name+'_d.png')
 		
-		// jersey heightmap
+		// jersey height map
 		await jerseyOverlay.grayscale()
 		await jerseyOverlay.brightness(.5)
 		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyHMBuffer = await jerseyHeightMap.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(jerseyHMBuffer, {name: "jersey_"+req.body.name+"_h.png"})
+		await jerseyHeightMap.write(app.getPath('downloads') + '/uniform_Unknown_Team_Home/jersey_' + req.body.name+'_h.png')
 
 		archive.append(JSONC.pack(req.body.json), {name: "uniform_"+req.body.name+".uni"})
 		
