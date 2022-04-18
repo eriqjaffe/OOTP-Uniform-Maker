@@ -22,10 +22,9 @@ const server = app2.listen(0, () => {
 const preferredColorFormat = "hex"
 const preferredTexture = "tbd"
 
-app2.use(express.urlencoded({limit: '100mb', extended: true, parameterLimit: 50000}));
+app2.use(express.urlencoded({limit: '200mb', extended: true, parameterLimit: 500000}));
 
 app2.get("/uploadImage", (req, res) => {
-	console.log("GOT THIS FAR")
 	dialog.showOpenDialog(null, {
 		properties: ['openFile'],
 		filters: [
