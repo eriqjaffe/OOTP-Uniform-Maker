@@ -206,7 +206,6 @@ app2.post('/warpText', (req, res)=> {
 	var width;
 	var height;
 	var cmdLine;
-	console.log(req.body.deform)
 	Jimp.read(buffer, (err, image) => {
 		if (err) {
 			console.log(err);
@@ -215,7 +214,6 @@ app2.post('/warpText', (req, res)=> {
 			image.write(tempDir+"/temp.png");
 			width = image.bitmap.width;
 			height = image.bitmap.height;
-			console.log(width +'x'+height)
 			switch (deform) {
 				case "arch":
 					cmdLine = 'magick convert -background transparent -wave -'+amount+'x'+width*2+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png'
@@ -224,14 +222,10 @@ app2.post('/warpText', (req, res)=> {
 					cmdLine = 'magick convert '+tempDir+'/temp.png -virtual-pixel Background -background transparent -distort Arc '+amount+' -trim +repage '+tempDir+'/'+deform+'.png'
 					break;
 				case "bilinearUp":
-					console.log(amount)
-					console.log(((100-amount)*0.01));
 					var y2=height*((100-amount)*0.01)
 					cmdLine = 'magick convert '+tempDir+'/temp.png -virtual-pixel transparent -interpolate Spline -distort BilinearForward "0,0 0,0 0,'+height+' 0,'+height+' '+width+',0 '+width+',0 '+width+','+height+' '+width+','+y2+'" '+tempDir+'/'+deform+'.png'
 					break;
 				case "bilinearDown":
-					console.log(amount)
-					console.log(((100-amount)*0.01));
 					var y2=height*((100-amount)*0.01)
 					cmdLine = 'magick convert '+tempDir+'/temp.png -virtual-pixel transparent -interpolate Spline -distort BilinearForward "0,0 0,0 0,'+height+' 0,'+y2+' '+width+',0 '+width+',0 '+width+','+height+' '+width+','+height+'" '+tempDir+'/'+deform+'.png'
 					break;
@@ -271,7 +265,6 @@ app2.post('/warpText', (req, res)=> {
 					})
 					break;
 			}
-			console.log(cmdLine);
 			imagemagickCli.exec(cmdLine).then(({ stdout, stderr }) => {
 				Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
 					if (err) {
@@ -294,8 +287,9 @@ app2.post('/saveUniform', (req, res) => {
 	const pantsBelow = Buffer.from(req.body.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const json = Buffer.from(req.body.json, 'utf8')
 
-	fs.writeFileSync(app.getPath('downloads') + '/uniform_Unknown_Team_Home/uniform_' + req.body.name+'.uni', JSONC.pack(req.body.json))
+	fs.writeFileSync(app.getPath('downloads') + '/uniform_Unknown_Team_Home/uniform_' + req.body.name+'.uni', json)
 
 	const output = fs.createWriteStream(tempDir + '/uniform_'+req.body.name+'.zip');
 
@@ -306,7 +300,6 @@ app2.post('/saveUniform', (req, res) => {
 		}
 		dialog.showSaveDialog(null, saveOptions).then((result) => { 
 		  if (!result.canceled) {
-			console.log("OK THEN")
 			fs.writeFile(result.filePath, data, function(err) {
 			  if (err) {
 				fs.unlink(tempDir + '/uniform_'+req.body.name+'.zip', (err) => {
@@ -400,7 +393,8 @@ app2.get("/loadUniform", (req, res) => {
 			{ name: 'Jersey Files', extensions: ['uni'] }
 		]
 	})
-	res.end(JSON.stringify(JSONC.unpack(fs.readFileSync(file[0]).toString())))
+	//res.end(JSON.stringify(JSONC.unpack(fs.readFileSync(file[0]).toString())))
+	res.end(JSON.stringify(JSON.parse(fs.readFileSync(file[0]).toString())))
 })
 
 function createWindow () {

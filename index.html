@@ -572,7 +572,7 @@
 									</div>
 									<div class="jersey-accord-header jersey-inactive-header">Text</div>
 									<div class="jersey-accord-content">
-										<table style="width:100%;">
+										<table style="width:100%">
 											<tr>
 												<td class="checkCell"><input type="checkbox" id="wordmarkCheck" class="wordmarkToggle" data-id="wordmark"></td>
 												<td colspan="2"><label>Text: </label><input class="jerseyTextOption" type="text" id="wordmarkTextBox" value="Bulldogs" style="width:79%; text-align:center;"/></td>
@@ -1604,9 +1604,9 @@
 			$(this).prop("disabled",true);
 		})
 		
-		$(".textColorSelector, .textColor2Selector, .jerseyTextColorSelector").each(function() {
+		$(".textColorSelector, .textColor2Selector, .jerseyTextColorSelector, .swashSelector").each(function() {
 			$(this).spectrum('disable')
-		})
+		})	
 		
 		$("#capFontTypeCombo").prop("disabled",true)
 
@@ -2455,10 +2455,12 @@
 	})
 
 	$("#buttonOpacity").on("change",function(e) {
-		var o = jerseyLogoCanvas.getObjects().find(o => o.id == 'buttonsNoScript')
-		var p = jerseyLogoCanvas.getObjects().find(p => p.id == 'buttonsScript')
-		o.set('opacity',parseInt($(this).val())/100);
-		p.set('opacity',parseInt($(this).val())/100);
+		const g = jerseyLogoCanvas.getObjects().find(o => o.id == 'buttons')
+		g.getObjects().forEach(function(o) {
+			if (o.id != 'zipper') {
+				o.set('opacity',parseInt($("#buttonOpacity").val())/100);
+			}
+		})
 		$("#buttonOpacitySpan").html($(this).val());
 		jerseyLogoCanvas.renderAll();
 	})
@@ -2469,6 +2471,7 @@
 		//	jerseyLogoCanvas.setOverlayImage(null,jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 		//}
 		var obj = e.selected[0];
+		console.log(obj.id)
 		if (obj.id == 'wordmark') {
 			$("#tipSpan").html("If you're trying to select an image instead of the text, you have to hide the text first.");
 		}
@@ -2521,6 +2524,7 @@
 	});
 	
 	jerseyLogoCanvas.on("mouse:down",function(e) {
+		console.log("oh hello")
 		$("#jerseyOverlay").css("display","none");
 		$("#capOverlay").css("display","inline-block");
 		$("#pantsOverlay").css("display","inline-block");
@@ -2652,6 +2656,9 @@
 
 	$("#swashCheck").on("change",function() {
 		$("#swashCombo").msDropDown().data("dd").set("disabled", $(this).is(":checked") ? false : true);
+		$(".swashSelector").each(function() {
+			$(this).spectrum($("#swashCheck").is(":checked") ? 'enable' : 'disable')
+		})	
 		jerseyLogoCanvas.getObjects('group').forEach(function(o) {
 			if (o.id.indexOf("swash") > -1) {
 				if (state == true) {
@@ -3888,7 +3895,9 @@
 
 		seams = new fabric.Group([],{
 			id: 'seams',
-			visible: true
+			visible: true,
+			selectable: false,
+			evented: false
 		})
 
 		seamsStandardToPiping = new fabric.Image.fromURL('./images/seams/seams_standard_to_piping.png', function(oImg) {
@@ -4757,7 +4766,9 @@
 		
 		buttons = new fabric.Group([],{
 			id: 'buttons',
-			visible: true
+			visible: true,
+			selectable: false,
+			evented: false
 		})
 
 		fabric.Image.fromURL("./images/buttons_no_script.png", function (img) {
@@ -5899,8 +5910,8 @@
 		const buttons = {}
 
 		exportMeta.team = $("#teamName").val()
-		exportMeta.start = parseInt($("#startYear").val())
-		exportMeta.end = parseInt($("#endYear").val())
+		exportMeta.start = 0
+		exportMeta.end = 0
 		exportMeta.type = $("#uniformType").val()
 
 		jerseySelectors.jerseyColor = { "disabled": $("#jerseyColor").prop("disabled"), "val": $("#jerseyColor").spectrum("get").toHexString() }
@@ -5936,17 +5947,17 @@
 			jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
 		})
 
-		textBoxes.wordmarkTextBox = $("#wordmarkTextBox").val()
-		textBoxes.capText = $("#capText").val()
-		textBoxes.capText2 = $("#capText2").val()
+		textBoxes.wordmarkTextBox = { "disabled": $("#wordmarkTextBox").prop("disabled"), "val": $("#wordmarkTextBox").val() }
+		textBoxes.capText = { "disabled": $("#capText").prop("disabled"), "val": $("#capText").val() }
+		textBoxes.capText2 = { "disabled": $("#capText2").prop("disabled"), "val": $("#capText2").val() }
 
 		const jsonExport = {
 			'jerseyBelow': jerseyBelow.toDatalessJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
 			'jerseyLogoCanvas': jerseyLogoCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
 			'pantsBelow': pantsBelow.toDatalessJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
 			'pantsLogoCanvas': pantsLogoCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
-			'capBelow': jerseyBelow.toDatalessJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
-			'capLogoCanvas': jerseyLogoCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners'])
+			'capBelow': capBelow.toDatalessJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
+			'capLogoCanvas': capLogoCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners'])
 		}
 
 		//const jsonExport = ""
@@ -5954,11 +5965,15 @@
 		exportMeta.checkboxes = checkboxes
 		exportMeta.selects = selects
 		exportMeta.ranges = ranges
+		exportMeta.buttons = buttons
 		exportMeta.capSelectors = capSelectors
 		exportMeta.jerseySelectors = jerseySelectors
 		exportMeta.pantsSelectors = pantsSelectors
 		exportMeta.textBoxes = textBoxes
 		exportMeta.canvases = jsonExport
+		exportMeta.customFonts = customFonts
+		exportMeta.selectedJerseyFont = $("#jerseyFontTypeCombo").val()
+		exportMeta.capSelectedFont = $("#capFontTypeCombo").val()
 
 		var startYear = parseInt($("#startYear").val());
 		var endYear = parseInt($("#endYear").val())
@@ -6016,6 +6031,8 @@
     	capBelow.setZoom(1)
 		capLogoCanvas.setDimensions({ width: 512, height: 512 });
     	capLogoCanvas.setZoom(1)
+
+		console.log(exportMeta)
 		
 		$.ajax({
 		 	type: "POST",
@@ -6029,7 +6046,7 @@
 				pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
 				pantsBelow: pantsBelow.toDataURL(),
 				name: fileName,
-				json: exportMeta
+				json: JSON.stringify(exportMeta,null,2)
 			},
 			success: function(data) {
 				if (data.result == "error") {
@@ -6078,38 +6095,134 @@
 			type: "GET",
 			url: "http://127.0.0.1:"+port+"/loadUniform",
 			success: function(response) {
-				/* exportMeta.checkboxes = checkboxes
-				exportMeta.selects = selects
-				exportMeta.ranges = ranges
-				exportMeta.capSelectors = capSelectors
-				exportMeta.jerseySelectors = jerseySelectors
-				exportMeta.pantsSelectors = pantsSelectors
-				exportMeta.textBoxes = textBoxes
-				exportMeta.canvases = jsonExport */
+				customFonts.splice(0, customFonts.length)
+
 				const exportMeta = JSON.parse(response)
+
+				$("#teamName").val(exportMeta.team)
+				$("#uniformType").val(exportMeta.type)
+				$("#startYear").val(exportMeta.start)
+				$("#endYear").val(exportMeta.end)
+
+				if (exportMeta.customFonts != undefined && exportMeta.customFonts != null) {
+					if (exportMeta.customFonts.length > 0) {
+						for (x in exportMeta.customFonts) {
+							const loadedFont = exportMeta.customFonts[x]
+							validFonts.push(loadedFont.familyName)
+							$("head").prepend("<style>@font-face {\n   font-family: '"+loadedFont.familyName+"';\n   src: url('"+loadedFont.fontData+"') format('truetype');\n}\n."+loadedFont.familyName+" { font-family: '"+loadedFont.familyName+"'; font-size: 1.1em;}\n</style>");
+							fontSources[loadedFont.familyName] = loadedFont.fontData;
+							var style = loadedFont.familyName;
+							var font_family = $("."+style).css("font-family");
+							var optgroup = $("<optgroup class='"+loadedFont.familyName+"'>");
+							optgroup.append("<option value='"+loadedFont.familyName+"'>"+loadedFont.fontName+"</option>")
+							$("#jerseyFontTypeCombo").append(optgroup)
+							var optgroup2 = $("<optgroup class='"+loadedFont.familyName+"'>");
+							optgroup2.append("<option value='"+loadedFont.familyName+"'>"+loadedFont.fontName+"</option>")
+							$("#capFontTypeCombo").append(optgroup2)
+							customFonts.push(loadedFont)
+						}	
+					}
+				}
+				
+
 				Object.keys(exportMeta.checkboxes).forEach(function(key){
-					$("#"+key).prop('checked', exportMeta.checkboxes[key] == "true")
+					$("#"+key).prop('checked', exportMeta.checkboxes[key].checked)
 				})	
+
 				Object.keys(exportMeta.selects).forEach(function(key){
-					$("#"+key).val(exportMeta.selects[key])
+					$("#"+key).prop("disabled",exportMeta.selects[key].disabled)
+					$("#"+key).val(exportMeta.selects[key].val)
 				})
+
 				Object.keys(exportMeta.ranges).forEach(function(key){
-					$("#"+key).val(exportMeta.ranges[key])
+					$("#"+key).prop("disabled",exportMeta.ranges[key].disabled)
+					$("#"+key).val(exportMeta.ranges[key].val)
 				})
+
 				Object.keys(exportMeta.textBoxes).forEach(function(key){
-					console.log(key)
-					console.log(exportMeta.textBoxes[key])
-					$("#"+key).val(exportMeta.textBoxes[key])
+					$("#"+key).prop("disabled",exportMeta.textBoxes[key].disabled)
+					$("#"+key).val(exportMeta.textBoxes[key].val)
 				})
+
+				Object.keys(exportMeta.buttons).forEach(function(key){
+					$("#"+key).prop("disabled",exportMeta.buttons[key].disabled)
+					$("#"+key).val(exportMeta.buttons[key].val)
+				})
+
 				Object.keys(exportMeta.capSelectors).forEach(function(key){
-					$("#"+key).spectrum("set",exportMeta.capSelectors[key])
+					if (exportMeta.capSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+					$("#"+key).spectrum("set",exportMeta.capSelectors[key].val)
 				})
+
 				Object.keys(exportMeta.jerseySelectors).forEach(function(key){
-					$("#"+key).spectrum("set",exportMeta.jerseySelectors[key])
+					if (exportMeta.jerseySelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+					$("#"+key).spectrum("set",exportMeta.jerseySelectors[key].val)
 				})
+
 				Object.keys(exportMeta.pantsSelectors).forEach(function(key){
-					$("#"+key).spectrum("set",exportMeta.pantsSelectors[key])
+					if (exportMeta.pantsSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+					$("#"+key).spectrum("set",exportMeta.pantsSelectors[key].val)
 				})
+
+
+				jerseyBelow.loadFromJSON(exportMeta.canvases.jerseyBelow, jerseyBelow.renderAll.bind(jerseyBelow), function(o, object) {
+					jerseyBelow.add(object)
+				})
+				jerseyLogoCanvas.loadFromJSON(exportMeta.canvases.jerseyLogoCanvas, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), function(o, object) {
+					console.log(object.id)
+					if (object.id == 'wordmark' || object.id == 'warpedText') {
+						$("#wordmarkCheck").prop("checked",object.visible).triggerHandler('click');
+						if (object.id == 'warpedText') {
+							var myfont = new FontFaceObserver(exportMeta.selectedJerseyFont)
+							myfont.load()
+								.then(function() {
+									o.set("fontFamily", (validFonts.includes(exportMeta.selectedJerseyFont)) ? o.fontFamily : "Leckerli One")
+									jerseyLogoCanvas.renderAll();
+									$("#jerseyFontTypeCombo").val(exportMeta.selectedJerseyFont)
+									$("#jerseyFontTypeCombo").removeClass().addClass(o.get("fontFamily"));
+									$("#jerseyFontTypeCombo").trigger('change')
+								}).catch(function(e) {
+									console.log(e)
+								});
+						} else {
+							object.getObjects().forEach(function(o) {
+							var myfont = new FontFaceObserver(exportMeta.selectedJerseyFont)
+							myfont.load()
+								.then(function() {
+									o.set("fontFamily", (validFonts.includes(exportMeta.selectedJerseyFont)) ? o.fontFamily : "Leckerli One")
+									jerseyLogoCanvas.renderAll();
+									$("#jerseyFontTypeCombo").val(exportMeta.selectedJerseyFont)
+									$("#jerseyFontTypeCombo").removeClass().addClass(object.get("fontFamily"));
+									$("#jerseyFontTypeCombo").trigger('change')
+								}).catch(function(e) {
+									console.log(e)
+								});
+							})
+						}
+						
+					}
+					jerseyLogoCanvas.add(object)
+				})
+				jerseyBelow.renderAll()
+				reRenderBG("jersey")
+
+				capBelow.loadFromJSON(exportMeta.canvases.capBelow, capBelow.renderAll.bind(capBelow), function(o, object) {
+					capBelow.add(object)
+				})
+				capLogoCanvas.loadFromJSON(exportMeta.canvases.capLogoCanvas, capLogoCanvas.renderAll.bind(capLogoCanvas), function(o, object) {
+					capLogoCanvas.add(object)
+				})
+				capBelow.renderAll()
+				reRenderBG("cap")
+
+				pantsBelow.loadFromJSON(exportMeta.canvases.pantsBelow, pantsBelow.renderAll.bind(pantsBelow), function(o, object) {
+					pantsBelow.add(object)
+				})
+				pantsLogoCanvas.loadFromJSON(exportMeta.canvases.pantsLogoCanvas, pantsLogoCanvas.renderAll.bind(pantsLogoCanvas), function(o, object) {
+					pantsLogoCanvas.add(object)
+				})
+				pantsBelow.renderAll()
+				reRenderBG("pants")
 			}
 		})
 	})
