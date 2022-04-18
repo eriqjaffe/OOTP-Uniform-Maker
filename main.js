@@ -380,6 +380,16 @@ app2.post('/saveUniform', (req, res) => {
 		archive.append(jerseyHMBuffer, {name: "jersey_"+req.body.name+"_h.png"})
 		await jerseyHeightMap.write(app.getPath('downloads') + '/uniform_Unknown_Team_Home/jersey_' + req.body.name+'_h.png')
 
+		// jersey with baked texture
+		let jerseyBakedBase = await Jimp.read(jerseyBelow)
+		let jerseyBakedOverlay = await Jimp.read(jerseyLogoCanvas)
+		let jerseyTexture = await Jimp.read(__dirname+"/images/texture_jersey_default.png")
+		await jerseyBakedBase.composite(jerseyTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+		await jerseyBakedBase.composite(jerseyBakedOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		let jerseyBakedBuffer = await jerseyBakedBase.getBufferAsync(Jimp.MIME_PNG)
+		archive.append(jerseyBakedBuffer, {name: "jersey_"+req.body.name+".png"})
+		await jerseyBakedBase.write(app.getPath('downloads') + '/uniform_Unknown_Team_Home/jersey_' + req.body.name+'.png')
+
 		archive.append(JSONC.pack(req.body.json), {name: "uniform_"+req.body.name+".uni"})
 		
 	    archive.finalize()
