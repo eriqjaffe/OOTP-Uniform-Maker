@@ -483,7 +483,7 @@ function createWindow () {
           submenu: [
           {
               click: () => mainWindow.webContents.send('about','click'),
-                  label: 'About the OOTP23 Uniform Maker',
+                  label: 'About the OOTP Uniform Maker',
           },
           {
               label: 'About OOTP Baseball',

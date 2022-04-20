@@ -1,19 +1,19 @@
 {
-  "name": "OOTP23-Uniform-Maker",
-  "productName": "OOTP23 Uniform Maker",
+  "name": "OOTP-Uniform-Maker",
+  "productName": "OOTP Uniform Maker",
   "version": "0.1.0",
-  "description": "OOTP23 Uniform Maker",
+  "description": "OOTP Uniform Maker",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
-  "repository": "https://github.com/eriqjaffe/OOTP23-Uniform-Maker",
+  "repository": "https://github.com/eriqjaffe/OOTP-Uniform-Maker",
   "author": {
     "name": "Eriq Jaffe",
     "email": "eriqjaffe@gmail.com",
-    "url": "https://github.com/eriqjaffe/OOTP23-Uniform-Maker"
+    "url": "https://github.com/eriqjaffe/OOTP-Uniform-Maker"
   },
   "license": "MIT",
   "devDependencies": {
