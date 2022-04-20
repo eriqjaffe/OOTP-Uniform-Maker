@@ -28,7 +28,7 @@ app2.get("/uploadImage", (req, res) => {
 	dialog.showOpenDialog(null, {
 		properties: ['openFile'],
 		filters: [
-			{ name: 'Images', extensions: ['jpg', 'png', 'gif'] }
+			{ name: 'Images', extensions: ['jpg', 'png'] }
 		]
 	  }).then(result => {
 		  if(!result.canceled) {
@@ -390,7 +390,8 @@ app2.post('/saveUniform', (req, res) => {
 		archive.append(jerseyBakedBuffer, {name: "jersey_"+req.body.name+".png"})
 		await jerseyBakedBase.write(app.getPath('downloads') + '/uniform_Unknown_Team_Home/jersey_' + req.body.name+'.png')
 
-		archive.append(JSONC.pack(req.body.json), {name: "uniform_"+req.body.name+".uni"})
+		archive.append(json, {name: "uniform_"+req.body.name+".uni"})
+		archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });
 		
 	    archive.finalize()
 	}
@@ -400,7 +401,7 @@ app2.get("/loadUniform", (req, res) => {
 	const file = dialog.showOpenDialogSync(null, {
 		properties: ['openFile'],
 		filters: [
-			{ name: 'Jersey Files', extensions: ['uni'] }
+			{ name: 'Uniform Files', extensions: ['uni'] }
 		]
 	})
 	//res.end(JSON.stringify(JSONC.unpack(fs.readFileSync(file[0]).toString())))

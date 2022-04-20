@@ -28,5 +28,6 @@
     "node-font2base64": "^0.7.1",
     "promise-synchronizer": "^1.1.8",
     "ttfinfo": "^0.2.0"
-  }
+  },
+  "packageManager": "yarn@3.2.0"
 }
