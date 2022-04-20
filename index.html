@@ -15,7 +15,7 @@
 	<script type="text/javascript" src="./scripts/jquery.mousewheel.min.js"></script>
 	<script type="text/javascript" src="./scripts/spin.min.js"></script>
 	<script type="text/javascript" src="./scripts/fontfaceobserver.js"></script>
-    <script type="text/javascript" src="./scripts/skeletabs.js"></script>>
+    <script type="text/javascript" src="./scripts/skeletabs.js"></script>
 	<script>if (window.module) module = window.module;</script>
 	<link href='./scripts/uniformmaker.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/spectrum.css' rel='stylesheet' type='text/css'>
@@ -116,7 +116,8 @@
                 </div>
             </div>
             <div class="col span_2_of_5">
-                <div id="text">   
+                <div id="text">
+					<div> 
 					<table style="width:100%;">
 						<tr>
 							<td>
@@ -139,6 +140,7 @@
 							</td>
 						</tr>	
 					<table>
+					</div> 
 					<div class="accordion">	
                         <table style="width:100%; height:760px"><tr><td>
                         <div id="tabContainer" class="skltbs-theme-light" data-skeletabs='{ "panelHeight": "adaptive", "keyboard": false, "startIndex": 0 }' style="position:absolute; top:60px;">
@@ -173,17 +175,17 @@
                                                 </td>
                                             </tr>
                                             <tr class="color_tr">
-                                                <td class="checkCell">&nbsp;</td>
+                                                <td class="checkCell"><input type="checkbox" id="sleevesCheck"></td>
                                                 <td>
 													<label>Sleeves:&nbsp;</label>
 													<select id="sleeveType">
-                                                        <option value="standard" selected>Standard</option>
+                                                        <option value="standard" selected>Vest</option>
                                                         <option value="raglan">Raglan</option>
                                                     </select>
 												</td>
                                                 <td style="text-align:right;">
-                                                    <input class="sleeveSelector" type="text" id="leftSleeveColor" data-element="leftSleeveColor" data-sleeve="left">
-                                                    <input class="sleeveSelector" type="text" id="rightSleeveColor" data-element="rightSleeveColor" data-sleeve="right">
+                                                    <input class="sleeveSelector selector" type="text" id="leftSleeveColor" data-element="leftSleeveColor" data-sleeve="left">
+                                                    <input class="sleeveSelector selector" type="text" id="rightSleeveColor" data-element="rightSleeveColor" data-sleeve="right">
                                                 </td>
                                             </tr>
 											<tr class="color_tr">
@@ -1458,17 +1460,34 @@
                         <input type="button" class="button" id="straightenObject" value="Reset Object Rotation" style="display:none;">
                         <input type="button" class="button" id="save" value="Save Uniform">
                         <input type="button" class="button" id="load" value="Load Uniform">
-                        <input type="button" class="button" id="copy" value="Copy Object" onclick="copy()">
-						<input type="button" class="button" id="paste" value="Paste Object" onclick="paste()">
-                        <input type="button" class="button" id="aboutUniformFactory" value="About Uniform Factory">
+                        <input type="button" class="button copypaste" id="copy" value="Copy Object" onclick="copy()">
+						<input type="button" class="button copypaste" id="paste" value="Paste Object" onclick="paste()">
+						<input type="button" class="button" id="aboutUniformMaker" value="About Uniform Maker">
                     </div>
                 </div>
             </div>
         </div>
     </div>
+	<div id="FAQ" class="jm-white-popup mfp-hide">
+		<div style="width:100%; text-align:center;">	
+			<span class="header" style="color:#103959!important; font-size:2em!important;">About The OOTP23 Uniform Maker</span>
+		</div>
+		<div id="faqContainer" style="width:100%; height:90%; overflow:auto;">
+			<div class="question" style="margin-top:10px!important;">So what is this thing?</div><br>
+			<div class="answer">This is a utility designed to make it easy to create custom uniforms for Out Of The Park Baseball 23 and newer.  If you don't at least have OOTP23, then this is really of little use to you.</div><br>
+			<div class="question">What is Out Of The Park Baseball?</div><br>
+			<div class="answer">Out Of The Park Baseball is an award winning baseball management simulation published by OOTP Developments.  For more information about OOTP, as well as the other games they make, <a href="http://www.ootpdevelopments.com" target="_blank">visit their site</a>.</div><br>
+			<div class="question">How did you do this?</div><br>
+			<div class="answer">The Uniform Maker is built using <a href="https://nodejs.org/en/about/" target="_blank">Node.js</a> and <a href="https://www.electronjs.org/" target="_blank">Electron</a>.  So it's written entirely in HTML and JavaScript like pretty much any website.</div></br>
+			<div class="question">Who is responsible for this thing?</div>
+			<div class="answer">That would be me.  My name is Eriq Jaffe, and I've been playing OOTP Baseball since 2004.  Feel free to <a href="mailto:eriqjaffe@gmail.com">shoot me an email</a> with any questions or comments.  You can also view the source code for this on <a href="https://github.com/eriqjaffe/OOTP23-Uniform-Maker" target="_blank">GitHub</a>.<br><br>Some of the textures and shapes are taken directly from OOTP, but a lot of them are based on the work of Gern44, silvam14, txranger, Deft, NoPepper, Reds1, davwms and probably several others (my record keeping isn't all that great, and I'm not 100% sure where every piece came from - if I'm using one of your components and I forgot to give you credit, thanks!).<br><br>I'd also like to give an additional shout out to Conrad Burry, who created some of the default fonts.</div><br>
+		</div>
+	</div>
 </div>
 </body>
 <script>
+	require('./renderer.js')
+
 	const spinnerOptions = {lines: 13, length: 28, width: 14, radius: 42, scale: 2, corners: 1, color: '#C8102E', opacity: 0.25, rotate: 0, direction: 1, speed: 1, trail: 60, fps: 20, zIndex: 2e9, className: 'spinner', top: '50%', left: '50%', shadow: false, hwaccel: false, position: 'absolute'}
     const target = document.getElementById('overlay');
     const spinner = new Spinner(spinnerOptions);
@@ -1612,6 +1631,27 @@
 				}
 			})
 		})
+
+		/* $("#uniformType").customComboBox({
+			tipText : "Enter Your Value",
+			tipClass : "mytipclass",
+			allowed : /[A-Za-z0-9\$\.\s]/,
+			notallowed : /[\<\>]/,
+			index : 'last',
+			isEditing : function(el, status, value) {
+				if (typeof window.console!='object') { return; }
+				console.info('Editing status changed to (', status, ') on ', el, ' combo box and the selected value is "', value, '"');
+			},
+			onKeyDown : function(el, character, fulltext) {
+				if (typeof window.console!='object') { return; }
+				console.info('The character (', character, ') was just typed into ', el, ' combo box and the complete text is now "', fulltext, '"');
+			},
+			onDelete : function(el, fulltext) {
+				if (typeof window.console!='object') { return; }
+				console.info('A character was deleted from ', el, ' combo box and the complete text is now "', fulltext, '"');
+			}
+		}); */
+			
 		
 		$(":checkbox").click(function(e) {
 			state = ($(this).is(':checked')) ? true : false
@@ -1710,9 +1750,13 @@
 							$("#jerseyFileName").html("")
 							activeCanvas.remove(obj);
 							activeCanvas.renderAll();
+							
 						}
-						$("#tipSpan").html("");
-						activeCanvas = null;
+						$("#tipSpan").html("");	
+						$(".copypaste").each(function() {
+							$(this).css("display","none")
+						})
+						//activeCanvas = null;
 					return false;
 				}
 			}
@@ -2559,6 +2603,28 @@
 		jerseyLogoCanvas.renderAll()
 	})
 
+	$("#sleevesCheck").on("change",function() {
+		if ($(this).is(":checked")) {
+			if ($("#sleeveType").val() == "standard") {
+				jerseyBelow.getObjects().find(o => o.id === 'rightSleeveColor').visible = true
+				jerseyBelow.getObjects().find(o => o.id === 'leftSleeveColor').visible = true
+				jerseyBelow.getObjects().find(o => o.id === 'rightSleeveRaglanColor').visible = false
+				jerseyBelow.getObjects().find(o => o.id === 'leftSleeveRaglanColor').visible = false
+			} else {
+				jerseyBelow.getObjects().find(o => o.id === 'rightSleeveColor').visible = false
+				jerseyBelow.getObjects().find(o => o.id === 'leftSleeveColor').visible = false
+				jerseyBelow.getObjects().find(o => o.id === 'rightSleeveRaglanColor').visible = true
+				jerseyBelow.getObjects().find(o => o.id === 'leftSleeveRaglanColor').visible = true
+			}
+		} else {
+			jerseyBelow.getObjects().find(o => o.id === 'rightSleeveColor').visible = false
+			jerseyBelow.getObjects().find(o => o.id === 'leftSleeveColor').visible = false
+			jerseyBelow.getObjects().find(o => o.id === 'rightSleeveRaglanColor').visible = false
+			jerseyBelow.getObjects().find(o => o.id === 'leftSleeveRaglanColor').visible = false
+		}
+		reRenderBG("jersey")
+	})
+
 	$("#buttonOpacity").on("change",function(e) {
 		const g = jerseyLogoCanvas.getObjects().find(o => o.id == 'buttons')
 		g.getObjects().forEach(function(o) {
@@ -2599,6 +2665,9 @@
 		$("#jerseyReplaceColorDiv").css("display", "none")
 		$("#jerseyFileName").html("");
 		$("#tipSpan").html("");
+		$(".copypaste").each(function() {
+			$(this).css("display","none")
+		})
 	})
 
 	jerseyLogoCanvas.on('mouse:move', function(e) {
@@ -3335,7 +3404,7 @@
 		if (obj.id == 'wordmark') {
 			$("#tipSpan").html("If you're trying to select an image instead of the text, you have to hide the text first.");
 		}
-		if (obj.type == 'image') {
+		/* if (obj.type == 'image') {
 			$("#fileName").html(obj.get('name'));
 			if ($("#capTrimImageDiv").css("display") == "none") {
 				$("#capTrimImageDiv").css("display","block");
@@ -3343,7 +3412,7 @@
 				$("#capSelectedImageDiv").css("display","block");
 			}
 			$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-		}
+		} */
 	})
 
 	capLogoCanvas.on('selection:cleared', function(e) {
@@ -3363,6 +3432,9 @@
 		$("#capReplaceColorDiv").css("display", "none")
 		$("#fileName").html("");
 		$("#tipSpan").html("");
+		$(".copypaste").each(function() {
+			$(this).css("display","none")
+		})
 	})
 
 	$(".capSelector").each(function() {
@@ -4061,23 +4133,15 @@
 			seams.addWithUpdate(oImg)
 		})
 
-		jerseyBackColor = new fabric.Rect({
+		jerseyBackColor = new fabric.Path("M 0 0 L 0 512 L 116.43164 512 L 132.05078 511.13281 L 149.24414 508.625 L 172.28711 506.83398 L 183.15234 503.60938 L 194.01758 508.50586 L 205.59961 516.26562 L 301.47461 515.66992 L 316.39844 508.26758 L 327.85938 504.08789 L 338.72461 507.55078 L 364.51367 509.58008 L 383.08398 512 L 512 512 L 512 0 L 0 0 z",{
 			id: 'jerseyBackColor',
-			top: 0,
-			left: 0,
-			width: 512,
-			height: 512,
 			fill: initialJerseyColors['jerseyBackColor'],
 			visible: false,
 			clipPath: clippingPath
 		})
 
-		jerseyFrontColor = new fabric.Rect({
+		jerseyFrontColor = new fabric.Path("M 183.15234 503.60938 L 172.28711 506.83398 L 149.24414 508.625 L 132.05078 511.13281 L 116.43164 512 L 0 512 L 0 1024 L 512 1024 L 512 512 L 383.08398 512 L 364.51367 509.58008 L 338.72461 507.55078 L 327.85938 504.08789 L 316.39844 508.26758 L 301.47461 515.66992 L 205.59961 516.26562 L 194.01758 508.50586 L 183.15234 503.60938 z",{
 			id: 'jerseyFrontColor',
-			top: 511,
-			left: 0,
-			width: 512,
-			height: 513,
 			fill: initialJerseyColors['jerseyFrontColor'],
 			visible: false,
 			clipPath: clippingPath
@@ -4094,7 +4158,7 @@
 		rightSleeveColor = new fabric.Path("M 103.04688 356 C 102.57402 356 98.432928 358.18589 93.84375 360.85742 C 86.037211 365.4019 84.211761 365.9808 65.5 369.85547 C 45.577543 373.98088 45.411783 373.99781 22.75 374.06641 L 0 374.13477 L 0 524.06836 L 0 674 L 16.75 674.13086 C 25.962485 674.20324 38.674998 674.5407 45 674.88086 C 51.325002 675.2209 62.800006 675.15165 70.5 674.72656 C 82.083307 674.08707 86.657776 674.28399 97 675.86523 C 103.875 676.91632 110.18346 677.82707 111.01953 677.88867 C 112.0058 677.9612 114.58771 673.88582 118.37109 666.28516 L 124.20312 654.57031 L 124.05859 641.80273 C 123.97873 634.78022 123.24329 625.31441 122.42578 620.76758 C 117.0652 590.95255 116.77433 587.21889 116.29883 542 L 115.8418 498.5 L 119.42773 482.14648 C 122.79174 466.80531 123.05389 464.32786 123.64062 442.14648 C 124.30794 416.92004 123.16477 394.15083 120.31641 375.9082 L 118.66211 365.31641 L 111.28516 360.6582 C 107.22746 358.09631 103.51973 356 103.04688 356 z",{
 			fill: initialJerseyColors["rightSleeveColor"],
 			id: 'rightSleeveColor',
-			visible: true,
+			visible: false,
 			selectable:false,
 			evented: false
 		});
@@ -4102,7 +4166,7 @@
 		leftSleeveColor = new fabric.Path("M 394.43164 350.12695 C 394.13895 350.10069 393.95298 350.16321 393.87305 350.3125 C 392.76398 352.38394 389.69126 376.21537 389.59375 383.5 C 389.4626 393.29075 391.68194 422.31652 394.64062 449.5 C 399.68701 495.8646 400.23814 504.76734 400.67773 547 C 401.09979 587.55146 401.05157 588.88856 398.55273 605.5 C 397.14626 614.85 395.23409 629.1862 394.30273 637.35938 C 392.34362 654.55239 392.27431 654.1981 401.29102 673.33789 L 406.39648 684.17773 L 414.17383 688.08789 C 421.24068 691.64102 422.98208 692.07585 433.22656 692.85742 L 433.22656 692.85547 C 439.42741 693.32855 444.57865 693.77994 444.67578 693.85742 C 444.77295 693.93494 445.99698 691.49988 447.39453 688.44727 C 452.55797 677.16882 451.93106 677.53941 468.18359 676.17383 C 476.05786 675.51222 489.13747 674.97682 497.25 674.98438 L 512 675 L 512 525 L 512 375 L 492.43555 375 C 473.64302 375 471.8774 374.82237 447.68555 370.49805 C 420.30261 365.60329 419.71924 365.40115 404.31445 355.45508 C 398.97428 352.00721 395.69998 350.24074 394.43164 350.12695 z",{
 			fill: initialJerseyColors["leftSleeveColor"],
 			id: 'leftSleeveColor',
-			visible: true,
+			visible: false,
 			selectable:false,
 			evented: false
 		});
@@ -5577,6 +5641,9 @@
 							$("#"+canStr+"SelectedImageDiv").css("display","block");
 						}
 						$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+						$(".copypaste").each(function() {
+							$(this).css("display","inline-block")
+						})
 					})
 					var h = image.height;
 					var w = image.width;
@@ -5619,8 +5686,6 @@
 				fontSources[data.familyName] = data.fontData;
 				var style = data.familyName;
 				var font_family = $("."+style).css("font-family");
-				//var objects = canvas.getObjects('text');
-				//console.log(canvas)
 				var myfont = new FontFaceObserver(data.familyName)
 				myfont.load()
 					.then(function() {
@@ -5987,7 +6052,6 @@
 	})
 	
 	$(".replaceColor").on("click",function(e) {
-		console.log($(this).data("canvas"))
 		if ($(this).data("canvas") == "capLogoCanvas") {
 			$("#capReplaceColorSubmit").data("action",$(this).attr("id"))
 			$("#capReplaceColorSubmit").data("x",$(this).data("x"))
@@ -6009,7 +6073,6 @@
 	})
 	
 	$(".replaceColorSubmit").on("click",function(e) {
-		console.log("got here")
 		if ($(this).data("canvas") == "capLogoCanvas") {
 			var canvas = capLogoCanvas
 			var fuzz = parseInt($("#capColorFuzz").val());
@@ -6248,8 +6311,6 @@
     	capBelow.setZoom(1)
 		capLogoCanvas.setDimensions({ width: 512, height: 512 });
     	capLogoCanvas.setZoom(1)
-
-		console.log(exportMeta)
 		
 		$.ajax({
 		 	type: "POST",
@@ -6386,7 +6447,6 @@
 					jerseyBelow.add(object)
 				})
 				jerseyLogoCanvas.loadFromJSON(exportMeta.canvases.jerseyLogoCanvas, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), function(o, object) {
-					console.log(object.id)
 					if (object.id == 'wordmark' || object.id == 'warpedText') {
 						$("#wordmarkCheck").prop("checked",object.visible).triggerHandler('click');
 						if (object.id == 'warpedText') {
@@ -6566,6 +6626,9 @@
 						$("#"+canStr+"SelectedImageDiv").css("display","block");
 					}
 					$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+					$(".copypaste").each(function() {
+						$(this).css("display","inline-block")
+					})
 				})
 				if (clonedObj.type === 'activeSelection') {
 					// active selection needs a reference to the canvas.
@@ -6583,7 +6646,6 @@
 				activeCanvas.requestRenderAll();
 			});
 		}
-		
 	}
 
 	function getNumberAtEnd(str) {
@@ -6596,5 +6658,12 @@
 	function endsWithNumber(str) {
 		return /[0-9]+$/.test(str);
 	}
+
+	$("#aboutUniformMaker").magnificPopup({
+		items: {
+			src: '#FAQ',
+			type: 'inline'
+		}
+	});
 </script>
 </html>

@@ -16,6 +16,10 @@ body {
 	font-weight: bold;
 }
 
+.copypaste {
+	display: none;
+}
+
 .rangeButton {
 	padding-left:5px;
 	padding-right:5px;

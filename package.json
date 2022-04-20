@@ -17,17 +17,56 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "electron": "^18.0.1"
+    "electron": "^18.0.1",
+    "electron-builder": "^23.0.3"
   },
   "dependencies": {
     "archiver": "^5.3.0",
     "express": "^4.17.3",
     "imagemagick-cli": "^0.5.0",
     "jimp": "^0.16.1",
-    "json-compress": "https://github.com/Alamantus/JSON-Compress.git",
     "node-font2base64": "^0.7.1",
     "promise-synchronizer": "^1.1.8",
     "ttfinfo": "^0.2.0"
   },
-  "packageManager": "yarn@3.2.0"
+  "build": {
+    "appId": "com.ootputilities.uniformmaker",
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": [
+        "zip",
+        "dmg"
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "portable": {
+      "artifactName": "${productName}_${version}_portable.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "allowElevation": true,
+      "artifactName": "${productName} ${version} setup.${ext}",
+      "menuCategory": "OOTP Utilities",
+      "shortcutName": "${productName}",
+      "include": "build/installer.nsh",
+      "uninstallDisplayName": "${productName} ${version}",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico"
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "rpm",
+        "tar.gz"
+      ]
+    },
+    "deb": {}
+  }
 }

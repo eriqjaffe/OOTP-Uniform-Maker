@@ -9,7 +9,6 @@ const archiver = require('archiver');
 const imagemagickCli = require('imagemagick-cli')
 const ttfInfo = require('ttfinfo')
 const font2base64 = require("node-font2base64")
-const JSONC = require( 'json-compress');
 
 const isMac = process.platform === 'darwin'
 const tempDir = os.tmpdir()
@@ -438,18 +437,33 @@ function createWindow () {
           label: 'File',
           submenu: [
           {
-              click: () => mainWindow.webContents.send('load-cap','click'),
-              accelerator: process.platform === 'darwin' ? 'Cmd+L' : 'Control+L',
-              label: 'Load Cap',
+              click: () => mainWindow.webContents.send('load-uniform','click'),
+              accelerator: isMac ? 'Cmd+L' : 'Control+L',
+              label: 'Load Uniform',
           },
           {
-              click: () => mainWindow.webContents.send('save-cap','click'),
-              accelerator: process.platform === 'darwin' ? 'Cmd+S' : 'Control+S',
-              label: 'Save Cap',
+              click: () => mainWindow.webContents.send('save-uniform','click'),
+              accelerator: isMac ? 'Cmd+S' : 'Control+S',
+              label: 'Save Uniform',
           },
           isMac ? { role: 'close' } : { role: 'quit' }
           ]
       },
+	  {
+		  label: 'Edit',
+		  submenu: [
+			{
+				click: () => mainWindow.webContents.send('copy','click'),
+				accelerator: isMac ? 'Cmd+C' : 'Control+C',
+				label: 'Copy',
+			},
+			{
+				click: () => mainWindow.webContents.send('paste','click'),
+				accelerator: isMac ? 'Cmd+V' : 'Control+V',
+				label: 'Paste',
+			}
+		  ]
+	  },
       {
           label: 'View',
           submenu: [
@@ -511,8 +525,8 @@ function createWindow () {
     });
   
     // Open the DevTools.
-    mainWindow.maximize()
-    mainWindow.webContents.openDevTools()
+    // mainWindow.maximize()
+    // mainWindow.webContents.openDevTools()
   }
   
   app.whenReady().then(() => {
