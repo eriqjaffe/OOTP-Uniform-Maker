@@ -288,13 +288,13 @@
 												</td>
 												<td style="text-align:right;">
 													<span id="jerseyMLBLogoSelectors" style="display:inline-block;">
+														<input class="jerseySelector selector" type="text" id="mlb2Color" data-element="mlb2Color" data-canvas="above">
 														<input class="jerseySelector selector" type="text" id="mlbBaseColor" data-element="mlbBaseColor" data-canvas="above">
 														<input class="jerseySelector selector" type="text" id="mlb1Color" data-element="mlb1Color" data-canvas="above">
-														<input class="jerseySelector selector" type="text" id="mlb2Color" data-element="mlb2Color" data-canvas="above">
 													</span>
 													<span id="jerseyMiLBLogoSelectors" style="display:none;">
-														<input class="jerseySelector selector" type="text" id="milbBaseColor" data-element="milbBaseColor" data-canvas="above">
 														<input class="jerseySelector selector" type="text" id="milb1Color" data-element="milb1Color" data-canvas="above">
+														<input class="jerseySelector selector" type="text" id="milbBaseColor" data-element="milbBaseColor" data-canvas="above">
 														<input class="jerseySelector selector" type="text" id="milb2Color" data-element="milb2Color" data-canvas="above">
 													</span>
 												</td>
@@ -2767,9 +2767,9 @@
 					jerseyLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
 					object.set({"left":256,"top":512,"scaleX":1,"scaleY":1,"angle":0})
 					object.setCoords();
-					var dim = fitInBox(imageWidth, imageHeight, 44, 22, false)
+					var dim = fitInBox(imageWidth, imageHeight, 33, 16.5, false)
 					object.scaleToWidth(dim.width)	
-					object.set({left:256,top:480,angle:180})
+					object.set({left:256,top:473,angle:180})
 					object.setCoords()
 					break;
 				case "sleeveLeft":
@@ -4936,9 +4936,14 @@
 		});
 
 		mlbLogo = new fabric.Group([mlbBaseColor,mlb1Color,mlb2Color], {
+			top: 473,
+			originX: 'center',
+			originY: 'center',
 			id: 'mlbLogo',
 			visible: false,
-			selectable: false
+			selectable: false,
+			scaleX: 0.75,
+			scaleY: 0.75
 		});
 
 		milbBaseColor = new fabric.Path("M 238.36133 469.07617 C 236.41908 469.07617 234.83984 470.66486 234.83984 472.61914 L 234.83984 488.36133 C 234.83984 489.31834 235.20576 490.2093 235.87109 490.87109 A 3.5164716 3.5164716 0 0 0 238.36133 491.89258 L 273.63281 491.89258 A 3.554037 3.554037 0 0 0 276.13281 490.87695 C 276.79901 490.21308 277.16211 489.32198 277.16211 488.35938 L 277.16211 472.61914 C 277.16211 471.65597 276.79704 470.76627 276.13672 470.11328 A 3.5331999 3.5331999 0 0 0 273.63281 469.07617 L 238.36133 469.07617 z",{
@@ -4966,9 +4971,14 @@
 		});
 
 		milbLogo = new fabric.Group([milbBaseColor,milb1Color,milb2Color], {
+			top: 473,
+			originX: 'center',
+			originY: 'center',
 			id: 'milbLogo',
 			visible: false,
-			selectable: false
+			selectable: false,
+			scaleX: 0.75,
+			scaleY: 0.75
 		});
 
 		butterflyColor = new fabric.Path("M 182.91406 503.84961 L 171.69141 506.83398 L 186.9043 614.34961 L 232.19531 569.81641 L 255.66211 582.29883 L 222.46484 505.98633 L 210.61328 509.9375 L 205.83789 516.26562 L 194.01758 508.50586 L 182.91406 503.84961 z M 255.66211 582.29883 L 279.12891 569.81641 L 324.41992 614.34961 L 339.63281 506.83398 L 328.41016 503.84961 L 317.30664 508.50586 L 305.48633 516.26562 L 300.71094 509.9375 L 288.85938 505.98633 L 255.66211 582.29883 z",{
@@ -5085,6 +5095,8 @@
 		jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 		jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 		reRenderBG("jersey")
+
+		console.log(mlbLogo.top)
 	}
 
 	function initializePants() {
