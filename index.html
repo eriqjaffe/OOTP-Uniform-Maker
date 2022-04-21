@@ -2541,7 +2541,7 @@
 
 	$("#seamsButtonPadCheck").on("change",function() {
 		if ($(this).is(":checked")) {
-			jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+			jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 		} else {
 			jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 		}
@@ -2556,7 +2556,7 @@
 					g.getObjects().find(o => o.id === 'buttonsScript').visible = true;
 					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
 					g.getObjects().find(o => o.id === 'zipper').visible = false;
-					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 					if ($("#seamsType").val() == "seamsStandardToCollar") {
 						$("#seamsType").val("seamsStandardToPiping").trigger("change")
 					} else if ($("#seamsType").val() == "seamsRaglanToCollar") {
@@ -2567,7 +2567,7 @@
 					g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
 					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = true;
 					g.getObjects().find(o => o.id === 'zipper').visible = false;
-					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 					if ($("#seamsType").val() == "seamsStandardToCollar") {
 						$("#seamsType").val("seamsStandardToPiping").trigger("change")
 					} else if ($("#seamsType").val() == "seamsRaglanToCollar") {
@@ -2590,7 +2590,7 @@
 			g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
 			g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
 			g.getObjects().find(o => o.id === 'zipper').visible = false;
-			jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+			jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 		}
 		g.addWithUpdate()
 		jerseyLogoCanvas.renderAll()
@@ -4104,7 +4104,8 @@
 		seamsStandardToPiping = new fabric.Image.fromURL('./images/seams/seams_standard_to_piping.png', function(oImg) {
 			oImg.set({
 				id: 'seamsStandardToPiping',
-				visible: true
+				visible: true,
+				opacity: 0.25
 			})
 			seams.addWithUpdate(oImg)
 		})
@@ -4112,7 +4113,8 @@
 		seamsStandardToCollar = new fabric.Image.fromURL('./images/seams/seams_standard_to_collar.png', function(oImg) {
 			oImg.set({
 				id: 'seamsStandardToCollar',
-				visible: false
+				visible: false,
+				opacity: 0.25
 			})
 			seams.addWithUpdate(oImg)
 		})
@@ -4120,7 +4122,8 @@
 		seamsRaglanToPiping = new fabric.Image.fromURL('./images/seams/seams_raglan_to_piping.png', function(oImg) {
 			oImg.set({
 				id: 'seamsRaglanToPiping',
-				visible: false
+				visible: false,
+				opacity: 0.25
 			})
 			seams.addWithUpdate(oImg)
 		})
@@ -4128,7 +4131,8 @@
 		seamsRaglanToCollar = new fabric.Image.fromURL('./images/seams/seams_raglan_to_collar.png', function(oImg) {
 			oImg.set({
 				id: 'seamsRaglanToCollar',
-				visible: false
+				visible: false,
+				opacity: 0.25
 			})
 			seams.addWithUpdate(oImg)
 		})
@@ -5093,10 +5097,9 @@
 		jerseyLogoCanvas.add(buttons)
         
 		jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
-		jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+		jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 		reRenderBG("jersey")
-
-		console.log(mlbLogo.top)
 	}
 
 	function initializePants() {
@@ -6359,6 +6362,9 @@
 				buttonPadSeams: buttonPadSeams,
 				seamsVisible: seamsVisible,
 				seamsOption: $("#seamsType").val(),
+				jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
+				capWatermarkColor: idealTextColor(capBelow.backgroundColor),
+				pantsWatermarkColor: idealTextColor(pantsBelow.backgroundColor),
 				json: JSON.stringify(exportMeta,null,2)
 			},
 			success: function(data) {
@@ -6390,7 +6396,7 @@
 				}
 
 				if (buttonPadSeams == true) {
-					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 				}
 
 				if ($("#toggleCapGuides").is(":checked")) {
