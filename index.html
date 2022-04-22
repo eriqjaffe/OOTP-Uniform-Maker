@@ -167,6 +167,18 @@
                                                     
                                                 </td>
                                             </tr>
+											<tr class="color_tr">
+                                                <td>&nbsp;</td>
+                                                <td colspan="2">
+													<label>Cloth Texture:&nbsp;</label>
+													<select id="jerseyTextureSelect">
+														<option value="jersey_texture_default.png" selected>None</option>
+														<option value="jersey_texture_flannel.png">Flannel</option>
+														<option value="jersey_texture_mesh.png">Mesh</option>
+														<option value="jersey_texture_polyester.png">Polyester</option>
+													</select>
+												</td>
+                                            </tr>
                                             <tr class="color_tr">
                                                 <td>&nbsp;</td>
                                                 <td><label>Jersey Color: </label></td>
@@ -851,6 +863,18 @@
                                                 <td><label>Grid (Will Be Hidden On Export)</label></td>
                                                 <td></td>
                                             </tr>
+											<tr class="color_tr">
+                                                <td>&nbsp;</td>
+                                                <td colspan="2">
+													<label>Cloth Texture:&nbsp;</label>
+													<select id="pantsTextureSelect">
+														<option value="pants_texture_default.png" selected>None</option>
+														<option value="pants_texture_flannel.png">Flannel</option>
+														<option value="pants_texture_mesh.png">Mesh</option>
+														<option value="pants_texture_polyester.png">Polyester</option>
+													</select>
+												</td>
+                                            </tr>
                                             <tr class="color_tr">
                                                 <td class="checkCell">&nbsp;</td>
                                                 <td><label>Pants Color: </label></td>
@@ -999,7 +1023,7 @@
                                                 <td colspan="2">
 													<label>Texture:&nbsp;</label>
 													<select id="capTextureSelect">
-														<option value="cap_texture_default.png">Gern44</option>	
+														<option value="cap_texture_default.png" selected>Gern44</option>	
 														<option value="cap_texture_mottled.png">Mottled</option>
 														<option value="cap_texture_wool.png">Wool</option>
 														<option value="cap_texture_knit.png">Knit</option>
@@ -2187,6 +2211,10 @@
 		})
 	})
 
+	$("#jerseyTextureSelect").on("change",function(){
+		reRenderBG("jersey")
+	})
+
 	$(".jerseyTextureToggle").on("click",function() {
 		const id = $(this).data("id");
 		const state = $(this).is(':checked') ? true : false
@@ -3280,6 +3308,10 @@
 		})
 	})
 
+	$("#pantsTextureSelect").on("change",function(){
+		reRenderBG("pants")
+	})
+
 	$(".pantsTextureToggle").on("click",function() {
 		const id = $(this).data("id");
 		const state = $(this).is(':checked') ? true : false
@@ -4101,7 +4133,6 @@
 		clippingPath2 = new fabric.Path("M 239.72266 50.248047 C 223.43703 50.310052 210.96441 50.599602 201.64453 51.113281 C 187.81478 51.875544 164.575 52.362191 150 52.193359 L 123.5 51.886719 L 123.82617 184.19336 C 124.06985 283.21195 123.84892 318.6386 122.95117 325 C 121.99755 331.75727 120.94844 334.88394 117.83203 340.25 C 115.67595 343.96248 113.59332 347.02029 113.20508 347.04297 C 112.81684 347.0664 110.50284 348.83782 108.0625 350.98047 L 103.62695 354.87695 L 106.0625 356.91406 C 107.40284 358.03488 110.78227 360.35986 113.57227 362.08008 L 118.64453 365.20703 L 120.30859 375.85352 C 123.1653 394.14779 124.30856 416.89527 123.64062 442.14648 C 123.05389 464.32785 122.79173 466.80531 119.42773 482.14648 L 115.8418 498.5 L 116.29883 542 C 116.77431 587.21891 117.06518 590.95255 122.42578 620.76758 C 123.24328 625.31439 123.97858 634.79188 124.05859 641.83008 L 124.20312 654.62695 L 118.48828 666.06445 C 115.34443 672.35438 112.66542 677.61816 112.53711 677.76367 C 112.40878 677.90903 106.10909 677.11863 98.537109 676.00586 C 87.335679 674.3598 82.182113 674.10527 70.884766 674.64453 C 56.427121 675.33471 55.01805 675.89741 58.908203 679.41797 C 59.957947 680.36795 61.294518 682.34957 61.878906 683.82227 C 62.463294 685.29503 63.85213 699.51595 64.964844 715.42383 C 66.663249 739.70506 67.155643 761.85411 68.033203 853.42383 C 68.608138 913.41593 69.269878 963.41589 69.503906 964.53516 C 69.927258 966.56163 70.301063 966.56917 143.21484 966.53516 C 218.49908 966.49914 393.08111 967.74906 393.66016 968.32812 L 393.66211 968.32812 C 393.84043 968.50652 404.7342 968.66457 417.87109 968.67969 L 441.75586 968.70703 L 442.26172 961.10352 C 442.53955 956.92158 442.5252 905.35 442.23047 846.5 C 441.70735 742.04221 442.34892 707.44733 444.99609 697.24805 C 446.00426 693.36371 446.10765 693.40092 431.67773 692.53711 C 422.87032 692.00987 421.05724 691.547 414.12695 688.0625 L 406.39648 684.17773 L 401.29102 673.33789 C 392.27431 654.19806 392.34359 654.55241 394.30273 637.35938 C 395.23407 629.18622 397.14624 614.85002 398.55273 605.5 C 401.05158 588.88856 401.0998 587.55146 400.67773 547 C 400.23817 504.76733 399.687 495.8646 394.64062 449.5 C 391.49914 420.63692 389.4457 392.90315 389.67969 382.5 C 389.77866 378.10003 390.79288 368.46011 391.93359 361.07812 L 394.00781 347.65625 L 390.11914 341.45312 L 386.22852 335.25 L 385.02148 309.375 C 383.81593 283.54083 383.18962 133.35232 384.0625 79.5 L 384.5 52.5 L 356 51.849609 C 304.60206 50.674958 266.86537 50.144705 239.72266 50.248047 z",{
 			absolutePositioned: true
 		})
-
 
 		camo = new fabric.Group([],{
 			id: 'camo',
@@ -5383,7 +5414,7 @@
     function reRenderBG(target) {
         switch (target) {
             case "jersey":
-                var canvas = jerseyBelow 
+				var canvas = jerseyBelow
                 var textureCanvas = jerseyTextureContext
                 var can = document.getElementById('jerseyBelow')
                 var can2 = document.getElementById('jerseyTexture')
@@ -5391,7 +5422,7 @@
                 var composite = can3.getContext('2d')
                 var width = 384
                 var height = 768
-                var textureFile = './images/texture_jersey_default.png'
+                var textureFile = './images/'+$("#jerseyTextureSelect").val()
                 break;				
             case "cap":
                 var canvas = capBelow 
@@ -5413,9 +5444,11 @@
                 var composite = can3.getContext('2d')
                 var width = 384
                 var height = 384
-                var textureFile = './images/texture_pants_default.png'
+                var textureFile = './images/'+$("#pantsTextureSelect").val()
                 break;
         }
+		jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
+		pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));	
 		canvas.renderAll();
 		var img = new Image; 
 		img.onload = function(){
@@ -6292,6 +6325,8 @@
 		textBoxes.capText = { "disabled": $("#capText").prop("disabled"), "val": $("#capText").val() }
 		textBoxes.capText2 = { "disabled": $("#capText2").prop("disabled"), "val": $("#capText2").val() }
 
+		pantsBelow.setOverlayImage(null,pantsBelow.renderAll.bind(pantsBelow));
+		jerseyBelow.setOverlayImage(null,jerseyBelow.renderAll.bind(jerseyBelow));
 		jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 		seamsGroup.visible = false;
 
@@ -6404,6 +6439,8 @@
 				capWatermarkColor: idealTextColor(capBelow.backgroundColor),
 				pantsWatermarkColor: idealTextColor(pantsBelow.backgroundColor),
 				capTexture: $("#capTextureSelect").val(),
+				jerseyTexture: $("#jerseyTextureSelect").val(),
+				pantsTexture: $("#pantsTextureSelect").val(),
 				json: JSON.stringify(exportMeta,null,2)
 			},
 			success: function(data) {
@@ -6433,6 +6470,9 @@
 				if (seamsVisible == true) {
 					seamsGroup.visible = true
 				}
+
+				pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));
+				jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
 
 				if (buttonPadSeams == true) {
 					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
