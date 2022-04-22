@@ -286,6 +286,7 @@ app2.post('/saveUniform', (req, res) => {
 	const pantsBelow = Buffer.from(req.body.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const capTexture = req.body.capTexture
 	const showPlanket = req.body.showPlanket
 	const buttonPadSeams = req.body.buttonPadSeams
 	const seamsVisible = req.body.seamsVisible
@@ -351,7 +352,7 @@ app2.post('/saveUniform', (req, res) => {
 		// cap
 		let capBase = await Jimp.read(capBelow)
 		let capOverlay = await Jimp.read(capLogoCanvas)
-		let texture = await Jimp.read(__dirname+"/images/texture_cap_default.png")
+		let texture = await Jimp.read(__dirname+"/images/"+capTexture)
 		let capWM = await Jimp.read(__dirname+"/images/cap_watermark.png")
 		await capWM.color([{ apply: "mix", params: [req.body.capWatermarkColor, 100] }]);
 		await capBase.composite(texture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
@@ -375,9 +376,7 @@ app2.post('/saveUniform', (req, res) => {
 		// jersey diffuse map
 		let jerseyBase = await Jimp.read(jerseyBelow)
 		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
-		console.log(buttonPadSeams)
 		if (buttonPadSeams == "true") {
-			console.log("button pad seams are visible")
 			let bpSeamImg = await Jimp.read(__dirname+"/images/seams/seams_button_pad.png")
 			await bpSeamImg.opacity(.25)
 			await jerseyBase.composite(bpSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
@@ -414,7 +413,6 @@ app2.post('/saveUniform', (req, res) => {
 		await jerseyOverlay.grayscale()
 		await jerseyOverlay.brightness(.5)
 		if (buttonPadSeams == "true") {
-			console.log("button pad seams are visible")
 			let bpHMSeamImg = await Jimp.read(__dirname+"/images/seams/seams_button_pad.png")
 			await bpHMSeamImg.brightness(.33)
 			await jerseyHeightMap.composite(bpHMSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
@@ -439,7 +437,6 @@ app2.post('/saveUniform', (req, res) => {
 			await jerseyHeightMap.composite(seamsHMImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
 		if (showPlanket == "true") {
-			console.log("showing planket")
 			let planket = await Jimp.read(__dirname+"/images/planket.png")
 			await jerseyHeightMap.composite(planket, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
