@@ -19,7 +19,7 @@ git clone https://github.com/eriqjaffe/OOTP-Uniform-Maker && cd OOTP-Uniform-Mak
 yarn
 yarn start
 ```
-Or you can grab a compiled binary from the "releases" section.  Binaries are available for Windows, macOS and Linux.
+Or you can grab a pre-compiled binary from the "releases" section.  Binaries are available for Windows, macOS and Linux.
 
 Because I'm not a registered developer with Apple, macOS may block the app for security reasons (not a bad thing for it to do, ultimately).  If this happens, just CTRL-click on the app and choose "Open" from the menu - that will bring up a slightly different version of the security message with an option to open the app.  You *should* only have to do that once and macOS should store an exception for the app going forward.
 
