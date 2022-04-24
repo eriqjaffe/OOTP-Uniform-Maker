@@ -9,10 +9,12 @@ const archiver = require('archiver');
 const imagemagickCli = require('imagemagick-cli')
 const ttfInfo = require('ttfinfo')
 const font2base64 = require("node-font2base64")
+const Store = require("electron-store")
 
 const isMac = process.platform === 'darwin'
 const tempDir = os.tmpdir()
 const app2 = express();
+const store = new Store();
 
 const server = app2.listen(0, () => {
 	console.log(`Server running on port ${server.address().port}`);
@@ -302,10 +304,11 @@ app2.post('/saveUniform', (req, res) => {
 	output.on('close', function() {
 		var data = fs.readFileSync(tempDir + '/uniform_'+req.body.name+'.zip');
 		var saveOptions = {
-		  defaultPath: app.getPath('downloads') + '/uniform_' + req.body.name+'.zip',
+		  defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/uniform_' + req.body.name+'.zip'
 		}
 		dialog.showSaveDialog(null, saveOptions).then((result) => { 
 		  if (!result.canceled) {
+			store.set("downloadPath", path.dirname(result.filePath))
 			fs.writeFile(result.filePath, data, function(err) {
 			  if (err) {
 				fs.unlink(tempDir + '/uniform_'+req.body.name+'.zip', (err) => {
@@ -362,7 +365,7 @@ app2.post('/saveUniform', (req, res) => {
 		await capBase.composite(capWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let capBuffer = await capBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(capBuffer, {name: "cap_"+req.body.name+".png"})
-		//await capBase.write(app.getPath('downloads') + '/uniform_Unknown_Team_Home/cap_' + req.body.name+'.png')
+		await capBase.write(app.getPath('desktop') + '/uniform_Unknown_Team_Home/cap_' + req.body.name+'.png')
 
 		// pants
 		let pantsBase = await Jimp.read(pantsBelow)
