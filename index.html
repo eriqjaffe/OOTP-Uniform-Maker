@@ -502,6 +502,13 @@
 									<div class="jersey-accord-content">
 										<table style="width:100%;">
 											<tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" class="jerseyTextureToggle" data-id="arcedStripeColor" id="arcedStripeColorCheck" data-canvas="below"></td>
+												<td><label>Arced Stripe: </label></td>
+												<td style="text-align:right;">
+													<input class="jerseySelector selector" type="text" id="arcedStripeColor" data-element="arcedStripeColor" data-canvas="below">
+												</td>
+											</tr>
+											<tr class="color_tr">
 												<td class="checkCell"><input type="checkbox" id="camoCheck"></td>
 												<td>
 													<label>Camouflage: </label>
@@ -573,7 +580,14 @@
 												<td style="text-align:right;">
 													<input class="jerseySelector selector" type="text" id="butterflyColor" data-element="butterflyColor" data-canvas="above">
 												</td>
-											</tr>					
+											</tr>	
+											<tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" class="jerseyTextureToggle" data-id="nikeHornsColor" id="nikeHornsColorCheck" data-canvas="below"></td>
+												<td><label>Nike "Horns": </label></td>
+												<td style="text-align:right;">
+													<input class="jerseySelector selector" type="text" id="nikeHornsColor" data-element="nikeHornsColor" data-canvas="below">
+												</td>
+											</tr>				
 										</table>
 									</div>
 									<div class="jersey-accord-header jersey-inactive-header">Side Panels</div>
@@ -1283,7 +1297,7 @@
 											</tr>
 										</table>
 									</div>
-									<div class="cap-accord-header cap-inactive-header">Logo Image</div>
+									<div class="cap-accord-header cap-inactive-header">Images</div>
 									<div class="cap-accord-content">
 										<div id="capUploadImageDiv">
 										<table style="width:100%;">
@@ -1340,7 +1354,7 @@
 											</tr></table>
 										</div>
 									</div>
-									<div class="cap-accord-header cap-inactive-header">Logo Text</div>
+									<div class="cap-accord-header cap-inactive-header">Text</div>
 									<div class="cap-accord-content">
 										<table style="width:100%;">
 											<tr>
@@ -4542,6 +4556,15 @@
 			clipPath: clippingPath
 		});
 
+		arcedStripeColor = new fabric.Path("M 231.53125 554.41211 C 182.74088 571.98238 150.35646 607.60178 130.22461 644.29688 C 110.09278 680.99185 102.02198 718.67562 101.78516 741.97656 L 99.464844 970.05664 L 108.33008 970.14258 L 110.65039 742.06836 C 110.86704 720.76324 118.62583 683.8655 137.99609 648.55859 C 157.36638 613.25172 188.15827 579.45109 234.53516 562.75 L 231.53125 554.41211 z M 284.46875 554.41211 L 281.46484 562.75 C 327.84173 579.45109 358.63362 613.25172 378.00391 648.55859 C 397.37417 683.8655 405.13296 720.76324 405.34961 742.06836 L 407.66992 970.14258 L 416.53516 970.05664 L 414.21484 741.97656 C 413.97802 718.67562 405.90722 680.99185 385.77539 644.29688 C 365.64354 607.60178 333.25912 571.98238 284.46875 554.41211 z",{
+			fill: initialJerseyColors["arcedStripeColor"],
+			id: 'arcedStripeColor',
+			visible: false,
+			selectable:false,
+			evented: false,
+			clipPath: clippingPath
+		});
+
 		camoBaseColor = new fabric.Rect({
 			id: 'camoBaseColor',
 			top: 0,
@@ -4636,6 +4659,15 @@
 			oImg.applyFilters()
 			jerseyBelow.add(oImg)
 		})
+
+		nikeHornsColor = new fabric.Path("M 221.05859 587.62305 C 218.93564 587.60232 216.4315 588.60123 213.27734 590.66797 C 209.3082 593.26855 205.36441 595.2303 204.51367 595.02734 C 201.59159 594.32794 178.54031 604.36194 165.02148 612.21875 C 155.09223 617.98941 136.75776 636.41176 127.05273 650.36914 C 123.84733 654.97902 121.06727 659.72081 118.625 664.87305 L 13.050781 664.87305 L 13.050781 808.06641 L 1.8789062 807.9082 L 3.7753906 819.6582 C 10.595635 861.92772 13.625306 890.80766 15.298828 929.49219 C 16.390114 954.71838 18.464271 974.32952 20.152344 975.37305 C 22.62959 976.9041 65.924508 984.18752 90.648438 987.23242 L 90.648438 987.22852 C 94.55826 987.70999 103.71321 988.11171 110.99414 988.12305 L 124.23242 988.14453 L 126.21875 946.74219 C 127.31088 923.97061 129.24997 899.58075 130.5293 892.54297 C 131.80861 885.50534 134.31655 841.36124 136.10156 794.44336 C 140.36513 682.37878 144.33932 665.93055 175.74414 630.38281 C 185.53096 619.30487 214.45693 597.52119 225.66602 592.78711 C 227.34969 592.07595 226.87303 590.38928 224.52539 588.75195 C 223.46793 588.01444 222.33236 587.63548 221.05859 587.62305 z M 293.48828 587.62305 C 292.21451 587.63548 291.07895 588.01444 290.02148 588.75195 C 287.67385 590.38928 287.19718 592.07595 288.88086 592.78711 C 300.08994 597.52119 329.01592 619.30487 338.80273 630.38281 C 370.20755 665.93055 374.18174 682.37878 378.44531 794.44336 C 380.23032 841.36124 382.73826 885.50534 384.01758 892.54297 C 385.2969 899.58075 387.23599 923.97061 388.32812 946.74219 L 390.31445 988.14453 L 403.55273 988.12305 C 410.83367 988.11171 419.98861 987.70999 423.89844 987.22852 L 423.89844 987.23242 C 448.62236 984.18752 491.91728 976.9041 494.39453 975.37305 C 496.08262 974.32952 498.15675 954.71838 499.24805 929.49219 C 500.92158 890.80766 503.95121 861.92772 510.77148 819.6582 L 512.66797 807.9082 L 501.08398 808.07227 L 501.08398 656.87305 L 393.05078 656.87305 L 393.05078 659.32031 C 391.34636 656.24226 389.5136 653.27344 387.49414 650.36914 C 377.78912 636.41176 359.45464 617.98941 349.52539 612.21875 C 336.00656 604.36194 312.95528 594.32794 310.0332 595.02734 C 309.18247 595.2303 305.23867 593.26855 301.26953 590.66797 C 298.11537 588.60123 295.61123 587.60232 293.48828 587.62305 z",{
+			fill: initialJerseyColors["nikeHornsColor"],
+			id: 'nikeHornsColor',
+			visible: false,
+			selectable:false,
+			evented: false,
+			clipPath: clippingPath2
+		});
 
 		tequilaSunrise1Color = new fabric.Path("M 56.287109 48.5625 L 56.287109 160.62891 L 455.71289 160.62891 L 455.71289 48.5625 L 56.287109 48.5625 z M 56.287109 258.65039 L 56.287109 281.07422 L 455.71289 281.07422 L 455.71289 258.65039 L 56.287109 258.65039 z M 505.57227 350.89062 L 505.57227 694.56641 L 512.91602 694.56641 L 512.91602 350.89062 L 505.57227 350.89062 z M -0.91601562 351.29297 L -0.91601562 694.96875 L 6.4277344 694.96875 L 6.4277344 351.29297 L -0.91601562 351.29297 z M 56.287109 748.45117 L 56.287109 770.875 L 455.71289 770.875 L 455.71289 748.45117 L 56.287109 748.45117 z M 56.287109 868.89648 L 56.287109 973.82227 L 455.71289 973.82227 L 455.71289 868.89648 L 56.287109 868.89648 z",{
 			fill: initialJerseyColors["tequilaSunrise1Color"],
@@ -5086,6 +5118,8 @@
 		jerseyBelow.add(buttonPadFillColor)
 		jerseyBelow.add(camo)
 		jerseyBelow.add(digiCamo)
+		jerseyBelow.add(arcedStripeColor)
+		jerseyBelow.add(nikeHornsColor)
 		jerseyBelow.add(tequilaSunrise4Color)
 		jerseyBelow.add(tequilaSunrise3Color)
 		jerseyBelow.add(tequilaSunrise2Color)
