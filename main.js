@@ -575,6 +575,10 @@ function createWindow () {
 				click: () => mainWindow.webContents.send('paste','click'),
 				accelerator: isMac ? 'Cmd+V' : 'Control+V',
 				label: 'Paste',
+			},
+			{
+				click: () => mainWindow.webContents.send('prefs','click'),
+				label: 'Preferences',
 			}
 		  ]
 	  },
