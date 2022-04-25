@@ -1318,9 +1318,16 @@
 														<input type="button" class="button removeColor removeColorRange" id="capRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="capLogoCanvas">
 														<input type="button" class="button removeColor removeAllColor" id="capRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="capLogoCanvas">
 														<input type="button" class="button replaceColor replaceColorRange" id="capReplaceColorRange" value="Replace Section" data-x="0" data-y="0" data-canvas="capLogoCanvas">
-														<input type="button" class="button replaceColor replaceAllColor" id="capReplaceAllColor" value="Replace All" data-x="0" data-y="0" data-canvas="capLogoCanvas">
-														<input type="button" id="capAutoSize" class="button" value="Auto-Size Logo" data-canvas="capLogoCanvas">
 													</td>
+												</tr>
+												<tr>
+													<td><center>
+														<input type="button" id="capAutoSize" class="button capPlace" data-loc="front" value="Auto-Size Logo" data-canvas="capLogoCanvas">
+														<input type="button" id="capPlaceLeft" class="button capPlace" data-loc="left" value="Place on Left" data-canvas="capLogoCanvas">
+														<input type="button" id="capPlaceRight" class="button capPlace" data-loc="right" value="Place on Right" data-canvas="capLogoCanvas">
+														<!--<input type="button" id="capPlaceBack" class="button capPlace" data-loc="back" value="Place on Back" data-canvas="capLogoCanvas">-->
+														<input type="button" id="capLogoReset" class="button capPlace" data-loc="reset" value="Reset Image" data-canvas="capLogoCanvas">
+													</center></td>
 												</tr>
 											</table>
 										</div>
@@ -1592,7 +1599,9 @@
 		</div>
 	</div>
 	<div id="prefs" class="jm-white-popup mfp-hide" style="height:200px!important;">
-		<div class="question" style="margin-top:10px!important;">Preferences</div><br><br>
+		<div style="width:100%; text-align:center;">	
+			<span class="header" style="color:#103959!important; font-size:2em!important;">Uniform Maker Preferences</span>
+		</div><br>
 		<table class="prefs" style="width:100%;">
 			<tr>
 				<td><center>
@@ -1982,6 +1991,7 @@
 		showInitial: true,
 		showPalette: true,
 		showButtons: true,
+		allowEmpty: false,
 		//showSelectionPalette: true,
 		color: initialJerseyColors["jerseyColor"],
 		show: function(color) {
@@ -1998,14 +2008,16 @@
 			$(this).data('changed', true);
 			jerseyBelow.setBackgroundColor(color.toHexString(), jerseyBelow.renderAll.bind(jerseyBelow))
 			reRenderBG("jersey")
-			if ($.inArray(color.toHexString(), commonPalette) < 0) {
-				commonPalette.push(color.toHexString())
-			}
-			if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
-				jerseyPalette.push(color.toHexString())
-			}
-			if ($.inArray(color.toHexString(), capPalette) < 0) {
-				capPalette.push(color.toHexString())
+			if (color !=  null) {
+				if ($.inArray(color.toHexString(), commonPalette) < 0) {
+					commonPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+					jerseyPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), capPalette) < 0) {
+					capPalette.push(color.toHexString())
+				}
 			}
 		},
 		hide: function(color) {
@@ -2036,36 +2048,37 @@
 				$(this).data('changed', true);
 				const id = $(this).data('element');
 				const canvas = $(this).data('canvas') == 'below' ? jerseyBelow : jerseyLogoCanvas
+				var c = (color == null) ? 'transparent' : color.toHexString()
 				canvas.getObjects().forEach(function(o) {
                     if (o.get('type') == "group") {
 						var groupObjects = o.getObjects().forEach(function(p) {
                             if (p.id == id) {
 								if (p.get('type') == 'image') {
-									p.filters[0]['color'] = color.toHexString();
+									p.filters[0]['color'] = c;
 									p.applyFilters()
 									canvas.requestRenderAll()
 								} else {
-									p.set("fill", color.toHexString());
-									p.set("stroke", color.toHexString());
+									p.set("fill", c);
+									p.set("stroke", c);
 								}					
 							}
                         });
 					} else {
 						if (o.id == id) {
 							if (o.type == 'image') {
-								o.filters[0]['color'] = color.toHexString();
+								o.filters[0]['color'] = c;
 								o.applyFilters()
 								canvas.requestRenderAll()
 							} else {
-								o.set("fill", color.toHexString());
+								o.set("fill", c);
 								if (o.id == 'jerseyPinstripesColor') {
-									canvas.getObjects().find(o => o.id == 'standardPinstripesColor').set("fill", color.toHexString())
-									canvas.getObjects().find(o => o.id == 'raglanPinstripesColor').set("fill", color.toHexString())
+									canvas.getObjects().find(o => o.id == 'standardPinstripesColor').set("fill", c)
+									canvas.getObjects().find(o => o.id == 'raglanPinstripesColor').set("fill", c)
 								}
 							}
 						} 		
 						if (o.id == 'jerseyMakersMark') {
-							jerseyMakersMarkColor = color.toHexString();						
+							jerseyMakersMarkColor = c;						
 						}			
 					} 
                 });
@@ -2081,36 +2094,37 @@
 				$(this).data('changed', true);
 				const id = $(this).data('element');
 				const canvas = $(this).data('canvas') == 'below' ? jerseyBelow : jerseyLogoCanvas
+				var c = (color == null) ? 'transparent' : color.toHexString()
 				canvas.getObjects().forEach(function(o) {
                     if (o.get('type') == "group") {
 						var groupObjects = o.getObjects().forEach(function(p) {
                             if (p.id == id) {
 								if (p.get('type') == 'image') {
-									p.filters[0]['color'] = color.toHexString();
+									p.filters[0]['color'] = c;
 									p.applyFilters()
 									canvas.requestRenderAll()
 								} else {
-									p.set("fill", color.toHexString());
-									p.set("stroke", color.toHexString());
+									p.set("fill", c);
+									p.set("stroke", c);
 								}					
 							}
                         });
 					} else {
 						if (o.id == id) {
 							if (o.type == 'image') {
-								o.filters[0]['color'] = color.toHexString();
+								o.filters[0]['color'] = c;
 								o.applyFilters()
 								canvas.requestRenderAll()
 							} else {
-								o.set("fill", color.toHexString());
+								o.set("fill", c);
 								if (o.id == 'jerseyPinstripesColor') {
-									canvas.getObjects().find(o => o.id == 'standardPinstripesColor').set("fill", color.toHexString())
-									canvas.getObjects().find(o => o.id == 'raglanPinstripesColor').set("fill", color.toHexString())
+									canvas.getObjects().find(o => o.id == 'standardPinstripesColor').set("fill", c)
+									canvas.getObjects().find(o => o.id == 'raglanPinstripesColor').set("fill", c)
 								}
 							}
 						} 		
 						if (o.id == 'jerseyMakersMark') {
-							jerseyMakersMarkColor = color.toHexString();						
+							jerseyMakersMarkColor = c;						
 						}				
 					} 
                 });
@@ -2121,50 +2135,53 @@
 						warpText()
 					}
 				}
-				if ($.inArray(color.toHexString(), commonPalette) < 0) {
-					commonPalette.push(color.toHexString())
-				}
-				if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
-					jerseyPalette.push(color.toHexString())
-				}
-				if ($.inArray(color.toHexString(), capPalette) < 0) {
-					capPalette.push(color.toHexString())
+				if (color !=  null) {
+					if ($.inArray(color.toHexString(), commonPalette) < 0) {
+						commonPalette.push(color.toHexString())
+					}
+					if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+						jerseyPalette.push(color.toHexString())
+					}
+					if ($.inArray(color.toHexString(), capPalette) < 0) {
+						capPalette.push(color.toHexString())
+					}
 				}
 			},
 			hide: function(color) {
 				$(this).data('changed', true);
 				const id = $(this).data('element');
 				const canvas = $(this).data('canvas') == 'below' ? jerseyBelow : jerseyLogoCanvas
+				var c = (color == null) ? 'transparent' : color.toHexString()
 				canvas.getObjects().forEach(function(o) {
                     if (o.get('type') == "group") {
 						var groupObjects = o.getObjects().forEach(function(p) {
                             if (p.id == id) {
 								if (p.get('type') == 'image') {
-									p.filters[0]['color'] = color.toHexString();
+									p.filters[0]['color'] = c;
 									p.applyFilters()
 									canvas.requestRenderAll()
 								} else {
-									p.set("fill", color.toHexString());
-									p.set("stroke", color.toHexString());
+									p.set("fill", c);
+									p.set("stroke", c);
 								}					
 							}
                         });
 					} else {
 						if (o.id == id) {
 							if (o.type == 'image') {
-								o.filters[0]['color'] = color.toHexString();
+								o.filters[0]['color'] = c;
 								o.applyFilters()
 								canvas.requestRenderAll()
 							} else {
-								o.set("fill", color.toHexString());
+								o.set("fill", c);
 								if (o.id == 'jerseyPinstripesColor') {
-									canvas.getObjects().find(o => o.id == 'standardPinstripesColor').set("fill", color.toHexString())
-									canvas.getObjects().find(o => o.id == 'raglanPinstripesColor').set("fill", color.toHexString())
+									canvas.getObjects().find(o => o.id == 'standardPinstripesColor').set("fill", c)
+									canvas.getObjects().find(o => o.id == 'raglanPinstripesColor').set("fill", c)
 								}
 							}
 						} 		
 						if (o.id == 'jerseyMakersMark') {
-							jerseyMakersMarkColor = color.toHexString();						
+							jerseyMakersMarkColor = c;						
 						}				
 					} 
                 });
@@ -2187,6 +2204,7 @@
 		showInitial: true,
 		showPalette: true,
 		showButtons: true,
+		allowEmpty: false,
 		color: initialJerseyColors["jerseyColor"],
 		show: function(color) {
 			original_color = color;
@@ -2213,14 +2231,16 @@
 				}
 			})
 			jerseyLogoCanvas.requestRenderAll()
-			if ($.inArray(color.toHexString(), commonPalette) < 0) {
-				commonPalette.push(color.toHexString())
-			}
-			if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
-				jerseyPalette.push(color.toHexString())
-			}
-			if ($.inArray(color.toHexString(), capPalette) < 0) {
-				capPalette.push(color.toHexString())
+			if (color !=  null) {
+				if ($.inArray(color.toHexString(), commonPalette) < 0) {
+					commonPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+					jerseyPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), capPalette) < 0) {
+					capPalette.push(color.toHexString())
+				}
 			}
 		},
 		hide: function(color) {
@@ -2245,6 +2265,7 @@
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
+			allowEmpty: false,
 			//showSelectionPalette: true,
 			//palette: [ "#FFFFFF", "#A2AAAD", "#6CACE4" ],
 			color: initialJerseyColors["jerseyColor"],
@@ -2274,6 +2295,7 @@
 					jerseyBelow.getObjects().find(o => o.id == 'rightSleeveRaglanColor').set("fill", color.toHexString())
 				}
 				reRenderBG("jersey")
+				if (color !=  null) {
 				if ($.inArray(color.toHexString(), commonPalette) < 0) {
 					commonPalette.push(color.toHexString())
 				}
@@ -2282,6 +2304,7 @@
 				}
 				if ($.inArray(color.toHexString(), capPalette) < 0) {
 					capPalette.push(color.toHexString())
+				}
 				}
 			},
 			hide: function(color) {
@@ -2319,16 +2342,17 @@
 			move: function(color) {
 				var type = $(this).attr("id");
 				$(this).data('changed', true);
+				var c = (color == null) ? 'transparent' : color.toHexString()
 				jerseyLogoCanvas.getObjects('group').forEach(function(o){
 					if (o.id.indexOf("swash") > -1) {
 						o.getObjects().forEach(function(p) {
 							if (type.indexOf("Fill") > -1) {
 								if (p.id.indexOf("Fill")  > -1) {
-									p.set("fill", color);
+									p.set("fill", c);
 								}	
 							} else if (type.indexOf("Stroke") > -1) {
 								if (p.id.indexOf("Stroke")  > -1) {
-									p.set("fill", color);
+									p.set("fill", c);
 								}
 							}
 						})
@@ -2339,45 +2363,49 @@
 			change: function(color) {
 				var type = $(this).attr("id");
 				$(this).data('changed', true);
+				var c = (color == null) ? 'transparent' : color.toHexString()
 				jerseyLogoCanvas.getObjects('group').forEach(function(o){
 					if (o.id.indexOf("swash") > -1) {
 						o.getObjects().forEach(function(p) {
 							if (type.indexOf("Fill") > -1) {
 								if (p.id.indexOf("Fill")  > -1) {
-									p.set("fill", color);
+									p.set("fill", capMakersMarkA);
 								}	
 							} else if (type.indexOf("Stroke") > -1) {
 								if (p.id.indexOf("Stroke")  > -1) {
-									p.set("fill", color);
+									p.set("fill", c);
 								}
 							}
 						})
 					} 
 				})
 				jerseyLogoCanvas.renderAll();
-				if ($.inArray(color.toHexString(), commonPalette) < 0) {
-					commonPalette.push(color.toHexString())
-				}
-				if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
-					jerseyPalette.push(color.toHexString())
-				}
-				if ($.inArray(color.toHexString(), capPalette) < 0) {
-					capPalette.push(color.toHexString())
+				if (color !=  null) {
+					if ($.inArray(color.toHexString(), commonPalette) < 0) {
+						commonPalette.push(color.toHexString())
+					}
+					if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+						jerseyPalette.push(color.toHexString())
+					}
+					if ($.inArray(color.toHexString(), capPalette) < 0) {
+						capPalette.push(color.toHexString())
+					}
 				}
 			},
 			hide: function(color) {
 				var type = $(this).attr("id");
 				$(this).data('changed', true);
+				var c = (color == null) ? 'transparent' : color.toHexString()
 				jerseyLogoCanvas.getObjects('group').forEach(function(o){
 					if (o.id.indexOf("swash") > -1) {
 						o.getObjects().forEach(function(p) {
 							if (type.indexOf("Fill") > -1) {
 								if (p.id.indexOf("Fill")  > -1) {
-									p.set("fill", color);
+									p.set("fill", c);
 								}	
 							} else if (type.indexOf("Stroke") > -1) {
 								if (p.id.indexOf("Stroke")  > -1) {
-									p.set("fill", color);
+									p.set("fill", c);
 								}
 							}
 						})
@@ -3346,6 +3374,7 @@
 		showInitial: true,
 		showPalette: true,
 		showButtons: true,
+		allowEmpty: false,
 		//showSelectionPalette: true,
 		//palette: [ "#FFFFFF", "#A2AAAD", "#6CACE4" ],
 		color: initialPantsColors["pantsColor"],
@@ -3363,14 +3392,16 @@
 			$(this).data('changed', true);
 			pantsBelow.setBackgroundColor(color.toHexString(), pantsBelow.renderAll.bind(pantsBelow))
 			reRenderBG("pants")
-			if ($.inArray(color.toHexString(), commonPalette) < 0) {
-				commonPalette.push(color.toHexString())
-			}
-			if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
-				jerseyPalette.push(color.toHexString())
-			}
-			if ($.inArray(color.toHexString(), capPalette) < 0) {
-				capPalette.push(color.toHexString())
+			if (color !=  null) {
+				if ($.inArray(color.toHexString(), commonPalette) < 0) {
+					commonPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+					jerseyPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), capPalette) < 0) {
+					capPalette.push(color.toHexString())
+				}
 			}
 		},
 		hide: function(color) {
@@ -3402,26 +3433,27 @@
 				$(this).data('changed', true);
 				const id = $(this).data('element');
 				const canvas = $(this).data('canvas') == 'below' ? pantsBelow : pantsLogoCanvas
+				var c = (color == null) ? 'transparent' : color.toHexString()
 				canvas.getObjects().forEach(function(o) {
                     if (o.get('type') == "group") {
 						var groupObjects = o.getObjects().forEach(function(p) {
                             if (p.id == id) {
-								p.set("fill", color.toHexString());
-								p.set("stroke", color.toHexString());
+								p.set("fill", c);
+								p.set("stroke", c);
 							}
                         });
 					} else {
 						if (o.id == id) {
 							if (o.type == 'image') {
-								o.filters[0]['color'] = color.toHexString();
+								o.filters[0]['color'] = c;
 								o.applyFilters()
 								canvas.requestRenderAll()
 							} else {
-								o.set("fill", color.toHexString());
+								o.set("fill", c);
 							}
 						} 		
 						if (o.id == 'pantsMakersMark') {
-							pantsMakersMarkColor = color.toHexString();						
+							pantsMakersMarkColor = c;						
 						}			
 					} 
                 });
@@ -3432,65 +3464,69 @@
 				$(this).data('changed', true);
 				const id = $(this).data('element');
 				const canvas = $(this).data('canvas') == 'below' ? pantsBelow : pantsLogoCanvas
+				var c = (color == null) ? 'transparent' : color.toHexString()
 				canvas.getObjects().forEach(function(o) {
                     if (o.get('type') == "group") {
 						var groupObjects = o.getObjects().forEach(function(p) {
                             if (p.id == id) {
-								p.set("fill", color.toHexString());
-								p.set("stroke", color.toHexString());
+								p.set("fill", c);
+								p.set("stroke", c);
 							}
                         });
 					} else {
 						if (o.id == id) {
 							if (o.type == 'image') {
-								o.filters[0]['color'] = color.toHexString();
+								o.filters[0]['color'] = c;
 								o.applyFilters()
 								canvas.requestRenderAll()
 							} else {
-								o.set("fill", color.toHexString());
+								o.set("fill", c);
 							}
-						}		
+						} 		
 						if (o.id == 'pantsMakersMark') {
-							pantsMakersMarkColor = color.toHexString();						
+							pantsMakersMarkColor = c;						
 						}			
 					} 
                 });
                 canvas.renderAll()
 				reRenderBG("pants");
-				if ($.inArray(color.toHexString(), commonPalette) < 0) {
-					commonPalette.push(color.toHexString())
-				}
-				if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
-					jerseyPalette.push(color.toHexString())
-				}
-				if ($.inArray(color.toHexString(), capPalette) < 0) {
-					capPalette.push(color.toHexString())
+				if (color !=  null) {
+					if ($.inArray(color.toHexString(), commonPalette) < 0) {
+						commonPalette.push(color.toHexString())
+					}
+					if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+						jerseyPalette.push(color.toHexString())
+					}
+					if ($.inArray(color.toHexString(), capPalette) < 0) {
+						capPalette.push(color.toHexString())
+					}
 				}
 			},
 			hide: function(color) {
 				$(this).data('changed', true);
 				const id = $(this).data('element');
 				const canvas = $(this).data('canvas') == 'below' ? pantsBelow : pantsLogoCanvas
+				var c = (color == null) ? 'transparent' : color.toHexString()
 				canvas.getObjects().forEach(function(o) {
                     if (o.get('type') == "group") {
 						var groupObjects = o.getObjects().forEach(function(p) {
                             if (p.id == id) {
-								p.set("fill", color.toHexString());
-								p.set("stroke", color.toHexString());
+								p.set("fill", c);
+								p.set("stroke", c);
 							}
                         });
 					} else {
 						if (o.id == id) {
 							if (o.type == 'image') {
-								o.filters[0]['color'] = color.toHexString();
+								o.filters[0]['color'] = c;
 								o.applyFilters()
 								canvas.requestRenderAll()
 							} else {
-								o.set("fill", color.toHexString());
+								o.set("fill", c);
 							}
-						}		
+						} 		
 						if (o.id == 'pantsMakersMark') {
-							pantsMakersMarkColor = color.toHexString();						
+							pantsMakersMarkColor = c;						
 						}			
 					} 
                 });
@@ -3606,6 +3642,7 @@
 		showInitial: true,
 		showPalette: true,
 		showButtons: true,
+		allowEmpty: false,
 		//showSelectionPalette: true,
 		//palette: ,
 		color: initialCapColors["capColor"],
@@ -3623,14 +3660,16 @@
 			$(this).data('changed', true);
 			capBelow.setBackgroundColor(color.toHexString(), capBelow.renderAll.bind(capBelow))
 			reRenderBG("cap")
-			if ($.inArray(color.toHexString(), commonPalette) < 0) {
-				commonPalette.push(color.toHexString())
-			}
-			if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
-				jerseyPalette.push(color.toHexString())
-			}
-			if ($.inArray(color.toHexString(), capPalette) < 0) {
-				capPalette.push(color.toHexString())
+			if (color !=  null) {
+				if ($.inArray(color.toHexString(), commonPalette) < 0) {
+					commonPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+					jerseyPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), capPalette) < 0) {
+					capPalette.push(color.toHexString())
+				}
 			}
 		},
 		hide: function(color) {
@@ -3699,21 +3738,22 @@
 			move: function(color) {
 				$(this).data('changed', true);
 				const id = $(this).data('element');
+				var c = (color == null) ? 'transparent' : color.toHexString()
 				const canvas = $(this).data('canvas') == 'below' ? capBelow : capLogoCanvas
 				canvas.getObjects().forEach(function(o) {
                     if (o.get('type') == "group") {
 						var groupObjects = o.getObjects().forEach(function(p) {
                             if (p.id == id) {
-								p.set("fill", color.toHexString());
-								p.set("stroke", color.toHexString());
+								p.set("fill", c);
+								p.set("stroke", c);
 							}
                         });
 					} else {
 						if (o.id == id) {
-							o.set("fill", color.toHexString());
+							o.set("fill", c);
 						} 		
 						if (o.id == 'capMakersMark') {
-							capMakersMarkColor = color.toHexString();						
+							capMakersMarkColor = c;						
 						}			
 					} 
                 });
@@ -3723,55 +3763,59 @@
 			change: function(color) {
 				$(this).data('changed', true);
 				const id = $(this).data('element');
+				var c = (color == null) ? 'transparent' : color.toHexString()
 				const canvas = $(this).data('canvas') == 'below' ? capBelow : capLogoCanvas
 				canvas.getObjects().forEach(function(o) {
                     if (o.get('type') == "group") {
 						var groupObjects = o.getObjects().forEach(function(p) {
                             if (p.id == id) {
-								p.set("fill", color.toHexString());
-								p.set("stroke", color.toHexString());
+								p.set("fill", c);
+								p.set("stroke", c);
 							}
                         });
 					} else {
 						if (o.id == id) {
-							o.set("fill", color.toHexString());
-						} 	
+							o.set("fill", c);
+						} 		
 						if (o.id == 'capMakersMark') {
-							capMakersMarkColor = color.toHexString();						
-						}						
+							capMakersMarkColor = c;						
+						}			
 					} 
                 });
                 canvas.renderAll()
 				reRenderBG("cap");
-				if ($.inArray(color.toHexString(), commonPalette) < 0) {
-					commonPalette.push(color.toHexString())
-				}
-				if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
-					jerseyPalette.push(color.toHexString())
-				}
-				if ($.inArray(color.toHexString(), capPalette) < 0) {
-					capPalette.push(color.toHexString())
+				if (color !=  null) {
+					if ($.inArray(color.toHexString(), commonPalette) < 0) {
+						commonPalette.push(color.toHexString())
+					}
+					if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+						jerseyPalette.push(color.toHexString())
+					}
+					if ($.inArray(color.toHexString(), capPalette) < 0) {
+						capPalette.push(color.toHexString())
+					}
 				}
 			},
 			hide: function(color) {
 				$(this).data('changed', true);
 				const id = $(this).data('element');
+				var c = (color == null) ? 'transparent' : color.toHexString()
 				const canvas = $(this).data('canvas') == 'below' ? capBelow : capLogoCanvas
 				canvas.getObjects().forEach(function(o) {
                     if (o.get('type') == "group") {
 						var groupObjects = o.getObjects().forEach(function(p) {
                             if (p.id == id) {
-								p.set("fill", color.toHexString());
-								p.set("stroke", color.toHexString());
+								p.set("fill", c);
+								p.set("stroke", c);
 							}
                         });
 					} else {
 						if (o.id == id) {
-							o.set("fill", color.toHexString());
-						} 	
+							o.set("fill", c);
+						} 		
 						if (o.id == 'capMakersMark') {
-							capMakersMarkColor = color.toHexString();						
-						}						
+							capMakersMarkColor = c;						
+						}			
 					} 
                 });
                 canvas.renderAll()
@@ -3844,7 +3888,7 @@
 		}
 	})
 	
-	$("#capAutoSize").on("click",function(e) {
+/* 	$("#capAutoSize").on("click",function(e) {
 		var object = capLogoCanvas.getActiveObject();
 		if (object.get('type') == "image") {
 			var imageHeight = object.get("height");
@@ -3852,6 +3896,41 @@
 			var dim = fitInBox(object.get("width"), object.get("height"), 50, 50, false)
 			object.scaleToWidth(dim.width)
 			object.set({"left":106.5,"top":284,"angle":0});
+			object.setCoords();
+		}
+		capLogoCanvas.renderAll();
+	}) */
+
+	$(".capPlace").on("click",function(e) {
+		const loc = $(this).data("loc")
+		const object = capLogoCanvas.getActiveObject();
+		const imageHeight = object.get("height");
+		const imageWidth = object.get("width")
+		const dim = fitInBox(object.get("width"), object.get("height"), 50, 50, false)
+		if (object.get('type') == "image") {
+			switch (loc) {
+				case "front":
+					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0});	
+					object.setCoords();
+					object.scaleToWidth(dim.width)
+					object.set({"left":106.5,"top":284,"angle":0});
+					break;
+				case "left":
+					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0});	
+					object.setCoords();
+					object.scaleToWidth(dim.width)
+					object.set({"left":130,"top":360,"angle":capMakersMarkCoords['leftA']});
+					break;
+				case "right":
+					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0});	
+					object.setCoords();
+					object.scaleToWidth(dim.width)
+					object.set({"left":327,"top":388,"angle":capMakersMarkCoords['rightA']});
+					break;
+				case "reset":
+					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0});					
+					break;
+			}
 			object.setCoords();
 		}
 		capLogoCanvas.renderAll();
