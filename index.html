@@ -77,6 +77,8 @@
 		var fontFamilies = {Acme: "Acme", athletic_gothicregular: "AthleticGothic", athletic_gothic_shadowregular: "AthleticGothicShadow", beaverton_scriptregular: "BeavertonScript", 'Berkshire Swash': "Berkshire_Swash", 'Cantora One': "Cantora_One", caxton_romanregular: "CaxtonRoman", 'Chela One': "Chela_One", russell_circusregular: "Circus", Condiment: "Comdiment", Cookie: "Coookie", Courgette: "Courgette", 'Croissant One': "Croissant_one", Damion: "Damion", Engagement: "Engagement", rawlings_fancy_blockregular: "RawlingsFancyBlock", 'Germania One': "Germania_One", Graduate: "Graduate", 'Grand Hotel': "Grand_Hotel", 'Jockey One': "Jockey_One", kansasregular: "Kansas", 'Kaushan Script': "Kaushan_Script", 'Leckerli One': "Leckerli_One", 'Lily Script One': "Lily_Script_One", Lobster: "Lobster", 'Lobster Two': "Lobster_Two", 'Metal Mania': "Metal_Mania", Miniver: "Miniver", 'Molle, italic': "Molle", 'New Rocker': "New_Rocker", Norican: "Norican", rawlings_old_englishmedium: "OldEnglish", 'Oleo Script': "Oleo_Script", 'Oleo Script Swash Caps': "Oleo_Script_Swash_Caps", Pacifico: "Pacifico", 'Pirata One': "Pirata_One", Playball: "Playball", pro_full_blockregular: "ProFullBlock", richardson_fancy_blockregular: "RichardsonFancyBlock", 'Rubik One': "Rubik_One", 'Rum Raisin': "Rum_Raisin", Satisfy: "Satisfy", 'Seymour One': "Seymour_One", spl28scriptregular: "spl28", ua_tiffanyregular: "TiffanyRegular", 'Trade Winds': "Trade_Winds", mlb_tuscan_newmedium: "Tuscan", UnifrakturCook: "UnifrakturCook", UnifrakturMaguntia: "UnifrakturMaguntia", Vibur: "Vibur", Viga: "Viga", Wellfleet: "Wellfleet", 'Wendy One': "Wendy_One", Yellowtail: "Yellowtail"};
   
 		var customFonts = [];
+		var capPalette = ["#0C2340","#BA0C2F","#002F6C","#024638","#1e1e1e","#3F2021"]
+		var jerseyPalette = ["#FFFFFF","#A2AAAD","#6CACE4"]
 		var commonPalette = []
 		var objectIDs = []
 
@@ -1985,7 +1987,7 @@
 		show: function(color) {
 			original_color = color;
 			$(this).data('changed', false);
-			$(this).spectrum("option", "palette", [["#FFFFFF","#A2AAAD","#6CACE4"],commonPalette])
+			$(this).spectrum("option", "palette", jerseyPalette)
 		},
 		move: function(color) {
 			$(this).data('changed', true);
@@ -1998,6 +2000,12 @@
 			reRenderBG("jersey")
 			if ($.inArray(color.toHexString(), commonPalette) < 0) {
 				commonPalette.push(color.toHexString())
+			}
+			if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+				jerseyPalette.push(color.toHexString())
+			}
+			if ($.inArray(color.toHexString(), capPalette) < 0) {
+				capPalette.push(color.toHexString())
 			}
 		},
 		hide: function(color) {
@@ -2116,6 +2124,12 @@
 				if ($.inArray(color.toHexString(), commonPalette) < 0) {
 					commonPalette.push(color.toHexString())
 				}
+				if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+					jerseyPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), capPalette) < 0) {
+					capPalette.push(color.toHexString())
+				}
 			},
 			hide: function(color) {
 				$(this).data('changed', true);
@@ -2177,7 +2191,7 @@
 		show: function(color) {
 			original_color = color;
 			$(this).data('changed', false);
-			$(this).spectrum("option", "palette", [["#FFFFFF","#A2AAAD","#6CACE4"], commonPalette])
+			$(this).spectrum("option", "palette", [jerseyPalette, commonPalette])
 		},
 		move: function(color) {
 			$(this).data('changed', true);
@@ -2201,6 +2215,12 @@
 			jerseyLogoCanvas.requestRenderAll()
 			if ($.inArray(color.toHexString(), commonPalette) < 0) {
 				commonPalette.push(color.toHexString())
+			}
+			if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+				jerseyPalette.push(color.toHexString())
+			}
+			if ($.inArray(color.toHexString(), capPalette) < 0) {
+				capPalette.push(color.toHexString())
 			}
 		},
 		hide: function(color) {
@@ -2231,7 +2251,7 @@
 			show: function(color) {
 				original_color = color;
 				$(this).data('changed', false);
-				$(this).spectrum("option", "palette", [["#FFFFFF","#A2AAAD","#6CACE4"],commonPalette])
+				$(this).spectrum("option", "palette", jerseyPalette)
 			},
 			move: function(color) {
 				$(this).data('changed', true);
@@ -2256,6 +2276,12 @@
 				reRenderBG("jersey")
 				if ($.inArray(color.toHexString(), commonPalette) < 0) {
 					commonPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+					jerseyPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), capPalette) < 0) {
+					capPalette.push(color.toHexString())
 				}
 			},
 			hide: function(color) {
@@ -2332,8 +2358,11 @@
 				if ($.inArray(color.toHexString(), commonPalette) < 0) {
 					commonPalette.push(color.toHexString())
 				}
-				if ($.inArray(color.toHexString(), commonPalette) < 0) {
-					commonPalette.push(color.toHexString())
+				if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+					jerseyPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), capPalette) < 0) {
+					capPalette.push(color.toHexString())
 				}
 			},
 			hide: function(color) {
@@ -3323,7 +3352,7 @@
 		show: function(color) {
 			original_color = color;
 			$(this).data('changed', false);
-			$(this).spectrum("option", "palette", [["#FFFFFF","#A2AAAD","#6CACE4"],commonPalette])
+			$(this).spectrum("option", "palette", jerseyPalette)
 		},
 		move: function(color) {
 			$(this).data('changed', true);
@@ -3336,6 +3365,12 @@
 			reRenderBG("pants")
 			if ($.inArray(color.toHexString(), commonPalette) < 0) {
 				commonPalette.push(color.toHexString())
+			}
+			if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+				jerseyPalette.push(color.toHexString())
+			}
+			if ($.inArray(color.toHexString(), capPalette) < 0) {
+				capPalette.push(color.toHexString())
 			}
 		},
 		hide: function(color) {
@@ -3424,6 +3459,12 @@
 				reRenderBG("pants");
 				if ($.inArray(color.toHexString(), commonPalette) < 0) {
 					commonPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+					jerseyPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), capPalette) < 0) {
+					capPalette.push(color.toHexString())
 				}
 			},
 			hide: function(color) {
@@ -3566,12 +3607,12 @@
 		showPalette: true,
 		showButtons: true,
 		//showSelectionPalette: true,
-		//palette: [ "#0C2340", "#BA0C2F", "#002F6C", "#024638", "#1e1e1e", "#3F2021" ],
+		//palette: ,
 		color: initialCapColors["capColor"],
 		show: function(color) {
 			original_color = color;
 			$(this).data('changed', false);
-			$(this).spectrum("option", "palette", [["#0C2340","#BA0C2F","#002F6C","#024638","#1e1e1e","#3F2021"],commonPalette])
+			$(this).spectrum("option", "palette", capPalette)
 		},
 		move: function(color) {
 			$(this).data('changed', true);
@@ -3584,6 +3625,12 @@
 			reRenderBG("cap")
 			if ($.inArray(color.toHexString(), commonPalette) < 0) {
 				commonPalette.push(color.toHexString())
+			}
+			if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+				jerseyPalette.push(color.toHexString())
+			}
+			if ($.inArray(color.toHexString(), capPalette) < 0) {
+				capPalette.push(color.toHexString())
 			}
 		},
 		hide: function(color) {
@@ -3698,6 +3745,12 @@
 				reRenderBG("cap");
 				if ($.inArray(color.toHexString(), commonPalette) < 0) {
 					commonPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+					jerseyPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), capPalette) < 0) {
+					capPalette.push(color.toHexString())
 				}
 			},
 			hide: function(color) {
