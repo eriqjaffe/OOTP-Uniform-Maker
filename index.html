@@ -333,6 +333,16 @@
 													</span>
 												</td>
 											</tr>
+											<tr class="color_tr">
+                                                <input type="file" id="uploadedLayer" accept="image/*" style="display:none;"/>
+                                                <td class="checkCell"><input id="customJerseyLayerCheck" type="checkbox" class="customLayer" data-canvas="jersey" data-id="customJerseyLayer"></td>
+                                                <td><label>Custom Layer: </label></td>
+                                                <td style="text-align:right;">
+                                                <span id="customJerseyLayerName"></span>
+                                                <input type="button" id="customJerseyLayerButton" class="button fakeLayerButton" data-canvas="jersey" value="Upload Custom Layer" disabled>
+												<input type="button" id="customJerseyLayerDelete" class="button fakeLayerDelete" data-canvas="jersey" value="Remove Custom Layer" disabled style="display:none;">
+                                                </td>
+                                            </tr>
                                             <!--<tr class="color_tr">
                                                 <td>&nbsp;</td>
                                                 <td>
@@ -1019,6 +1029,16 @@
                                                     <input class="pantsSelector selector" type="text" id="pantsMakersMarkColor" data-element="pantsMakersMark">
                                                 </td>
                                             </tr>
+											<tr class="color_tr">
+                                                <input type="file" id="uploadedLayer" accept="image/*" style="display:none;"/>
+                                                <td class="checkCell"><input id="customPantsLayerCheck" type="checkbox" class="customLayer" data-canvas="pants" data-id="customPantsLayer"></td>
+                                                <td><label>Custom Layer: </label></td>
+                                                <td style="text-align:right;">
+                                                <span id="customPantsLayerName"></span>
+                                                <input type="button" id="customPantsLayerButton" class="button fakeLayerButton" data-canvas="pants" value="Upload Custom Layer" disabled>
+												<input type="button" id="customPantsLayerDelete" class="button fakeLayerDelete" data-canvas="pants" value="Remove Custom Layer" disabled style="display:none;">
+                                                </td>
+                                            </tr>
                                         </table>
                                     </div>
 									<div class="pants-accord-header">Striping</div>
@@ -1173,6 +1193,16 @@
 														<option value="right">Cap Right</option>
 													</select>
                                                     <input class="capSelector selector" type="text" id="capMakersMarkColor" data-element="capMakersMark">
+                                                </td>
+                                            </tr>
+											<tr class="color_tr">
+                                                <input type="file" id="uploadedLayer" accept="image/*" style="display:none;"/>
+                                                <td class="checkCell"><input id="customCapLayerCheck" type="checkbox" class="customLayer" data-canvas="cap" data-id="customCapLayer"></td>
+                                                <td><label>Custom Layer: </label></td>
+                                                <td style="text-align:right;">
+                                                <span id="customCapLayerName"></span>
+                                                <input type="button" id="customCapLayerButton" class="button fakeLayerButton" data-canvas="cap" value="Upload Custom Layer" disabled>
+												<input type="button" id="customCapLayerDelete" class="button fakeLayerDelete" data-canvas="cap" value="Remove Custom Layer" disabled style="display:none;">
                                                 </td>
                                             </tr>
                                         </table>
@@ -3031,7 +3061,7 @@
 					object.set({"left":256,"top":512,"scaleX":1,"scaleY":1,"angle":0})
 					object.setCoords();
 					var dim = fitInBox(imageWidth, imageHeight, 33, 16.5, false)
-					object.scaleToWidth(dim.width)	
+					object.scaleToWidth(dim.width)
 					object.set({left:256,top:473,angle:180})
 					object.setCoords()
 					break;
@@ -7040,6 +7070,162 @@
 				reRenderBG("pants")
 			}
 		})
+	})
+
+	$(".fakeLayerButton").on("click",function(e){
+		const renderTarget = $(this).data("canvas")
+		switch ($(this).data("canvas")) {
+			case "cap":
+				var canvas = capBelow
+				var imLeft = 256
+				var imTop = 256
+				var options = {"left":256,"top":256}
+				var canvasHeight = 512
+				var canvasWidth = 512
+				var span = $("#customCapLayerName")
+				var id = "customCapLayer"
+				var loadButton = $("#customCapLayerButton")
+				var delButton = $("#customCapLayerDelete")
+				break;
+		 	case "jersey":
+				var canvas = jerseyBelow
+				var imLeft = 256
+				var imTop = 512
+				var options = {"left":256,"top":512,"clipPath":clippingPath}
+				var canvasHeight = 1024
+				var canvasWidth = 512
+				var span = $("#customJerseyLayerName")
+				var id = "customJerseyLayer"
+				var loadButton = $("#customJerseyLayerButton")
+				var delButton = $("#customJerseyLayerDelete")
+				break;
+			case "pants":
+				var canvas = pantsBelow
+				var imLeft = 256
+				var imTop = 256
+				var options = {"left":256,"top":256}
+				var canvasHeight = 512
+				var canvasWidth = 512
+				var span = $("#customPantsLayerName")
+				var id = "customPantsLayer"
+				var loadButton = $("#customPantsLayerButton")
+				var delButton = $("#customPantsLayerDelete")
+				break;
+		}
+		$.ajax({
+			type: "GET",
+			url: "http://127.0.0.1:"+port+"/uploadImage",
+			success: function(data) {
+				var imgObj = new Image();
+				imgObj.src = data.image;
+				imgObj.onload = function () {
+					var image = new fabric.Image(imgObj);
+					image.set({
+						originX: 'center',
+						originY: 'center',
+						perPixelTargetFind: true,
+						centeredScaling: true,
+						centeredRotation: true,
+						id: id
+					});		
+					var h = image.height;
+					var w = image.width;
+					if (image.width > image.height) {
+						image.scaleToHeight(canvasWidth)
+					} else {
+						image.scaleToWidth(canvasHeight)
+					}
+					canvas.add(image);
+					image.set(options);
+					image.sendToBack();
+					image.setCoords();
+					canvas.renderAll();
+					span.html(data.filename)
+					reRenderBG(renderTarget)
+					loadButton.css("display","none")
+					delButton.css("display","inline-block")
+				}
+				
+			}
+		});
+	})
+
+	$(".fakeLayerDelete").on("click",function() {
+		switch ($(this).data("canvas")) {
+			case "cap":
+				var canvas = capBelow
+				var imLeft = 256
+				var imTop = 256
+				var clipping = false
+				var canvasHeight = 512
+				var canvasWidth = 512
+				var span = $("#customCapLayerName")
+				var id = "customCapLayer"
+				var target = "cap"
+				var loadButton = $("#customCapLayerButton")
+				var delButton = $("#customCapLayerDelete")
+				break;
+		 	case "jersey":
+				var canvas = jerseyBelow
+				var imLeft = 256
+				var imTop = 512
+				var clipping = true
+				var canvasHeight = 1024
+				var canvasWidth = 512
+				var span = $("#customJerseyLayerName")
+				var id = "customJerseyLayer"
+				var target = "jersey"
+				var loadButton = $("#customJerseyLayerButton")
+				var delButton = $("#customJerseyLayerDelete")
+				break;
+			case "pants":
+				var canvas = pantsBelow
+				var imLeft = 256
+				var imTop = 256
+				var clipping = false
+				var canvasHeight = 512
+				var canvasWidth = 512
+				var span = $("#customPantsLayerName")
+				var id = "customPantsLayer"
+				var target = "pants"
+				var loadButton = $("#customPantsLayerButton")
+				var delButton = $("#customPantsLayerDelete")
+				break;
+		}
+		var o = canvas.getObjects().find(o => o.id == id)
+		if (o != undefined) {
+			canvas.remove(o)
+			span.html("")
+			delButton.css("display","none")
+			loadButton.css("display","inline-block")
+		}
+		reRenderBG(target)
+	})
+	
+	$(".customLayer").on("click",function(){
+		const state = ($(this).is(":checked")) ? true : false
+		switch ($(this).data("canvas")) {
+			case "jersey":
+				var canvas = jerseyBelow
+				var id = $(this).data("id")
+				var target = "jersey"
+				break;
+			case "cap":
+				var canvas = capBelow
+				var id = $(this).data("id")
+				var target = "cap"
+				break;
+			case "pants":
+				var canvas = pantsBelow
+				var id = $(this).data("id")
+				var target = "pants"
+				break;
+		}
+		var o = canvas.getObjects().find(o => o.id == id)
+		if (o != undefined) {
+			o.visible = state;
+		}
+		reRenderBG(target)
 	})
 
 // UTILITY FUNCTIONS
