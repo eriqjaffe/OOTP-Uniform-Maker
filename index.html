@@ -27,6 +27,14 @@
     <script>
 		const params = new URLSearchParams(window.location.search)
 		const port = params.get('port')
+		const defaultJerseyTexture = params.get('preferredJerseyTexture')
+		const defaultPantsTexture = params.get('preferredPantsTexture')
+		const defaultCapTexture = params.get('preferredCapTexture')
+		const gridsVisible = (params.get('gridsVisible').toLowerCase() == "true") ? true : false
+
+		console.log(defaultJerseyTexture)
+		console.log(defaultPantsTexture)
+		console.log(defaultCapTexture)
 
         const initialJerseyColors = {jerseyColor:"#FFFFFF",jerseyFrontColor:"#008800",jerseyBackColor:"#880000",buttonPadFillColor:"#FFFFFF",buttonPadColor:"#000000",collarColor:"#103959",leftSleeveColor:"#FFFFFF",rightSleeveColor:"#FFFFFF",leftSleeveRaglanColor:"#FFFFFF",rightSleeveRaglanColor:"#FFFFFF",jerseyPinstripesColor:"#0c2340",jerseyPinstripesStrokeColor:"transparent",undershirtColor:"#103959",sleeveSeamAngledColor:"#0202f0",sleeveSeamAngledStrokeColor:"#000000",racingStripeLargeColor:"#ff0000",racingStripeSmallColor:"#00FF00",sideRacingStripeLargeColor:"#ff0000",sideRacingStripeSmallColor:"#00FF00",sleeveSeamXLColor:"#971717",sleeveSeamXLStrokeColor:"#000000",smallTopShouldersColor:"#999999",smallTopShouldersStrokeColor:"#000000",bigTopShouldersColor:"#00FF00",bigTopShouldersStrokeColor:"#000000",sidePanelSmallColor:"#FF0000",sidePanelSmallStrokeColor:"#0000FF",sidePanelSmallRoundedColor:"#0000FF",sidePanelSmallRoundedStrokeColor:"#FF0000",sidePanelLargeRoundedColor:"#00FF00",sidePanelLargeRoundedStrokeColor:"yellow",sidePanelVColor:"yellow",sidePanelVStrokeColor:"#00FF00",arcedStripeColor:"#003399",placketPipingInnerColor:"#FF0000",placketPipingMiddleColor:"#00FF00",placketPipingOuterColor:"#0000FF",widePlacketPipingInnerColor:"#FF0000",widePlacketPipingMiddleColor:"#00FF00",widePlacketPipingOuterColor:"#0000FF",tequilaSunrise1Color:"#d50032",tequilaSunrise2Color:"#ff8200",tequilaSunrise3Color:"#ffcd00",tequilaSunrise4Color:"#e87722",sleevePipingInnerColor:"#FF0000",sleevePipingMiddleColor:"#FFFFFF",sleevePipingOuterColor:"#0000FF",thinCuffInnerColor:"#FF0000",thinCuffMiddleColor:"#FFFFFF",thinCuffOuterColor:"#0000FF",sleeveCuffInnerColor:"#FF0000",sleeveCuffMiddleColor:"#FFFFFF",sleeveCuffOuterColor:"#0000FF",shoulderPipingInnerColor:"#FF0000",shoulderPipingMiddleColor:"#FFFFFF",shoulderPipingOuterColor:"#0000FF",swashFillColor:"#000000",swashStrokeColor:"#FF0000",wordmarkTextColor:"#103959",wordmarkTextStroke1Color:"#FFFFFF",wordmarkTextStroke2Color:"#FF0000",beachBlanketTopColor:"#FF0000",beachBlanketMiddleColor:"#0000FF",beachBlanketBottomColor:"#FF0000",vNeckThinInnerColor:"#FF0000",vNeckThinMiddleColor:"#FFFFFF",vNeckThinOuterColor:"#0000FF",vNeckOffsetInnerColor:"#FF0000",vNeckOffsetMiddleColor:"#FFFFFF",vNeckOffsetOuterColor:"#0000FF",vNeckThickInnerColor:"#FF0000",vNeckThickMiddleColor:"#FFFFFF",vNeckThickOuterColor:"#0000FF",vNeck2OuterColor:"#0000FF",vNeck2InnerColor:"#FF0000",buttonsColor:"#FFFFFF",camoBaseColor:"#4a551e",camoLayer1Color:"#052503",camoLayer2Color:"#beb585",digiCamoBaseColor:"#9a8b62",digiCamoLayer1Color:"#372900",digiCamoLayer2Color:"#736632",butterflyColor:"#103959",cadetCollarColor:"#FF0000",fullCollarColor:"#00FF00",neckCollarColor:"#0000FF",sunCollar1Color:"#FF0000",sunCollar2Color:"#00FF00",buttonDownCollarColor:"#00FFFF",jerseyFlapColor:"#191970",jerseyFlapTrimColor:"#800000",jerseyFlapButtonsColor:"#FFFFFF",jerseyShield1WideStrokeColor:"#FF0000",jerseyShield1WideColor:"#0000FF",jerseyShield1InnerStrokeColor:"#000000",jerseyShield1InnerColor:"#00FF00",jerseyShield1ButtonsColor:"#FFFFFF",jerseyShield2StrokeColor:"#FF0000",jerseyShield2InnerColor:"#0000FF",jerseyShield2ButtonsColor:"#FFFFFF",jerseyPanelStrokeColor:"#FF0000",jerseyPanelFillColor:"#00FF00",jerseyPanelButtonColor:"#FFFFFF",bowTie1Color:"#0000FF",bowTie2Color:"#FF0000",tieColor:"#272A26",pocketFillColor:"#fffdd0",xLacesColor:"#0000FF",vLacesColor:"#FF0000",hockeyLacesColor:"#CFCFCF",suspendersColor:"#228b22",nikeHornsColor:"#FF9933",shoulderLoops1Color:"#6600CC",shoulderLoops2Color:"#339933",ncaaShoulderColor:"#996633",makersMarkColor:"#000000",jerseySnakeskinColor:"#A41E20",rainbowShoulder1Color:"#041E42",rainbowShoulder2Color:"#D50032",rainbowShoulder3Color:"#FA4616",rainbowShoulder4Color:"#FFCD00",jerseyMakersMarkColor:"#000000",mlbBaseColor:"#FFFFFF",mlb1Color:"#041e42",mlb2Color:"#bf0d3e",milbBaseColor:"#FFFFFF",milb1Color:"#041e42",milb2Color:"#bf0d3e",highCollar1:"#00FF00",highCollar1Laces:"#ffffff",diagonalSide1:"#FF0000",diagonalSide2:"#0000FF",kiaSide1:"#00FF00",kiaSide2:"#FF0000"}
         
@@ -178,7 +186,7 @@
 														<option value="jersey_texture_polyester.png">Polyester</option>
 														<option value="jersey_texture_deft_canvas.png">Canvas (deft)</option>
 														<option value="jersey_texture_deft_gingham.png">Gingham (deft)</option>
-														<option value="jersey_texture_deft_herringbone.png">Herringbond (deft)</option>
+														<option value="jersey_texture_deft_herringbone.png">Herringbone (deft)</option>
 														<option value="jersey_texture_deft_hex.png">Hex (deft)</option>
 														<option value="jersey_texture_deft_mesh.png">Mesh (deft)</option>
 														<option value="jersey_texture_deft_mottled.png">Mottled (deft)</option>
@@ -920,6 +928,18 @@
 														<option value="pants_texture_flannel.png">Flannel</option>
 														<option value="pants_texture_mesh.png">Mesh</option>
 														<option value="pants_texture_polyester.png">Polyester</option>
+														<option value="pants_texture_deft_canvas.png">Canvas (deft)</option>
+														<option value="pants_texture_deft_gingham.png">Gingham (deft)</option>
+														<option value="pants_texture_deft_herringbone.png">Herringbone (deft)</option>
+														<option value="pants_texture_deft_hex.png">Hex (deft)</option>
+														<option value="pants_texture_deft_mesh.png">Mesh (deft)</option>
+														<option value="pants_texture_deft_mottled.png">Mottled (deft)</option>
+														<option value="pants_texture_deft_polyester.png">Polyester (deft)</option>
+														<option value="pants_texture_deft_snakeskin.png">Snake Skin (deft)</option>
+														<option value="pants_texture_deft_wool.png">Wool (deft)</option>
+														<option value="pants_texture_micropterus1.png">Micropterus58 #1</option>
+														<option value="pants_texture_micropterus2.png">Micropterus58 #2</option>
+														<option value="pants_texture_micropterus3.png">Micropterus58 #3</option>
 													</select>
 												</td>
                                             </tr>
@@ -1547,6 +1567,7 @@
                         <input type="button" class="button" id="load" value="Load Uniform">
                         <input type="button" class="button copypaste" id="copy" value="Copy Object" onclick="copy()">
 						<input type="button" class="button copypaste" id="paste" value="Paste Object" onclick="paste()">
+						<input type="button" class="button" id="prefsButton" value="Preferences">
 						<input type="button" class="button" id="aboutUniformMaker" value="About Uniform Maker">
                     </div>
                 </div>
@@ -1567,6 +1588,81 @@
 			<div class="question">Who is responsible for this thing?</div>
 			<div class="answer">That would be me.  My name is Eriq Jaffe, and I've been playing OOTP Baseball since 2004.  Feel free to <a href="mailto:eriqjaffe@gmail.com">shoot me an email</a> with any questions or comments.  You can also view the source code for this on <a href="https://github.com/eriqjaffe/OOTP-Uniform-Maker" target="_blank">GitHub</a>.<br><br>Some of the textures and shapes are taken directly from OOTP, but a lot of them are based on the work of Gern44, silvam14, txranger, Deft, NoPepper, Reds1, davwms and probably several others (my record keeping isn't all that great, and I'm not 100% sure where every piece came from - if I'm using one of your components and I forgot to give you credit, thanks!).<br><br>I'd also like to give an additional shout out to Conrad Burry, who created some of the default fonts.</div><br>
 		</div>
+	</div>
+	<div id="prefs" class="jm-white-popup mfp-hide" style="height:200px!important;">
+		<div class="question" style="margin-top:10px!important;">Preferences</div><br><br>
+		<table class="prefs" style="width:100%;">
+			<tr>
+				<td><center>
+					<input type="checkbox" id="gridsVisible" checked>&nbsp;Grids & Gudes Visible
+				</center></td>
+				<td><center>
+					Preferred Color Format:&nbsp;
+					<select id="preferredColorFormat" class="preference">
+						<option value="hex">Hex</option>
+						<option value="rgb">RGB</option>
+						<option value="hsv">HSV</option>
+					</select>
+				</center></td>
+			</tr>
+		</table>
+		<br>
+		<table class="prefs" style="width:100%;">
+			<tr>
+				<td><center>
+					Jersey Texture:&nbsp;
+					<select id="preferredJerseyTexture" class="preference">
+						<option value="jersey_texture_default.png" selected>None</option>
+						<option value="jersey_texture_flannel.png">Flannel</option>
+						<option value="jersey_texture_mesh.png">Mesh</option>
+						<option value="jersey_texture_polyester.png">Polyester</option>
+						<option value="jersey_texture_deft_canvas.png">Canvas (deft)</option>
+						<option value="jersey_texture_deft_gingham.png">Gingham (deft)</option>
+						<option value="jersey_texture_deft_herringbone.png">Herringbone (deft)</option>
+						<option value="jersey_texture_deft_hex.png">Hex (deft)</option>
+						<option value="jersey_texture_deft_mesh.png">Mesh (deft)</option>
+						<option value="jersey_texture_deft_mottled.png">Mottled (deft)</option>
+						<option value="jersey_texture_deft_polyester.png">Polyester (deft)</option>
+						<option value="jersey_texture_deft_snakeskin.png">Snake Skin (deft)</option>
+						<option value="jersey_texture_deft_wool.png">Wool (deft)</option>
+						<option value="jersey_texture_micropterus1.png">Micropterus58 #1</option>
+						<option value="jersey_texture_micropterus2.png">Micropterus58 #2</option>
+						<option value="jersey_texture_micropterus3.png">Micropterus58 #3</option>
+					</select>
+				</center></td>
+				<td><center>
+					Pants Texture:&nbsp;
+					<select id="preferredPantsTexture" class="preference">
+						<option value="pants_texture_default.png" selected>None</option>
+						<option value="pants_texture_flannel.png">Flannel</option>
+						<option value="pants_texture_mesh.png">Mesh</option>
+						<option value="pants_texture_polyester.png">Polyester</option>
+						<option value="pants_texture_deft_canvas.png">Canvas (deft)</option>
+						<option value="pants_texture_deft_gingham.png">Gingham (deft)</option>
+						<option value="pants_texture_deft_herringbone.png">Herringbone (deft)</option>
+						<option value="pants_texture_deft_hex.png">Hex (deft)</option>
+						<option value="pants_texture_deft_mesh.png">Mesh (deft)</option>
+						<option value="pants_texture_deft_mottled.png">Mottled (deft)</option>
+						<option value="pants_texture_deft_polyester.png">Polyester (deft)</option>
+						<option value="pants_texture_deft_snakeskin.png">Snake Skin (deft)</option>
+						<option value="pants_texture_deft_wool.png">Wool (deft)</option>
+						<option value="pants_texture_micropterus1.png">Micropterus58 #1</option>
+						<option value="pants_texture_micropterus2.png">Micropterus58 #2</option>
+						<option value="pants_texture_micropterus3.png">Micropterus58 #3</option>
+					</select>
+				</center></td>
+				<td><center>
+					Cap Texture:&nbsp;
+					<select id="preferredCapTexture" class="preference">
+						<option value="cap_texture_default.png" selected>Gern44</option>	
+						<option value="cap_texture_mottled.png">Mottled</option>
+						<option value="cap_texture_wool.png">Wool</option>
+						<option value="cap_texture_knit.png">Knit</option>
+						<option value="cap_texture_mesh.png">Mesh</option>
+					</select>
+				</center></td>
+			</tr>
+		</table>
 	</div>
 </div>
 </body>
@@ -1657,6 +1753,10 @@
 // DOCUMENT FUNCTIONS
 
     $(document).ready(function() {
+		$("#toggleJerseyGrid").prop( "checked", gridsVisible )
+		$("#togglePantsGrid").prop( "checked", gridsVisible )
+		$("#toggleCapGuides").prop( "checked", gridsVisible )
+		$("#gridsVisible").prop( "checked", gridsVisible )
 		$(".jersey-accord-header").click(function() {
 			if($(this).next("div").is(":visible")){
 				$(this).next("div").slideUp("fast");
@@ -2811,14 +2911,17 @@
 	})
 
 	$("#jerseyReplacementColor").spectrum({
+		type: "color",
+		showAlpha: false,
 		showInput: true,
 		preferredFormat: prefColorFormat,
 		showInitial: true,
 		showPalette: true,
 		showButtons: true,
-		//showSelectionPalette: true,
-		palette: commonPalette,
-		color: "#FF0000"
+		color: "#FF0000",
+		show: function(color) {
+			$(this).spectrum("option", "palette", commonPalette)
+		},
 	})
 
 	$(".makePatch").on("click",function(e) {
@@ -3540,9 +3643,6 @@
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
-			//showSelectionPalette: true,
-			localStorageKey: "spectrum.capmaker",
-			//palette: [ ],
 			color: initialCapColors[$(this).attr('id')],
 			show: function(color) {
 				var original_color = color;
@@ -3635,9 +3735,10 @@
 		showInitial: true,
 		showPalette: true,
 		showButtons: true,
-		//showSelectionPalette: true,
-		palette: commonPalette,
-		color: "#FF0000"
+		color: "#FF0000",
+		show: function(color) {
+			$(this).spectrum("option", "palette", commonPalette)
+		},
 	})
 
     $(".capTextureToggle").on("click",function() {
@@ -3800,6 +3901,9 @@
 // CANVAS INITIALIZE FUNCTIONS
 
 	function initializeCap() {
+
+		$("#capTextureSelect").val(defaultCapTexture)
+
         underBrimColor = new fabric.Rect({
 			top: -1,
 			left: -1,
@@ -4163,13 +4267,19 @@
         
         capBelow.renderAll()
 
-		capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png', capLogoCanvas.renderAll.bind(capLogoCanvas));
+		if (gridsVisible == true) {
+			capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png', capLogoCanvas.renderAll.bind(capLogoCanvas));
+		} else {
+			capLogoCanvas.setOverlayImage(null, capLogoCanvas.renderAll.bind(capLogoCanvas));
+		}
 
         reRenderBG("cap")
     }
 
 	function initializeJersey() {
-		
+
+		$("#jerseyTextureSelect").val(defaultJerseyTexture)
+
 /* 		clippingPath = new fabric.Path("M 239.72266 50.248047 C 223.43703 50.310052 210.96441 50.599602 201.64453 51.113281 C 187.81478 51.875544 164.575 52.362191 150 52.193359 L 123.5 51.886719 L 123.81836 184.19336 C 124.05417 282.17861 123.8301 318.71783 122.95312 325.04688 C 120.87675 340.03195 113.14335 349.58975 94.382812 360.36133 C 86.72954 364.75552 84.989527 365.27925 63.945312 369.51172 C 41.769792 373.97054 41.490718 374 20.8125 374 L 0 374 L 0 524.36914 L 0 674.73828 L 27.505859 675.1875 L 55.011719 675.63867 L 57.933594 678.43555 C 59.54015 679.97472 61.324344 682.41929 61.898438 683.86719 C 62.472533 685.31509 63.85213 699.51595 64.964844 715.42383 C 66.663249 739.70506 67.155643 761.85411 68.033203 853.42383 C 68.608138 913.41593 69.269878 963.41589 69.503906 964.53516 C 69.927258 966.56163 70.301063 966.56917 143.21484 966.53516 C 218.49908 966.49914 393.08111 967.74906 393.66016 968.32812 C 393.83848 968.50652 404.7342 968.66457 417.87109 968.67969 L 441.75586 968.70508 L 442.25781 961.10156 C 442.53349 956.91963 442.54664 903.99804 442.28906 843.49805 C 441.90342 752.91985 442.08018 730.16523 443.28516 714.61523 L 444.74805 695.73047 L 449.125 687.18359 L 453.5 678.63672 L 461.95508 675.81836 C 470.14414 673.08829 471.06333 673 491.20508 673 L 512 673 L 512 523.99805 L 512 375 L 492.75 374.97266 C 474.06043 374.94609 472.7362 374.80386 447.26562 370.0957 C 421.97952 365.4216 420.76869 365.09279 413.76562 360.97266 C 400.45138 353.13943 394.21527 347.98712 390.09766 341.41992 L 386.22852 335.25 L 385.02148 309.375 C 383.81593 283.54083 383.18962 133.35232 384.0625 79.5 L 384.5 52.5 L 356 51.849609 C 304.60206 50.674958 266.86537 50.144705 239.72266 50.248047 z",{
 			absolutePositioned: true
 		}) */
@@ -5280,13 +5390,19 @@
 
 		jerseyLogoCanvas.add(buttons)
         
-		jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
-		//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+		if (gridsVisible == true) {
+			jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		} else {
+			jerseyLogoCanvas.setOverlayImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		}
 		jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 		reRenderBG("jersey")
 	}
 
 	function initializePants() {
+
+		$("#pantsTextureSelect").val(defaultPantsTexture)
+		
 		/* pantsPinstripes = new fabric.Path("M 24 0 L 24 512 L 24.134766 512 L 25.818359 512 L 25.953125 512 L 25.953125 0 L 25.818359 0 L 24.134766 0 L 24 0 z M 36 0 L 36 512 L 37.818359 512 L 37.818359 0 L 36 0 z M 48 0 L 48 512 L 49.818359 512 L 49.818359 0 L 48 0 z M 60 0 L 60 512 L 61.818359 512 L 61.818359 0 L 60 0 z M 72 0 L 72 512 L 73.818359 512 L 73.818359 0 L 72 0 z M 84 0 L 84 512 L 85.818359 512 L 85.818359 0 L 84 0 z M 96 0 L 96 512 L 97.818359 512 L 97.818359 0 L 96 0 z M 108 0 L 108 512 L 109.81836 512 L 109.81836 0 L 108 0 z M 120 0 L 120 512 L 121.81836 512 L 121.81836 0 L 120 0 z M 132 0 L 132 512 L 133.81836 512 L 133.81836 0 L 132 0 z M 144 0 L 144 512 L 145.81836 512 L 145.81836 0 L 144 0 z M 156 0 L 156 512 L 157.81836 512 L 157.81836 0 L 156 0 z M 168 0 L 168 512 L 169.81836 512 L 169.81836 0 L 168 0 z M 180 0 L 180 512 L 181.81836 512 L 181.81836 0 L 180 0 z M 192 0 L 192 512 L 193.81836 512 L 193.81836 0 L 192 0 z M 204 0 L 204 512 L 205.81836 512 L 205.81836 0 L 204 0 z M 216 0 L 216 512 L 217.81836 512 L 217.81836 0 L 216 0 z M 228 0 L 228 512 L 229.81836 512 L 229.81836 0 L 228 0 z M 240 0 L 240 512 L 241.81836 512 L 241.81836 0 L 240 0 z M 252 0 L 252 512 L 253.81836 512 L 253.81836 0 L 252 0 z M 264 0 L 264 512 L 265.81836 512 L 265.81836 0 L 264 0 z M 276 0 L 276 512 L 277.81836 512 L 277.81836 0 L 276 0 z M 288 0 L 288 512 L 289.81836 512 L 289.81836 0 L 288 0 z M 300 0 L 300 512 L 301.81836 512 L 301.81836 0 L 300 0 z M 310.18164 0 L 310.18164 512 L 312 512 L 312 0 L 310.18164 0 z M 322.18164 0 L 322.18164 512 L 324 512 L 324 0 L 322.18164 0 z M 334.18164 0 L 334.18164 512 L 336 512 L 336 0 L 334.18164 0 z M 346.18164 0 L 346.18164 512 L 348 512 L 348 0 L 346.18164 0 z M 358.18164 0 L 358.18164 512 L 360 512 L 360 0 L 358.18164 0 z M 370.18164 0 L 370.18164 512 L 372 512 L 372 0 L 370.18164 0 z M 382.18164 0 L 382.18164 512 L 384 512 L 384 0 L 382.18164 0 z M 394.18164 0 L 394.18164 512 L 396 512 L 396 0 L 394.18164 0 z M 408 0 L 408 512 L 409.81836 512 L 409.81836 0 L 408 0 z M 420 0 L 420 512 L 421.81836 512 L 421.81836 0 L 420 0 z M 432 0 L 432 512 L 433.81836 512 L 433.81836 0 L 432 0 z M 444 0 L 444 512 L 445.81836 512 L 445.81836 0 L 444 0 z M 456 0 L 456 512 L 457.81836 512 L 457.81836 0 L 456 0 z M 468 0 L 468 512 L 469.81836 512 L 469.81836 0 L 468 0 z",{
 			fill: initialPantsColors["pantsPinstripes"],
 			id: 'pantsPinstripes',
@@ -5527,7 +5643,11 @@
 
 		pantsBelow.renderAll()
 
-		pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png', pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+		if (gridsVisible == true) {
+			pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png', pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+		} else {
+			pantsLogoCanvas.setOverlayImage(null, pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+		}
 
 		reRenderBG("pants")	
 	}
@@ -6917,5 +7037,57 @@
 			type: 'inline'
 		}
 	});
+
+	$("#prefsButton").magnificPopup({
+		items: {
+			src: '#prefs',
+			type: 'inline'
+		}
+	});
+
+	$(".preference").on("change",function() {
+		const pref = $(this).attr("id")
+		const val = $(this).val()
+		switch (pref) {
+			case "preferredColorFormat":
+				$(".baseSelector, .selector, .colorSelector").spectrum("option", "preferredFormat", val)
+				break;
+			case "preferredJerseyTexture":
+				$("#jerseyTextureSelect").val(val)
+				$("#jerseyTextureSelect").trigger("change")
+				break;
+			case "preferredCapTexture":
+				$("#capTextureSelect").val(val)
+				$("#capTextureSelect").trigger("change")
+				break;
+			case "preferredPantsTexture":
+				$("#pantsTextureSelect").val(val)
+				$("#pantsTextureSelect").trigger("change")
+				break;
+		}
+
+		$.ajax({
+			type: "POST",
+			url: "http://127.0.0.1:"+port+"/setPreference",
+			data: {pref:pref,val:val},
+			success: function(result) {
+			}
+		})
+	})
+
+	$("#gridsVisible").on("change", function() {
+		const pref = "gridsVisible"
+		const val = $(this).is(':checked')
+		$("#toggleJerseyGrid").prop( "checked", val ).triggerHandler('click');
+		$("#togglePantsGrid").prop( "checked", val ).triggerHandler('click');
+		$("#toggleCapGuides").prop( "checked", val ).triggerHandler('click');
+		$.ajax({
+			type: "POST",
+			url: "http://127.0.0.1:"+port+"/setPreference",
+			data: {pref:pref,val:val.toString()},
+			success: function(result) {
+			}
+		})
+	})
 </script>
 </html>

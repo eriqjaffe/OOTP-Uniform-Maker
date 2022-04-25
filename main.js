@@ -20,8 +20,11 @@ const server = app2.listen(0, () => {
 	console.log(`Server running on port ${server.address().port}`);
 });
 
-const preferredColorFormat = "hex"
-const preferredTexture = "tbd"
+const preferredColorFormat = store.get("preferredColorFormat", "hex")
+const preferredJerseyTexture = store.get("preferredJerseyTexture", "jersey_texture_default.png")
+const preferredPantsTexture = store.get("preferredPantsTexture", "pants_texture_default.png")
+const preferredCapTexture = store.get("preferredCapTexture", "cap_texture_default.png")
+const gridsVisible = store.get("gridsVisible", true)
 
 app2.use(express.urlencoded({limit: '200mb', extended: true, parameterLimit: 500000}));
 
@@ -511,6 +514,13 @@ app2.get("/loadUniform", (req, res) => {
 	res.end(JSON.stringify(JSON.parse(fs.readFileSync(file[0]).toString())))
 })
 
+app2.post('/setPreference', (req, res) => {
+	const pref = req.body.pref;
+	const val = req.body.val;
+	store.set(pref, val)
+	res.end()
+});
+
 function createWindow () {
     const mainWindow = new BrowserWindow({
       width: 1400,
@@ -620,8 +630,9 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    //mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&preferredColorFormat=${preferredColorFormat}&preferredTexture=${preferredTexture}`);
-    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}`);
+    //mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}`);
+	
   
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
       shell.openExternal(url);
