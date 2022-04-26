@@ -6088,7 +6088,6 @@
   			return obj.familyName === wordmarkText.fontFamily
 		})
 		const font = (result.length > 0) ? result[0].fontData : wordmarkText.fontFamily.replace(/\s/g,'').replace(/"/g,"")
-		console.log(font)
 		$("#overlay").css("display","inline-block");
 		var objects = jerseyLogoCanvas.getObjects();
 		for (x in objects) {

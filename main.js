@@ -291,7 +291,6 @@ app2.post('/warpText', (req, res)=> {
 })
 
 app2.post('/jitterText', (req, res) => {
-	console.log(req.body)
 	var text = req.body.text;
 	var diag = text.split("");
 	var fill = req.body.fill;
@@ -479,7 +478,7 @@ app2.post('/saveUniform', (req, res) => {
 		await capBase.composite(capWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let capBuffer = await capBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(capBuffer, {name: "cap_"+req.body.name+".png"})
-		await capBase.write(app.getPath('desktop') + '/uniform_Unknown_Team_Home/cap_' + req.body.name+'.png')
+		//await capBase.write(app.getPath('desktop') + '/uniform_Unknown_Team_Home/cap_' + req.body.name+'.png')
 
 		// pants
 		let pantsBase = await Jimp.read(pantsBelow)
@@ -609,7 +608,7 @@ app2.post('/saveUniform', (req, res) => {
 
 		archive.append(json, {name: "uniform_"+req.body.name+".uni"})
 		archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });
-		
+		archive.append(fs.createReadStream(__dirname+"/images/jersey_normal_map.png"), { name: "jersey_"+req.body.name+"_n.png" });
 	    archive.finalize()
 	}
 })
