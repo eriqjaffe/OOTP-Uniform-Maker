@@ -10,11 +10,15 @@ const imagemagickCli = require('imagemagick-cli')
 const ttfInfo = require('ttfinfo')
 const font2base64 = require("node-font2base64")
 const Store = require("electron-store")
+const { SVG, registerWindow } = require('@svgdotjs/svg.js')
+const { createSVGWindow } = require('svgdom')
 
 const isMac = process.platform === 'darwin'
 const tempDir = os.tmpdir()
 const app2 = express();
 const store = new Store();
+const window = createSVGWindow()
+const document = window.document
 
 const server = app2.listen(0, () => {
 	console.log(`Server running on port ${server.address().port}`);
@@ -25,6 +29,8 @@ const preferredJerseyTexture = store.get("preferredJerseyTexture", "jersey_textu
 const preferredPantsTexture = store.get("preferredPantsTexture", "pants_texture_default.png")
 const preferredCapTexture = store.get("preferredCapTexture", "cap_texture_default.png")
 const gridsVisible = store.get("gridsVisible", true)
+
+const fontArray = {"Acme": "Acme-Regular.ttf", "athletic_gothicregular": "athletic_gothic-webfont.ttf", "athletic_gothic_shadowregular": "athletic_gothic_shadow-webfont.ttf", "beaverton_scriptregular": "beaverton_script-webfont.ttf", "BerkshireSwash": "BerkshireSwash-Regular.ttf", "CantoraOne": "CantoraOne-Regular.ttf", "caxton_romanregular": "caxton_roman-webfont.ttf", "ChelaOne": "ChelaOne-Regular.ttf", "russell_circusregular": "circus-webfont.ttf", "Condiment": "Condiment-Regular.ttf", "Cookie": "Cookie-Regular.ttf", "Courgette": "Courgette-Regular.ttf", "CroissantOne": "CroissantOne-Regular.ttf", "Damion": "Damion-Regular.ttf", "Engagement": "Engagement-Regular.ttf", "rawlings_fancy_blockregular": "rawlingsfancyblock-regular-webfont.ttf", "GermaniaOne": "GermaniaOne-Regular.ttf", "Graduate": "Graduate-Regular.ttf", "GrandHotel": "GrandHotel-Regular.ttf", "JockeyOne": "JockeyOne-Regular.ttf", "kansasregular": "tuscan-webfont.ttf", "KaushanScript": "KaushanScript-Regular.ttf", "LeckerliOne": "LeckerliOne-Regular.ttf", "LilyScriptOne": "LilyScriptOne-Regular.ttf", "Lobster": "Lobster-Regular.ttf", "LobsterTwo": "LobsterTwo-Regular.ttf", "MetalMania": "MetalMania-Regular.ttf", "Miniver": "Miniver-Regular.ttf", "Molle,italic": "Molle-Regular.ttf", "NewRocker": "NewRocker-Regular.ttf", "Norican": "Norican-Regular.ttf", "rawlings_old_englishmedium": "rawlingsoldenglish-webfont.ttf", "OleoScript": "OleoScript-Regular.ttf", "OleoScriptSwashCaps": "OleoScriptSwashCaps-Regular.ttf", "Pacifico": "Pacifico.ttf", "PirataOne": "PirataOne-Regular.ttf", "Playball": "Playball-Regular.ttf", "pro_full_blockregular": "pro_full_block-webfont.ttf", "richardson_fancy_blockregular": "richardson_fancy_block-webfont.ttf", "RubikOne": "RubikOne-Regular.ttf", "RumRaisin": "RumRaisin-Regular.ttf", "Satisfy": "Satisfy-Regular.ttf", "SeymourOne": "SeymourOne-Regular.ttf", "spl28scriptregular": "spl28script-webfont.ttf", "ua_tiffanyregular": "tiffany-webfont.ttf", "TradeWinds": "TradeWinds-Regular.ttf", "mlb_tuscan_newmedium": "mlb_tuscan_new-webfont.ttf", "UnifrakturCook": "UnifrakturCook-Bold.ttf", "UnifrakturMaguntia": "UnifrakturMaguntia-Book.ttf", "Vibur": "Vibur-Regular.ttf", "Viga": "Viga-Regular.ttf", "Wellfleet": "Wellfleet-Regular.ttf", "WendyOne": "WendyOne-Regular.ttf", "Yellowtail": "Yellowtail-Regular.ttf"};
 
 app2.use(express.urlencoded({limit: '200mb', extended: true, parameterLimit: 500000}));
 
@@ -282,6 +288,111 @@ app2.post('/warpText', (req, res)=> {
 			})
 		}
 	})
+})
+
+app2.post('/jitterText', (req, res) => {
+	console.log(req.body)
+	var text = req.body.text;
+	var diag = text.split("");
+	var fill = req.body.fill;
+	var stroke1 = req.body.stroke1Color;
+	var stroke2 = req.body.stroke2Color;
+	var font = fontArray[req.body.font];
+	var size = req.body.size;
+	var h = parseInt(req.body.hSpacing);
+	var v = parseInt(req.body.vSpacing);
+	var stroke1Visible = (req.body.stroke1Visible === 'true');
+	var stroke2Visible = (req.body.stroke2Visible === 'true');
+	var fillVisible = (req.body.fillVisible === 'true');
+	var x = 10;
+	var y = 10;
+	var cmd;
+
+	var font_name = 'custom';
+	var font_format = 'woff2'; // best compression
+	var font_mimetype = 'font/ttf';
+	if (req.body.font.substring(0,5) === "file:") {
+		var buff = fs.readFileSync(url.fileURLToPath(req.body.font));
+	} else {
+		var buff = fs.readFileSync(__dirname+'\\fonts\\'+font);
+	}
+	var font_data = 'data:'+font_mimetype+';charset=ascii;base64,' + buff.toString('base64')
+
+	registerWindow(window, document)
+
+	const canvas = SVG(document.documentElement).size(2048, 2048)
+
+	canvas.clear()
+
+	canvas.defs().element('style').words(
+		"@font-face {" +
+		"  font-family: 'temp';" +
+		"  src: url('"+font_data+"')" +
+		"    format('"+font_format+"')" +
+		"  ;" +
+		"}"
+	)
+
+	var group = canvas.group();
+
+	if (stroke2Visible) {
+		for (var i=0; i<diag.length; i++) {
+			var text = group.text(diag[i]).font({
+				size: size*2,
+				fill: stroke2,
+				family: 'temp'
+			})
+			//text.x(x)
+			text.cx(x)
+			text.y(y)
+			text.stroke({ color: stroke2, width: 10 })
+			x += h*2;
+			y += v*2;
+		}
+	}
+	x = 10;
+	y = 10;
+
+	if (stroke1Visible) {
+		for (var i=0; i<diag.length; i++) {
+			var text = group.text(diag[i])
+			text.font({
+				size: size*2,
+				fill: stroke1,
+				family: 'temp'
+			})
+			//text.x(x)
+			text.cx(x)
+			text.y(y)
+			text.stroke({ color: stroke1, width: 6 })
+			x += h*2;
+			y += v*2;
+		}
+	}
+	x = 10;
+	y = 10;
+
+	if (fillVisible) {
+		for (var i=0; i<diag.length; i++) {
+			var text = group.text(diag[i])
+			text.font({
+				size: size*2,
+				fill: fill,
+				family: 'temp'
+			})
+			//text.x(x)
+			text.cx(x)
+			text.y(y)
+			x += h*2;
+			y += v*2;
+		}
+	}
+	group.x(10)
+	group.y(10)
+	canvas.height(group.bbox().height+20);
+	canvas.width(group.bbox().width+20)
+	var buff2 = Buffer.from(canvas.svg());
+	res.end('data:image/svg+xml;base64,'+buff2.toString('base64'))
 })
 
 app2.post('/saveUniform', (req, res) => {
