@@ -7021,19 +7021,40 @@
 			buttons[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).val() }
 		})
 		$(".capSelector").each(function(){
-			capSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			if ($(this).spectrum("get") == null) {
+				capSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": 'transparent' }
+			} else {
+				capSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			}
 		})
 		$(".pantsSelector").each(function(){
-			pantsSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			if ($(this).spectrum("get") == null) {
+				pantsSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": 'transparent' }
+			} else {
+				pantsSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			}
 		})
 		$(".jerseySelector").each(function(){
-			jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			if ($(this).spectrum("get") == null) {
+				jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": 'transparent' }
+			} else {
+				jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			}	
 		})
+		
 		$(".sleeveSelector").each(function(){
-			jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			if ($(this).spectrum("get") == null) {
+				jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": 'transparent' }
+			} else {
+				jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			}
 		})
 		$(".swashSelector").each(function(){
-			jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			if ($(this).spectrum("get") == null) {
+				jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": 'transparent' }
+			} else {
+				jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			}
 		})
 
 		textBoxes.wordmarkTextBox = { "disabled": $("#wordmarkTextBox").prop("disabled"), "val": $("#wordmarkTextBox").val() }
