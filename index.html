@@ -86,6 +86,7 @@
 		var objectIDs = []
 
 		var _clipboard = null;
+		var customJerseyTexture = null;
     </script>
 </head>
 <body>
@@ -201,6 +202,7 @@
 														<option value="jersey_texture_micropterus1.png">Micropterus58 #1</option>
 														<option value="jersey_texture_micropterus2.png">Micropterus58 #2</option>
 														<option value="jersey_texture_micropterus3.png">Micropterus58 #3</option>
+														<option value="custom">Custom Texture</option>
 													</select>
 												</td>
                                             </tr>
@@ -2492,7 +2494,16 @@
 	})
 
 	$("#jerseyTextureSelect").on("change",function(){
-		reRenderBG("jersey")
+		if ($(this).val() == "custom") {
+			if (customJerseyTexture == null) {
+				uploadCustomTexture("jersey")
+			} else {
+				reRenderBG("jersey")
+			}
+		} else {
+			reRenderBG("jersey")
+		}
+		
 	})
 
 	$(".jerseyTextureToggle").on("click",function() {
@@ -5998,7 +6009,7 @@
                 var composite = can3.getContext('2d')
                 var width = 384
                 var height = 768
-                var textureFile = './images/'+$("#jerseyTextureSelect").val()
+                var textureFile = ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : './images/'+$("#jerseyTextureSelect").val()
                 break;				
             case "cap":
                 var canvas = capBelow 
@@ -6085,6 +6096,31 @@
 		})
 	}
 
+	function uploadCustomTexture(type) {
+		$.ajax({
+			type: "GET",
+			url: "http://127.0.0.1:"+port+"/uploadImage",
+			data: {type:"jerseyTexture"},
+			success: function(data) {
+				var imgObj = new Image();
+				imgObj.src = data.image;
+				imgObj.onload = function () {
+					switch (type) {
+						case "jersey":
+							customJerseyTexture = data.image;
+							break;
+						case "pants":
+							customPantsTexture = data.image;
+							break;
+						case "cap":
+							customCapTexture = data.image;
+							break;
+					}
+					reRenderBG(type)
+				}
+			}
+		});
+	}
 	function diagonalText(type) {
 		const hSpacing = (type == "diag") ? $("#hSpacing").val() : 0
 		const vSpacing = (type == "diag") ? $("#vSpacing").val() : $("#vSpacing2").val()
@@ -6155,67 +6191,6 @@
 		jerseyLogoCanvas.renderAll();
 		diagonalText("diag");
 	})	
-
-	/* function verticalText() {
-		$("#overlay").css("display","inline-block");
-		var objects = jerseyLogoCanvas.getObjects();
-		for (x in objects) {
-			if (objects[x].get('name') == "warpedText") {
-				jerseyLogoCanvas.remove(objects[x]);
-			}
-		}
-		console.log(wordmarkText.fontFamily.replace(/\s/g,''))
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/jitterText",
-			data: {text:wordmarkText.text, font:wordmarkText.fontFamily.replace(/\s/g,'').replace(/"/g,""), size:wordmarkText.fontSize, fill:wordmarkText.fill, fillVisible:wordmarkText.visible, stroke1Visible:wordmarkTextStroke1.visible, stroke1Color:wordmarkTextStroke1.stroke, stroke2Visible:wordmarkTextStroke2.visible, stroke2Color:wordmarkTextStroke2.stroke,hSpacing:0,vSpacing:$("#vSpacing2").val()},
-			success: function(data) {
-				var imgObj = new Image();
-				imgObj.src = data;
-				imgObj.onload = function () {
-					var image = new fabric.Image(imgObj);
-					image.set({
-						originX: 'center',
-						originY: 'center',
-						left: 256,
-						top: 750,
-						perPixelTargetFind: true,
-						centeredScaling: true,
-						centeredRotation: true,
-						borderColor: 'red',
-						cornerColor: 'yellow',
-						cornerSize: 12,
-						name: 'warpedText',
-						id: 'warpedText',
-						transparentCorners: false,
-						scaleX: 0.5,
-						scaleY: 0.5
-					});
-					
-					image.filters.push(new fabric.Image.filters.Resize({
-							resizeType: 'lanczos', // typo fixed
-							lanczosLobes: 2 // typo fixed
-					}));
-					
-					image.on('object:modified',function() {
-						wmLeft = image.getBoundingRect()['left'];
-						wmTop = image.getBoundingRect()['top'];
-					});
-					
-					var objects = jerseyLogoCanvas.getObjects();
-					for (x in objects) {
-						if (objects[x].id == "wordmark") {
-							objects[x].visible = false;
-						}
-					}
-
-					jerseyLogoCanvas.add(image);
-					jerseyLogoCanvas.renderAll();
-					$("#overlay").css("display","none");
-				}
-			}
-		})
-	} */
 
 	$("#vSpacing2").on("change",function(e) {
 		jerseyLogoCanvas.renderAll();

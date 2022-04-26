@@ -46,12 +46,25 @@ app2.get("/uploadImage", (req, res) => {
 				if (err) {
 					console.log(err);
 				} else {
-					image.getBase64(Jimp.AUTO, (err, ret) => {
-            res.json({
-              "filename": path.basename(result.filePaths[0]),
-              "image": ret
-              });
-					})
+					if (req.query.type == "jerseyTexture") {
+						Jimp.read(__dirname+"/images/mask.png", (err, mask) => {
+							image.mask(mask,0,0)
+							image.getBase64(Jimp.AUTO, (err, ret) => {
+								res.json({
+									"filename": path.basename(result.filePaths[0]),
+									"image": ret
+								});
+							})
+						})
+					} else {
+						console.log("some other image")
+						image.getBase64(Jimp.AUTO, (err, ret) => {
+							res.json({
+								"filename": path.basename(result.filePaths[0]),
+								"image": ret
+							});
+						})
+					}
 				}
 			});
 		  } else {
