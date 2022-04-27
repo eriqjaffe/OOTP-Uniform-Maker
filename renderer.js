@@ -1,21 +1,25 @@
 const { ipcRenderer } = require('electron')
 
 ipcRenderer.on('load-uniform', (event, data) => {
-    $("#load").click()
+    $("#load").trigger("click")
 });
 
 ipcRenderer.on('save-uniform', (event, data) => {
-    $("#save").click()
+    $("#save").trigger("click")
 });
 
 ipcRenderer.on('about', (event, data) => {
-    $("#aboutUniformMaker").click()
+    $("#aboutUniformMaker").trigger("click")
 });
 
 ipcRenderer.on('copy', (event, data) => {
-    $("#copy").click()
+    $("#copy").trigger("click")
 });
 
 ipcRenderer.on('paste', (event, data) => {
-    $("#paste").click()
+    $("#paste").trigger("click")
+});
+
+ipcRenderer.on('prefs', (event, data) => {
+    $("#prefsButton").trigger("click")
 });

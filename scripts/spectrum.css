@@ -525,6 +525,7 @@ Here are the basic themeable display options (colors, fonts, global widths)
     border-radius: 3px;
     background-position: 50% 50%;
     background-repeat: no-repeat;
+    border:1px solid rgb(204, 204, 204);
 }
 
 .sp-palette .sp-thumb-light.sp-thumb-active .sp-thumb-inner {

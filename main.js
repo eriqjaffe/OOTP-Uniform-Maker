@@ -9,17 +9,28 @@ const archiver = require('archiver');
 const imagemagickCli = require('imagemagick-cli')
 const ttfInfo = require('ttfinfo')
 const font2base64 = require("node-font2base64")
+const Store = require("electron-store")
+const { SVG, registerWindow } = require('@svgdotjs/svg.js')
+const { createSVGWindow } = require('svgdom')
 
 const isMac = process.platform === 'darwin'
 const tempDir = os.tmpdir()
 const app2 = express();
+const store = new Store();
+const window = createSVGWindow()
+const document = window.document
 
 const server = app2.listen(0, () => {
 	console.log(`Server running on port ${server.address().port}`);
 });
 
-const preferredColorFormat = "hex"
-const preferredTexture = "tbd"
+const preferredColorFormat = store.get("preferredColorFormat", "hex")
+const preferredJerseyTexture = store.get("preferredJerseyTexture", "jersey_texture_default.png")
+const preferredPantsTexture = store.get("preferredPantsTexture", "pants_texture_default.png")
+const preferredCapTexture = store.get("preferredCapTexture", "cap_texture_default.png")
+const gridsVisible = store.get("gridsVisible", true)
+
+const fontArray = {"Acme": "Acme-Regular.ttf", "athletic_gothicregular": "athletic_gothic-webfont.ttf", "athletic_gothic_shadowregular": "athletic_gothic_shadow-webfont.ttf", "beaverton_scriptregular": "beaverton_script-webfont.ttf", "BerkshireSwash": "BerkshireSwash-Regular.ttf", "CantoraOne": "CantoraOne-Regular.ttf", "caxton_romanregular": "caxton_roman-webfont.ttf", "ChelaOne": "ChelaOne-Regular.ttf", "russell_circusregular": "circus-webfont.ttf", "Condiment": "Condiment-Regular.ttf", "Cookie": "Cookie-Regular.ttf", "Courgette": "Courgette-Regular.ttf", "CroissantOne": "CroissantOne-Regular.ttf", "Damion": "Damion-Regular.ttf", "Engagement": "Engagement-Regular.ttf", "rawlings_fancy_blockregular": "rawlingsfancyblock-regular-webfont.ttf", "GermaniaOne": "GermaniaOne-Regular.ttf", "Graduate": "Graduate-Regular.ttf", "GrandHotel": "GrandHotel-Regular.ttf", "JockeyOne": "JockeyOne-Regular.ttf", "kansasregular": "tuscan-webfont.ttf", "KaushanScript": "KaushanScript-Regular.ttf", "LeckerliOne": "LeckerliOne-Regular.ttf", "LilyScriptOne": "LilyScriptOne-Regular.ttf", "Lobster": "Lobster-Regular.ttf", "LobsterTwo": "LobsterTwo-Regular.ttf", "MetalMania": "MetalMania-Regular.ttf", "Miniver": "Miniver-Regular.ttf", "Molle,italic": "Molle-Regular.ttf", "NewRocker": "NewRocker-Regular.ttf", "Norican": "Norican-Regular.ttf", "rawlings_old_englishmedium": "rawlingsoldenglish-webfont.ttf", "OleoScript": "OleoScript-Regular.ttf", "OleoScriptSwashCaps": "OleoScriptSwashCaps-Regular.ttf", "Pacifico": "Pacifico.ttf", "PirataOne": "PirataOne-Regular.ttf", "Playball": "Playball-Regular.ttf", "pro_full_blockregular": "pro_full_block-webfont.ttf", "richardson_fancy_blockregular": "richardson_fancy_block-webfont.ttf", "RubikOne": "RubikOne-Regular.ttf", "RumRaisin": "RumRaisin-Regular.ttf", "Satisfy": "Satisfy-Regular.ttf", "SeymourOne": "SeymourOne-Regular.ttf", "spl28scriptregular": "spl28script-webfont.ttf", "ua_tiffanyregular": "tiffany-webfont.ttf", "TradeWinds": "TradeWinds-Regular.ttf", "mlb_tuscan_newmedium": "mlb_tuscan_new-webfont.ttf", "UnifrakturCook": "UnifrakturCook-Bold.ttf", "UnifrakturMaguntia": "UnifrakturMaguntia-Book.ttf", "Vibur": "Vibur-Regular.ttf", "Viga": "Viga-Regular.ttf", "Wellfleet": "Wellfleet-Regular.ttf", "WendyOne": "WendyOne-Regular.ttf", "Yellowtail": "Yellowtail-Regular.ttf"};
 
 app2.use(express.urlencoded({limit: '200mb', extended: true, parameterLimit: 500000}));
 
@@ -35,15 +46,29 @@ app2.get("/uploadImage", (req, res) => {
 				if (err) {
 					console.log(err);
 				} else {
-					image.getBase64(Jimp.AUTO, (err, ret) => {
-            res.json({
-              "filename": path.basename(result.filePaths[0]),
-              "image": ret
-              });
-					})
+					if (req.query.type == "jersey") {
+						Jimp.read(__dirname+"/images/mask.png", (err, mask) => {
+							image.mask(mask,0,0)
+							image.getBase64(Jimp.AUTO, (err, ret) => {
+								res.json({
+									"filename": path.basename(result.filePaths[0]),
+									"image": ret
+								});
+							})
+						})
+					} else {
+						console.log("some other image")
+						image.getBase64(Jimp.AUTO, (err, ret) => {
+							res.json({
+								"filename": path.basename(result.filePaths[0]),
+								"image": ret
+							});
+						})
+					}
 				}
 			});
 		  } else {
+			  res.end()
 			  console.log("cancelled")
 		  }
 	  }).catch(err => {
@@ -279,6 +304,110 @@ app2.post('/warpText', (req, res)=> {
 	})
 })
 
+app2.post('/jitterText', (req, res) => {
+	var text = req.body.text;
+	var diag = text.split("");
+	var fill = req.body.fill;
+	var stroke1 = req.body.stroke1Color;
+	var stroke2 = req.body.stroke2Color;
+	var font = fontArray[req.body.font];
+	var size = req.body.size;
+	var h = parseInt(req.body.hSpacing);
+	var v = parseInt(req.body.vSpacing);
+	var stroke1Visible = (req.body.stroke1Visible === 'true');
+	var stroke2Visible = (req.body.stroke2Visible === 'true');
+	var fillVisible = (req.body.fillVisible === 'true');
+	var x = 10;
+	var y = 10;
+	var cmd;
+
+	var font_name = 'custom';
+	var font_format = 'woff2'; // best compression
+	var font_mimetype = 'font/ttf';
+	if (req.body.font.substring(0,5) === "file:") {
+		var buff = fs.readFileSync(url.fileURLToPath(req.body.font));
+	} else {
+		var buff = fs.readFileSync(__dirname+'\\fonts\\'+font);
+	}
+	var font_data = 'data:'+font_mimetype+';charset=ascii;base64,' + buff.toString('base64')
+
+	registerWindow(window, document)
+
+	const canvas = SVG(document.documentElement).size(2048, 2048)
+
+	canvas.clear()
+
+	canvas.defs().element('style').words(
+		"@font-face {" +
+		"  font-family: 'temp';" +
+		"  src: url('"+font_data+"')" +
+		"    format('"+font_format+"')" +
+		"  ;" +
+		"}"
+	)
+
+	var group = canvas.group();
+
+	if (stroke2Visible) {
+		for (var i=0; i<diag.length; i++) {
+			var text = group.text(diag[i]).font({
+				size: size*2,
+				fill: stroke2,
+				family: 'temp'
+			})
+			//text.x(x)
+			text.cx(x)
+			text.y(y)
+			text.stroke({ color: stroke2, width: 10 })
+			x += h*2;
+			y += v*2;
+		}
+	}
+	x = 10;
+	y = 10;
+
+	if (stroke1Visible) {
+		for (var i=0; i<diag.length; i++) {
+			var text = group.text(diag[i])
+			text.font({
+				size: size*2,
+				fill: stroke1,
+				family: 'temp'
+			})
+			//text.x(x)
+			text.cx(x)
+			text.y(y)
+			text.stroke({ color: stroke1, width: 6 })
+			x += h*2;
+			y += v*2;
+		}
+	}
+	x = 10;
+	y = 10;
+
+	if (fillVisible) {
+		for (var i=0; i<diag.length; i++) {
+			var text = group.text(diag[i])
+			text.font({
+				size: size*2,
+				fill: fill,
+				family: 'temp'
+			})
+			//text.x(x)
+			text.cx(x)
+			text.y(y)
+			x += h*2;
+			y += v*2;
+		}
+	}
+	group.x(10)
+	group.y(10)
+	canvas.height(group.bbox().height+20);
+	canvas.width(group.bbox().width+20)
+	var buff2 = Buffer.from(canvas.svg());
+	res.end('data:image/svg+xml;base64,'+buff2.toString('base64'))
+})
+
 app2.post('/saveUniform', (req, res) => {
 	const jerseyLogoCanvas = Buffer.from(req.body.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const jerseyBelow = Buffer.from(req.body.jerseyBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
@@ -302,10 +431,11 @@ app2.post('/saveUniform', (req, res) => {
 	output.on('close', function() {
 		var data = fs.readFileSync(tempDir + '/uniform_'+req.body.name+'.zip');
 		var saveOptions = {
-		  defaultPath: app.getPath('downloads') + '/uniform_' + req.body.name+'.zip',
+		  defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/uniform_' + req.body.name+'.zip'
 		}
 		dialog.showSaveDialog(null, saveOptions).then((result) => { 
 		  if (!result.canceled) {
+			store.set("downloadPath", path.dirname(result.filePath))
 			fs.writeFile(result.filePath, data, function(err) {
 			  if (err) {
 				fs.unlink(tempDir + '/uniform_'+req.body.name+'.zip', (err) => {
@@ -361,8 +491,8 @@ app2.post('/saveUniform', (req, res) => {
 		await capBase.composite(capOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await capBase.composite(capWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let capBuffer = await capBase.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(capBuffer, {name: "cap_"+req.body.name+".png"})
-		//await capBase.write(app.getPath('downloads') + '/uniform_Unknown_Team_Home/cap_' + req.body.name+'.png')
+		archive.append(capBuffer, {name: "caps_"+req.body.name+".png"})
+		//await capBase.write(app.getPath('desktop') + '/uniform_Unknown_Team_Home/caps_' + req.body.name+'.png')
 
 		// pants
 		let pantsBase = await Jimp.read(pantsBelow)
@@ -411,8 +541,8 @@ app2.post('/saveUniform', (req, res) => {
 		await jerseyWM.color([{ apply: "mix", params: [req.body.jerseyWatermarkColor, 100] }]);
 		await jerseyBase.composite(jerseyWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBuffer = await jerseyBase.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(jerseyBuffer, {name: "jersey_"+req.body.name+"_d.png"})
-		//await jerseyBase.write(app.getPath('downloads') + '/jersey_' + req.body.name+'_d.png')
+		archive.append(jerseyBuffer, {name: "jerseys_"+req.body.name+".png"})
+		//await jerseyBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'.png')
 		
 		// jersey height map
 		let jerseyHeightMap = await Jimp.read(__dirname+"/images/jersey_height_map.png")
@@ -448,8 +578,8 @@ app2.post('/saveUniform', (req, res) => {
 		}
 		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyHMBuffer = await jerseyHeightMap.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(jerseyHMBuffer, {name: "jersey_"+req.body.name+"_h.png"})
-		//await jerseyHeightMap.write(app.getPath('downloads') + '/uniform_Unknown_Team_Home/jersey_' + req.body.name+'_h.png')
+		archive.append(jerseyHMBuffer, {name: "jerseys_"+req.body.name+"_h.png"})
+		//await jerseyHeightMap.write(app.getPath('downloads') + '/uniform_Unknown_Team_Home/jerseys_' + req.body.name+'_h.png')
 
 		// jersey with baked texture
 		let jerseyBakedBase = await Jimp.read(jerseyBelow)
@@ -487,12 +617,12 @@ app2.post('/saveUniform', (req, res) => {
 		await jerseyBakedWM.color([{ apply: "mix", params: [req.body.jerseyWatermarkColor, 100] }]);
 		await jerseyBakedBase.composite(jerseyBakedWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBakedBuffer = await jerseyBakedBase.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(jerseyBakedBuffer, {name: "jersey_"+req.body.name+".png"})
-		//await jerseyBakedBase.write(app.getPath('downloads') + '/jersey_' + req.body.name+'.png')
+		archive.append(jerseyBakedBuffer, {name: "jerseys_"+req.body.name+"_textured.png"})
+		//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'_textured.png')
 
 		archive.append(json, {name: "uniform_"+req.body.name+".uni"})
 		archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });
-		
+		archive.append(fs.createReadStream(__dirname+"/images/jersey_normal_map.png"), { name: "jerseys_"+req.body.name+"_n.png" });
 	    archive.finalize()
 	}
 })
@@ -507,6 +637,13 @@ app2.get("/loadUniform", (req, res) => {
 	//res.end(JSON.stringify(JSONC.unpack(fs.readFileSync(file[0]).toString())))
 	res.end(JSON.stringify(JSON.parse(fs.readFileSync(file[0]).toString())))
 })
+
+app2.post('/setPreference', (req, res) => {
+	const pref = req.body.pref;
+	const val = req.body.val;
+	store.set(pref, val)
+	res.end()
+});
 
 function createWindow () {
     const mainWindow = new BrowserWindow({
@@ -562,6 +699,10 @@ function createWindow () {
 				click: () => mainWindow.webContents.send('paste','click'),
 				accelerator: isMac ? 'Cmd+V' : 'Control+V',
 				label: 'Paste',
+			},
+			{
+				click: () => mainWindow.webContents.send('prefs','click'),
+				label: 'Preferences',
 			}
 		  ]
 	  },
@@ -617,8 +758,9 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    //mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&preferredColorFormat=${preferredColorFormat}&preferredTexture=${preferredTexture}`);
-    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}`);
+    //mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}`);
+	
   
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
       shell.openExternal(url);
