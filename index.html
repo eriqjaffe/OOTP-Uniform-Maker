@@ -27,6 +27,7 @@
     <script>
 		const params = new URLSearchParams(window.location.search)
 		const port = params.get('port')
+		const appVersion = params.get('appVersion')
 		const gridsVisible = (params.get('gridsVisible').toLowerCase() == "true") ? true : false
 		const checkForUpdates = (params.get('checkForUpdates').toLowerCase() == "true") ? true : false
 
@@ -7038,9 +7039,10 @@
 		const textBoxes = {}
 		const buttons = {}
 
+		exportMeta.version = appVersion
 		exportMeta.team = $("#teamName").val()
-		exportMeta.start = 0
-		exportMeta.end = 0
+		exportMeta.start = parseInt($("#startYear").val());
+		exportMeta.end = parseInt($("#endYear").val());
 		exportMeta.type = $("#uniformType").val()
 
 		jerseySelectors.jerseyColor = { "disabled": $("#jerseyColor").prop("disabled"), "val": $("#jerseyColor").spectrum("get").toHexString() }
