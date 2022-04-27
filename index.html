@@ -256,28 +256,6 @@
                                                     <input class="jerseySelector selector" type="text" id="collarColor" data-element="collarColor" data-canvas="below">
                                                 </td>
                                             </tr>
-                                            <!-- <tr class="color_tr">
-                                                <td class="checkCell"><input type="checkbox" id="buttonPadCheck" class="multiToggle" data-canvas="below" data-id="buttonPadFillColor,buttonPad" checked></td>
-                                                <td><label>Button Pad: </label></td>
-                                                <td style="text-align:right;">
-                                                    <input class="jerseySelector selector" type="text" id="buttonPadFillColor" data-element="buttonPadFillColor">
-                                                </td>
-                                            </tr> -->
-                                            <!-- <tr class="color_tr">
-                                                <td class="checkCell"><input type="checkbox" id="buttonsColorCheck" class="multiToggle" data-canvas="aboveCanvas" data-id="buttonsColor" checked></td>
-                                                <td><label>Buttons (Opacity: <span id="buttonOpacitySpan"></span>%: </label>)</td>
-                                                <td style="text-align:right;">
-                                                    <input type="button" class="button rangeButton" value="-" data-span="buttonOpacitySpan">
-                                                    <input type="range" class="range" id="buttonOpacity" value=buttonOpacity min="0" max="100">
-                                                    <input type="button" class="button rangeButton" value="+" data-span="buttonOpacitySpan">
-                                                    <input class="jerseySelector selector" type="text" id="buttonsColor" data-element="buttonsColor">
-                                                </td>
-                                            </tr> -->
-                                            <!-- <tr class="color_tr">
-                                                <td class="checkCell"><input type="checkbox" id="stitchingCheck" class="belowTextureToggle" data-id="stitching"></td>
-                                                <td><label>Stitching / Seams</label></td>
-                                                <td style="text-align:right;">&nbsp;</td>
-                                            </tr> -->
                                             <tr class="color_tr">
                                                 <td class="checkCell"><input type="checkbox" id="jerseyFrontColorCheck" class="jerseyTextureToggle" data-id="jerseyFrontColor" data-canvas="below"></td>
                                                 <td><label>Jersey Front: </label></td>
@@ -352,35 +330,6 @@
 												<input type="button" id="customJerseyLayerDelete" class="button fakeLayerDelete" data-canvas="jersey" value="Remove Custom Layer" disabled style="display:none;">
                                                 </td>
                                             </tr>
-                                            <!--<tr class="color_tr">
-                                                <td>&nbsp;</td>
-                                                <td>
-                                                <label>Texture: </label>
-                                                </td>
-                                                <td style="text-align:right;">
-                                                    <select id="textureSelect" style="width:100%;">
-                                                        <option value="default_jersey_texture.png">Default</option>
-                                                        <option value="jm_modern_2.png">Modern #2</option>
-                                                        <option value="jm_flannel.png">Flannel #1</option>
-                                                        <option value="jm_flannel_2.png">Flannel #2</option>
-                                                        <option value="jm_baggy_flannel.png">Baggy</option>
-                                                        <option value="jm_mesh_texture.png">Mesh</option>
-                                                        <option value="jm_reds1.png">Reds 1 / skyballer455</option>
-                                                        <option id="customTexture" value="custom">Custom</option>
-                                                    </select>
-                                                    <input type="file" id="uploadedTexture" accept="image/png" style="display:none;"/>
-                                                </td>
-                                            </tr>-->
-                                            
-<!--                                             <tr class="color_tr">
-                                                <input type="file" id="uploadedLayer" accept="image/*" style="display:none;"/>
-                                                <td class="checkCell"><input id="customLayerCheck" type="checkbox" class="multiToggle" data-canvas="below" data-id="uploadedLayer"></td>
-                                                <td><label>Custom Layer: </label></td>
-                                                <td style="text-align:right;">
-                                                <span id="customLayerName"></span>
-                                                <input type="button" class="button" id="fakeLayerButton" value="Upload Custom Layer" disabled>
-                                                </td>
-                                            </tr> -->
                                         </table>
                                     </div>
 									<div class="jersey-accord-header jersey-inactive-header">Seams</div>
@@ -1386,7 +1335,7 @@
 										</div>
 										<div id="capSelectedImageDiv" style="display:none;">
 											<table style="width:100%;"><tr><td><center>
-											<b>Selected Image:</b> <span id="fileName"></span>
+											<b>Selected Image:</b> <span id="capFileName"></span>
 											</td></tr></table>
 										</div>
 										<div id="capTrimImageDiv" style="display:none;">
@@ -3000,9 +2949,6 @@
 	})
 
 	jerseyLogoCanvas.on('selection:created', function(e) {
-		//if($("#toggleJerseyGrid").is(':checked')){
-		//	jerseyLogoCanvas.setOverlayImage(null,jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
-		//}
 		var obj = e.selected[0];
 		if (obj.id == 'wordmark') {
 			$("#tipSpan").html("If you're trying to select an image instead of the text, you have to hide the text first.");
@@ -3010,9 +2956,6 @@
 	})
 
 	jerseyLogoCanvas.on('selection:cleared', function(e) {
-		//if($("#toggleJerseyGrid").is(':checked')){
-		//	jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
-		//}
 		if ($("#jerseyReplaceColorDiv").css("display") == "block") {
 			$("#jerseyReplaceColorDiv").slideToggle();
 		}
@@ -3051,6 +2994,10 @@
 	
 	jerseyLogoCanvas.on("mouse:down",function(e) {
 		activeCanvas = jerseyLogoCanvas;
+		capLogoCanvas.discardActiveObject()
+		capLogoCanvas.requestRenderAll()
+		pantsLogoCanvas.discardActiveObject()
+		pantsLogoCanvas.requestRenderAll()
 		$("#jerseyOverlay").css("display","none");
 		$("#capOverlay").css("display","inline-block");
 		$("#pantsOverlay").css("display","inline-block");
@@ -3795,7 +3742,11 @@
 	})
 
 	pantsLogoCanvas.on("mouse:down",function(e) {
-		activeCanvas = pantsLogoCanvas;	
+		activeCanvas = pantsLogoCanvas;
+		capLogoCanvas.discardActiveObject()
+		capLogoCanvas.requestRenderAll()
+		jerseyLogoCanvas.discardActiveObject()
+		jerseyLogoCanvas.requestRenderAll()
 		$("#jerseyOverlay").css("display","inline-block");
 		$("#capOverlay").css("display","inline-block");
 		$("#pantsOverlay").css("display","none");
@@ -3861,24 +3812,13 @@
 
     capLogoCanvas.on('selection:created', function(e) {
 		activeCanvas = capLogoCanvas;
-		//$("#straightenObject").css("display","inline-block");
 		var obj = e.selected[0];
 		if (obj.id == 'wordmark') {
 			$("#tipSpan").html("If you're trying to select an image instead of the text, you have to hide the text first.");
 		}
-		/* if (obj.type == 'image') {
-			$("#fileName").html(obj.get('name'));
-			if ($("#capTrimImageDiv").css("display") == "none") {
-				$("#capTrimImageDiv").css("display","block");
-				$("#capUploadImageDiv").css("display","none");
-				$("#capSelectedImageDiv").css("display","block");
-			}
-			$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-		} */
 	})
 
 	capLogoCanvas.on('selection:cleared', function(e) {
-		//$("#straightenObject").css("display","none");
 		if ($("#replaceColorDiv").css("display") == "block") {
 			$("#replaceColorDiv").slideToggle();
 		}
@@ -4188,6 +4128,10 @@
 	
 	capLogoCanvas.on("mouse:down",function(e) {
 		activeCanvas = capLogoCanvas;
+		jerseyLogoCanvas.discardActiveObject()
+		jerseyLogoCanvas.requestRenderAll()
+		pantsLogoCanvas.discardActiveObject()
+		pantsLogoCanvas.requestRenderAll()
 		$("#jerseyOverlay").css("display","inline-block");
 		$("#capOverlay").css("display","none");
 		$("#pantsOverlay").css("display","inline-block");
@@ -6424,18 +6368,21 @@
 			var imLeft = 256
 			var imTop = 256
 			var moveBelow = 'eyeletGroup'
+			//var canStr = "jersey"
 		}
 		if ($(this).data("canvas") == "jersey") {
 			var canvas = jerseyLogoCanvas
 			var imLeft = 256
 			var imTop = 512
 			var moveBelow = 'buttons'
+			//var canStr = "cap"
 		}
 		if ($(this).data("canvas") == "pants") {
 			var canvas = pantsLogoCanvas
 			var moveBelow = null
+			//var canStr = "pants"
 		}
-		switch (activeCanvas.id) {
+		/* switch (activeCanvas.id) {
 			case "jerseyLogoCanvas":
 				var canStr = "jersey"
 				break;
@@ -6445,7 +6392,7 @@
 			case "pantsLogoCanvas":
 				var canStr = "pants"
 				break;
-		}
+		} */
 		$.ajax({
 			type: "GET",
 			url: "http://127.0.0.1:"+port+"/uploadImage",
@@ -6473,6 +6420,17 @@
 						imTop = image.get('top');
 					})
 					image.on('selected',function() {
+						switch (activeCanvas.id) {
+							case "jerseyLogoCanvas":
+								var canStr = "jersey"
+								break;
+							case "capLogoCanvas":
+								var canStr = "cap"
+								break;
+							case "pantsLogoCanvas":
+								var canStr = "pants"
+								break;
+						} 
 						$("#"+canStr+"FileName").html(image.get('id'));
 						if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
 							$("#"+canStr+"TrimImageDiv").css("display","block");
@@ -6492,6 +6450,8 @@
 					if (moveBelow != null) {
 						canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
 					}
+					canvas.setActiveObject(image)
+					canvas.requestRenderAll()
 					canvas.renderAll();
 				}
 			}
