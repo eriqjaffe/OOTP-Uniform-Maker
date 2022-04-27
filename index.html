@@ -1658,7 +1658,7 @@
                         </td></tr></table>
                     </div>
                     <div style="text-align:center; margin-top:5px;">
-                        <input type="button" class="button" id="straightenObject" value="Reset Object Rotation" style="display:none;">
+                        <!--<input type="button" class="button" id="straightenObject" value="Reset Object Rotation" style="display:none;">-->
                         <input type="button" class="button" id="save" value="Save Uniform">
                         <input type="button" class="button" id="load" value="Load Uniform">
                         <input type="button" class="button copypaste" id="copy" value="Copy Object" onclick="copy()">
@@ -3857,7 +3857,7 @@
 
     capLogoCanvas.on('selection:created', function(e) {
 		activeCanvas = capLogoCanvas;
-		$("#straightenObject").css("display","inline-block");
+		//$("#straightenObject").css("display","inline-block");
 		var obj = e.selected[0];
 		if (obj.id == 'wordmark') {
 			$("#tipSpan").html("If you're trying to select an image instead of the text, you have to hide the text first.");
@@ -3874,7 +3874,7 @@
 	})
 
 	capLogoCanvas.on('selection:cleared', function(e) {
-		$("#straightenObject").css("display","none");
+		//$("#straightenObject").css("display","none");
 		if ($("#replaceColorDiv").css("display") == "block") {
 			$("#replaceColorDiv").slideToggle();
 		}
