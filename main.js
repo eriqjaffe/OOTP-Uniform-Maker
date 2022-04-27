@@ -46,7 +46,7 @@ app2.get("/uploadImage", (req, res) => {
 				if (err) {
 					console.log(err);
 				} else {
-					if (req.query.type == "jerseyTexture") {
+					if (req.query.type == "jersey") {
 						Jimp.read(__dirname+"/images/mask.png", (err, mask) => {
 							image.mask(mask,0,0)
 							image.getBase64(Jimp.AUTO, (err, ret) => {
@@ -68,6 +68,7 @@ app2.get("/uploadImage", (req, res) => {
 				}
 			});
 		  } else {
+			  res.end()
 			  console.log("cancelled")
 		  }
 	  }).catch(err => {
@@ -490,8 +491,8 @@ app2.post('/saveUniform', (req, res) => {
 		await capBase.composite(capOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await capBase.composite(capWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let capBuffer = await capBase.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(capBuffer, {name: "cap_"+req.body.name+".png"})
-		//await capBase.write(app.getPath('desktop') + '/uniform_Unknown_Team_Home/cap_' + req.body.name+'.png')
+		archive.append(capBuffer, {name: "caps_"+req.body.name+".png"})
+		//await capBase.write(app.getPath('desktop') + '/uniform_Unknown_Team_Home/caps_' + req.body.name+'.png')
 
 		// pants
 		let pantsBase = await Jimp.read(pantsBelow)
@@ -540,8 +541,8 @@ app2.post('/saveUniform', (req, res) => {
 		await jerseyWM.color([{ apply: "mix", params: [req.body.jerseyWatermarkColor, 100] }]);
 		await jerseyBase.composite(jerseyWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBuffer = await jerseyBase.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(jerseyBuffer, {name: "jersey_"+req.body.name+"_d.png"})
-		//await jerseyBase.write(app.getPath('downloads') + '/jersey_' + req.body.name+'_d.png')
+		archive.append(jerseyBuffer, {name: "jerseys_"+req.body.name+".png"})
+		//await jerseyBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'.png')
 		
 		// jersey height map
 		let jerseyHeightMap = await Jimp.read(__dirname+"/images/jersey_height_map.png")
@@ -577,8 +578,8 @@ app2.post('/saveUniform', (req, res) => {
 		}
 		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyHMBuffer = await jerseyHeightMap.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(jerseyHMBuffer, {name: "jersey_"+req.body.name+"_h.png"})
-		//await jerseyHeightMap.write(app.getPath('downloads') + '/uniform_Unknown_Team_Home/jersey_' + req.body.name+'_h.png')
+		archive.append(jerseyHMBuffer, {name: "jerseys_"+req.body.name+"_h.png"})
+		//await jerseyHeightMap.write(app.getPath('downloads') + '/uniform_Unknown_Team_Home/jerseys_' + req.body.name+'_h.png')
 
 		// jersey with baked texture
 		let jerseyBakedBase = await Jimp.read(jerseyBelow)
@@ -616,12 +617,12 @@ app2.post('/saveUniform', (req, res) => {
 		await jerseyBakedWM.color([{ apply: "mix", params: [req.body.jerseyWatermarkColor, 100] }]);
 		await jerseyBakedBase.composite(jerseyBakedWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBakedBuffer = await jerseyBakedBase.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(jerseyBakedBuffer, {name: "jersey_"+req.body.name+".png"})
-		//await jerseyBakedBase.write(app.getPath('downloads') + '/jersey_' + req.body.name+'.png')
+		archive.append(jerseyBakedBuffer, {name: "jerseys_"+req.body.name+"_textured.png"})
+		//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'_textured.png')
 
 		archive.append(json, {name: "uniform_"+req.body.name+".uni"})
 		archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });
-		archive.append(fs.createReadStream(__dirname+"/images/jersey_normal_map.png"), { name: "jersey_"+req.body.name+"_n.png" });
+		archive.append(fs.createReadStream(__dirname+"/images/jersey_normal_map.png"), { name: "jerseys_"+req.body.name+"_n.png" });
 	    archive.finalize()
 	}
 })

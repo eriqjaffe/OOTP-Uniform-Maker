@@ -27,14 +27,11 @@
     <script>
 		const params = new URLSearchParams(window.location.search)
 		const port = params.get('port')
-		const defaultJerseyTexture = params.get('preferredJerseyTexture')
-		const defaultPantsTexture = params.get('preferredPantsTexture')
-		const defaultCapTexture = params.get('preferredCapTexture')
 		const gridsVisible = (params.get('gridsVisible').toLowerCase() == "true") ? true : false
 
-		console.log(defaultJerseyTexture)
-		console.log(defaultPantsTexture)
-		console.log(defaultCapTexture)
+		var defaultJerseyTexture = params.get('preferredJerseyTexture')
+		var defaultPantsTexture = params.get('preferredPantsTexture')
+		var defaultCapTexture = params.get('preferredCapTexture')
 
         const initialJerseyColors = {jerseyColor:"#FFFFFF",jerseyFrontColor:"#008800",jerseyBackColor:"#880000",buttonPadFillColor:"#FFFFFF",buttonPadColor:"#000000",collarColor:"#103959",leftSleeveColor:"#FFFFFF",rightSleeveColor:"#FFFFFF",leftSleeveRaglanColor:"#FFFFFF",rightSleeveRaglanColor:"#FFFFFF",jerseyPinstripesColor:"#0c2340",jerseyPinstripesStrokeColor:"transparent",undershirtColor:"#103959",sleeveSeamAngledColor:"#0202f0",sleeveSeamAngledStrokeColor:"#000000",racingStripeLargeColor:"#ff0000",racingStripeSmallColor:"#00FF00",sideRacingStripeLargeColor:"#ff0000",sideRacingStripeSmallColor:"#00FF00",sleeveSeamXLColor:"#971717",sleeveSeamXLStrokeColor:"#000000",smallTopShouldersColor:"#999999",smallTopShouldersStrokeColor:"#000000",bigTopShouldersColor:"#00FF00",bigTopShouldersStrokeColor:"#000000",sidePanelSmallColor:"#FF0000",sidePanelSmallStrokeColor:"#0000FF",sidePanelSmallRoundedColor:"#0000FF",sidePanelSmallRoundedStrokeColor:"#FF0000",sidePanelLargeRoundedColor:"#00FF00",sidePanelLargeRoundedStrokeColor:"yellow",sidePanelVColor:"yellow",sidePanelVStrokeColor:"#00FF00",arcedStripeColor:"#003399",placketPipingInnerColor:"#FF0000",placketPipingMiddleColor:"#00FF00",placketPipingOuterColor:"#0000FF",widePlacketPipingInnerColor:"#FF0000",widePlacketPipingMiddleColor:"#00FF00",widePlacketPipingOuterColor:"#0000FF",tequilaSunrise1Color:"#d50032",tequilaSunrise2Color:"#ff8200",tequilaSunrise3Color:"#ffcd00",tequilaSunrise4Color:"#e87722",sleevePipingInnerColor:"#FF0000",sleevePipingMiddleColor:"#FFFFFF",sleevePipingOuterColor:"#0000FF",thinCuffInnerColor:"#FF0000",thinCuffMiddleColor:"#FFFFFF",thinCuffOuterColor:"#0000FF",sleeveCuffInnerColor:"#FF0000",sleeveCuffMiddleColor:"#FFFFFF",sleeveCuffOuterColor:"#0000FF",shoulderPipingInnerColor:"#FF0000",shoulderPipingMiddleColor:"#FFFFFF",shoulderPipingOuterColor:"#0000FF",swashFillColor:"#000000",swashStrokeColor:"#FF0000",wordmarkTextColor:"#103959",wordmarkTextStroke1Color:"#FFFFFF",wordmarkTextStroke2Color:"#FF0000",beachBlanketTopColor:"#C8102E",beachBlanketMiddleColor:"#0C2340",beachBlanketBottomColor:"#C8102E",vNeckThinInnerColor:"#FF0000",vNeckThinMiddleColor:"#FFFFFF",vNeckThinOuterColor:"#0000FF",vNeckOffsetInnerColor:"#FF0000",vNeckOffsetMiddleColor:"#FFFFFF",vNeckOffsetOuterColor:"#0000FF",vNeckThickInnerColor:"#FF0000",vNeckThickMiddleColor:"#FFFFFF",vNeckThickOuterColor:"#0000FF",vNeck2OuterColor:"#0000FF",vNeck2InnerColor:"#FF0000",buttonsColor:"#FFFFFF",camoBaseColor:"#4a551e",camoLayer1Color:"#052503",camoLayer2Color:"#beb585",digiCamoBaseColor:"#9a8b62",digiCamoLayer1Color:"#372900",digiCamoLayer2Color:"#736632",butterflyColor:"#103959",cadetCollarColor:"#FF0000",fullCollarColor:"#00FF00",neckCollarColor:"#0000FF",sunCollar1Color:"#FF0000",sunCollar2Color:"#00FF00",buttonDownCollarColor:"#00FFFF",jerseyFlapColor:"#191970",jerseyFlapTrimColor:"#800000",jerseyFlapButtonsColor:"#FFFFFF",jerseyShield1WideStrokeColor:"#FF0000",jerseyShield1WideColor:"#0000FF",jerseyShield1InnerStrokeColor:"#000000",jerseyShield1InnerColor:"#00FF00",jerseyShield1ButtonsColor:"#FFFFFF",jerseyShield2StrokeColor:"#FF0000",jerseyShield2InnerColor:"#0000FF",jerseyShield2ButtonsColor:"#FFFFFF",jerseyPanelStrokeColor:"#FF0000",jerseyPanelFillColor:"#00FF00",jerseyPanelButtonColor:"#FFFFFF",bowTie1Color:"#0000FF",bowTie2Color:"#FF0000",tieColor:"#272A26",pocketFillColor:"#fffdd0",xLacesColor:"#0000FF",vLacesColor:"#FF0000",hockeyLacesColor:"#CFCFCF",suspendersColor:"#228b22",nikeHornsColor:"#FF9933",shoulderLoops1Color:"#6600CC",shoulderLoops2Color:"#339933",ncaaShoulderColor:"#996633",makersMarkColor:"#000000",jerseySnakeskinColor:"#A41E20",rainbowShoulder1Color:"#041E42",rainbowShoulder2Color:"#D50032",rainbowShoulder3Color:"#FA4616",rainbowShoulder4Color:"#FFCD00",jerseyMakersMarkColor:"#000000",mlbBaseColor:"#FFFFFF",mlb1Color:"#041e42",mlb2Color:"#bf0d3e",milbBaseColor:"#FFFFFF",milb1Color:"#041e42",milb2Color:"#bf0d3e",highCollar1:"#00FF00",highCollar1Laces:"#ffffff",diagonalSide1:"#FF0000",diagonalSide2:"#0000FF",kiaSide1:"#00FF00",kiaSide2:"#FF0000"}
         
@@ -87,6 +84,8 @@
 
 		var _clipboard = null;
 		var customJerseyTexture = null;
+		var customCapTexture = null;
+		var customPantsTexture = null;
     </script>
 </head>
 <body>
@@ -183,7 +182,7 @@
                                             </tr>
 											<tr class="color_tr">
                                                 <td>&nbsp;</td>
-                                                <td colspan="2">
+                                                <td>
 													<label>Cloth Texture:&nbsp;</label>
 													<select id="jerseyTextureSelect">
 														<option value="jersey_texture_default.png" selected>None</option>
@@ -204,6 +203,9 @@
 														<option value="jersey_texture_micropterus3.png">Micropterus58 #3</option>
 														<option value="custom">Custom Texture</option>
 													</select>
+												</td>
+												<td style="text-align:right;">
+													<input type="button" class="button resetTexture" id="resetJerseyTexture" value="Remove Custom Texture" disabled>
 												</td>
                                             </tr>
                                             <tr class="color_tr">
@@ -980,7 +982,7 @@
                                             </tr>
 											<tr class="color_tr">
                                                 <td>&nbsp;</td>
-                                                <td colspan="2">
+                                                <td>
 													<label>Cloth Texture:&nbsp;</label>
 													<select id="pantsTextureSelect">
 														<option value="pants_texture_default.png" selected>None</option>
@@ -999,7 +1001,11 @@
 														<option value="pants_texture_micropterus1.png">Micropterus58 #1</option>
 														<option value="pants_texture_micropterus2.png">Micropterus58 #2</option>
 														<option value="pants_texture_micropterus3.png">Micropterus58 #3</option>
+														<option value="custom">Custom Texture</option>
 													</select>
+												</td>
+												<td style="text-align:right;">
+													<input type="button" class="button resetTexture" id="resetPantsTexture" value="Remove Custom Texture" disabled>
 												</td>
                                             </tr>
                                             <tr class="color_tr">
@@ -1157,7 +1163,7 @@
                                             </tr>
 											<tr class="color_tr">
                                                 <td>&nbsp;</td>
-                                                <td colspan="2">
+                                                <td>
 													<label>Texture:&nbsp;</label>
 													<select id="capTextureSelect">
 														<option value="cap_texture_default.png" selected>Gern44</option>	
@@ -1165,7 +1171,11 @@
 														<option value="cap_texture_wool.png">Wool</option>
 														<option value="cap_texture_knit.png">Knit</option>
 														<option value="cap_texture_mesh.png">Mesh</option>
+														<option value="custom">Custom Texture</option>
 													</select>
+												</td>
+												<td style="text-align:right;">
+													<input type="button" class="button resetTexture" id="resetCapTexture" value="Remove Custom Texture" disabled>
 												</td>
                                             </tr>
                                             <tr class="color_tr">
@@ -2503,7 +2513,6 @@
 		} else {
 			reRenderBG("jersey")
 		}
-		
 	})
 
 	$(".jerseyTextureToggle").on("click",function() {
@@ -3696,7 +3705,15 @@
 	})
 
 	$("#pantsTextureSelect").on("change",function(){
-		reRenderBG("pants")
+		if ($(this).val() == "custom") {
+			if (customPantsTexture == null) {
+				uploadCustomTexture("pants")
+			} else {
+				reRenderBG("pants")
+			}
+		} else {
+			reRenderBG("pants")
+		}
 	})
 
 	$(".pantsTextureToggle").on("click",function() {
@@ -4011,7 +4028,15 @@
 	})
 
 	$("#capTextureSelect").on("change",function(){
-		reRenderBG("cap")
+		if ($(this).val() == "custom") {
+			if (customCapTexture == null) {
+				uploadCustomTexture("cap")
+			} else {
+				reRenderBG("cap")
+			}
+		} else {
+			reRenderBG("cap")
+		}
 	})
 
 	$(".capText").on("keyup",function() {
@@ -6020,7 +6045,7 @@
                 var composite = can3.getContext('2d')
                 var width = 384
                 var height = 384
-                var textureFile = './images/'+$("#capTextureSelect").val()
+                var textureFile = ($("#capTextureSelect").val() == "custom") ? customCapTexture : './images/'+$("#capTextureSelect").val()
                 break;
             case "pants":
                 var canvas = pantsBelow 
@@ -6031,7 +6056,7 @@
                 var composite = can3.getContext('2d')
                 var width = 384
                 var height = 384
-                var textureFile = './images/'+$("#pantsTextureSelect").val()
+                var textureFile = ($("#pantsTextureSelect").val() == "custom") ? customPantsTexture : './images/'+$("#pantsTextureSelect").val()
                 break;
         }
 		
@@ -6097,30 +6122,64 @@
 	}
 
 	function uploadCustomTexture(type) {
+		showOverlay()
 		$.ajax({
 			type: "GET",
 			url: "http://127.0.0.1:"+port+"/uploadImage",
-			data: {type:"jerseyTexture"},
-			success: function(data) {
-				var imgObj = new Image();
-				imgObj.src = data.image;
-				imgObj.onload = function () {
+			data: {type:type},
+			success: function(data) { 
+				if (data.image != undefined) {
+					console.log(data.filename)
+					var imgObj = new Image();
+					imgObj.src = data.image;
+					imgObj.onload = function () {
+						switch (type) {
+							case "jersey":
+								customJerseyTexture = data.image;
+								$("#resetJerseyTexture").prop("disabled",false)
+								break;
+							case "pants":
+								customPantsTexture = data.image;
+								$("#resetPantsTexture").prop("disabled",false)
+								break;
+							case "cap":
+								customCapTexture = data.image;
+								$("#resetCapTexture").prop("disabled",false)
+								break;
+						}
+						hideOverlay()
+						reRenderBG(type)
+					}	
+				} else {
 					switch (type) {
 						case "jersey":
-							customJerseyTexture = data.image;
+							customJerseyTexture = null;
+							$("#jerseyTextureSelect").val(defaultJerseyTexture)
+							$("#jerseyTextureSelect").trigger("change")
+							$("#resetJerseyTexture").prop("disabled",true)
 							break;
 						case "pants":
-							customPantsTexture = data.image;
+							customPantsTexture = null;
+							$("#pantsTextureSelect").val(defaultPantsTexture)
+							$("#pantsTextureSelect").trigger("change")
+							$("#resetPantsTexture").prop("disabled",true)
 							break;
 						case "cap":
-							customCapTexture = data.image;
+							customCapTexture = null;
+							$("#capTextureSelect").val(defaultCapTexture)
+							$("#capTextureSelect").trigger("change")
+							$("#resetCapTexture").prop("disabled",true)
 							break;
 					}
-					reRenderBG(type)
+					hideOverlay()
 				}
+			},
+			error: function(data) {
+				hideOverlay()
 			}
 		});
 	}
+
 	function diagonalText(type) {
 		const hSpacing = (type == "diag") ? $("#hSpacing").val() : 0
 		const vSpacing = (type == "diag") ? $("#vSpacing").val() : $("#vSpacing2").val()
@@ -6436,6 +6495,7 @@
 	})
 
 	$(".localFontButton").on("click",function() {
+		showOverlay()
 		switch ($(this).data("canvas")) {
 			case "cap":
 				var type = "cap"
@@ -6506,7 +6566,7 @@
 							optgroup2.append("<option value='"+data.familyName+"'>"+data.fontName+"</option>")
 							$("#jerseyFontTypeCombo").append(optgroup2)
 						}
-						
+						hideOverlay();
 						//canvas.renderAll();
 						//var optgroup = $("<optgroup class='"+data.familyName+"'>");
 						//optgroup.append("<option value='"+data.familyName+"'>"+data.fontName+"</option>")
@@ -6521,7 +6581,9 @@
 					}).catch(function(e) {
 						console.log(e)
 						alert('font loading failed ' + data.familyName);
+						hideOverlay();
 					});
+					
 			}
 		})
 	})
@@ -6675,7 +6737,7 @@
 			var object = canvas.getActiveObject()
 			var idx = canvas.getObjects().indexOf(object)
 			if (object.get('type') == "image") {
-				//showOverlay()
+				showOverlay()
 				var pictureName = object.get('name');
 				var pLeft = object.get('left')
 				var pTop = object.get('top')
@@ -6880,6 +6942,7 @@
 			var object = canvas.getActiveObject()
 			var idx = canvas.getObjects().indexOf(object)
 			if (object.get('type') == "image") {
+				showOverlay()
 				var pictureName = object.get('name');
 				colorSquare.removeClass("colorSquareActive").removeClass("colorSquareSelected");
 				
@@ -7072,6 +7135,9 @@
 		exportMeta.customFonts = customFonts
 		exportMeta.selectedJerseyFont = $("#jerseyFontTypeCombo").val()
 		exportMeta.capSelectedFont = $("#capFontTypeCombo").val()
+		exportMeta.customJerseyTexture = customJerseyTexture
+		exportMeta.customCapTexture = customCapTexture
+		exportMeta.customPantsTexture = customPantsTexture
 
 		var startYear = parseInt($("#startYear").val());
 		var endYear = parseInt($("#endYear").val())
@@ -7203,11 +7269,11 @@
 
 				hideOverlay()
 			}
-
 		})
 	})
 
 	$("#load").on("click",function(e){
+		showOverlay()
 		$.ajax({
 			type: "GET",
 			url: "http://127.0.0.1:"+port+"/loadUniform",
@@ -7220,6 +7286,10 @@
 				$("#uniformType").val(exportMeta.type)
 				$("#startYear").val(exportMeta.start)
 				$("#endYear").val(exportMeta.end)
+
+				customJerseyTexture = exportMeta.customJerseyTexture
+				customPantsTexture = exportMeta.customPantsTexture
+				customCapTexture = exportMeta.customCapTexture
 
 				if (exportMeta.customFonts != undefined && exportMeta.customFonts != null) {
 					if (exportMeta.customFonts.length > 0) {
@@ -7339,11 +7409,13 @@
 				})
 				pantsBelow.renderAll()
 				reRenderBG("pants")
+				hideOverlay()
 			}
 		})
 	})
 
 	$(".fakeLayerButton").on("click",function(e){
+		showOverlay()
 		const renderTarget = $(this).data("canvas")
 		switch ($(this).data("canvas")) {
 			case "cap":
@@ -7415,8 +7487,9 @@
 					reRenderBG(renderTarget)
 					loadButton.css("display","none")
 					delButton.css("display","inline-block")
+					hideOverlay()
 				}
-				
+				hideOverlay()
 			}
 		});
 	})
@@ -7497,6 +7570,28 @@
 			o.visible = state;
 		}
 		reRenderBG(target)
+	})
+
+	$(".resetTexture").on("click",function(){
+		switch ($(this).attr("id")) {
+			case "resetJerseyTexture":
+				$(this).prop("disabled",true)
+				customJerseyTexture = null;
+				$("#jerseyTextureSelect").val(defaultJerseyTexture)
+				$("#jerseyTextureSelect").trigger("change")
+				break;
+			case "resetPantsTexture":
+				$(this).prop("disabled",true)
+				customPantsTexture = null;
+				$("#pantsTextureSelect").val(defaultPantsTexture)
+				$("#pantsTextureSelect").trigger("change")
+			case "resetCapTexture":
+				$(this).prop("disabled",true)
+				customCapTexture = null;
+				$("#capTextureSelect").val(defaultCapTexture)
+				$("#capTextureSelect").trigger("change")
+					
+		}
 	})
 
 // UTILITY FUNCTIONS
@@ -7678,14 +7773,17 @@
 			case "preferredJerseyTexture":
 				$("#jerseyTextureSelect").val(val)
 				$("#jerseyTextureSelect").trigger("change")
+				defaultJerseyTexture = val;
 				break;
 			case "preferredCapTexture":
 				$("#capTextureSelect").val(val)
 				$("#capTextureSelect").trigger("change")
+				defaultCapTextre = val;
 				break;
 			case "preferredPantsTexture":
 				$("#pantsTextureSelect").val(val)
 				$("#pantsTextureSelect").trigger("change")
+				defaultPantsTexture = val;
 				break;
 		}
 
