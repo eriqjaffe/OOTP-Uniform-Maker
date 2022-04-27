@@ -31,6 +31,7 @@
     "jimp": "^0.16.1",
     "node-font2base64": "^0.7.1",
     "promise-synchronizer": "^1.1.8",
+    "semver": "^7.3.7",
     "svgdom": "^0.1.10",
     "ttfinfo": "^0.2.0"
   },

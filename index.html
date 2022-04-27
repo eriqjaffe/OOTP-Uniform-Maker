@@ -1772,6 +1772,7 @@
 </body>
 <script>
 	require('./renderer.js')
+	const semver = require('semver')
 
 	const spinnerOptions = {lines: 13, length: 28, width: 14, radius: 42, scale: 2, corners: 1, color: '#C8102E', opacity: 0.25, rotate: 0, direction: 1, speed: 1, trail: 60, fps: 20, zIndex: 2e9, className: 'spinner', top: '50%', left: '50%', shadow: false, hwaccel: false, position: 'absolute'}
     const target = document.getElementById('overlay');
@@ -7282,9 +7283,16 @@
 			type: "GET",
 			url: "http://127.0.0.1:"+port+"/loadUniform",
 			success: function(response) {
+				
 				customFonts.splice(0, customFonts.length)
 
 				const exportMeta = JSON.parse(response)
+
+				if (exportMeta.version == undefined || !semver.eq(appVersion, exportMeta.version)) {
+					console.log("They don't match")
+				} else {
+					console.log("They match")
+				}
 
 				$("#teamName").val(exportMeta.team)
 				$("#uniformType").val(exportMeta.type)
