@@ -1896,6 +1896,19 @@ gifwrap@^0.9.2:
     image-q "^4.0.0"
     omggif "^1.0.10"
 
+github-graphql-client@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/github-graphql-client/-/github-graphql-client-1.0.0.tgz#d5acacc31bb9f6b77e5c502812e90c844f727bca"
+  integrity sha1-1ayswxu59rd+XFAoEukMhE9ye8o=
+
+github-version-checker@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/github-version-checker/-/github-version-checker-2.3.0.tgz#ef4de98e8dbca975b095bdeac859a7b9e00bb08f"
+  integrity sha512-JAAB8Q/U+HkZHpBail8c28wS6zgWV3k1kK7FiWzMFW5NyVt74K1hZffoJgFHXZpFdZl/VIQm8K2wdl/C1CA/DA==
+  dependencies:
+    github-graphql-client "^1.0.0"
+    semver "^7.3.5"
+
 glob@^7.1.3, glob@^7.1.4, glob@^7.1.6:
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/glob/-/glob-7.2.0.tgz#d15535af7732e02e948f4c41628bd910293f6023"

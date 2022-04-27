@@ -23,3 +23,7 @@ ipcRenderer.on('paste', (event, data) => {
 ipcRenderer.on('prefs', (event, data) => {
     $("#prefsButton").trigger("click")
 });
+
+ipcRenderer.on('update', (event, data) => {
+    $("#checkForUpdates").trigger("click")
+});

@@ -1663,8 +1663,9 @@
                         <input type="button" class="button" id="load" value="Load Uniform">
                         <input type="button" class="button copypaste" id="copy" value="Copy Object" onclick="copy()">
 						<input type="button" class="button copypaste" id="paste" value="Paste Object" onclick="paste()">
-						<input type="button" class="button" id="prefsButton" value="Preferences">
-						<input type="button" class="button" id="aboutUniformMaker" value="About Uniform Maker">
+						<input type="button" class="button" id="prefsButton" value="Preferences" style="display:none;">
+						<input type="button" class="button" id="aboutUniformMaker" value="About Uniform Maker" style="display:none;">
+						<input type="button" class="button" id="checkForUpdates" value="Check For Updates" style="display:none;">
                     </div>
                 </div>
             </div>
@@ -7748,6 +7749,27 @@
 	function endsWithNumber(str) {
 		return /[0-9]+$/.test(str);
 	}
+	
+	$("#checkForUpdates").on("click", function() {
+		$.ajax({
+			type: "GET",
+			url: "http://127.0.0.1:"+port+"/checkForUpdate",
+			success: function(data) { 
+				if (data.update == true) {
+					if (confirm("Current version: "+data.currentVersion+"\r\n\r\n"+data.name+" is now availble.  Click 'OK' to go to the releases page.")) {
+						window.open(
+      						data.url, 
+      						'_blank'
+    					);
+					}
+				} else if (data.update == false) {
+					alert("Current version: "+data.currentVersion+"\r\n\r\nThere is no update available at this time")
+				} else {
+					alert("Something went wrong, the update check failed.")
+				}
+			}
+		})
+	})
 
 	$("#aboutUniformMaker").magnificPopup({
 		items: {

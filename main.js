@@ -12,6 +12,8 @@ const font2base64 = require("node-font2base64")
 const Store = require("electron-store")
 const { SVG, registerWindow } = require('@svgdotjs/svg.js')
 const { createSVGWindow } = require('svgdom')
+const versionCheck = require('github-version-checker');
+const pkg = require('./package.json');
 
 const isMac = process.platform === 'darwin'
 const tempDir = os.tmpdir()
@@ -32,7 +34,32 @@ const gridsVisible = store.get("gridsVisible", true)
 
 const fontArray = {"Acme": "Acme-Regular.ttf", "athletic_gothicregular": "athletic_gothic-webfont.ttf", "athletic_gothic_shadowregular": "athletic_gothic_shadow-webfont.ttf", "beaverton_scriptregular": "beaverton_script-webfont.ttf", "BerkshireSwash": "BerkshireSwash-Regular.ttf", "CantoraOne": "CantoraOne-Regular.ttf", "caxton_romanregular": "caxton_roman-webfont.ttf", "ChelaOne": "ChelaOne-Regular.ttf", "russell_circusregular": "circus-webfont.ttf", "Condiment": "Condiment-Regular.ttf", "Cookie": "Cookie-Regular.ttf", "Courgette": "Courgette-Regular.ttf", "CroissantOne": "CroissantOne-Regular.ttf", "Damion": "Damion-Regular.ttf", "Engagement": "Engagement-Regular.ttf", "rawlings_fancy_blockregular": "rawlingsfancyblock-regular-webfont.ttf", "GermaniaOne": "GermaniaOne-Regular.ttf", "Graduate": "Graduate-Regular.ttf", "GrandHotel": "GrandHotel-Regular.ttf", "JockeyOne": "JockeyOne-Regular.ttf", "kansasregular": "tuscan-webfont.ttf", "KaushanScript": "KaushanScript-Regular.ttf", "LeckerliOne": "LeckerliOne-Regular.ttf", "LilyScriptOne": "LilyScriptOne-Regular.ttf", "Lobster": "Lobster-Regular.ttf", "LobsterTwo": "LobsterTwo-Regular.ttf", "MetalMania": "MetalMania-Regular.ttf", "Miniver": "Miniver-Regular.ttf", "Molle,italic": "Molle-Regular.ttf", "NewRocker": "NewRocker-Regular.ttf", "Norican": "Norican-Regular.ttf", "rawlings_old_englishmedium": "rawlingsoldenglish-webfont.ttf", "OleoScript": "OleoScript-Regular.ttf", "OleoScriptSwashCaps": "OleoScriptSwashCaps-Regular.ttf", "Pacifico": "Pacifico.ttf", "PirataOne": "PirataOne-Regular.ttf", "Playball": "Playball-Regular.ttf", "pro_full_blockregular": "pro_full_block-webfont.ttf", "richardson_fancy_blockregular": "richardson_fancy_block-webfont.ttf", "RubikOne": "RubikOne-Regular.ttf", "RumRaisin": "RumRaisin-Regular.ttf", "Satisfy": "Satisfy-Regular.ttf", "SeymourOne": "SeymourOne-Regular.ttf", "spl28scriptregular": "spl28script-webfont.ttf", "ua_tiffanyregular": "tiffany-webfont.ttf", "TradeWinds": "TradeWinds-Regular.ttf", "mlb_tuscan_newmedium": "mlb_tuscan_new-webfont.ttf", "UnifrakturCook": "UnifrakturCook-Bold.ttf", "UnifrakturMaguntia": "UnifrakturMaguntia-Book.ttf", "Vibur": "Vibur-Regular.ttf", "Viga": "Viga-Regular.ttf", "Wellfleet": "Wellfleet-Regular.ttf", "WendyOne": "WendyOne-Regular.ttf", "Yellowtail": "Yellowtail-Regular.ttf"};
 
+const options = {
+	repo: 'OOTP-Uniform-Maker',
+	owner: 'eriqjaffe',
+	currentVersion: pkg.version
+};
+
 app2.use(express.urlencoded({limit: '200mb', extended: true, parameterLimit: 500000}));
+
+app2.get("/checkForUpdate", (req,res) => {
+	versionCheck(options, function (error, update) { // callback function
+		if (error) throw error;
+		if (update) { // print some update info if an update is available
+			res.json({
+				"update": true,
+				"currentVersion": pkg.version,
+				"name": update.name,
+				"url": update.url
+			})
+		} else {
+			res.json({
+				"update": false,
+				"currentVersion": pkg.version,
+			})
+		}
+	});
+})
 
 app2.get("/uploadImage", (req, res) => {
 	dialog.showOpenDialog(null, {
@@ -750,7 +777,11 @@ function createWindow () {
               click: async () => {
               await shell.openExternal('https://github.com/eriqjaffe/OOTP-Uniform-Maker')
               }
-          }
+          },
+		  {
+			  click: () => mainWindow.webContents.send('update','click'),
+			  label: 'Check For Updates',
+		  }
           ]
       }
       ]
@@ -788,3 +819,4 @@ function getExtension(filename) {
 	var ext = path.extname(filename||'').split('.');
 	return ext[ext.length - 1];
 }
+
