@@ -28,6 +28,7 @@
 		const params = new URLSearchParams(window.location.search)
 		const port = params.get('port')
 		const gridsVisible = (params.get('gridsVisible').toLowerCase() == "true") ? true : false
+		const checkForUpdates = (params.get('checkForUpdates').toLowerCase() == "true") ? true : false
 
 		var defaultJerseyTexture = params.get('preferredJerseyTexture')
 		var defaultPantsTexture = params.get('preferredPantsTexture')
@@ -1693,6 +1694,9 @@
 		<table class="prefs" style="width:100%;">
 			<tr>
 				<td><center>
+					<input type="checkbox" id="checkForUpdatesPref" checked>&nbsp;Check for Updates on Startup
+				</center></td>
+				<td><center>
 					<input type="checkbox" id="gridsVisible" checked>&nbsp;Grids & Gudes Visible
 				</center></td>
 				<td><center>
@@ -1856,6 +1860,7 @@
 		$("#togglePantsGrid").prop( "checked", gridsVisible )
 		$("#toggleCapGuides").prop( "checked", gridsVisible )
 		$("#gridsVisible").prop( "checked", gridsVisible )
+		$("#checkForUpdatesPref").prop("checked", checkForUpdates)
 		$(".jersey-accord-header").click(function() {
 			if($(this).next("div").is(":visible")){
 				$(this).next("div").slideUp("fast");
@@ -1915,28 +1920,7 @@
 				}
 			})
 		})
-
-		/* $("#uniformType").customComboBox({
-			tipText : "Enter Your Value",
-			tipClass : "mytipclass",
-			allowed : /[A-Za-z0-9\$\.\s]/,
-			notallowed : /[\<\>]/,
-			index : 'last',
-			isEditing : function(el, status, value) {
-				if (typeof window.console!='object') { return; }
-				console.info('Editing status changed to (', status, ') on ', el, ' combo box and the selected value is "', value, '"');
-			},
-			onKeyDown : function(el, character, fulltext) {
-				if (typeof window.console!='object') { return; }
-				console.info('The character (', character, ') was just typed into ', el, ' combo box and the complete text is now "', fulltext, '"');
-			},
-			onDelete : function(el, fulltext) {
-				if (typeof window.console!='object') { return; }
-				console.info('A character was deleted from ', el, ' combo box and the complete text is now "', fulltext, '"');
-			}
-		}); */
-			
-		
+	
 		$(":checkbox").click(function(e) {
 			state = ($(this).is(':checked')) ? true : false
 			$(this).parent().parent().find(".selector").each(function(e) {				
@@ -1972,6 +1956,23 @@
 		$("#tabContainer").skeletabs('goTo', 0)
 
 		activeCanvas = jerseyLogoCanvas;
+
+		if (checkForUpdates == true) {
+			$.ajax({
+				type: "GET",
+				url: "http://127.0.0.1:"+port+"/checkForUpdate",
+				success: function(data) { 
+					if (data.update == true) {
+						if (confirm("Current version: "+data.currentVersion+"\r\n\r\nVersion "+data.name+" is now availble.  Click 'OK' to go to the releases page.\r\n\r\bThis automatic check can be disabled in the Preferences.")) {
+							window.open(
+								data.url, 
+								'_blank'
+							);
+						}
+					} 
+				}
+			})
+		}
     })
 
 	$(document).keydown(function(e) {   
@@ -7756,7 +7757,7 @@
 			url: "http://127.0.0.1:"+port+"/checkForUpdate",
 			success: function(data) { 
 				if (data.update == true) {
-					if (confirm("Current version: "+data.currentVersion+"\r\n\r\n"+data.name+" is now availble.  Click 'OK' to go to the releases page.")) {
+					if (confirm("Current version: "+data.currentVersion+"\r\n\r\nVersion "+data.name+" is now availble.  Click 'OK' to go to the releases page.")) {
 						window.open(
       						data.url, 
       						'_blank'
@@ -7813,6 +7814,18 @@
 			type: "POST",
 			url: "http://127.0.0.1:"+port+"/setPreference",
 			data: {pref:pref,val:val},
+			success: function(result) {
+			}
+		})
+	})
+
+	$("#checkForUpdatesPref").on("change",function() {
+		const pref = "checkForUpdates"
+		const val = $(this).is(':checked')
+		$.ajax({
+			type: "POST",
+			url: "http://127.0.0.1:"+port+"/setPreference",
+			data: {pref:pref,val:val.toString()},
 			success: function(result) {
 			}
 		})
