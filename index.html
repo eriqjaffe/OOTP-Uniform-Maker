@@ -7180,9 +7180,9 @@
 				jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
 				capWatermarkColor: idealTextColor(capBelow.backgroundColor),
 				pantsWatermarkColor: idealTextColor(pantsBelow.backgroundColor),
-				capTexture: $("#capTextureSelect").val(),
-				jerseyTexture: $("#jerseyTextureSelect").val(),
-				pantsTexture: $("#pantsTextureSelect").val(),
+				capTexture: ($("#capTextureSelect").val() == "custom") ? customCapTexture : $("#capTextureSelect").val(),
+				jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
+				pantsTexture: ($("#pantsTextureSelect").val() == "custom") ? customPantsTexture : $("#pantsTextureSelect").val(),
 				json: JSON.stringify(exportMeta,null,2)
 			},
 			success: function(data) {

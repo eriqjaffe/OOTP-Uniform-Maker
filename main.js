@@ -443,14 +443,35 @@ app2.post('/saveUniform', (req, res) => {
 	const pantsBelow = Buffer.from(req.body.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const capTexture = req.body.capTexture
-	const jerseyTexture = req.body.jerseyTexture
-	const pantsTexture = req.body.pantsTexture
+	const tmpCapTexture = req.body.capTexture
+	const tmpJerseyTexture = req.body.jerseyTexture
+	const tmpPantsTexture = req.body.pantsTexture
 	const showPlanket = req.body.showPlanket
 	const buttonPadSeams = req.body.buttonPadSeams
 	const seamsVisible = req.body.seamsVisible
 	const seamsOption = req.body.seamsOption
 	const json = Buffer.from(req.body.json, 'utf8')
+
+	if (tmpCapTexture.startsWith("data:image")) {
+		fs.writeFileSync(tempDir+"/tempCapTexture.png", tmpCapTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
+		var capTexture = tempDir+"/tempCapTexture.png"
+	} else {
+		var capTexture = __dirname+"/images/"+tmpCapTexture
+	}
+
+	if (tmpJerseyTexture.startsWith("data:image")) {
+		fs.writeFileSync(tempDir+"/tempJerseyTexture.png", tmpJerseyTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
+		var jerseyTexture = tempDir+"/tempJerseyTexture.png"
+	} else {
+		var jerseyTexture = __dirname+"/images/"+tmpJerseyTexture
+	}
+
+	if (tmpPantsTexture.startsWith("data:image")) {
+		fs.writeFileSync(tempDir+"/tempPantsTexture.png", tmpPantsTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
+		var pantsTexture = tempDir+"/tempPantsTexture.png"
+	} else {
+		var pantsTexture = __dirname+"/images/"+tmpPantsTexture
+	}
 
 	//fs.writeFileSync(app.getPath('downloads') + '/uniform_Unknown_Team_Home/uniform_' + req.body.name+'.uni', json)
 
@@ -512,7 +533,7 @@ app2.post('/saveUniform', (req, res) => {
 		// cap
 		let capBase = await Jimp.read(capBelow)
 		let capOverlay = await Jimp.read(capLogoCanvas)
-		let capTextureFile = await Jimp.read(__dirname+"/images/"+capTexture)
+		let capTextureFile = await Jimp.read(capTexture)
 		let capWM = await Jimp.read(__dirname+"/images/cap_watermark.png")
 		await capWM.color([{ apply: "mix", params: [req.body.capWatermarkColor, 100] }]);
 		await capBase.composite(capTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
@@ -524,7 +545,7 @@ app2.post('/saveUniform', (req, res) => {
 
 		// pants
 		let pantsBase = await Jimp.read(pantsBelow)
-		let pantsTextureFile = await Jimp.read(__dirname+"/images/"+pantsTexture)
+		let pantsTextureFile = await Jimp.read(pantsTexture)
 		let pantsOverlay = await Jimp.read(pantsLogoCanvas)
 		await pantsBase.composite(pantsTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await pantsBase.composite(pantsOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
@@ -537,7 +558,7 @@ app2.post('/saveUniform', (req, res) => {
 
 		// jersey diffuse map
 		let jerseyBase = await Jimp.read(jerseyBelow)
-		let jerseyTextureFile = await Jimp.read(__dirname+"/images/"+jerseyTexture)
+		let jerseyTextureFile = await Jimp.read(jerseyTexture)
 		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
 		await jerseyBase.composite(jerseyTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		if (buttonPadSeams == "true") {
@@ -612,7 +633,7 @@ app2.post('/saveUniform', (req, res) => {
 		// jersey with baked texture
 		let jerseyBakedBase = await Jimp.read(jerseyBelow)
 		let jerseyBakedOverlay = await Jimp.read(jerseyLogoCanvas)
-		let jerseyBakedTexture = await Jimp.read(__dirname+"/images/"+jerseyTexture)
+		let jerseyBakedTexture = await Jimp.read(jerseyTexture)
 		let jerseyBakedTexture2 = await Jimp.read(__dirname+"/images/texture_jersey_default.png")
 		if (buttonPadSeams == "true") {
 			let bpBakedSeamImg = await Jimp.read(__dirname+"/images/seams/seams_button_pad.png")
