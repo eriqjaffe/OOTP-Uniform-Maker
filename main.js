@@ -85,7 +85,6 @@ app2.get("/uploadImage", (req, res) => {
 							})
 						})
 					} else {
-						console.log("some other image")
 						image.getBase64(Jimp.AUTO, (err, ret) => {
 							res.json({
 								"filename": path.basename(result.filePaths[0]),
