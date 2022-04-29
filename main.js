@@ -29,7 +29,7 @@ const server = app2.listen(0, () => {
 const preferredColorFormat = store.get("preferredColorFormat", "hex")
 const preferredJerseyTexture = store.get("preferredJerseyTexture", "jersey_texture_default.png")
 const preferredPantsTexture = store.get("preferredPantsTexture", "pants_texture_default.png")
-const preferredCapTexture = store.get("preferredCapTexture", "cap_texture_default.png")
+const preferredCapTexture = store.get("preferredCapTexture", "cap_texture_wool.png")
 const gridsVisible = store.get("gridsVisible", true)
 const checkForUpdates = store.get("checkForUpdates", true)
 
