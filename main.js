@@ -12,6 +12,8 @@ const font2base64 = require("node-font2base64")
 const Store = require("electron-store")
 const { SVG, registerWindow } = require('@svgdotjs/svg.js')
 const { createSVGWindow } = require('svgdom')
+const versionCheck = require('github-version-checker');
+const pkg = require('./package.json');
 
 const isMac = process.platform === 'darwin'
 const tempDir = os.tmpdir()
@@ -27,12 +29,38 @@ const server = app2.listen(0, () => {
 const preferredColorFormat = store.get("preferredColorFormat", "hex")
 const preferredJerseyTexture = store.get("preferredJerseyTexture", "jersey_texture_default.png")
 const preferredPantsTexture = store.get("preferredPantsTexture", "pants_texture_default.png")
-const preferredCapTexture = store.get("preferredCapTexture", "cap_texture_default.png")
+const preferredCapTexture = store.get("preferredCapTexture", "cap_texture_wool.png")
 const gridsVisible = store.get("gridsVisible", true)
+const checkForUpdates = store.get("checkForUpdates", true)
 
 const fontArray = {"Acme": "Acme-Regular.ttf", "athletic_gothicregular": "athletic_gothic-webfont.ttf", "athletic_gothic_shadowregular": "athletic_gothic_shadow-webfont.ttf", "beaverton_scriptregular": "beaverton_script-webfont.ttf", "BerkshireSwash": "BerkshireSwash-Regular.ttf", "CantoraOne": "CantoraOne-Regular.ttf", "caxton_romanregular": "caxton_roman-webfont.ttf", "ChelaOne": "ChelaOne-Regular.ttf", "russell_circusregular": "circus-webfont.ttf", "Condiment": "Condiment-Regular.ttf", "Cookie": "Cookie-Regular.ttf", "Courgette": "Courgette-Regular.ttf", "CroissantOne": "CroissantOne-Regular.ttf", "Damion": "Damion-Regular.ttf", "Engagement": "Engagement-Regular.ttf", "rawlings_fancy_blockregular": "rawlingsfancyblock-regular-webfont.ttf", "GermaniaOne": "GermaniaOne-Regular.ttf", "Graduate": "Graduate-Regular.ttf", "GrandHotel": "GrandHotel-Regular.ttf", "JockeyOne": "JockeyOne-Regular.ttf", "kansasregular": "tuscan-webfont.ttf", "KaushanScript": "KaushanScript-Regular.ttf", "LeckerliOne": "LeckerliOne-Regular.ttf", "LilyScriptOne": "LilyScriptOne-Regular.ttf", "Lobster": "Lobster-Regular.ttf", "LobsterTwo": "LobsterTwo-Regular.ttf", "MetalMania": "MetalMania-Regular.ttf", "Miniver": "Miniver-Regular.ttf", "Molle,italic": "Molle-Regular.ttf", "NewRocker": "NewRocker-Regular.ttf", "Norican": "Norican-Regular.ttf", "rawlings_old_englishmedium": "rawlingsoldenglish-webfont.ttf", "OleoScript": "OleoScript-Regular.ttf", "OleoScriptSwashCaps": "OleoScriptSwashCaps-Regular.ttf", "Pacifico": "Pacifico.ttf", "PirataOne": "PirataOne-Regular.ttf", "Playball": "Playball-Regular.ttf", "pro_full_blockregular": "pro_full_block-webfont.ttf", "richardson_fancy_blockregular": "richardson_fancy_block-webfont.ttf", "RubikOne": "RubikOne-Regular.ttf", "RumRaisin": "RumRaisin-Regular.ttf", "Satisfy": "Satisfy-Regular.ttf", "SeymourOne": "SeymourOne-Regular.ttf", "spl28scriptregular": "spl28script-webfont.ttf", "ua_tiffanyregular": "tiffany-webfont.ttf", "TradeWinds": "TradeWinds-Regular.ttf", "mlb_tuscan_newmedium": "mlb_tuscan_new-webfont.ttf", "UnifrakturCook": "UnifrakturCook-Bold.ttf", "UnifrakturMaguntia": "UnifrakturMaguntia-Book.ttf", "Vibur": "Vibur-Regular.ttf", "Viga": "Viga-Regular.ttf", "Wellfleet": "Wellfleet-Regular.ttf", "WendyOne": "WendyOne-Regular.ttf", "Yellowtail": "Yellowtail-Regular.ttf"};
 
+const options = {
+	repo: 'OOTP-Uniform-Maker',
+	owner: 'eriqjaffe',
+	currentVersion: pkg.version
+};
+
 app2.use(express.urlencoded({limit: '200mb', extended: true, parameterLimit: 500000}));
+
+app2.get("/checkForUpdate", (req,res) => {
+	versionCheck(options, function (error, update) { // callback function
+		if (error) throw error;
+		if (update) { // print some update info if an update is available
+			res.json({
+				"update": true,
+				"currentVersion": pkg.version,
+				"name": update.name,
+				"url": update.url
+			})
+		} else {
+			res.json({
+				"update": false,
+				"currentVersion": pkg.version,
+			})
+		}
+	});
+})
 
 app2.get("/uploadImage", (req, res) => {
 	dialog.showOpenDialog(null, {
@@ -57,7 +85,6 @@ app2.get("/uploadImage", (req, res) => {
 							})
 						})
 					} else {
-						console.log("some other image")
 						image.getBase64(Jimp.AUTO, (err, ret) => {
 							res.json({
 								"filename": path.basename(result.filePaths[0]),
@@ -415,14 +442,35 @@ app2.post('/saveUniform', (req, res) => {
 	const pantsBelow = Buffer.from(req.body.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const capTexture = req.body.capTexture
-	const jerseyTexture = req.body.jerseyTexture
-	const pantsTexture = req.body.pantsTexture
+	const tmpCapTexture = req.body.capTexture
+	const tmpJerseyTexture = req.body.jerseyTexture
+	const tmpPantsTexture = req.body.pantsTexture
 	const showPlanket = req.body.showPlanket
 	const buttonPadSeams = req.body.buttonPadSeams
 	const seamsVisible = req.body.seamsVisible
 	const seamsOption = req.body.seamsOption
 	const json = Buffer.from(req.body.json, 'utf8')
+
+	if (tmpCapTexture.startsWith("data:image")) {
+		fs.writeFileSync(tempDir+"/tempCapTexture.png", tmpCapTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
+		var capTexture = tempDir+"/tempCapTexture.png"
+	} else {
+		var capTexture = __dirname+"/images/"+tmpCapTexture
+	}
+
+	if (tmpJerseyTexture.startsWith("data:image")) {
+		fs.writeFileSync(tempDir+"/tempJerseyTexture.png", tmpJerseyTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
+		var jerseyTexture = tempDir+"/tempJerseyTexture.png"
+	} else {
+		var jerseyTexture = __dirname+"/images/"+tmpJerseyTexture
+	}
+
+	if (tmpPantsTexture.startsWith("data:image")) {
+		fs.writeFileSync(tempDir+"/tempPantsTexture.png", tmpPantsTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
+		var pantsTexture = tempDir+"/tempPantsTexture.png"
+	} else {
+		var pantsTexture = __dirname+"/images/"+tmpPantsTexture
+	}
 
 	//fs.writeFileSync(app.getPath('downloads') + '/uniform_Unknown_Team_Home/uniform_' + req.body.name+'.uni', json)
 
@@ -484,7 +532,7 @@ app2.post('/saveUniform', (req, res) => {
 		// cap
 		let capBase = await Jimp.read(capBelow)
 		let capOverlay = await Jimp.read(capLogoCanvas)
-		let capTextureFile = await Jimp.read(__dirname+"/images/"+capTexture)
+		let capTextureFile = await Jimp.read(capTexture)
 		let capWM = await Jimp.read(__dirname+"/images/cap_watermark.png")
 		await capWM.color([{ apply: "mix", params: [req.body.capWatermarkColor, 100] }]);
 		await capBase.composite(capTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
@@ -496,7 +544,7 @@ app2.post('/saveUniform', (req, res) => {
 
 		// pants
 		let pantsBase = await Jimp.read(pantsBelow)
-		let pantsTextureFile = await Jimp.read(__dirname+"/images/"+pantsTexture)
+		let pantsTextureFile = await Jimp.read(pantsTexture)
 		let pantsOverlay = await Jimp.read(pantsLogoCanvas)
 		await pantsBase.composite(pantsTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await pantsBase.composite(pantsOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
@@ -509,7 +557,7 @@ app2.post('/saveUniform', (req, res) => {
 
 		// jersey diffuse map
 		let jerseyBase = await Jimp.read(jerseyBelow)
-		let jerseyTextureFile = await Jimp.read(__dirname+"/images/"+jerseyTexture)
+		let jerseyTextureFile = await Jimp.read(jerseyTexture)
 		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
 		await jerseyBase.composite(jerseyTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		if (buttonPadSeams == "true") {
@@ -584,7 +632,7 @@ app2.post('/saveUniform', (req, res) => {
 		// jersey with baked texture
 		let jerseyBakedBase = await Jimp.read(jerseyBelow)
 		let jerseyBakedOverlay = await Jimp.read(jerseyLogoCanvas)
-		let jerseyBakedTexture = await Jimp.read(__dirname+"/images/"+jerseyTexture)
+		let jerseyBakedTexture = await Jimp.read(jerseyTexture)
 		let jerseyBakedTexture2 = await Jimp.read(__dirname+"/images/texture_jersey_default.png")
 		if (buttonPadSeams == "true") {
 			let bpBakedSeamImg = await Jimp.read(__dirname+"/images/seams/seams_button_pad.png")
@@ -750,7 +798,11 @@ function createWindow () {
               click: async () => {
               await shell.openExternal('https://github.com/eriqjaffe/OOTP-Uniform-Maker')
               }
-          }
+          },
+		  {
+			  click: () => mainWindow.webContents.send('update','click'),
+			  label: 'Check For Updates',
+		  }
           ]
       }
       ]
@@ -758,7 +810,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}`);
     //mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}`);
 	
   
@@ -788,3 +840,4 @@ function getExtension(filename) {
 	var ext = path.extname(filename||'').split('.');
 	return ext[ext.length - 1];
 }
+
