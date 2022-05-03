@@ -130,6 +130,7 @@
                     "<div class='sp-button-container sp-cf'>",
                         "<button class='sp-cancel' href='#'></button>",
                         "<button type='button' class='sp-choose'></button>",
+                        "<button type='button' class='sp-eyedropper'><img src='./images/eyedropper.png'></button>",
                     "</div>",
                 "</div>",
             "</div>"
@@ -233,6 +234,7 @@
             cancelButton = container.find(".sp-cancel"),
             clearButton = container.find(".sp-clear"),
             chooseButton = container.find(".sp-choose"),
+            eyedropperButton = container.find(".sp-eyedropper"),
             toggleButton = container.find(".sp-palette-toggle"),
             isInput = boundElement.is("input"),
             isInputTypeColor = isInput && boundElement.attr("type") === "color" && inputTypeColorSupport(),
@@ -426,6 +428,50 @@
                     hide();
                 }
             });
+
+            eyedropperButton.on("click.spectrum", function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                const currentTab = $('#tabContainer').skeletabs('getCurrentInfo');
+                const eyeDropper = new EyeDropper();
+                jerseyLogoCanvas.setOverlayImage(null,jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+                pantsLogoCanvas.setOverlayImage(null,pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+                capLogoCanvas.setOverlayImage(null,capLogoCanvas.renderAll.bind(capLogoCanvas));
+                $("#jerseyOverlay").css("display","none");
+                $("#capOverlay").css("display","none");
+                $("#pantsOverlay").css("display","none");
+                eyeDropper.open().then(result => {
+			        console.log(result.sRGBHex)
+                    if($("#toggleJerseyGrid").is(':checked')){
+                        jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+                    }
+                    if($("#togglePantsGrid").is(':checked')){
+                        pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+                    }
+                    if($("#toggleCapGuides").is(":checked")){
+                        capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
+                    }
+                    switch(currentTab.currentIndex) {
+                        case 0:
+                            $("#jerseyOverlay").css("display","none");
+                            $("#capOverlay").css("display","inline-block");
+                            $("#pantsOverlay").css("display","inline-block");
+                            break;
+                        case 1:
+                            $("#jerseyOverlay").css("display","inline-block");
+                            $("#capOverlay").css("display","inline-block");
+                            $("#pantsOverlay").css("display","none");
+                            break;
+                        case 2:
+                            $("#jerseyOverlay").css("display","inline-block");
+                            $("#capOverlay").css("display","none");
+                            $("#pantsOverlay").css("display","inline-block");
+                            break;
+                    }
+                    setFromTextInput(result.sRGBHex)
+                    hide()
+                })
+            })
 
             toggleButton.text(opts.showPaletteOnly ? opts.togglePaletteMoreText : opts.togglePaletteLessText);
             toggleButton.on("click.spectrum", function (e) {
