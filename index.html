@@ -16,7 +16,7 @@
 	<script type="text/javascript" src="./scripts/spin.min.js"></script>
 	<script type="text/javascript" src="./scripts/fontfaceobserver.js"></script>
     <script type="text/javascript" src="./scripts/skeletabs.js"></script>
-	<script>if (window.module) module = window.module;</script>
+	<script type="text/javascript" src="./scripts/tinycolor-min.js"></script>
 	<link href='./scripts/uniformmaker.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/spectrum.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/menu.css' rel='stylesheet' type='text/css'>
@@ -352,9 +352,9 @@
                                             </tr>
                                         </table>
                                     </div>
-									<div class="jersey-accord-header jersey-inactive-header">Seams</div>
-									<div class="jersey-accord-content">
-										<table style="width:100%;">
+									<!-- <div class="jersey-accord-header jersey-inactive-header">Seams</div>
+									<div class="jersey-accord-content"> -->
+										<table style="width:100%; display:none;">
 											<tr class="color_tr">
 												<td class="checkCell"><input type="checkbox" id="seamsButtonPadCheck" checked></td>
 												<td colspan='2'><label>Button Pad Seam</label></td>
@@ -373,7 +373,7 @@
 												<td style="text-align:right;">&nbsp;</td>
 											</tr>
 										</table>
-									</div>
+									<!-- </div> -->
 									<div class="jersey-accord-header jersey-inactive-header">Basic Striping</div>
 									<div class="jersey-accord-content">
 										<table style="width:100%;">
@@ -1706,6 +1706,7 @@
                         <!--<input type="button" class="button" id="straightenObject" value="Reset Object Rotation" style="display:none;">-->
                         <input type="button" class="button" id="save" value="Save Uniform">
                         <input type="button" class="button" id="load" value="Load Uniform">
+						<input type="button" class="button" id="eyedropper" value="Eyedropper">
                         <input type="button" class="button copypaste" id="copy" value="Copy Object" onclick="copy()">
 						<input type="button" class="button copypaste" id="paste" value="Paste Object" onclick="paste()">
 						<input type="button" class="button" id="prefsButton" value="Preferences" style="display:none;">
@@ -1819,6 +1820,7 @@
 <script>
 	require('./renderer.js')
 	const semver = require('semver')
+	const { clipboard } = require('electron')
 
 	const spinnerOptions = {lines: 13, length: 28, width: 14, radius: 42, scale: 2, corners: 1, color: '#C8102E', opacity: 0.25, rotate: 0, direction: 1, speed: 1, trail: 60, fps: 20, zIndex: 2e9, className: 'spinner', top: '50%', left: '50%', shadow: false, hwaccel: false, position: 'absolute'}
     const target = document.getElementById('overlay');
@@ -2118,6 +2120,7 @@
 				$("#pantsOverlay").css("display","inline-block");
 				$("#pantsAndCapContainer").css("display","inline-block")
 				$("#heightMapContainer").css("display","none")
+				$("#eyedropper").css("display","inline-block")
 				break;
 			case 1:
 				$("#jerseyOverlay").css("display","inline-block");
@@ -2125,6 +2128,7 @@
 				$("#pantsOverlay").css("display","none");
 				$("#pantsAndCapContainer").css("display","inline-block")
 				$("#heightMapContainer").css("display","none")
+				$("#eyedropper").css("display","inline-block")
 				break;
 			case 2:
 				$("#jerseyOverlay").css("display","inline-block");
@@ -2132,6 +2136,7 @@
 				$("#pantsOverlay").css("display","inline-block");
 				$("#pantsAndCapContainer").css("display","inline-block")
 				$("#heightMapContainer").css("display","none")
+				$("#eyedropper").css("display","inline-block")
 				break;
 			case 3:
 				$("#jerseyOverlay").css("display","none");
@@ -2139,9 +2144,84 @@
 				$("#pantsOverlay").css("display","none");
 				$("#pantsAndCapContainer").css("display","none")
 				$("#heightMapContainer").css("display","inline-block")
+				$("#eyedropper").css("display","none")
 		}
 	})
-// JERSEY SPECIFIC
+
+	$("#eyedropper").on("click",function() {
+		if (!window.EyeDropper) {
+			alert('Your browser does not support the EyeDropper API');
+			return;
+		}
+		const currentTab = $('#tabContainer').skeletabs('getCurrentInfo');
+		console.log(currentTab.currentIndex)
+		const eyeDropper = new EyeDropper();
+		jerseyLogoCanvas.setOverlayImage(null,jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		pantsLogoCanvas.setOverlayImage(null,pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+		capLogoCanvas.setOverlayImage(null,capLogoCanvas.renderAll.bind(capLogoCanvas));
+		$("#jerseyOverlay").css("display","none");
+		$("#capOverlay").css("display","none");
+		$("#pantsOverlay").css("display","none");
+		eyeDropper.open().then(result => {
+			clipboard.writeText(result.sRGBHex)
+			console.log(clipboard.readText('selection'))
+			if($("#toggleJerseyGrid").is(':checked')){
+				jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+			}
+			if($("#togglePantsGrid").is(':checked')){
+				pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+			}
+			if($("#toggleCapGuides").is(":checked")){
+				capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
+			}
+			switch(currentTab.currentIndex) {
+				case 0:
+					$("#jerseyOverlay").css("display","none");
+					$("#capOverlay").css("display","inline-block");
+					$("#pantsOverlay").css("display","inline-block");
+					break;
+				case 1:
+					$("#jerseyOverlay").css("display","inline-block");
+					$("#capOverlay").css("display","inline-block");
+					$("#pantsOverlay").css("display","none");
+					break;
+				case 2:
+					$("#jerseyOverlay").css("display","inline-block");
+					$("#capOverlay").css("display","none");
+					$("#pantsOverlay").css("display","inline-block");
+					break;
+			}
+		}).catch(e => {
+			if($("#toggleJerseyGrid").is(':checked')){
+				jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+			}
+			if($("#togglePantsGrid").is(':checked')){
+				pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+			}
+			if($("#toggleCapGuides").is(":checked")){
+				capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
+			}
+			switch(currentTab.currentIndex) {
+				case 0:
+					$("#jerseyOverlay").css("display","none");
+					$("#capOverlay").css("display","inline-block");
+					$("#pantsOverlay").css("display","inline-block");
+					break;
+				case 1:
+					$("#jerseyOverlay").css("display","inline-block");
+					$("#capOverlay").css("display","inline-block");
+					$("#pantsOverlay").css("display","none");
+					break;
+				case 2:
+					$("#jerseyOverlay").css("display","inline-block");
+					$("#capOverlay").css("display","none");
+					$("#pantsOverlay").css("display","inline-block");
+					break;
+			}
+		});
+	})
+
+	// JERSEY SPECIFIC
 
 	initializeJersey()
 
@@ -2588,6 +2668,12 @@
 			}
         });
 		canvas.renderAll()
+		heightMapCanvas.getObjects().forEach(function(o) {
+			if (o.id == id) {
+				o.set("visible", state)
+			}
+		})
+		heightMapCanvas.renderAll()
 		reRenderBG("jersey");
 	})
 
@@ -2605,6 +2691,18 @@
 			}
 		})
 		canvas.renderAll();
+		heightMapCanvas.getObjects().forEach(function(o) {
+			console.log(o.id)
+			if ($.inArray(o.id, ids) > -1) {
+				
+				if (state == true) {
+					o.visible = true;
+				} else {
+					o.visible = false;
+				}
+			}
+		})
+		heightMapCanvas.renderAll()
 		reRenderBG("jersey");
 	})
 	
@@ -2724,6 +2822,15 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 					break;
 				case "edge":
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
@@ -2735,6 +2842,15 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 					break;
 				case "thick":
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
@@ -2746,6 +2862,15 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = true;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = true;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = true;
 					break;
 			}
 		} else {
@@ -2758,8 +2883,18 @@
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 		}
 		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
 		reRenderBG("jersey")
 	})
 
@@ -2782,7 +2917,7 @@
 				break;
 		}
 		if ($("#sleeveCuffCheck").is(":checked")) {
-			switch( $(this).val()) {
+			switch($(this).val()) {
 				case "offset":
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = true;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = true;
@@ -2793,6 +2928,15 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 					break;
 				case "edge":
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
@@ -2804,6 +2948,15 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 					break;
 				case "thick":
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
@@ -2815,8 +2968,17 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = true;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = true;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = true;
 					break;
-				}
+			}
 		} else {
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
@@ -2827,8 +2989,18 @@
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 		}
 		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
 		reRenderBG("jersey")
 	})
 
@@ -2839,6 +3011,9 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = true;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
 					$("#vNeck3Selectors").show()
 					$("#vNeck2Selectors").hide()
 					$("#vNeckOffsetSelectors").hide()
@@ -2847,6 +3022,9 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = true;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
 					$("#vNeck3Selectors").hide()
 					$("#vNeck2Selectors").show()
 					$("#vNeckOffsetSelectors").hide()
@@ -2855,6 +3033,9 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = true;
 					$("#vNeck3Selectors").hide()
 					$("#vNeck2Selectors").hide()
 					$("#vNeckOffsetSelectors").show()
@@ -2864,8 +3045,13 @@
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
+
+			heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
 		}
 		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
 		reRenderBG("jersey")
 	})
 
@@ -2875,6 +3061,9 @@
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = true;
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
+				heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = true;
+				heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
+				heightMapCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
 				$("#vNeck3Selectors").show()
 				$("#vNeck2Selectors").hide()
 				$("#vNeckOffsetSelectors").hide()
@@ -2883,6 +3072,9 @@
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = true;
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
+				heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
+				heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = true;
+				heightMapCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
 				$("#vNeck3Selectors").hide()
 				$("#vNeck2Selectors").show()
 				$("#vNeckOffsetSelectors").hide()
@@ -2891,12 +3083,16 @@
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = true;
+				heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
+				heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
+				heightMapCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = true;
 				$("#vNeck3Selectors").hide()
 				$("#vNeck2Selectors").hide()
 				$("#vNeckOffsetSelectors").show()
 				break;
 		}
 		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
 		reRenderBG("jersey")
 	})
 
@@ -2944,8 +3140,11 @@
 		if ($("#seamsCheck").is(":checked")) {
 			g.getObjects().forEach(function(o) {
 				o.set("visible", o.id == id)
+				heightMapCanvas.getObjects('image').find(p => p.id == o.id).set("visible", o.visible)
+				heightMapCanvas.renderAll()
 			})
 			g.addWithUpdate()
+			
 		}
 		if (id.startsWith("seamsStandard")) {
 			jerseyBelow.getObjects().find(o => o.id == 'jerseyPinstripesColor').set({
@@ -2971,12 +3170,16 @@
 	})
 
 	$("#seamsButtonPadCheck").on("change",function() {
-		if ($(this).is(":checked")) {
+		setSeams($(this).is(":checked"))
+		/* if ($(this).is(":checked")) {
 			jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+			heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
 		} else {
 			jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
-		}
+			heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",false)
+		} */
 		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
 	})
 
 	$("#buttonsType").on("change",function() {
@@ -2987,7 +3190,13 @@
 					g.getObjects().find(o => o.id === 'buttonsScript').visible = true;
 					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
 					g.getObjects().find(o => o.id === 'zipper').visible = false;
-					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					heightMapCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
+					//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					//heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
+					//heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",true)
+					setSeams(true)
 					if ($("#seamsType").val() == "seamsStandardToCollar") {
 						$("#seamsType").val("seamsStandardToPiping").trigger("change")
 					} else if ($("#seamsType").val() == "seamsRaglanToCollar") {
@@ -2998,7 +3207,13 @@
 					g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
 					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = true;
 					g.getObjects().find(o => o.id === 'zipper').visible = false;
-					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					heightMapCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
+					//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					//heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
+					//heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",true)
+					setSeams(true)
 					if ($("#seamsType").val() == "seamsStandardToCollar") {
 						$("#seamsType").val("seamsStandardToPiping").trigger("change")
 					} else if ($("#seamsType").val() == "seamsRaglanToCollar") {
@@ -3009,7 +3224,13 @@
 					g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
 					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
 					g.getObjects().find(o => o.id === 'zipper').visible = true;
-					jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+					heightMapCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'zipper').visible = true;
+					//jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+					//heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",false)
+					//heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",false)
+					setSeams(false)
 					if ($("#seamsType").val() == "seamsStandardToPiping") {
 						$("#seamsType").val("seamsStandardToCollar").trigger("change")
 					} else if ($("#seamsType").val() == "seamsRaglanToPiping") {
@@ -3021,17 +3242,32 @@
 			g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
 			g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
 			g.getObjects().find(o => o.id === 'zipper').visible = false;
-			jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+			heightMapCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
+			//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+			//heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
+			setSeams(true)
 		}
 		g.addWithUpdate()
 		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
 	})
 
 	$("#buttonsCheck").on("change",function() {
 		const g = jerseyLogoCanvas.getObjects().find(o => o.id === 'buttons')
 		g.set("visible", $(this).is(":checked"))
 		g.addWithUpdate()
+		if ($(this).is(":checked")) {
+			$("#buttonsType").trigger("change")
+		} else {
+			heightMapCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
+			setSeams(false)
+		}
 		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
 	})
 
 	$("#sleevesCheck").on("change",function() {
@@ -3643,6 +3879,30 @@
 		jerseyBelow.renderAll()
 		reRenderBG("jersey")
 	})
+	
+	function setSeams(buttonPadVisible) {
+		if (buttonPadVisible == true) {
+			jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+			heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
+			heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",true)
+			if ($("#seamsType").val().startsWith("seamsStandard")) {
+				$("#seamsType").val("seamsStandardToPiping").trigger("change") 
+			} else {
+				$("#seamsType").val("seamsRaglanToPiping").trigger("change") 
+			}
+		} else {
+			jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+			heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",false)
+			heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",false)
+			if ($("#seamsType").val().startsWith("seamsStandard")) {
+				$("#seamsType").val("seamsStandardToCollar").trigger("change") 
+			} else {
+				$("#seamsType").val("seamsRaglanToCollar").trigger("change") 
+			}
+		}
+		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
+	}
 	
 	// PANTS SPECIFIC
 
@@ -6355,9 +6615,65 @@
 	}
 
 	function initializeHeightMap() {
-		hmseamsButtonPad = new fabric.Image.fromURL('./images/seams/seams_button_pad.png', function(oImg) {
+		jerseyBelow.getObjects().forEach(function(o) {
+			if (o.id != "seams" && o.id != "buttons") {
+				if(o.heightMap == true) {
+					var _clipboard;
+					o.clone(function(cloned) {
+						cloned.set({
+							fill: tinycolor(o.fill).greyscale().lighten(35).toString(),
+							id: o.id,
+							heightMap: o.heightMap
+						})
+						if (cloned.type == 'group') {
+							cloned.getObjects().forEach(function(p) {
+								p.set({
+									fill: tinycolor(p.fill).greyscale().lighten(35).toString(),
+									id: p.id
+								})
+							})
+						}
+						heightMapCanvas.add(cloned)
+					});
+				}
+			}
+		})
+		jerseyLogoCanvas.getObjects().forEach(function(o) {
+			if (o.id != "seams" && o.id != "buttons") {
+				if(o.heightMap == true) {
+					var _clipboard;
+					o.clone(function(cloned) {
+						cloned.set({
+							fill: tinycolor(o.fill).greyscale().lighten(35).toString(),
+							id: o.id,
+							heightMap: o.heightMap
+						})
+						if (cloned.type == 'group') {
+							cloned.getObjects().forEach(function(p) {
+								p.set({
+									fill: tinycolor(p.fill).greyscale().lighten(35).toString(),
+									id: p.id
+								})
+							})
+						}
+						heightMapCanvas.add(cloned)
+					});
+				}
+			}
+		})
+		fabric.Image.fromURL('./images/planket.png', function(oImg) {
 			oImg.set({
-				id: hmseamsButtonPad,
+				id: 'planket',
+				visible: true,
+				opacity: 1.0
+			})
+			heightMapCanvas.add(oImg)
+			heightMapCanvas.sendToBack(oImg)
+		})
+
+		fabric.Image.fromURL('./images/seams/seams_button_pad.png', function(oImg) {
+			oImg.set({
+				id: 'seamsButtonPad',
 				visible: true,
 				opacity: 0.5
 			})
@@ -6365,9 +6681,9 @@
 			heightMapCanvas.sendToBack(oImg)
 		})
 
-		hmseamsStandardToPiping = new fabric.Image.fromURL('./images/seams/seams_standard_to_piping.png', function(oImg) {
+		fabric.Image.fromURL('./images/seams/seams_standard_to_piping.png', function(oImg) {
 			oImg.set({
-				id: hmseamsStandardToPiping,
+				id: 'seamsStandardToPiping',
 				visible: true,
 				opacity: 0.5
 			})
@@ -6375,9 +6691,9 @@
 			heightMapCanvas.sendToBack(oImg)
 		})
 
-		hmseamsStandardToCollar = new fabric.Image.fromURL('./images/seams/seams_standard_to_collar.png', function(oImg) {
+		fabric.Image.fromURL('./images/seams/seams_standard_to_collar.png', function(oImg) {
 			oImg.set({
-				id: 'hmseamsStandardToCollar',
+				id: 'seamsStandardToCollar',
 				visible: false,
 				opacity: 0.5
 			})
@@ -6385,9 +6701,9 @@
 			heightMapCanvas.sendToBack(oImg)
 		})
 
-		hmseamsRaglanToPiping = new fabric.Image.fromURL('./images/seams/seams_raglan_to_piping.png', function(oImg) {
+		fabric.Image.fromURL('./images/seams/seams_raglan_to_piping.png', function(oImg) {
 			oImg.set({
-				id: 'hmseamsRaglanToPiping',
+				id: 'seamsRaglanToPiping',
 				visible: false,
 				opacity: 0.5
 			})
@@ -6395,9 +6711,9 @@
 			heightMapCanvas.sendToBack(oImg)
 		})
 
-		hmseamsRaglanToCollar = new fabric.Image.fromURL('./images/seams/seams_raglan_to_collar.png', function(oImg) {
+		fabric.Image.fromURL('./images/seams/seams_raglan_to_collar.png', function(oImg) {
 			oImg.set({
-				id: 'hmseamsRaglanToCollar',
+				id: 'seamsRaglanToCollar',
 				visible: false,
 				opacity: 0.5
 			})
@@ -6405,15 +6721,59 @@
 			heightMapCanvas.sendToBack(oImg)
 		})
 
-		rect = new fabric.Rect({
-			top: 512,
-			left: 256,
-			height: 100,
-			width: 100,
-			fill: '#ff0000'
+		fabric.Image.fromURL("./images/buttons_no_script.png", function (oImg) {
+			oImg.set({
+				left: 0, 
+                top: 0,
+				id: 'buttonsNoScript',
+				visible: false,
+				selectable: false,
+				evented: false,
+				opacity: 0.75
+			})
+			oImg.set('shadow', new fabric.Shadow({
+				color: '#000000',
+				blur: 5,
+				offsetX: 0,
+				offsetY: 2
+			}))
+			heightMapCanvas.add(oImg)
+			heightMapCanvas.bringToFront(oImg)
 		})
 
-		heightMapCanvas.add(rect)
+		fabric.Image.fromURL("./images/buttons_script.png", function (oImg) {
+			oImg.set({
+				left: 0, 
+                top: 0,
+				id: 'buttonsScript',
+				visible: true,
+				selectable: false,
+				evented: false,
+				opacity: 0.75
+			})
+			oImg.set('shadow', new fabric.Shadow({
+				color: '#000000',
+				blur: 5,
+				offsetX: 0,
+				offsetY: 2
+			}))
+			heightMapCanvas.add(oImg)
+			heightMapCanvas.bringToFront(oImg)
+		})
+
+ 		fabric.Image.fromURL("./images/zipper.png", function (oImg) {
+			oImg.set({
+				left: 0, 
+                top: 0,
+				id: 'zipper',
+				visible: false,
+				selectable: false,
+				evented: false,
+				clipPath: clippingPath
+			})
+			heightMapCanvas.add(oImg)
+			heightMapCanvas.bringToFront(oImg)
+		})
 
 		/* jerseyLogoCanvas.getObjects().forEach(function(o) {
 			if(o.visible && o.heightMap) {
@@ -6430,7 +6790,7 @@
 		
 		heightMapCanvas.renderAll()
 		heightMapCanvas.getObjects().forEach(function(o) {
-			console.log(o)
+			console.log(o.id)
 		})
 	}
 // GENERAL PURPOSE RENDERING FUNCTIONS
@@ -6534,6 +6894,33 @@
 			canvas.add(makersMark);
 			canvas.renderAll();
 		})
+		if (type == "jersey") {
+			console.log("adding makers mark")
+			var o = heightMapCanvas.getObjects().find(o => o.id === id);
+			heightMapCanvas.remove(o);
+			fabric.loadSVGFromURL(mark,function(svg,options) {
+			var makersMark = new fabric.util.groupSVGElements(svg,options);
+				makersMark.set("angle", 0)
+				makersMark.scaleToHeight(height);
+				makersMark.setOptions ({
+					originX: 'center',
+					originY: 'center',
+					left: left,
+					top: top,
+					angle: angle,
+					centeredScaling: true,
+					transparentCorners: true,
+					lockUniScaling: true,
+					id: id,
+					fill: 'white',
+					visible: visible,
+					heightMap: true
+				});
+				makersMark.setCoords();
+				heightMapCanvas.add(makersMark);
+				heightMapCanvas.renderAll();
+			})
+		}
 	}
 
 	function uploadCustomTexture(type) {
