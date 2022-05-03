@@ -1691,6 +1691,9 @@
                     </div>
                     <div style="text-align:center; margin-top:5px;">
                         <!--<input type="button" class="button" id="straightenObject" value="Reset Object Rotation" style="display:none;">-->
+						<input type="button" class="button" id="savePants" value="Save Pants" style="display:none;">
+						<input type="button" class="button" id="saveCap" value="Save Cap" style="display:none;">
+						<input type="button" class="button" id="saveJersey" value="Save Jersey" style="display:none;">
                         <input type="button" class="button" id="save" value="Save Uniform">
                         <input type="button" class="button" id="load" value="Load Uniform">
                         <input type="button" class="button copypaste" id="copy" value="Copy Object" onclick="copy()">
@@ -1698,6 +1701,7 @@
 						<input type="button" class="button" id="prefsButton" value="Preferences" style="display:none;">
 						<input type="button" class="button" id="aboutUniformMaker" value="About Uniform Maker" style="display:none;">
 						<input type="button" class="button" id="checkForUpdates" value="Check For Updates" style="display:none;">
+						<input type="button" class="button" id="eyedropper" value="Eyedropper">
                     </div>
                 </div>
             </div>
@@ -1713,7 +1717,7 @@
 			<div class="question">What is Out Of The Park Baseball?</div><br>
 			<div class="answer">Out Of The Park Baseball is an award winning baseball management simulation published by OOTP Developments.  For more information about OOTP, as well as the other games they make, <a href="http://www.ootpdevelopments.com" target="_blank">visit their site</a>.</div><br>
 			<div class="question">How did you do this?</div><br>
-			<div class="answer">The Uniform Maker is built using <a href="https://nodejs.org/en/about/" target="_blank">Node.js</a> and <a href="https://www.electronjs.org/" target="_blank">Electron</a>.  So it's written entirely in HTML and JavaScript like pretty much any website.</div></br>
+			<div class="answer">The Uniform Maker is built using <a href="https://nodejs.org/en/about/" target="_blank">Node.js</a> and <a href="https://www.electronjs.org/" target="_blank">Electron</a>.  So it's written entirely in HTML and JavaScript like pretty much any website.  It also leverages the <a href="http://fabricjs.com/" target="_blank">Fabric.js</a> library for all of the graphical stuff.</div></br>
 			<div class="question">Who is responsible for this thing?</div>
 			<div class="answer">That would be me.  My name is Eriq Jaffe, and I've been playing OOTP Baseball since 2004.  Feel free to <a href="mailto:eriqjaffe@gmail.com">shoot me an email</a> with any questions or comments.  You can also view the source code for this on <a href="https://github.com/eriqjaffe/OOTP-Uniform-Maker" target="_blank">GitHub</a>.<br><br>Some of the textures and shapes are taken directly from OOTP, but a lot of them are based on the work of Gern44, silvam14, txranger, Deft, NoPepper, Reds1, davwms and probably several others (my record keeping isn't all that great, and I'm not 100% sure where every piece came from - if I'm using one of your components and I forgot to give you credit, thanks!).<br><br>I'd also like to give an additional shout out to Conrad Burry, who created some of the default fonts.</div><br>
 		</div>
@@ -1806,6 +1810,7 @@
 <script>
 	require('./renderer.js')
 	const semver = require('semver')
+	const { clipboard } = require('electron')
 
 	const spinnerOptions = {lines: 13, length: 28, width: 14, radius: 42, scale: 2, corners: 1, color: '#C8102E', opacity: 0.25, rotate: 0, direction: 1, speed: 1, trail: 60, fps: 20, zIndex: 2e9, className: 'spinner', top: '50%', left: '50%', shadow: false, hwaccel: false, position: 'absolute'}
     const target = document.getElementById('overlay');
@@ -6948,6 +6953,80 @@
 		$("#"+$(this).data('span')).change();
 	})
 
+	$("#eyedropper").on("click",function() {
+		if (!window.EyeDropper) {
+			alert('Your browser does not support the EyeDropper API');
+			return;
+		}
+		const currentTab = $('#tabContainer').skeletabs('getCurrentInfo');
+		console.log(currentTab.currentIndex)
+		const eyeDropper = new EyeDropper();
+		jerseyLogoCanvas.setOverlayImage(null,jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		pantsLogoCanvas.setOverlayImage(null,pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+		capLogoCanvas.setOverlayImage(null,capLogoCanvas.renderAll.bind(capLogoCanvas));
+		$("#jerseyOverlay").css("display","none");
+		$("#capOverlay").css("display","none");
+		$("#pantsOverlay").css("display","none");
+		eyeDropper.open().then(result => {
+			clipboard.writeText(result.sRGBHex)
+			console.log(clipboard.readText('selection'))
+			if($("#toggleJerseyGrid").is(':checked')){
+				jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+			}
+			if($("#togglePantsGrid").is(':checked')){
+				pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+			}
+			if($("#toggleCapGuides").is(":checked")){
+				capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
+			}
+			switch(currentTab.currentIndex) {
+				case 0:
+					$("#jerseyOverlay").css("display","none");
+					$("#capOverlay").css("display","inline-block");
+					$("#pantsOverlay").css("display","inline-block");
+					break;
+				case 1:
+					$("#jerseyOverlay").css("display","inline-block");
+					$("#capOverlay").css("display","inline-block");
+					$("#pantsOverlay").css("display","none");
+					break;
+				case 2:
+					$("#jerseyOverlay").css("display","inline-block");
+					$("#capOverlay").css("display","none");
+					$("#pantsOverlay").css("display","inline-block");
+					break;
+			}
+		}).catch(e => {
+			alert(e);
+			if($("#toggleJerseyGrid").is(':checked')){
+				jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+			}
+			if($("#togglePantsGrid").is(':checked')){
+				pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+			}
+			if($("#toggleCapGuides").is(":checked")){
+				capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
+			}
+			switch(currentTab.currentIndex) {
+				case 0:
+					$("#jerseyOverlay").css("display","none");
+					$("#capOverlay").css("display","inline-block");
+					$("#pantsOverlay").css("display","inline-block");
+					break;
+				case 1:
+					$("#jerseyOverlay").css("display","inline-block");
+					$("#capOverlay").css("display","inline-block");
+					$("#pantsOverlay").css("display","none");
+					break;
+				case 2:
+					$("#jerseyOverlay").css("display","inline-block");
+					$("#capOverlay").css("display","none");
+					$("#pantsOverlay").css("display","inline-block");
+					break;
+			}
+		});
+	})
+
 // IMAGEMAGICK FUNCTIONS
 	
 	$(".removeColorRange").on("click",function(e) {
@@ -7252,6 +7331,265 @@
 	})
 
 // LOADING AND SAVING FUNCTIONS
+	$("#saveCap").on("click",function(e){
+		showOverlay();
+		capBelow.setOverlayImage(null,capBelow.renderAll.bind(capBelow));
+
+		var startYear = parseInt($("#startYear").val());
+		var endYear = parseInt($("#endYear").val())
+		var yearRange = "";
+		var teamName = "";
+		if (startYear > endYear && endYear > 0) {
+			alert("The start year has to be before the end year!");
+			return false;
+		}
+		if (startYear == endYear && startYear > 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear == 0 && endYear > 0) {
+			yearRange = $("#endYear").val();
+		} else if (startYear > 0 && endYear == 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear > 0 && endYear > 0) {
+			yearRange = $("#startYear").val()+"-"+$("#endYear").val()
+		} else {
+			yearRange = ""
+		}
+		if (yearRange.length > 0) {
+			yearRange = "_"+yearRange;
+		}
+		if ($("#teamName").val().length == 0) {
+			teamName = "Unknown_Team";
+		} else {
+			teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
+		}
+		teamName = teamName.split(' ').join('_');
+		var fileName = "caps_"+teamName+"_"+$("#uniformType").val()+yearRange;
+
+		if ($("#toggleCapGuides").is(':checked')){
+			capLogoCanvas.setOverlayImage(null,capLogoCanvas.renderAll.bind(capLogoCanvas));
+		}
+
+		capBelow.setDimensions({ width: 512, height: 512 });
+    	capBelow.setZoom(1)
+		capLogoCanvas.setDimensions({ width: 512, height: 512 });
+    	capLogoCanvas.setZoom(1)
+
+		$.ajax({
+		 	type: "POST",
+			url: "http://127.0.0.1:"+port+"/saveCap",
+			dataType: "json",
+			data: {
+				capLogoCanvas: capLogoCanvas.toDataURL(),
+				capBelow: capBelow.toDataURL(),
+				name: fileName,
+				capWatermarkColor: idealTextColor(capBelow.backgroundColor),
+				capTexture: ($("#capTextureSelect").val() == "custom") ? customCapTexture : $("#capTextureSelect").val(),
+			},
+			success: function(data) {
+				if (data.result == "error") {
+					if (data.errno == -4082) {
+						alert("An error occurred saving the file, it appears to already be open.\n\nClose the file and try again!")
+					} else {
+						alert("An error occurred saving the file.")
+					}
+				}
+
+				capBelow.setDimensions({ width: capBelow.getWidth() * 0.75, height: capBelow.getHeight() * 0.75 });
+				capBelow.setZoom(scaleRatio)
+				capLogoCanvas.setDimensions({ width: capLogoCanvas.getWidth() * 0.75, height: capLogoCanvas.getHeight() * 0.75 });
+				capLogoCanvas.setZoom(scaleRatio)
+
+				if ($("#toggleCapGuides").is(":checked")) {
+					capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
+				}
+
+				hideOverlay()
+			}
+		})
+
+	})
+
+	$("#savePants").on("click",function(e){
+		showOverlay();
+		pantsBelow.setOverlayImage(null,pantsBelow.renderAll.bind(pantsBelow));
+
+		var startYear = parseInt($("#startYear").val());
+		var endYear = parseInt($("#endYear").val())
+		var yearRange = "";
+		var teamName = "";
+		if (startYear > endYear && endYear > 0) {
+			alert("The start year has to be before the end year!");
+			return false;
+		}
+		if (startYear == endYear && startYear > 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear == 0 && endYear > 0) {
+			yearRange = $("#endYear").val();
+		} else if (startYear > 0 && endYear == 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear > 0 && endYear > 0) {
+			yearRange = $("#startYear").val()+"-"+$("#endYear").val()
+		} else {
+			yearRange = ""
+		}
+		if (yearRange.length > 0) {
+			yearRange = "_"+yearRange;
+		}
+		if ($("#teamName").val().length == 0) {
+			teamName = "Unknown_Team";
+		} else {
+			teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
+		}
+		teamName = teamName.split(' ').join('_');
+		var fileName = "pants_"+teamName+"_"+$("#uniformType").val()+yearRange;
+
+		if ($("#togglePantsGrid").is(':checked')){
+			pantsLogoCanvas.setOverlayImage(null,pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+		}
+
+		pantsBelow.setDimensions({ width: 512, height: 512 });
+    	pantsBelow.setZoom(1)
+		pantsLogoCanvas.setDimensions({ width: 512, height: 512 });
+    	pantsLogoCanvas.setZoom(1)
+
+		$.ajax({
+		 	type: "POST",
+			url: "http://127.0.0.1:"+port+"/savePants",
+			dataType: "json",
+			data: {
+				pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
+				pantsBelow: pantsBelow.toDataURL(),
+				name: fileName,
+				pantsWatermarkColor: idealTextColor(pantsBelow.backgroundColor),
+				pantsTexture: ($("#pantsTextureSelect").val() == "custom") ? customPantsTexture : $("#pantsTextureSelect").val(),
+			},
+			success: function(data) {
+				if (data.result == "error") {
+					if (data.errno == -4082) {
+						alert("An error occurred saving the file, it appears to already be open.\n\nClose the file and try again!")
+					} else {
+						alert("An error occurred saving the file.")
+					}
+				}
+
+				pantsBelow.setDimensions({ width: pantsBelow.getWidth() * 0.75, height: pantsBelow.getHeight() * 0.75 });
+				pantsBelow.setZoom(scaleRatio)
+				pantsLogoCanvas.setDimensions({ width: pantsLogoCanvas.getWidth() * 0.75, height: pantsLogoCanvas.getHeight() * 0.75 });
+				pantsLogoCanvas.setZoom(scaleRatio)
+
+				pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));
+
+				if	($("#togglePantsGrid").is(':checked')) {
+					pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+				}
+
+				hideOverlay()
+			}
+		})
+	})
+
+	$("#saveJersey").on("click",function(e){
+		showOverlay()
+		jerseyBelow.setOverlayImage(null,jerseyBelow.renderAll.bind(jerseyBelow));
+		var showPlanket = false
+		
+		const buttonGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons')
+		const seamsGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'seams')
+		const buttonPadSeams = (jerseyLogoCanvas.backgroundImage != null)
+		const seamsVisible = seamsGroup.visible
+		const seamsOption = $("#seamsType").val()
+
+		var startYear = parseInt($("#startYear").val());
+		var endYear = parseInt($("#endYear").val())
+		var yearRange = "";
+		var teamName = "";
+		if (startYear > endYear && endYear > 0) {
+			alert("The start year has to be before the end year!");
+			return false;
+		}
+		if (startYear == endYear && startYear > 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear == 0 && endYear > 0) {
+			yearRange = $("#endYear").val();
+		} else if (startYear > 0 && endYear == 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear > 0 && endYear > 0) {
+			yearRange = $("#startYear").val()+"-"+$("#endYear").val()
+		} else {
+			yearRange = ""
+		}
+		if (yearRange.length > 0) {
+			yearRange = "_"+yearRange;
+		}
+		if ($("#teamName").val().length == 0) {
+			teamName = "Unknown_Team";
+		} else {
+			teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
+		}
+		teamName = teamName.split(' ').join('_');
+		var fileName = "jerseys_"+teamName+"_"+$("#uniformType").val()+yearRange;
+
+		if ($("#toggleJerseyGrid").is(':checked')){
+			jerseyLogoCanvas.setOverlayImage(null,jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		}
+
+		jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		seamsGroup.visible = false;
+
+		if (buttonGroup.visible == true) {
+			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons').getObjects().forEach(function(o) {
+				if (o.id != "zipper" && o.visible == true) {
+					showPlanket = true
+				}		
+			})
+		} else {
+			showPlanket = false
+		}
+
+		jerseyBelow.setDimensions({ width: 512, height: 1024 });
+    	jerseyBelow.setZoom(1)
+		jerseyLogoCanvas.setDimensions({ width: 512, height: 1024 });
+    	jerseyLogoCanvas.setZoom(1)
+
+		$.ajax({
+		 	type: "POST",
+			url: "http://127.0.0.1:"+port+"/saveJersey",
+			dataType: "json",
+			data: {
+				jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
+				jerseyBelow: jerseyBelow.toDataURL(),
+				name: fileName,
+				jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
+				jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
+				showPlanket: showPlanket,
+				buttonPadSeams: buttonPadSeams,
+				seamsVisible: seamsVisible,
+				seamsOption: $("#seamsType").val()
+			},
+			success: function(data) {
+				if (data.result == "error") {
+					if (data.errno == -4082) {
+						alert("An error occurred saving the file, it appears to already be open.\n\nClose the file and try again!")
+					} else {
+						alert("An error occurred saving the file.")
+					}
+				}
+
+				jerseyBelow.setDimensions({ width: jerseyBelow.getWidth() * 0.75, height: jerseyBelow.getHeight() * 0.75 });
+				jerseyBelow.setZoom(scaleRatio)
+				jerseyLogoCanvas.setDimensions({ width: jerseyLogoCanvas.getWidth() * 0.75, height: jerseyLogoCanvas.getHeight() * 0.75 });
+				jerseyLogoCanvas.setZoom(scaleRatio)
+
+				jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
+
+				if	($("#toggleJerseyGrid").is(':checked')) {
+					jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+				}
+
+				hideOverlay()
+			}
+		})
+	})
 
 	$("#save").on("click",function(e) {
 		showOverlay();

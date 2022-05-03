@@ -8,6 +8,18 @@ ipcRenderer.on('save-uniform', (event, data) => {
     $("#save").trigger("click")
 });
 
+ipcRenderer.on('save-cap', (event, data) => {
+    $("#saveCap").trigger("click")
+});
+
+ipcRenderer.on('save-pants', (event, data) => {
+    $("#savePants").trigger("click")
+});
+
+ipcRenderer.on('save-jersey', (event, data) => {
+    $("#saveJersey").trigger("click")
+});
+
 ipcRenderer.on('about', (event, data) => {
     $("#aboutUniformMaker").trigger("click")
 });
