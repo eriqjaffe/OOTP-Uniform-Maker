@@ -389,7 +389,7 @@ Here are the basic themeable display options (colors, fonts, global widths)
     float: left;
 }
 .sp-initial span {
-    width: 30px;
+    width: 20px;
     height: 25px;
     border:none;
     display:block;
@@ -482,7 +482,7 @@ Here are the basic themeable display options (colors, fonts, global widths)
     border: none;
     background: transparent;
     line-height: 1;
-    padding: 0 8px;
+    padding: 0 6px;
     height: 25px;
     text-transform: capitalize;
     text-align: center;
