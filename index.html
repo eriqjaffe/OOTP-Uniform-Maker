@@ -16,7 +16,7 @@
 	<script type="text/javascript" src="./scripts/spin.min.js"></script>
 	<script type="text/javascript" src="./scripts/fontfaceobserver.js"></script>
     <script type="text/javascript" src="./scripts/skeletabs.js"></script>
-	<script>if (window.module) module = window.module;</script>
+	<script type="text/javascript" src="./scripts/tinycolor-min.js"></script>
 	<link href='./scripts/uniformmaker.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/spectrum.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/menu.css' rel='stylesheet' type='text/css'>
@@ -117,13 +117,20 @@
 						<canvas id="jerseyComposite" width="384" height="768" style="position:relative; top:0; float:left; z-index:1;"></canvas>
 						<canvas id="jerseyAbove" width="512" height="1024" style="position:relative; top:0; float:left; z-index:2;"></canvas>
 					</div>
-					<div id="pantsContainer">
-						<canvas id="pantsComposite" width="384" height="384" style="position:relative; top:0; float:right; z-index:1;"></canvas>
-						<canvas id="pantsAbove" width="512" height="512" style="position:relative; top:0; float:right; z-index:2;"></canvas>
-					</div>
-					<div id="capContainer">
-						<canvas id="capComposite" width="384" height="384" style="position:absolute; top:0; float:right; z-index:1;"></canvas>
-						<canvas id="capAbove" width="512" height="512" style="position:absolute; top:0; float:right; z-index:2;"></canvas>
+					<div>
+						<div id="heightMapContainer" style="display:none; float:right;">
+							<canvas id="heightMap" width="512" height="1024" style="position:relative; top:0; float:right; z-index:1;"></canvas>
+						</div>
+						<div id="pantsAndCapContainer" style="display:inline-block;">
+							<div id="pantsContainer">
+								<canvas id="pantsComposite" width="384" height="384" style="position:relative; top:0; float:right; z-index:1;"></canvas>
+								<canvas id="pantsAbove" width="512" height="512" style="position:relative; top:0; float:right; z-index:2;"></canvas>
+							</div>
+							<div id="capContainer">
+								<canvas id="capComposite" width="384" height="384" style="position:absolute; top:0; float:right; z-index:1;"></canvas>
+								<canvas id="capAbove" width="512" height="512" style="position:absolute; top:0; float:right; z-index:2;"></canvas>
+							</div>
+						</div>
 					</div>
                     <div id="tipContainer">
 						<span id="tipSpan"></span>
@@ -169,6 +176,9 @@
                                 <li class="skltbs-tab-item">
                                 <button class="skltbs-tab">Cap</button>
                                 </li>
+								<li class="skltbs-tab-item">
+								<button class="skltbs-tab">Height Map</button>
+								</li>
                             </ul>
                             <div class="skltbs-panel-group">
                                 <div class="skltbs-panel" id="jerseyPanel">
@@ -352,9 +362,9 @@
                                             </tr>
                                         </table>
                                     </div>
-									<div class="jersey-accord-header jersey-inactive-header">Seams</div>
-									<div class="jersey-accord-content">
-										<table style="width:100%;">
+									<!-- <div class="jersey-accord-header jersey-inactive-header">Seams</div>
+									<div class="jersey-accord-content"> -->
+										<table style="width:100%; display:none;">
 											<tr class="color_tr">
 												<td class="checkCell"><input type="checkbox" id="seamsButtonPadCheck" checked></td>
 												<td colspan='2'><label>Button Pad Seam</label></td>
@@ -373,7 +383,7 @@
 												<td style="text-align:right;">&nbsp;</td>
 											</tr>
 										</table>
-									</div>
+									<!-- </div> -->
 									<div class="jersey-accord-header jersey-inactive-header">Basic Striping</div>
 									<div class="jersey-accord-content">
 										<table style="width:100%;">
@@ -1695,6 +1705,9 @@
 										</table>
 									</div>
                                 </div>
+								<div class="skltbs-panel" id="heightPanel">
+
+								</div>
                             </div>
                             </div>
                         </div>
@@ -1707,6 +1720,7 @@
 						<input type="button" class="button" id="saveJersey" value="Save Jersey" style="display:none;">
                         <input type="button" class="button" id="save" value="Save Uniform">
                         <input type="button" class="button" id="load" value="Load Uniform">
+						<input type="button" class="button" id="eyedropper" value="Eyedropper">
                         <input type="button" class="button copypaste" id="copy" value="Copy Object" onclick="copy()">
 						<input type="button" class="button copypaste" id="paste" value="Paste Object" onclick="paste()">
 						<input type="button" class="button" id="prefsButton" value="Preferences" style="display:none;">
@@ -1837,6 +1851,9 @@
     const capTextureCanvas = document.getElementById('capTexture');
 	const capTextureContext = capTextureCanvas.getContext('2d');
 
+	//const heightMap = document.getElementById('heightMap');
+	//const heightMapContext = heightMapCanvas.getContext('2d')
+
 // FABRIC JS STUFF
 
     fabric.Object.prototype.set({
@@ -1845,6 +1862,12 @@
 		cornerSize: 12,
 		transparentCorners: true
 	});
+
+	var heightMapCanvas = new fabric.StaticCanvas('heightMap',{
+		enableRetinaScaling: false,
+		preserveObjectStacking: true,
+		backgroundColor: 'white'
+	})
 
     var jerseyBelow = new fabric.StaticCanvas('jerseyBelow',{
 		enableRetinaScaling: false,
@@ -1903,6 +1926,10 @@
     capBelow.setZoom(scaleRatio)
 	capLogoCanvas.setDimensions({ width: capLogoCanvas.getWidth() * 0.75, height: capLogoCanvas.getHeight() * 0.75 });
     capLogoCanvas.setZoom(scaleRatio)
+	heightMapCanvas.setDimensions({ width: heightMapCanvas.getWidth() * 0.75, height: heightMapCanvas.getHeight() * 0.75 });
+    heightMapCanvas.setZoom(scaleRatio)
+	
+	heightMapCanvas.setBackgroundImage("./images/jersey_height_map.png", heightMapCanvas.renderAll.bind(heightMapCanvas));
 
 // DOCUMENT FUNCTIONS
 
@@ -2106,18 +2133,107 @@
 				$("#jerseyOverlay").css("display","none");
 				$("#capOverlay").css("display","inline-block");
 				$("#pantsOverlay").css("display","inline-block");
+				$("#pantsAndCapContainer").css("display","inline-block")
+				$("#heightMapContainer").css("display","none")
+				$("#eyedropper").css("display","inline-block")
 				break;
 			case 1:
 				$("#jerseyOverlay").css("display","inline-block");
 				$("#capOverlay").css("display","inline-block");
 				$("#pantsOverlay").css("display","none");
+				$("#pantsAndCapContainer").css("display","inline-block")
+				$("#heightMapContainer").css("display","none")
+				$("#eyedropper").css("display","inline-block")
 				break;
 			case 2:
 				$("#jerseyOverlay").css("display","inline-block");
 				$("#capOverlay").css("display","none");
 				$("#pantsOverlay").css("display","inline-block");
+				$("#pantsAndCapContainer").css("display","inline-block")
+				$("#heightMapContainer").css("display","none")
+				$("#eyedropper").css("display","inline-block")
 				break;
+			case 3:
+				$("#jerseyOverlay").css("display","none");
+				$("#capOverlay").css("display","none");
+				$("#pantsOverlay").css("display","none");
+				$("#pantsAndCapContainer").css("display","none")
+				$("#heightMapContainer").css("display","inline-block")
+				$("#eyedropper").css("display","none")
 		}
+	})
+
+	$("#eyedropper").on("click",function() {
+		if (!window.EyeDropper) {
+			alert('Your browser does not support the EyeDropper API');
+			return;
+		}
+		const currentTab = $('#tabContainer').skeletabs('getCurrentInfo');
+		console.log(currentTab.currentIndex)
+		const eyeDropper = new EyeDropper();
+		jerseyLogoCanvas.setOverlayImage(null,jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		pantsLogoCanvas.setOverlayImage(null,pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+		capLogoCanvas.setOverlayImage(null,capLogoCanvas.renderAll.bind(capLogoCanvas));
+		$("#jerseyOverlay").css("display","none");
+		$("#capOverlay").css("display","none");
+		$("#pantsOverlay").css("display","none");
+		eyeDropper.open().then(result => {
+			clipboard.writeText(result.sRGBHex)
+			console.log(clipboard.readText('selection'))
+			if($("#toggleJerseyGrid").is(':checked')){
+				jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+			}
+			if($("#togglePantsGrid").is(':checked')){
+				pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+			}
+			if($("#toggleCapGuides").is(":checked")){
+				capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
+			}
+			switch(currentTab.currentIndex) {
+				case 0:
+					$("#jerseyOverlay").css("display","none");
+					$("#capOverlay").css("display","inline-block");
+					$("#pantsOverlay").css("display","inline-block");
+					break;
+				case 1:
+					$("#jerseyOverlay").css("display","inline-block");
+					$("#capOverlay").css("display","inline-block");
+					$("#pantsOverlay").css("display","none");
+					break;
+				case 2:
+					$("#jerseyOverlay").css("display","inline-block");
+					$("#capOverlay").css("display","none");
+					$("#pantsOverlay").css("display","inline-block");
+					break;
+			}
+		}).catch(e => {
+			if($("#toggleJerseyGrid").is(':checked')){
+				jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+			}
+			if($("#togglePantsGrid").is(':checked')){
+				pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+			}
+			if($("#toggleCapGuides").is(":checked")){
+				capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
+			}
+			switch(currentTab.currentIndex) {
+				case 0:
+					$("#jerseyOverlay").css("display","none");
+					$("#capOverlay").css("display","inline-block");
+					$("#pantsOverlay").css("display","inline-block");
+					break;
+				case 1:
+					$("#jerseyOverlay").css("display","inline-block");
+					$("#capOverlay").css("display","inline-block");
+					$("#pantsOverlay").css("display","none");
+					break;
+				case 2:
+					$("#jerseyOverlay").css("display","inline-block");
+					$("#capOverlay").css("display","none");
+					$("#pantsOverlay").css("display","inline-block");
+					break;
+			}
+		});
 	})
 
 	// JERSEY SPECIFIC
@@ -2621,6 +2737,12 @@
 			}
         });
 		canvas.renderAll()
+		heightMapCanvas.getObjects().forEach(function(o) {
+			if (o.id == id) {
+				o.set("visible", state)
+			}
+		})
+		heightMapCanvas.renderAll()
 		reRenderBG("jersey");
 	})
 
@@ -2638,6 +2760,18 @@
 			}
 		})
 		canvas.renderAll();
+		heightMapCanvas.getObjects().forEach(function(o) {
+			console.log(o.id)
+			if ($.inArray(o.id, ids) > -1) {
+				
+				if (state == true) {
+					o.visible = true;
+				} else {
+					o.visible = false;
+				}
+			}
+		})
+		heightMapCanvas.renderAll()
 		reRenderBG("jersey");
 	})
 	
@@ -2757,6 +2891,15 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 					break;
 				case "edge":
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
@@ -2768,6 +2911,15 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 					break;
 				case "thick":
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
@@ -2779,6 +2931,15 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = true;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = true;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = true;
 					break;
 			}
 		} else {
@@ -2791,8 +2952,18 @@
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 		}
 		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
 		reRenderBG("jersey")
 	})
 
@@ -2815,7 +2986,7 @@
 				break;
 		}
 		if ($("#sleeveCuffCheck").is(":checked")) {
-			switch( $(this).val()) {
+			switch($(this).val()) {
 				case "offset":
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = true;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = true;
@@ -2826,6 +2997,15 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 					break;
 				case "edge":
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
@@ -2837,6 +3017,15 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 					break;
 				case "thick":
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
@@ -2848,8 +3037,17 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = true;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = true;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = true;
 					break;
-				}
+			}
 		} else {
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
@@ -2860,8 +3058,18 @@
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingInnerColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingMiddleColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleevePipingOuterColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'thinCuffInnerColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'thinCuffMiddleColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'thinCuffOuterColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffInnerColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffMiddleColor').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'sleeveCuffOuterColor').visible = false;
 		}
 		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
 		reRenderBG("jersey")
 	})
 
@@ -2872,6 +3080,9 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = true;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
 					$("#vNeck3Selectors").show()
 					$("#vNeck2Selectors").hide()
 					$("#vNeckOffsetSelectors").hide()
@@ -2880,6 +3091,9 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = true;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
 					$("#vNeck3Selectors").hide()
 					$("#vNeck2Selectors").show()
 					$("#vNeckOffsetSelectors").hide()
@@ -2888,6 +3102,9 @@
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
 					jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = true;
 					$("#vNeck3Selectors").hide()
 					$("#vNeck2Selectors").hide()
 					$("#vNeckOffsetSelectors").show()
@@ -2897,8 +3114,13 @@
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
 			jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
+
+			heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
 		}
 		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
 		reRenderBG("jersey")
 	})
 
@@ -2908,6 +3130,9 @@
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = true;
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
+				heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = true;
+				heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
+				heightMapCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
 				$("#vNeck3Selectors").show()
 				$("#vNeck2Selectors").hide()
 				$("#vNeckOffsetSelectors").hide()
@@ -2916,6 +3141,9 @@
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = true;
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
+				heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
+				heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = true;
+				heightMapCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = false;
 				$("#vNeck3Selectors").hide()
 				$("#vNeck2Selectors").show()
 				$("#vNeckOffsetSelectors").hide()
@@ -2924,12 +3152,16 @@
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
 				jerseyLogoCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = true;
+				heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck3').visible = false;
+				heightMapCanvas.getObjects().find(o => o.id === 'thickVNeck2').visible = false;
+				heightMapCanvas.getObjects().find(o => o.id === 'offsetVNeck').visible = true;
 				$("#vNeck3Selectors").hide()
 				$("#vNeck2Selectors").hide()
 				$("#vNeckOffsetSelectors").show()
 				break;
 		}
 		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
 		reRenderBG("jersey")
 	})
 
@@ -2977,8 +3209,11 @@
 		if ($("#seamsCheck").is(":checked")) {
 			g.getObjects().forEach(function(o) {
 				o.set("visible", o.id == id)
+				heightMapCanvas.getObjects('image').find(p => p.id == o.id).set("visible", o.visible)
+				heightMapCanvas.renderAll()
 			})
 			g.addWithUpdate()
+			
 		}
 		if (id.startsWith("seamsStandard")) {
 			jerseyBelow.getObjects().find(o => o.id == 'jerseyPinstripesColor').set({
@@ -3004,12 +3239,16 @@
 	})
 
 	$("#seamsButtonPadCheck").on("change",function() {
-		if ($(this).is(":checked")) {
+		setSeams($(this).is(":checked"))
+		/* if ($(this).is(":checked")) {
 			jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+			heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
 		} else {
 			jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
-		}
+			heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",false)
+		} */
 		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
 	})
 
 	$("#buttonsType").on("change",function() {
@@ -3020,7 +3259,13 @@
 					g.getObjects().find(o => o.id === 'buttonsScript').visible = true;
 					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
 					g.getObjects().find(o => o.id === 'zipper').visible = false;
-					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					heightMapCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
+					//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					//heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
+					//heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",true)
+					setSeams(true)
 					if ($("#seamsType").val() == "seamsStandardToCollar") {
 						$("#seamsType").val("seamsStandardToPiping").trigger("change")
 					} else if ($("#seamsType").val() == "seamsRaglanToCollar") {
@@ -3031,7 +3276,13 @@
 					g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
 					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = true;
 					g.getObjects().find(o => o.id === 'zipper').visible = false;
-					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					heightMapCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = true;
+					heightMapCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
+					//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					//heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
+					//heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",true)
+					setSeams(true)
 					if ($("#seamsType").val() == "seamsStandardToCollar") {
 						$("#seamsType").val("seamsStandardToPiping").trigger("change")
 					} else if ($("#seamsType").val() == "seamsRaglanToCollar") {
@@ -3042,7 +3293,13 @@
 					g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
 					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
 					g.getObjects().find(o => o.id === 'zipper').visible = true;
-					jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+					heightMapCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+					heightMapCanvas.getObjects().find(o => o.id === 'zipper').visible = true;
+					//jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+					//heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",false)
+					//heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",false)
+					setSeams(false)
 					if ($("#seamsType").val() == "seamsStandardToPiping") {
 						$("#seamsType").val("seamsStandardToCollar").trigger("change")
 					} else if ($("#seamsType").val() == "seamsRaglanToPiping") {
@@ -3054,17 +3311,32 @@
 			g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
 			g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
 			g.getObjects().find(o => o.id === 'zipper').visible = false;
-			jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+			heightMapCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
+			//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+			//heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
+			setSeams(true)
 		}
 		g.addWithUpdate()
 		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
 	})
 
 	$("#buttonsCheck").on("change",function() {
 		const g = jerseyLogoCanvas.getObjects().find(o => o.id === 'buttons')
 		g.set("visible", $(this).is(":checked"))
 		g.addWithUpdate()
+		if ($(this).is(":checked")) {
+			$("#buttonsType").trigger("change")
+		} else {
+			heightMapCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+			heightMapCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
+			setSeams(false)
+		}
 		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
 	})
 
 	$("#sleevesCheck").on("change",function() {
@@ -3775,6 +4047,31 @@
 		}
 		reRenderBG("jersey")
 	})
+	
+	function setSeams(buttonPadVisible) {
+		if (buttonPadVisible == true) {
+			jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+			heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
+			heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",true)
+			if ($("#seamsType").val().startsWith("seamsStandard")) {
+				$("#seamsType").val("seamsStandardToPiping").trigger("change") 
+			} else {
+				$("#seamsType").val("seamsRaglanToPiping").trigger("change") 
+			}
+		} else {
+			jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+			heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",false)
+			heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",false)
+			if ($("#seamsType").val().startsWith("seamsStandard")) {
+				$("#seamsType").val("seamsStandardToCollar").trigger("change") 
+			} else {
+				$("#seamsType").val("seamsRaglanToCollar").trigger("change") 
+			}
+		}
+		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
+	}
+	
 	// PANTS SPECIFIC
 
 	initializePants()
@@ -4464,6 +4761,10 @@
 		}
 	})
 
+// HEIGHT MAP SPECIFIC STUFF
+
+	initializeHeightMap()
+
 // CANVAS INITIALIZE FUNCTIONS
 
 	function initializeCap() {
@@ -4931,20 +5232,23 @@
 		camo = new fabric.Group([],{
 			id: 'camo',
 			visible: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: false
 		})
 
 		digiCamo = new fabric.Group([],{
 			id: 'digiCamo',
 			visible: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: false
 		})
 
 		seams = new fabric.Group([],{
 			id: 'seams',
 			visible: true,
 			selectable: false,
-			evented: false
+			evented: false,
+			heightMap: true
 		})
 
 		seamsStandardToPiping = new fabric.Image.fromURL('./images/seams/seams_standard_to_piping.png', function(oImg) {
@@ -4987,14 +5291,16 @@
 			id: 'jerseyBackColor',
 			fill: initialJerseyColors['jerseyBackColor'],
 			visible: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: false
 		})
 
 		jerseyFrontColor = new fabric.Path("M 183.15234 503.60938 L 172.28711 506.83398 L 149.24414 508.625 L 132.05078 511.13281 L 116.43164 512 L 0 512 L 0 1024 L 512 1024 L 512 512 L 383.08398 512 L 364.51367 509.58008 L 338.72461 507.55078 L 327.85938 504.08789 L 316.39844 508.26758 L 301.47461 515.66992 L 205.59961 516.26562 L 194.01758 508.50586 L 183.15234 503.60938 z",{
 			id: 'jerseyFrontColor',
 			fill: initialJerseyColors['jerseyFrontColor'],
 			visible: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: false
 		})
 
 		collarColor = new fabric.Path("M 13 135 A 99.000015 99.000015 0 0 0 -86 234 A 99.000015 99.000015 0 0 0 13 333 A 99.000015 99.000015 0 0 0 93 292.25391 L 93 175.69336 A 99.000015 99.000015 0 0 0 13 135 z",{
@@ -5002,7 +5308,8 @@
 			id: 'collarColor',
 			visible: true,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: false
 		});
 
 		rightSleeveColor = new fabric.Path("M 103.04688 356 C 102.57402 356 98.432928 358.18589 93.84375 360.85742 C 86.037211 365.4019 84.211761 365.9808 65.5 369.85547 C 45.577543 373.98088 45.411783 373.99781 22.75 374.06641 L 0 374.13477 L 0 524.06836 L 0 674 L 16.75 674.13086 C 25.962485 674.20324 38.674998 674.5407 45 674.88086 C 51.325002 675.2209 62.800006 675.15165 70.5 674.72656 C 82.083307 674.08707 86.657776 674.28399 97 675.86523 C 103.875 676.91632 110.18346 677.82707 111.01953 677.88867 C 112.0058 677.9612 114.58771 673.88582 118.37109 666.28516 L 124.20312 654.57031 L 124.05859 641.80273 C 123.97873 634.78022 123.24329 625.31441 122.42578 620.76758 C 117.0652 590.95255 116.77433 587.21889 116.29883 542 L 115.8418 498.5 L 119.42773 482.14648 C 122.79174 466.80531 123.05389 464.32786 123.64062 442.14648 C 124.30794 416.92004 123.16477 394.15083 120.31641 375.9082 L 118.66211 365.31641 L 111.28516 360.6582 C 107.22746 358.09631 103.51973 356 103.04688 356 z",{
@@ -5010,7 +5317,8 @@
 			id: 'rightSleeveColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: false
 		});
 
 		leftSleeveColor = new fabric.Path("M 394.43164 350.12695 C 394.13895 350.10069 393.95298 350.16321 393.87305 350.3125 C 392.76398 352.38394 389.69126 376.21537 389.59375 383.5 C 389.4626 393.29075 391.68194 422.31652 394.64062 449.5 C 399.68701 495.8646 400.23814 504.76734 400.67773 547 C 401.09979 587.55146 401.05157 588.88856 398.55273 605.5 C 397.14626 614.85 395.23409 629.1862 394.30273 637.35938 C 392.34362 654.55239 392.27431 654.1981 401.29102 673.33789 L 406.39648 684.17773 L 414.17383 688.08789 C 421.24068 691.64102 422.98208 692.07585 433.22656 692.85742 L 433.22656 692.85547 C 439.42741 693.32855 444.57865 693.77994 444.67578 693.85742 C 444.77295 693.93494 445.99698 691.49988 447.39453 688.44727 C 452.55797 677.16882 451.93106 677.53941 468.18359 676.17383 C 476.05786 675.51222 489.13747 674.97682 497.25 674.98438 L 512 675 L 512 525 L 512 375 L 492.43555 375 C 473.64302 375 471.8774 374.82237 447.68555 370.49805 C 420.30261 365.60329 419.71924 365.40115 404.31445 355.45508 C 398.97428 352.00721 395.69998 350.24074 394.43164 350.12695 z ",{
@@ -5018,7 +5326,8 @@
 			id: 'leftSleeveColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: false
 		});
 
 		rightSleeveRaglanColor = new fabric.Path("M 103.64648 356.45898 C 101.95568 356.39372 99.113091 357.59898 94.003906 360.49805 C 86.715957 364.63337 83.667736 365.60167 63.701172 370.12305 L 41.5 375.15039 L 20.75 374.48438 L 0 373.82031 L 0 523.75586 L 0 673.69141 L 25.25 674.46875 C 39.137496 674.89606 59.500025 675.19436 70.5 675.13086 C 83.571798 675.0555 93.098066 675.48764 98 676.38086 C 109.22104 678.42558 111.60747 678.33232 114.04492 675.75 C 118.99251 670.50848 123.30431 658.13811 128.91797 633.07617 C 131.18761 622.94343 133.71456 612.34927 134.5332 609.5332 C 138.30597 596.55533 153.78884 575.49389 168.28125 563.62695 C 172.10987 560.4919 184.74666 554.30323 191 552.5 C 195.11768 551.31262 207 543.64396 207 542.17383 C 207 541.42251 206.27023 538.29848 205.37891 535.23242 C 203.36347 528.29957 204.16978 518.25057 207.16797 512.91602 L 209.23828 509.23242 L 201.47266 499.86523 C 197.20187 494.71389 193.1215 490.15301 192.4043 489.72852 C 191.68709 489.30401 187.36374 488.50264 182.79883 487.94922 C 169.24306 486.30578 158.89845 482.54298 151.04297 476.39648 C 141.37501 468.83185 132.4892 454.96697 126.89062 438.70898 C 123.96077 430.20087 123.65509 428.05492 122.875 410.5 C 121.81851 386.72525 120.40965 372.91366 118.5957 368.57227 C 117.16931 365.15838 108.42562 357.81196 104.30469 356.56445 C 104.10688 356.50457 103.88803 356.46831 103.64648 356.45898 z",{
@@ -5026,7 +5335,8 @@
 			id: 'rightSleeveRaglanColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: false
 		});
 
 		leftSleeveRaglanColor = new fabric.Path("M 394.9668 349.67773 C 394.29406 349.75645 393.89259 350.31397 393.64648 351.31641 C 390.05699 365.93728 388.96087 387.99918 390.92773 406 C 393.58765 430.34366 390.82768 441.55933 377.84961 459.16406 C 364.42953 477.36836 344.21092 488.89543 325.43555 489.04688 L 319.5 489.0957 L 309.54688 498.58984 L 299.59375 508.08398 L 300.91016 511.29102 C 304.90837 521.03539 305.87468 531.76034 303.46875 539.66992 C 302.50985 542.82233 312.88275 550.16269 322.36328 553.04102 C 336.37138 557.29393 349.46526 565.50015 362.8418 578.41211 C 375.6344 590.76044 379.68141 597.85979 383.41211 614.5 C 393.61011 659.98655 398.19144 672.68491 408.42969 683.83398 C 414.44084 690.3799 418.57734 692.06015 430.89062 692.95703 C 436.72557 693.38193 442.1258 693.6764 442.89062 693.61328 C 443.65549 693.55005 446.04868 690.57306 448.20898 686.99805 C 450.36932 683.42307 452.706 679.91359 453.40234 679.19922 C 455.23855 677.31546 478.81505 675.04221 496.75 675.01953 L 512 675 L 512 525 L 512 375 L 492.87695 375 C 474.56635 375 472.68554 374.80837 448.62695 370.47656 C 424.707 366.16972 423.05017 365.7255 414.14844 361.22656 C 409.00556 358.62731 403.15552 355.11632 401.14844 353.42578 C 397.96506 350.74447 396.08803 349.54654 394.9668 349.67773 z",{
@@ -5034,7 +5344,8 @@
 			id: 'leftSleeveRaglanColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: false
 		});
 
 		buttonPadFillColor = new fabric.Path("M 265.17188 456.25 C 257.8717 456.16978 249.72096 456.37146 240.54102 456.81641 C 214.29276 458.08867 210.50351 458.8041 198 464.84375 C 191.30109 468.07955 180.78773 478.40613 176.07422 486.38086 C 174.19009 489.56855 171.54323 495.84902 170.19141 500.33789 C 168.07211 507.37522 167.72491 510.56612 167.66992 523.5 C 167.59638 540.78756 169.00486 548.14261 174.63477 559.84766 C 181.16281 573.42002 196.45165 587.12368 218.33398 599.01562 C 227.31955 603.89881 232.0875 608.38477 235.85352 615.5 L 238.5 620.5 L 238.76172 796 L 239.02148 971.5 L 257.26172 971.29688 L 275.5 971.09375 L 275 836.79688 C 274.72499 762.93379 274.5 683.82498 274.5 661 L 274.5 619.5 L 277.25 614.2832 C 281.0137 607.14345 285.35529 603.07835 294.62305 598.01953 C 315.82018 586.44896 326.49202 576.33815 334.13281 560.58398 C 340.89148 546.64864 342.32237 539.14536 341.68359 521 C 340.90936 499.00678 336.81057 486.99899 326.5 476.52539 C 312.45183 462.25504 296.80598 456.59763 265.17188 456.25 z",{
@@ -5043,7 +5354,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: false
 		});
 
 		arcedStripeColor = new fabric.Path("M 231.53125 554.41211 C 182.74088 571.98238 150.35646 607.60178 130.22461 644.29688 C 110.09278 680.99185 102.02198 718.67562 101.78516 741.97656 L 99.464844 970.05664 L 108.33008 970.14258 L 110.65039 742.06836 C 110.86704 720.76324 118.62583 683.8655 137.99609 648.55859 C 157.36638 613.25172 188.15827 579.45109 234.53516 562.75 L 231.53125 554.41211 z M 284.46875 554.41211 L 281.46484 562.75 C 327.84173 579.45109 358.63362 613.25172 378.00391 648.55859 C 397.37417 683.8655 405.13296 720.76324 405.34961 742.06836 L 407.66992 970.14258 L 416.53516 970.05664 L 414.21484 741.97656 C 413.97802 718.67562 405.90722 680.99185 385.77539 644.29688 C 365.64354 607.60178 333.25912 571.98238 284.46875 554.41211 z",{
@@ -5052,13 +5364,15 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: false
 		});
 
 		brooklynCheckStroke = new fabric.Image.fromURL('./images/brooklynCheckStroke.png', function(oImg) {
 			oImg.set({
 				id: 'brooklynCheckStroke',
-				visible: true
+				visible: true,
+				heightMap: false
 			})
 			oImg.filters.push(new fabric.Image.filters.BlendColor({
 				color: initialJerseyColors['brooklynCheckStroke'],
@@ -5072,7 +5386,8 @@
 		brooklynCheck = new fabric.Image.fromURL('./images/brooklynCheck.png', function(oImg) {
 			oImg.set({
 				id: 'brooklynCheck',
-				visible: true
+				visible: true,
+				heightMap: false
 			})
 			oImg.filters.push(new fabric.Image.filters.BlendColor({
 				color: initialJerseyColors['brooklynCheck'],
@@ -5167,7 +5482,8 @@
 			oImg.set({
 				id: 'jerseySnakeskinColor',
 				visible: false,
-				clipPath: clippingPath
+				clipPath: clippingPath,
+				heightMap: false
 			})
 			oImg.filters.push(new fabric.Image.filters.BlendColor({
 				color: initialJerseyColors['jerseySnakeskinColor'],
@@ -5184,7 +5500,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPathStandardSleeves
+			clipPath: clippingPathStandardSleeves,
+			heightMap: false
 		});
 
 		rainbowR = new fabric.Path("M 149.61914 13 L 149.61914 242.24805 A 106.09076 106.09076 0 0 0 255.70898 348.33789 A 106.09076 106.09076 0 0 0 361.80078 242.24805 L 361.80078 13 L 347.91406 13 L 347.91406 242.24805 A 92.204855 92.204855 0 0 1 255.70898 334.45312 A 92.204855 92.204855 0 0 1 163.50586 242.24805 L 163.50391 242.24805 L 163.50391 13 L 149.61914 13 z M 255.71094 675.25586 A 106.09076 106.09076 0 0 0 149.61914 781.3457 L 149.61914 1010.5938 L 163.50586 1010.5938 L 163.50586 781.3457 A 92.204855 92.204855 0 0 1 255.71094 689.14062 A 92.204855 92.204855 0 0 1 347.91406 781.3457 L 347.91602 781.3457 L 347.91602 1010.5938 L 361.80078 1010.5938 L 361.80078 781.3457 A 106.09076 106.09076 0 0 0 255.71094 675.25586 z",{
@@ -5248,7 +5565,8 @@
 			visible: false,
 			selectable: false,
 			evented: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: false
 		})
 
 		tequilaSunrise1Color = new fabric.Path("M 56.287109 48.5625 L 56.287109 160.62891 L 455.71289 160.62891 L 455.71289 48.5625 L 56.287109 48.5625 z M 56.287109 258.65039 L 56.287109 281.07422 L 455.71289 281.07422 L 455.71289 258.65039 L 56.287109 258.65039 z M 505.57227 350.89062 L 505.57227 694.56641 L 512.91602 694.56641 L 512.91602 350.89062 L 505.57227 350.89062 z M -0.91601562 351.29297 L -0.91601562 694.96875 L 6.4277344 694.96875 L 6.4277344 351.29297 L -0.91601562 351.29297 z M 56.287109 748.45117 L 56.287109 770.875 L 455.71289 770.875 L 455.71289 748.45117 L 56.287109 748.45117 z M 56.287109 868.89648 L 56.287109 973.82227 L 455.71289 973.82227 L 455.71289 868.89648 L 56.287109 868.89648 z",{
@@ -5257,7 +5575,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: false
 		});
 
 		tequilaSunrise2Color = new fabric.Path("M 56.287109 160.62891 L 56.287109 220.3125 L 455.71289 220.3125 L 455.71289 160.62891 L 56.287109 160.62891 z M 56.287109 302.19531 L 56.287109 322.04297 L 455.71289 322.04297 L 455.71289 302.19531 L 56.287109 302.19531 z M 56.287109 341.05273 L 56.287109 351.29297 L 45.466797 351.29297 L 45.466797 694.96875 L 61.277344 694.96875 L 61.277344 688.47266 L 450.72266 688.47266 L 450.72266 694.56641 L 466.5332 694.56641 L 466.5332 350.89062 L 455.71289 350.89062 L 455.71289 341.05273 L 56.287109 341.05273 z M 479.16797 350.89062 L 479.16797 694.56641 L 492.29883 694.56641 L 492.29883 350.89062 L 479.16797 350.89062 z M 19.701172 351.29297 L 19.701172 694.96875 L 32.832031 694.96875 L 32.832031 351.29297 L 19.701172 351.29297 z M 61.277344 360.91602 L 450.72266 360.91602 L 450.72266 668.61133 L 61.277344 668.61133 L 61.277344 360.91602 z M 56.287109 707.48438 L 56.287109 727.33203 L 455.71289 727.33203 L 455.71289 707.48438 L 56.287109 707.48438 z M 56.287109 809.21289 L 56.287109 868.89648 L 455.71289 868.89648 L 455.71289 809.21289 L 56.287109 809.21289 z",{
@@ -5266,7 +5585,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: false
 		});
 
 		tequilaSunrise3Color = new fabric.Path("M 56.287109 220.3125 L 56.287109 258.65039 L 455.71289 258.65039 L 455.71289 220.3125 L 56.287109 220.3125 z M 56.287109 322.04297 L 56.287109 341.05273 L 455.71289 341.05273 L 455.71289 322.04297 L 56.287109 322.04297 z M 466.5332 350.89062 L 466.5332 694.56641 L 479.16797 694.56641 L 479.16797 350.89062 L 466.5332 350.89062 z M 32.832031 351.29297 L 32.832031 694.96875 L 45.466797 694.96875 L 45.466797 351.29297 L 32.832031 351.29297 z M 56.287109 688.47266 L 56.287109 707.48438 L 455.71289 707.48438 L 455.71289 688.47266 L 56.287109 688.47266 z M 56.287109 770.875 L 56.287109 809.21289 L 455.71289 809.21289 L 455.71289 770.875 L 56.287109 770.875 z",{
@@ -5275,7 +5595,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: false
 		});
 
 		tequilaSunrise4Color = new fabric.Path("M 56.287109 277.75781 L 56.287109 305.50977 L 455.71289 305.50977 L 455.71289 277.75781 L 56.287109 277.75781 z M 444.01758 350.89062 L 444.01758 357.34375 L 67.982422 357.34375 L 67.982422 351.29297 L 56.429688 351.29297 L 56.429688 357.34375 L 56.287109 357.34375 L 56.287109 371.10156 L 56.429688 371.10156 L 56.429688 660.01758 L 56.287109 660.01758 L 56.287109 672.18164 L 56.429688 672.18164 L 56.429688 694.96875 L 67.982422 694.96875 L 67.982422 672.18164 L 444.01758 672.18164 L 444.01758 694.56641 L 453.78516 694.56641 L 453.78516 672.18164 L 455.71289 672.18164 L 455.71289 660.01758 L 453.78516 660.01758 L 453.78516 371.10156 L 455.71289 371.10156 L 455.71289 357.34375 L 453.78516 357.34375 L 453.78516 350.89062 L 444.01758 350.89062 z M 490.00391 350.89062 L 490.00391 694.56641 L 507.86914 694.56641 L 507.86914 350.89062 L 490.00391 350.89062 z M 3.3671875 351.29297 L 3.3671875 694.96875 L 21.740234 694.96875 L 21.740234 351.29297 L 3.3671875 351.29297 z M 67.982422 371.10156 L 444.01758 371.10156 L 444.01758 660.01758 L 67.982422 660.01758 L 67.982422 371.10156 z M 56.287109 724.26953 L 56.287109 754.0625 L 455.71289 754.0625 L 455.71289 724.26953 L 56.287109 724.26953 z",{
@@ -5284,7 +5605,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: false
 		});
 
 		beachBlanketTopColor = new fabric.Path("M 408.43164 303.47461 L 408.43164 640.99219 L 111.9707 640.99219 L 111.9707 304.89258 L 105.9707 304.89258 L 94.470703 304.89258 L 94.470703 652.49219 L 100.4707 652.49219 L 100.4707 658.49219 L 419.93164 658.49219 L 419.93164 652.49219 L 425.93164 652.49219 L 425.93164 303.47461 L 419.93164 303.47461 L 414.43164 303.47461 L 408.43164 303.47461 z",{
@@ -5293,7 +5615,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: false
 		});
 
 		beachBlanketMiddleColor = new fabric.Path("M 419.93164 292.00781 L 419.93164 652.49219 L 100.4707 652.49219 L 100.4707 293.42188 L 49.931641 293.42188 L 49.931641 652.49219 L 49.931641 703.03125 L 100.4707 703.03125 L 419.93164 703.03125 L 457.71289 703.03125 L 470.4707 703.03125 L 470.4707 292.00781 L 419.93164 292.00781 z",{
@@ -5302,7 +5625,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: false
 		});
 
 		beachBlanketBottomColor = new fabric.Path("M 464 303.50781 L 464 696.56055 L 56.402344 696.56055 L 56.402344 304.92188 L 49.931641 304.92188 L 38.431641 304.92188 L 38.431641 714.53125 L 46.689453 714.53125 L 49.931641 714.53125 L 473.26953 714.53125 L 481.9707 714.53125 L 481.9707 303.50781 L 470.4707 303.50781 L 464 303.50781 z",{
@@ -5311,7 +5635,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: false
 		});
 
 		rainbowShoulder1Color = new fabric.Path("M 0 501.0293 L 0 503.52148 L 0 506.01367 L 0 508.50586 L 512 508.50586 L 512 506.01367 L 512 503.52148 L 512 501.0293 L 0 501.0293 z M 0 545.87695 L 0 548.36914 L 0 550.85938 L 0 553.35156 L 512 553.35156 L 512 550.85938 L 512 548.36914 L 512 545.87695 L 0 545.87695 z",{
@@ -5320,7 +5645,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: true
 		});
 
 		rainbowShoulder2Color = new fabric.Path("M 0 506.9707 L 0 509.97266 L 0 512.97461 L 0 515.97852 L 512 515.97852 L 512 512.97461 L 512 509.97266 L 512 506.9707 L 0 506.9707 z M 0 538.4043 L 0 541.44922 L 0 544.49219 L 0 547.53711 L 512 547.53711 L 512 544.49219 L 512 541.44922 L 512 538.4043 L 0 538.4043 z ",{
@@ -5329,7 +5655,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: true
 		});
 
 		rainbowShoulder3Color = new fabric.Path("M 0 514.18945 L 0 517.27734 L 0 520.36719 L 0 523.45312 L 512 523.45312 L 512 520.36719 L 512 517.27734 L 512 514.18945 L 0 514.18945 z M 0 530.92773 L 0 534.01562 L 0 537.10352 L 0 540.19336 L 512 540.19336 L 512 537.10352 L 512 534.01562 L 512 530.92773 L 0 530.92773 z",{
@@ -5338,7 +5665,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: true
 		});
 
 		rainbowShoulder4Color = new fabric.Path("M 0 521.4082 L 0 525.26367 L 0 529.11719 L 0 532.97461 L 512 532.97461 L 512 529.11719 L 512 525.26367 L 512 521.4082 L 0 521.4082 z",{
@@ -5347,7 +5675,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: true
 		});
 
 		racingStripeLargeColor = new fabric.Path("M 0 504.76367 L 0 536.60547 L 512 536.60547 L 512 504.76367 L 0 504.76367 z",{
@@ -5356,7 +5685,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: true
 		});
 
 		racingStripeSmallColor = new fabric.Path("M 0 512.44531 L 0 528.92188 L 512 528.92188 L 512 512.44531 L 0 512.44531 z",{
@@ -5365,7 +5695,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: true
 		});
 
 		sideRacingStripeLargeColor = new fabric.Path("M -8.0039062 -7.9980469 L -8.0039062 190.44922 L -8.0039062 388.20117 L 4.0292969 389.28711 C 8.2912849 389.67066 17.365347 389.63531 27.113281 389.5 C 43.571189 389.27172 47.488334 388.80863 68.119141 384.54688 C 78.763293 382.34806 84.454652 381.17382 89.164062 379.68945 C 93.873476 378.20508 97.24251 376.39303 101.81055 373.78516 C 116.41297 365.44869 126.09385 357.10012 131.83984 346.61133 C 134.4602 341.82811 136.86082 336.1364 137.95898 331.25 C 138.5906 328.43955 138.63514 325.93759 138.81445 320.46484 C 138.99375 314.9921 139.12827 306.99869 139.2207 295.28516 C 139.40564 271.85806 139.43971 233.58086 139.39844 171.49219 C 139.37047 129.68167 139.26425 90.576639 139.11133 61.242188 C 139.03483 46.57496 138.94567 34.358348 138.85156 25.449219 C 138.75745 16.54009 138.73403 11.755566 138.53516 9.1425781 L 137.22852 -7.9980469 L 64.908203 -7.9980469 L -8.0039062 -7.9980469 z M 371.01953 -7.9980469 L 369.67578 5.9824219 C 369.40309 8.8151286 369.31801 13.691053 369.17383 21.890625 C 369.02968 30.0902 368.89865 41.033506 368.7832 53.869141 C 368.55231 79.54041 368.38684 112.76087 368.29688 146.49023 C 368.11693 213.94897 368.21869 282.79784 368.86523 298.82227 C 369.66341 318.60366 369.93828 328.00449 370.94727 334.66797 C 371.95624 341.33146 374.47687 345.45708 377.25 349.70508 C 383.2836 358.94757 390.86895 365.29565 405.43359 373.85938 C 410.17729 376.64855 413.56915 378.64514 419.51953 380.27344 C 425.46991 381.90173 433.89101 383.42156 451.52734 386.73242 C 465.58295 389.3711 470.61493 389.78419 490.20898 389.88477 L 520.00195 390.03906 L 520.00195 191.00195 L 520.00195 -7.9980469 L 445.14258 -7.9980469 L 371.01953 -7.9980469 z M 8 7.9980469 L 64.908203 7.9980469 L 122.39844 7.9980469 L 122.57617 10.359375 C 122.58109 10.427633 122.76189 16.752119 122.85547 25.611328 C 122.94905 34.470545 123.03104 46.67429 123.10742 61.324219 C 123.26019 90.624084 123.37453 129.71647 123.40234 171.50586 C 123.44354 233.5839 123.40033 271.85434 123.2168 295.16016 C 123.1248 306.81306 122.99691 314.73073 122.82617 319.94141 C 122.65545 325.15209 122.26485 328.1039 122.3457 327.74414 C 121.96059 329.45772 119.56698 335.71438 117.80664 338.92773 C 113.9559 345.9569 107.15892 352.30549 93.882812 359.88477 C 89.418857 362.43319 87.741673 363.36309 84.351562 364.43164 C 80.961455 365.50019 75.496131 366.68955 64.878906 368.88281 C 44.354253 373.12261 43.170014 373.27797 26.890625 373.50391 C 18.511654 373.61994 10.791381 373.45934 8 373.36523 L 8 190.44922 L 8 7.9980469 z M 385.58398 7.9980469 L 445.14258 7.9980469 L 503.99805 7.9980469 L 503.99805 191.00195 L 503.99805 373.95508 L 490.28906 373.88867 C 470.8539 373.78889 468.23088 373.58481 454.47266 371.00195 C 436.81876 367.6878 428.31342 366.0888 423.74219 364.83789 C 419.17095 363.58698 418.44139 362.94499 413.53906 360.0625 C 399.71973 351.93701 395.35453 348.16603 390.64844 340.95703 C 387.69698 336.43588 387.47158 336.93181 386.76562 332.26953 C 386.05968 327.60723 385.65261 317.98386 384.85352 298.17969 C 384.28275 284.03444 384.11315 213.94062 384.29297 146.5332 C 384.38288 112.8295 384.54892 79.633267 384.7793 54.015625 C 384.8945 41.206806 385.02912 30.288978 385.17188 22.169922 C 385.3099 14.31674 385.51473 8.9413943 385.58398 7.9980469 z M 492.17188 656.99805 C 472.88332 656.99805 469.8425 657.40352 459.7207 660.43164 C 456.77109 661.31405 453.90632 662.23535 451.57227 663.04492 C 450.40523 663.44975 449.3717 663.82297 448.47852 664.17383 C 447.58533 664.52457 447.17083 664.56999 445.66602 665.50977 C 442.18743 667.68216 442.15803 668.7738 440.96289 670.47852 C 439.76775 672.18323 438.53403 674.16972 437.29492 676.30273 C 434.8167 680.56872 432.42492 685.13717 431.00586 689.17578 C 429.06062 694.71184 428.64532 701.47884 427.93359 712.83594 C 427.22187 724.19304 426.70168 739.24066 426.37695 757.57031 C 425.72751 794.22965 425.85938 843.95706 426.82812 902.63086 C 427.19875 925.07649 427.07467 949.44326 426.73047 954.45117 C 426.25777 961.32659 425.68759 979.2024 425.40234 995.10352 L 424.74609 1031.998 L 472.44727 1031.998 L 520.00195 1031.998 L 520.00195 844.49805 L 520.00195 656.99805 L 492.17188 656.99805 z M -8.0039062 659.64844 L -8.0039062 845.87891 L -8.0039062 1031.998 L 38.650391 1031.998 L 85.376953 1031.998 L 84.542969 948.67188 C 82.746412 768.78008 82.219725 736.9813 80.542969 710.98242 C 79.748041 698.6567 79.313877 692.08615 78.652344 687.36719 C 77.99081 682.64822 76.705001 679.27649 75.300781 676.48633 C 73.155661 672.22404 70.506969 668.48397 66.6875 665.39258 L 60.767578 660.60156 L 29.054688 660.16602 L -8.0039062 659.64844 z M 492.17188 673.00195 L 503.99805 673.00195 L 503.99805 844.49805 L 503.99805 1016.002 L 472.44727 1016.002 L 441.03711 1016.002 L 441.39844 995.39258 C 441.6805 979.66872 442.2944 961.32729 442.69141 955.55273 C 443.2168 947.91068 443.19827 925.0195 442.82422 902.36523 C 441.85754 843.8182 441.7366 794.22388 442.38086 757.85742 C 442.70299 739.67419 443.21577 724.78794 443.90234 713.83203 C 444.58894 702.8762 445.93425 694.95275 446.10156 694.47656 C 446.78254 692.53853 448.99697 688.01168 451.12891 684.3418 C 452.19487 682.50684 453.26029 680.80996 454.06641 679.66016 C 454.3092 679.31395 454.54797 679.13352 454.8125 678.88672 C 455.36788 678.67582 455.98364 678.44962 456.8125 678.16211 C 458.8688 677.44887 461.56959 676.57409 464.30469 675.75586 C 474.26975 672.77464 472.93177 673.00195 492.17188 673.00195 z M 8 675.875 L 28.832031 676.16211 L 55.009766 676.52344 L 56.625 677.83008 C 56.949873 678.09313 60.154287 681.97793 61.009766 683.67773 C 62.189032 686.02089 62.306797 686.03822 62.804688 689.58984 C 63.302574 693.1415 63.78299 699.71704 64.576172 712.01562 C 66.212716 737.39103 66.742635 768.94715 68.539062 948.82617 L 69.210938 1016.002 L 38.650391 1016.002 L 8 1016.002 L 8 845.87891 L 8 675.875 z",{
@@ -5374,7 +5705,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPathStandardSleeves
+			clipPath: clippingPathStandardSleeves,
+			heightMap: true
 		});
 
 		sideRacingStripeSmallColor = new fabric.Path("M 0 0 L 0 190.44531 L 0 380.89062 L 4.75 381.31836 C 7.3625002 381.55345 17.374998 381.63537 27 381.50195 C 43.368665 381.27477 45.922248 380.96564 66.5 376.71484 C 87.7614 372.32281 88.813705 371.99223 97.845703 366.83594 C 111.78498 358.87807 120.02194 351.52855 124.82031 342.76953 C 127.01066 338.77124 129.4107 332.8 130.15234 329.5 C 131.25386 324.59868 131.48094 295.66683 131.39844 171.5 C 131.34285 87.900006 130.96294 15.1125 130.55469 9.75 L 129.8125 0 L 64.90625 0 L 0 0 z M 378.28906 0 L 377.63867 6.75 C 376.30385 20.615144 375.64398 268.3303 376.86133 298.5 C 378.45861 338.0856 378.22658 336.55894 383.95117 345.32812 C 389.32102 353.55389 395.29627 358.61631 409.48828 366.96094 C 419.13432 372.63261 417.70972 372.24213 453 378.86719 C 466.90693 381.47793 470.73539 381.78851 490.25 381.88867 L 512 382 L 512 191 L 512 0 L 445.14453 0 L 378.28906 0 z M 492.17383 665 C 472.9095 665 472.05712 665.08711 462.01367 668.0918 C 456.32896 669.79247 450.87885 671.68314 449.90234 672.29297 C 447.74928 673.63757 440.65472 685.84953 438.55469 691.82617 C 434.32956 703.8507 432.88682 785.27905 434.82227 902.5 C 435.19461 925.04998 435.14383 948.675 434.70898 955 C 434.27413 961.325 433.686 979.43751 433.40234 995.25 L 432.88672 1024 L 472.44336 1024 L 512 1024 L 512 844.5 L 512 665 L 492.17383 665 z M 0 667.76172 L 0 845.88086 L 0 1024 L 38.646484 1024 L 77.294922 1024 L 76.542969 948.75 C 74.746474 768.86441 74.213293 737.18714 72.556641 711.5 C 70.96853 686.87566 70.735833 685.21339 68.152344 680.08008 C 66.652044 677.09901 63.730376 673.28654 61.658203 671.60938 L 57.890625 668.56055 L 28.945312 668.16211 L 0 667.76172 z",{
@@ -5383,7 +5715,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPathStandardSleeves
+			clipPath: clippingPathStandardSleeves,
+			heightMap: true
 		});
 
 		diagonalSide1 = new fabric.Path("M 124.05078 52.369141 L 124.2793 71.808594 C 124.40497 82.500998 124.76405 96.091098 125.07812 102.00781 C 125.48235 109.61212 125.55521 130.49735 125.32617 173.25781 C 124.60466 307.98911 124.46073 321.51565 123.70898 325.67969 C 123.31875 327.84131 123 329.96719 123 330.4043 C 123 330.88316 123.1718 331.0111 123.43164 330.72461 C 124.14181 329.94236 125.32221 324.3334 127.00391 313.75 C 128.64271 303.43618 137.29524 251.49285 139.95508 236 C 140.78128 231.18749 142.26209 222.525 143.24609 216.75 C 145.21768 205.17862 147.02032 194.72193 148.52344 186.14648 C 149.06372 183.0643 150.06811 177.27055 150.75391 173.27148 C 151.43951 169.27242 152.5603 162.72756 153.24609 158.72852 C 153.93189 154.72945 154.94447 148.87947 155.49609 145.72852 C 156.96406 137.34569 158.41012 129.02734 159.5332 122.5 C 160.07746 119.3375 160.94283 114.95 161.45703 112.75 C 161.97105 110.55 162.88929 105.9375 163.49609 102.5 C 164.13351 98.889432 165.19982 94.877495 166.02148 93 L 167.44336 89.75 L 166.96484 78.75 C 166.70198 72.700001 166.35594 64.574726 166.19531 60.693359 L 165.90234 53.636719 L 153.07617 53.3125 C 146.02168 53.134953 136.60532 52.850673 132.15039 52.679688 L 124.05078 52.369141 z M 364.28125 53.119141 C 353.57328 53.047103 344.63006 53.168729 344.4082 53.390625 C 344.18634 53.612506 343.77257 58.283845 343.49023 63.771484 C 343.20753 69.259132 342.77408 77.568748 342.52539 82.236328 C 342.10171 90.188518 342.14713 91.085697 343.25 96.486328 C 343.89743 99.656248 345.1377 106.3 346.00586 111.25 C 348.56384 125.83283 350.45934 136.55773 351 139.5 C 351.62759 142.9165 353.91212 155.8573 355.98633 167.75 C 356.84957 172.69999 357.75389 177.76251 357.99805 179 C 358.2422 180.23749 358.91852 184.0625 359.5 187.5 C 360.08148 190.9375 360.7578 194.76251 361.00195 196 C 361.24611 197.23751 362.15162 202.29999 363.01562 207.25 C 363.87981 212.19999 365.44778 221.0875 366.5 227 C 367.55203 232.9125 369.12592 241.80001 369.99805 246.75 C 373.43269 266.24622 374.51402 272.35953 374.99609 275 C 375.27219 276.51249 375.94806 280.33752 376.49609 283.5 C 377.04413 286.6625 377.70242 290.37501 377.96094 291.75 C 378.21927 293.12499 378.91518 297.0625 379.50781 300.5 C 380.10044 303.9375 381.22721 310.35 382.00977 314.75 C 382.79232 319.15001 383.67117 324.36803 383.96484 326.3457 C 384.2587 328.32338 384.53264 330.12347 384.57422 330.3457 C 384.61542 330.56801 384.74423 330.0996 384.86328 329.30469 C 385.07399 327.88857 384.59976 316.69865 383.39844 294.75 C 382.97437 287.00514 382.79234 257.48693 382.77344 195 C 382.75322 119.93973 382.86252 105.24737 383.48633 99.75 C 383.89263 96.175002 384.15334 92.2375 384.06641 91 C 383.98023 89.7625 383.87354 80.762501 383.83008 71 L 383.75 53.25 L 364.28125 53.119141 z M 87.628906 694 C 87.095048 694 87.021425 694.18132 87.375 694.625 C 87.649016 694.96875 88.003306 696.37497 88.160156 697.75 C 88.317952 699.12499 88.677977 701.71251 88.958984 703.5 C 89.676717 708.06586 90.450845 713.15549 91.052734 717.25 C 91.335821 719.17499 91.770397 722.10001 92.017578 723.75 C 92.26457 725.39999 92.689442 728.32501 92.962891 730.25 C 93.236339 732.17503 93.703496 735.32497 94 737.25 C 94.296315 739.17499 94.755153 742.26872 95.019531 744.125 C 95.283909 745.98124 95.725039 749.07497 96 751 C 96.274961 752.92499 96.72485 756.07501 97 758 C 97.729071 763.10421 98.360882 767.68379 99 772.5 C 99.310299 774.83749 99.77525 778.32501 100.0332 780.25 C 100.29134 782.17499 100.73348 785.55001 101.01562 787.75 C 101.29777 789.95003 101.74646 793.43751 102.01367 795.5 C 102.28088 797.56253 102.73134 801.16251 103.01367 803.5 C 103.296 805.83749 103.73266 809.43747 103.98438 811.5 C 106.56806 832.66823 108.85323 855.15922 110.00391 870.75 C 111.73965 894.26698 112.33753 929.84195 111.10938 936.5 C 110.21627 941.3418 109.12588 951.92424 108.79102 959.01172 L 108.49609 965.27539 L 131.62305 965.10742 C 144.34267 965.01558 155.01008 964.85671 155.32812 964.75391 C 155.94116 964.55571 155.87963 963.08449 155.06836 958.5 C 154.80058 956.98751 154.59766 955.4125 154.59766 955 C 154.60616 954.5875 154.38377 952.78749 154.10352 951 C 153.82345 949.21247 153.59312 947.4125 153.57422 947 C 153.56269 946.5875 153.09068 943.11731 152.52734 939.28906 C 151.96419 935.46082 151.59957 932.23442 151.71484 932.11914 C 151.83012 932.00379 151.61365 931.0302 151.23438 929.95508 C 150.85472 928.87992 150.6346 928 150.74609 928 C 150.8574 928 150.62077 927.21731 150.2207 926.25977 C 149.82064 925.30215 149.53082 924.34604 149.57617 924.13477 C 149.62153 923.92357 149.51969 923.4125 149.34961 923 C 149.09147 922.37521 147.13268 914.91273 146.79102 913.25 C 146.73432 912.975 146.54092 912.3 146.36328 911.75 C 146.1847 911.2 145.92292 910.1875 145.7793 909.5 C 145.63681 908.8125 144.87189 905.94373 144.08008 903.125 C 143.28827 900.30627 142.73017 898 142.83789 898 C 142.94617 898 142.82379 897.60625 142.56641 897.125 C 142.30883 896.64375 141.9713 895.57503 141.81445 894.75 C 141.65779 893.925 140.88002 890.94373 140.08594 888.125 C 139.29186 885.30627 138.73017 883 138.83789 883 C 138.94617 883 138.82379 882.60625 138.56641 882.125 C 138.30902 881.64375 137.9713 880.57503 137.81445 879.75 C 137.6576 878.925 136.88002 875.94373 136.08594 873.125 C 135.29205 870.30627 134.73017 868 134.83789 868 C 134.94617 868 134.82398 867.60625 134.56641 867.125 C 134.30902 866.64375 133.9713 865.57503 133.81445 864.75 C 133.6576 863.925 132.87983 860.94373 132.08594 858.125 C 131.29186 855.30627 130.73017 853 130.83789 853 C 130.94617 853 130.82379 852.60625 130.56641 852.125 C 130.30883 851.64375 129.9713 850.57503 129.81445 849.75 C 129.65779 848.925 128.88002 845.94373 128.08594 843.125 C 127.29186 840.30623 126.73017 838 126.83789 838 C 126.94617 838 126.82379 837.60625 126.56641 837.125 C 126.30902 836.64371 125.9713 835.575 125.81445 834.75 C 125.6576 833.925 124.88002 830.94373 124.08594 828.125 C 123.29205 825.30623 122.73017 823 122.83789 823 C 122.94617 823 122.82398 822.60625 122.56641 822.125 C 122.30902 821.64371 121.9713 820.575 121.81445 819.75 C 121.6576 818.925 120.87983 815.94373 120.08594 813.125 C 119.29186 810.30623 118.73017 808 118.83789 808 C 118.94617 808 118.82379 807.60625 118.56641 807.125 C 118.30883 806.64375 117.9713 805.575 117.81445 804.75 C 117.65779 803.925 116.88002 800.94373 116.08594 798.125 C 115.29186 795.30623 114.73017 793 114.83789 793 C 114.94617 793 114.82379 792.60625 114.56641 792.125 C 114.30902 791.64375 113.9713 790.575 113.81445 789.75 C 113.6576 788.925 112.88002 785.94373 112.08594 783.125 C 111.29205 780.30623 110.73017 778 110.83789 778 C 110.94617 778 110.82398 777.60625 110.56641 777.125 C 110.30902 776.64375 109.9713 775.575 109.81445 774.75 C 109.6576 773.925 108.87983 770.94373 108.08594 768.125 C 107.29186 765.30623 106.73017 763 106.83789 763 C 106.94617 763 106.82379 762.60625 106.56641 762.125 C 106.30883 761.64375 105.9713 760.575 105.81445 759.75 C 105.65779 758.925 104.88002 755.94373 104.08594 753.125 C 103.29186 750.30623 102.73017 748 102.83789 748 C 102.94617 748 102.82379 747.60625 102.56641 747.125 C 102.30902 746.64375 101.9713 745.575 101.81445 744.75 C 101.6576 743.925 100.88002 740.94373 100.08594 738.125 C 99.292048 735.30623 98.730174 733 98.837891 733 C 98.946174 733 98.823981 732.60625 98.566406 732.125 C 98.30902 731.64375 97.967334 730.575 97.808594 729.75 C 97.477696 728.04007 95.231972 719.50506 94.519531 717.25 C 94.258933 716.425 93.926698 715.1875 93.779297 714.5 C 93.453313 712.97908 91.178354 704.42098 90.457031 702 C 90.170165 701.03751 89.872402 699.9125 89.794922 699.5 C 89.195111 696.30543 88.286922 694 87.628906 694 z M 420.36133 698.32812 C 419.93885 698.36942 419.41439 699.12317 419.21289 700.29102 C 419.07437 701.09375 418.8124 702.2 418.63477 702.75 C 418.45618 703.3 418.26782 703.97485 418.2168 704.25 C 417.96432 705.59872 408.97574 739.14054 408.63672 740 C 408.47495 740.4125 408.37438 740.91089 408.41406 741.10742 C 408.4545 741.30411 408.24434 742.09161 407.94727 742.85742 C 407.65019 743.62319 407.31859 744.7 407.20898 745.25 C 407.09976 745.8 405.5432 751.65 403.75 758.25 C 401.95699 764.85 400.37617 770.75398 400.23633 771.36914 C 400.09667 771.98433 399.19589 775.35932 398.23438 778.86914 C 397.27305 782.379 396.37844 785.7 396.24805 786.25 C 396.1169 786.8 395.44178 789.27498 394.74805 791.75 C 394.05431 794.22499 393.37012 796.8125 393.22461 797.5 C 393.07985 798.1875 392.81429 799.2 392.63477 799.75 C 392.45599 800.3 392.26782 800.97485 392.2168 801.25 C 392.11664 801.78291 386.01515 824.57508 383.18164 835 C 382.24734 838.43748 381.37649 841.69997 381.24609 842.25 C 381.11551 842.8 379.54061 848.65 377.74609 855.25 C 375.95157 861.85 374.36225 867.7973 374.21484 868.46484 C 373.76319 870.5141 371.95697 877.20562 371.64062 878 C 371.47584 878.4125 371.37438 878.91089 371.41406 879.10742 C 371.45469 879.30411 371.24434 880.09161 370.94727 880.85742 C 370.65019 881.62323 370.31859 882.7 370.20898 883.25 C 370.09938 883.8 369.44014 886.27501 368.74414 888.75 C 368.04833 891.22502 367.36641 893.8125 367.22656 894.5 C 367.0871 895.1875 366.18713 898.56252 365.22656 902 C 364.26618 905.43752 363.36647 908.76126 363.22852 909.38477 C 363.09037 910.00824 362.065 913.94377 360.95117 918.13281 C 358.88906 925.88848 358.16005 927.82085 355.61719 932.25 C 351.62355 939.20645 351.6024 939.27656 350.01367 950.25 C 348.15339 963.09858 348.02766 963.93357 347.72266 965.5 L 347.47852 966.75 L 371.04883 966.93359 C 384.01261 967.03496 395.21233 967.29679 395.93555 967.51562 L 395.93359 967.51758 C 396.657 967.73645 398.21147 967.93435 399.38672 967.95703 L 401.52344 968 L 401.24414 963.875 C 401.09069 961.60623 400.75587 958.17499 400.5 956.25 C 399.1817 946.32885 399.11671 943.89787 399.94727 935.75 C 400.53498 929.98395 400.94602 925.44969 402.00977 913 C 402.28 909.83752 402.73008 904.66252 403.00977 901.5 C 403.28945 898.33752 403.73953 893.16252 404.00977 890 C 404.28 886.83752 404.73008 881.66248 405.00977 878.5 C 405.28945 875.33748 405.73953 870.16248 406.00977 867 C 406.28 863.83748 406.73008 858.66248 407.00977 855.5 C 407.28964 852.33748 407.73953 847.16248 408.00977 844 C 408.28 840.83748 408.73008 835.66248 409.00977 832.5 C 409.28945 829.33748 409.73953 824.16248 410.00977 821 C 410.28 817.83748 410.73008 812.66252 411.00977 809.5 C 411.28945 806.33752 411.73953 801.16252 412.00977 798 C 412.28 794.83752 412.73008 789.66252 413.00977 786.5 C 413.28964 783.33752 413.73953 778.16248 414.00977 775 C 414.28 771.83748 414.73008 766.66248 415.00977 763.5 C 415.28945 760.33748 415.73953 755.16252 416.00977 752 C 416.28 748.83752 416.73008 743.66252 417.00977 740.5 C 417.28945 737.33752 417.73997 732.16252 418.01172 729 C 418.28347 725.83752 418.72983 720.77502 419.00195 717.75 C 419.27427 714.72502 419.6244 709.99998 419.78125 707.25 C 419.93791 704.49998 420.29498 701.77696 420.57617 701.19922 C 420.85775 700.62152 421.01252 699.6719 420.91992 699.08789 C 420.83155 698.53468 420.61482 698.30335 420.36133 698.32812 z",{
@@ -5392,7 +5725,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPathStandardSleeves
+			clipPath: clippingPathStandardSleeves,
+			heightMap: true
 		});
 
 		diagonalSide2 = new fabric.Path("M 83.857422 673.9082 L 82.054688 674.20508 C 81.062505 674.36854 75.018755 674.64412 68.625 674.81836 C 55.603809 675.17277 55.698707 675.13615 58.792969 678.48047 C 62.63911 682.63734 63.110767 684.19002 63.810547 695 C 64.157696 700.36251 64.684418 708.01252 64.980469 712 C 66.059524 726.53346 66.517616 732.90029 67.015625 740.25 C 67.29514 744.37501 67.741179 781.27501 68.005859 822.25 C 68.465998 893.47478 69.084251 940.84143 69.783203 958.375 L 70.107422 966.49805 L 80.427734 966.49805 C 86.104717 966.49729 94.598293 966.35027 99.300781 966.17188 L 107.84961 965.84766 L 108.43164 959.79883 C 108.75103 956.47179 109.01374 952.39999 109.01562 950.75 C 109.01929 947.98989 109.53143 943.90919 111.02344 934.75 C 112.0784 928.2737 111.54563 896.8187 110.00781 874.75 C 109.19514 863.08751 107.60185 845.86921 106.01562 831.625 C 105.73235 829.08123 105.28254 825.03127 105.01562 822.625 C 104.74871 820.21876 104.31022 816.44999 104.04297 814.25 C 103.77574 812.04997 103.32657 808.33749 103.04492 806 C 102.76327 803.66248 102.30056 799.95003 102.01562 797.75 C 101.73072 795.55001 101.27248 791.94999 100.99805 789.75 C 100.72362 787.54997 100.28852 784.17499 100.03125 782.25 C 99.773978 780.32501 99.324907 776.94999 99.033203 774.75 C 98.741499 772.54997 98.292466 769.28749 98.035156 767.5 C 97.028819 760.5092 96.406078 756.11035 95.962891 752.875 C 95.332711 748.27475 94.635122 743.39114 94.052734 739.5 C 93.785201 737.71251 93.317798 734.56249 93.015625 732.5 C 92.713433 730.43751 92.263411 727.40003 92.015625 725.75 C 91.767801 724.10001 91.317798 721.06249 91.015625 719 C 90.47999 715.34414 89.971418 711.99146 88.984375 705.625 C 88.717899 703.90626 88.284098 701.09374 88.019531 699.375 C 87.754964 697.65626 87.310809 694.89999 87.033203 693.25 C 86.755597 691.59997 86.200466 687.66115 85.800781 684.49609 C 85.401096 681.33104 84.801512 677.6534 84.466797 676.32422 L 83.857422 673.9082 z M 422.48633 692.66016 C 421.96208 692.66476 421.64863 692.68535 421.60938 692.72461 C 421.44568 692.8883 421.13945 695.32392 420.92969 698.13672 C 420.71989 700.94948 420.30243 706.06252 420.00195 709.5 C 419.70152 712.93752 419.25096 718.11252 419 721 C 418.74915 723.88748 418.29896 729.06248 418 732.5 C 417.70089 735.93748 417.25096 741.11248 417 744 C 416.74911 746.88748 416.29896 752.06252 416 755.5 C 415.70089 758.93752 415.25096 764.11252 415 767 C 414.39002 774.02077 413.55806 783.57639 412.99805 790 C 412.43698 796.43574 411.71654 804.72004 410.99805 813 C 410.26368 821.46232 409.65023 828.52787 409 836 C 408.70089 839.43748 408.25096 844.61248 408 847.5 C 407.74911 850.38748 407.29896 855.56252 407 859 C 406.70089 862.43752 406.25096 867.61252 406 870.5 C 405.74911 873.38752 405.29896 878.56248 405 882 C 404.70085 885.43748 404.25096 890.61248 404 893.5 C 403.74915 896.38748 403.29896 901.56248 403 905 C 401.82151 918.54288 401.5256 921.97224 401.0332 927.75 C 400.75197 931.04998 400.29581 935.88748 400.01953 938.5 C 399.43987 943.9816 399.47926 944.63883 401.5332 962.86719 L 402.11133 967.98242 L 415.17969 968.00195 C 422.36805 968.01265 429.93747 968.20884 432 968.4375 C 434.06249 968.66624 437.12375 968.88729 438.80273 968.92773 L 441.85547 969 L 442.17773 965.625 C 442.9666 957.34542 443.0858 935.64061 442.56445 895.75 C 441.83274 839.75441 441.75012 733.84389 442.43164 725.25 C 442.71514 721.67498 443.19814 714.70001 443.50391 709.75 C 443.98863 701.90083 444.45238 698.09255 445.30859 694.93555 C 445.48015 694.30301 445.0495 694.05118 443.39062 693.81836 C 440.19284 693.36922 426.15605 692.6279 422.48633 692.66016 z",{
@@ -5401,7 +5735,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPathStandardSleeves
+			clipPath: clippingPathStandardSleeves,
+			heightMap: true
 		});
 
 		kiaSide1 = new fabric.Path("M 284.35547 50.375 C 278.09921 50.362255 270.6368 50.369066 261.5 50.388672 C 220.56957 50.476512 216.04213 50.574677 191.25 51.914062 C 163.78765 53.397705 164.80514 53.389416 129.75 52.460938 L 124.25 52.314453 L 124.5 79.283203 C 124.6375 94.115335 124.73582 154.0625 124.7207 212.5 L 124.69141 318.75 L 123.2793 326 C 122.00365 332.54177 121.58979 333.76285 119.05664 338.5 C 117.51255 341.38748 116.09888 344.11531 115.91406 344.5625 C 115.72928 345.00969 112.97303 347.56002 109.78906 350.22852 C 106.60509 352.89705 104.0041 355.23 104.00977 355.41406 C 104.02052 355.76129 106.66083 357.48242 114.08594 361.98047 L 118.41992 364.60547 L 120.60352 362.92773 C 132.02434 354.1477 136.85917 349.77916 137.28125 347.85742 C 137.47147 346.99138 137.814 345.93716 138.04297 345.51562 C 138.27189 345.09409 139.16933 343.17499 140.03711 341.25 C 140.90489 339.32501 142.35123 336.17499 143.25 334.25 C 144.14875 332.32501 145.49646 329.39999 146.24609 327.75 C 146.99573 326.09999 148.28933 323.28749 149.11914 321.5 C 150.90861 317.64522 153.0632 312.97808 155.12109 308.5 C 155.94254 306.71251 157.03799 304.38535 157.55664 303.32812 C 158.07531 302.27088 158.5 301.08962 158.5 300.70312 C 158.5 300.31659 158.725 300 159 300 C 159.275 300 159.5 299.69418 159.5 299.32031 C 159.5 298.94644 160.20362 297.2027 161.0625 295.44531 C 161.92136 293.68795 163.04637 291.38537 163.5625 290.32812 C 164.07863 289.2709 164.5 288.08964 164.5 287.70312 C 164.5 287.31661 164.725 287 165 287 C 165.275 287 165.5 286.68339 165.5 286.29688 C 165.5 285.91036 165.93664 284.72912 166.4707 283.67188 C 168.70801 279.24299 170.5 275.22378 170.5 274.63281 C 170.5 274.28496 170.725 274 171 274 C 171.275 274 171.5 273.68339 171.5 273.29688 C 171.5 272.91036 171.93879 271.7291 172.47461 270.67188 C 173.01043 269.61463 174.16039 267.17501 175.03125 265.25 C 175.90213 263.32501 177.35123 260.17499 178.25 258.25 C 179.14875 256.32499 180.49646 253.40001 181.24609 251.75 C 182.73483 248.47319 184.51717 244.59976 186.9375 239.375 C 187.7974 237.51874 189.20029 234.48125 190.05664 232.625 C 190.91299 230.76875 192.03798 228.38536 192.55664 227.32812 C 193.07529 226.27089 193.5 225.08964 193.5 224.70312 C 193.5 224.31661 193.725 224 194 224 C 194.275 224 194.5 223.69418 194.5 223.32031 C 194.5 222.94644 195.20362 221.20269 196.0625 219.44531 C 196.92136 217.68794 198.04639 215.38536 198.5625 214.32812 C 199.07863 213.27089 199.5 212.08963 199.5 211.70312 C 199.5 211.31661 199.725 211 200 211 C 200.275 211 200.5 210.68339 200.5 210.29688 C 200.5 209.91037 200.93879 208.72911 201.47461 207.67188 C 202.01043 206.61464 203.16037 204.175 204.03125 202.25 C 204.90211 200.325 206.35123 197.175 207.25 195.25 C 208.14877 193.325 209.49881 190.4 210.25195 188.75 C 211.00512 187.1 212.35511 184.175 213.25195 182.25 C 214.1488 180.325 215.49881 177.4 216.25195 175.75 C 217.00512 174.1 218.35511 171.175 219.25195 169.25 C 220.1488 167.325 221.49646 164.4 222.24609 162.75 C 224.48898 157.81327 226.55533 153.36921 227.55664 151.32812 C 228.07529 150.27089 228.5 149.08963 228.5 148.70312 C 228.5 148.31661 228.725 148 229 148 C 229.275 148 229.5 147.69418 229.5 147.32031 C 229.5 146.94645 230.20362 145.20269 231.0625 143.44531 C 231.92138 141.68794 233.04636 139.38536 233.5625 138.32812 C 234.07863 137.27089 234.5 136.08964 234.5 135.70312 C 234.5 135.31661 234.725 135 235 135 C 235.275 135 235.5 134.68339 235.5 134.29688 C 235.5 133.91036 235.93662 132.72911 236.4707 131.67188 C 238.70801 127.24299 240.5 123.22378 240.5 122.63281 C 240.5 122.28496 240.72485 122 241 122 C 241.27511 122 241.5 121.68339 241.5 121.29688 C 241.5 120.91037 241.93879 119.72911 242.47461 118.67188 C 243.01043 117.61464 244.16261 115.175 245.03516 113.25 C 251.20153 99.646021 252.69208 96.75 253.52539 96.75 C 254.31183 96.75 256.69701 101.43242 265.36914 120 C 266.33243 122.0625 268.10605 125.7768 269.31055 128.25391 C 270.51508 130.73102 271.5 133.03727 271.5 133.37891 C 271.5 133.72054 271.72485 134 272 134 C 272.27511 134 272.5 134.27976 272.5 134.62109 C 272.5 135.21225 273.29511 136.93942 278.31055 147.25391 C 279.51508 149.73102 280.5 152.03727 280.5 152.37891 C 280.5 152.72054 280.72485 153 281 153 C 281.27511 153 281.5 153.27976 281.5 153.62109 C 281.5 153.96241 282.31506 155.93116 283.31055 157.99609 C 285.16263 161.83786 288.15224 168.1407 291.49414 175.25 C 292.52829 177.45 294.30441 181.1625 295.44141 183.5 C 296.57836 185.8375 297.5058 188.03125 297.50391 188.375 C 297.50164 188.71877 297.72485 189 298 189 C 298.27511 189 298.5 189.27976 298.5 189.62109 C 298.5 190.21225 299.29508 191.93942 304.31055 202.25391 C 305.51504 204.73102 306.5 207.03727 306.5 207.37891 C 306.5 207.72054 306.72485 208 307 208 C 307.27511 208 307.5 208.27976 307.5 208.62109 C 307.5 209.21225 308.29508 210.93942 313.31055 221.25391 C 314.51504 223.73102 315.5 226.03727 315.5 226.37891 C 315.5 226.72053 315.72485 227 316 227 C 316.27511 227 316.5 227.27976 316.5 227.62109 C 316.5 227.96241 317.28751 229.87491 318.25 231.87109 C 319.21253 233.86729 320.78747 237.13271 321.75 239.12891 C 322.71249 241.12508 323.5 243.03758 323.5 243.37891 C 323.5 243.7202 323.72485 244 324 244 C 324.27511 244 324.5 244.27976 324.5 244.62109 C 324.5 245.21225 325.29508 246.93942 330.31055 257.25391 C 331.51504 259.73103 332.5 262.03727 332.5 262.37891 C 332.5 262.72054 332.72485 263 333 263 C 333.27511 263 333.5 263.2798 333.5 263.62109 C 333.5 264.21225 334.29508 265.93941 339.31055 276.25391 C 340.51504 278.73101 341.5 281.03727 341.5 281.37891 C 341.5 281.72058 341.72485 282 342 282 C 342.27511 282 342.5 282.30578 342.5 282.67969 C 342.5 283.05356 343.14865 284.6848 343.94141 286.30469 C 348.46312 295.54401 349.50769 297.81104 349.50391 298.375 C 349.50164 298.71873 349.72485 299 350 299 C 350.27515 299 350.5 299.27976 350.5 299.62109 C 350.5 300.21225 351.29508 301.93942 356.31055 312.25391 C 357.51504 314.73103 358.5 317.03727 358.5 317.37891 C 358.5 317.72058 358.72485 318 359 318 C 359.27515 318 359.5 318.27976 359.5 318.62109 C 359.5 318.9624 360.31506 320.93117 361.31055 322.99609 C 363.34862 327.22367 366.46329 333.7986 369.24805 339.75 C 371.96991 345.567 375.47196 352.98418 376.44727 354.99609 C 376.91271 355.95628 378.4087 357.59421 379.77148 358.63672 C 381.13431 359.67919 384.01494 361.87452 386.17188 363.51562 C 388.32881 365.1567 390.26321 366.5 390.4707 366.5 C 390.67809 366.5 391.34414 362.95623 391.95117 358.625 C 392.55816 354.29374 393.26731 350.35836 393.52734 349.88086 C 394.09129 348.84463 394.15387 347.00151 393.625 347 C 393.41875 346.99951 392.58774 345.93079 391.7793 344.625 C 390.97086 343.31925 389.32428 340.7177 388.11914 338.8457 C 386.91396 336.97367 385.82634 334.72369 385.70312 333.8457 C 385.57995 332.96772 384.91065 320.54999 384.21484 306.25 C 382.9648 280.59126 382.94897 279.10478 382.94141 193 C 382.93691 141.59666 383.13173 103.38761 383.41406 100 C 383.83484 94.954935 384.25913 53.068792 383.89062 52.957031 C 383.81318 52.93353 373.0625 52.72362 360 52.490234 C 346.9375 52.256852 329.27499 51.666646 320.75 51.179688 C 311.03887 50.624987 303.12425 50.413235 284.35547 50.375 z M 391.43164 654.10742 C 391.27731 654.0854 391.1647 654.25254 391.04688 654.5293 C 390.76099 655.20081 388.24269 661.4875 385.45117 668.5 L 380.375 681.25 L 376.43945 699.5 C 374.27431 709.53748 371.94855 720.33748 371.27148 723.5 C 370.59446 726.66248 369.33957 732.51249 368.48438 736.5 C 367.62918 740.48751 366.2794 746.78748 365.48438 750.5 C 364.68939 754.21252 363.4555 759.94998 362.74219 763.25 C 362.02888 766.54998 360.78268 772.34373 359.97266 776.125 C 359.16259 779.90623 357.83752 786.09373 357.02734 789.875 C 356.21716 793.65623 353.49348 806.31253 350.97461 818 C 348.45578 829.68751 345.74756 842.28748 344.95703 846 C 344.16654 849.71248 342.96135 855.33748 342.2793 858.5 C 341.59724 861.66248 340.36413 867.39998 339.53906 871.25 C 338.71399 875.09998 337.4555 880.94998 336.74219 884.25 C 336.02892 887.54998 334.78272 893.34373 333.97266 897.125 C 333.16259 900.90627 331.8376 907.09373 331.02734 910.875 C 330.21709 914.65627 328.95776 920.56248 328.23047 924 C 327.26336 928.57077 326.46826 930.98884 325.26758 933 C 322.73201 937.24713 322.2196 938.49808 321.58789 942 C 318.1828 960.877 317.5 964.76844 317.5 965.27539 C 317.5 966.07869 326.07094 966.41857 360.75 966.99219 C 376.42499 967.25146 393.07499 967.60052 397.75 967.76758 C 402.42501 967.93463 409.17498 967.86664 412.75 967.61719 C 418.33958 967.22706 436.93492 967.92756 440.5 968.66211 C 440.9125 968.74677 441.33879 968.75043 441.44727 968.66992 C 442.224 968.09173 442.55649 926.1617 441.98242 901.25 C 441.66679 887.544 441.44463 846.50418 441.48242 808.09961 L 441.54688 739.45117 L 443.04492 718.34961 C 443.86837 706.74442 444.58904 696.57656 444.64648 695.75391 L 444.75 694.25781 L 433.5 693.375 L 422.25 692.49023 L 414.32227 688.62109 L 406.39453 684.75 L 402.625 677.25 C 400.55151 673.12499 397.21533 666.05078 395.21094 661.5293 C 392.73266 655.93884 391.89463 654.17349 391.43164 654.10742 z M 124.85156 655.63281 C 124.59832 655.71725 121.79118 660.8963 118.61328 667.14258 C 113.09937 677.98034 112.76893 678.5 111.39648 678.5 C 109.78319 678.5 93.495596 676.30877 88.529297 675.42383 C 86.06221 674.98423 81.994492 675.00601 71.154297 675.51367 C 63.369736 675.87817 57 676.24989 57 676.33984 C 57 676.42965 57.935177 677.34643 59.078125 678.37695 C 61.822534 680.85145 64.001573 685.45391 63.990234 688.75 C 63.985245 690.12499 64.883058 704.07501 65.984375 719.75 L 67.986328 748.25 L 68.898438 857.01953 C 69.400208 916.84269 69.969379 966.04649 70.164062 966.36133 C 70.358746 966.67654 71.246066 966.8448 72.134766 966.73633 C 73.023484 966.62789 77.91251 966.42216 83 966.2793 C 88.087509 966.13639 96.300009 965.65341 101.25 965.20508 C 109.08608 964.4954 115.63315 964.43245 151.875 964.71289 C 174.76875 964.89015 193.49786 964.85839 193.49219 964.64258 C 193.48743 964.42692 193.14174 962.67499 192.72461 960.75 C 192.30746 958.82501 191.05495 952.86251 189.94141 947.5 C 188.82786 942.13749 187.17509 935.83021 186.26953 933.48438 C 185.36398 931.13854 183.92961 925.73854 183.08203 921.48438 C 182.23445 917.23021 181.06567 911.49998 180.48438 908.75 C 179.43486 903.78499 173.01506 872.22749 163.49609 825.25 C 160.76567 811.775 158.05771 798.49998 157.47852 795.75 C 156.48346 791.02544 151.86512 768.30999 140.50195 712.25 C 132.50897 672.81664 132.96406 674.69461 128.93945 664.58789 C 126.94439 659.57779 125.10479 655.54853 124.85156 655.63281 z",{
@@ -5410,7 +5745,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPathStandardSleeves
+			clipPath: clippingPathStandardSleeves,
+			heightMap: true
 		});
 
 		kiaSide2 = new fabric.Path("M 253.5 97.021484 C 253.3625 97.019387 252.76067 98.081415 252.16211 99.382812 C 250.50131 102.99378 247.54224 109.40583 245.99414 112.75 C 245.23034 114.4 243.99884 117.1 243.25586 118.75 C 242.51288 120.4 241.22497 123.2125 240.39453 125 C 239.56409 126.7875 238.3736 129.375 237.74805 130.75 C 236.64205 133.18091 235.07801 136.58097 232 143.25 C 231.175 145.0375 229.825 147.9625 229 149.75 C 228.175 151.5375 226.825 154.4625 226 156.25 C 225.175 158.0375 223.825 160.9625 223 162.75 C 222.175 164.5375 220.825 167.4625 220 169.25 C 230.80161 145.84651 205.7104 200.21081 214 182.25 C 213.175 184.0375 211.825 186.9625 211 188.75 C 206.85975 197.72055 206.54254 198.41183 202.69141 206.875 C 201.97186 208.45625 200.6488 211.325 199.75195 213.25 C 198.85511 215.175 197.55613 217.9875 196.86523 219.5 C 195.61427 222.23856 193.85371 226.06695 191 232.25 C 190.175 234.0375 188.825 236.9625 188 238.75 C 187.175 240.5375 185.825 243.4625 185 245.25 C 184.175 247.0375 182.825 249.9625 182 251.75 C 181.175 253.5375 179.825 256.4625 179 258.25 C 178.175 260.0375 176.825 262.9625 176 264.75 C 171.85975 273.72055 171.54254 274.41183 167.69141 282.875 C 166.97186 284.45625 165.6488 287.325 164.75195 289.25 C 163.85511 291.175 162.55613 293.9875 161.86523 295.5 C 160.61427 298.23856 158.85371 302.06695 156 308.25 C 155.17499 310.0375 153.825 312.9625 153 314.75 C 149.17852 323.02988 148.50164 324.50086 146.78711 328.25 C 145.78104 330.44999 144.51689 333.11463 143.97852 334.17188 C 143.44012 335.22912 143 336.41038 143 336.79688 C 143 337.18329 142.775 337.5 142.5 337.5 C 142.22498 337.5 142 338.0625 142 338.75 C 142 340.25255 143.23272 340.43257 143.97852 339.03906 C 144.26138 338.5105 144.7872 337.77916 145.14648 337.41406 C 145.5058 337.04885 147.69305 333.93752 150.00586 330.5 C 152.31867 327.0625 154.34718 324.1375 154.51367 324 C 154.68016 323.8625 156.50567 321.275 158.57031 318.25 C 160.63494 315.225 164.38854 309.76875 166.91211 306.125 C 169.43568 302.48125 173.56432 296.51875 176.08789 292.875 C 178.61146 289.23125 182.36506 283.775 184.42969 280.75 C 186.49433 277.725 188.33162 275.1375 188.51172 275 C 188.69176 274.8625 190.71146 271.9375 193 268.5 C 195.28856 265.0625 197.31348 262.1375 197.5 262 C 197.68644 261.8625 199.71146 258.9375 202 255.5 C 204.28856 252.0625 206.31348 249.1375 206.5 249 C 206.68644 248.8625 208.71146 245.9375 211 242.5 C 213.28856 239.0625 215.31348 236.1375 215.5 236 C 215.68644 235.8625 217.71146 232.9375 220 229.5 C 222.28856 226.0625 224.30938 223.1375 224.49023 223 C 224.67118 222.8625 226.70606 219.9375 229.01367 216.5 C 231.32126 213.0625 233.34718 210.1375 233.51367 210 C 233.68016 209.8625 235.50569 207.275 237.57031 204.25 C 250.28672 185.61852 254.46228 179.75 255.00781 179.75 C 255.48649 179.75 258.64253 184.19684 267.60156 197.5 C 270.65735 202.0375 273.30327 205.8625 273.48242 206 C 273.66165 206.1375 276.59044 210.4125 279.99023 215.5 C 283.39003 220.5875 286.31486 224.8625 286.49023 225 C 286.66542 225.1375 289.59044 229.4125 292.99023 234.5 C 296.39003 239.5875 299.31524 243.8625 299.49023 244 C 299.66542 244.1375 302.59044 248.4125 305.99023 253.5 C 309.39003 258.5875 312.32299 262.8625 312.50781 263 C 312.69267 263.1375 315.61407 267.4125 319 272.5 C 322.38593 277.5875 325.31102 281.8625 325.5 282 C 325.68909 282.1375 328.61411 286.4125 332 291.5 C 335.38593 296.5875 338.30737 300.8625 338.49219 301 C 338.67704 301.1375 341.60997 305.4125 345.00977 310.5 C 348.40956 315.5875 351.33477 319.8625 351.50977 320 C 351.68495 320.1375 354.61313 324.4125 358.01758 329.5 C 361.42203 334.58751 364.45829 339.00661 364.76367 339.32031 C 365.06913 339.6339 366.20414 341.26364 367.28516 342.94141 C 369.27538 346.03015 371 346.98576 371 345 C 371 344.45 370.77515 344 370.5 344 C 370.22489 344 370 343.7202 370 343.37891 C 370 343.03761 369.18494 341.06885 368.18945 339.00391 C 366.27592 335.03476 363.42523 329.03033 360.11523 322 C 359.01467 319.6625 357.049 315.5 355.74805 312.75 C 354.4471 310 352.48288 305.8375 351.38281 303.5 C 350.28274 301.1625 348.31059 297 347 294.25 C 345.68945 291.5 343.69083 287.28125 342.55859 284.875 C 337.53813 274.20526 336.4839 271.96876 334.30859 267.375 C 333.03897 264.69375 330.96106 260.30625 329.69141 257.625 C 328.42179 254.94375 326.4846 250.8375 325.38672 248.5 C 324.28884 246.1625 322.4028 242.16875 321.19531 239.625 C 319.98783 237.08125 318.01217 232.91875 316.80469 230.375 C 315.59724 227.83125 313.71116 223.8375 312.61328 221.5 C 310.74884 217.53034 309.49224 214.87256 303.75 202.75 C 302.51247 200.1375 300.51482 195.91875 299.31055 193.375 C 298.10628 190.83125 296.05483 186.5 294.75195 183.75 C 292.52196 179.04313 291.50567 176.88779 286.44141 166.125 C 285.30921 163.71875 283.31055 159.5 282 156.75 C 280.68945 154 278.71726 149.8375 277.61719 147.5 C 275.68158 143.38708 273.52619 138.83068 268.68945 128.625 C 263.32604 117.30809 259.74086 109.72563 255.33594 100.38672 C 254.4637 98.53743 253.63757 97.023563 253.5 97.021484 z",{
@@ -5419,7 +5755,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPathStandardSleeves
+			clipPath: clippingPathStandardSleeves,
+			heightMap: true
 		});
 
 		jerseyPinstripesColor = new fabric.Path("M 32.552734 0 L 32.552734 1024 L 34.052734 1024 L 34.052734 0 L 32.552734 0 z M 48.0625 0 L 48.0625 1024 L 49.5625 1024 L 49.5625 0 L 48.0625 0 z M 62.796875 0 L 62.796875 1024 L 64.296875 1024 L 64.296875 0 L 62.796875 0 z M 78.433594 0 L 78.433594 1024 L 79.933594 1024 L 79.933594 0 L 78.433594 0 z M 93.941406 0 L 93.941406 1024 L 95.441406 1024 L 95.441406 0 L 93.941406 0 z M 108.67773 0 L 108.67773 1024 L 110.17773 1024 L 110.17773 0 L 108.67773 0 z M 124.31445 0 L 124.31445 1024 L 125.81445 1024 L 125.81445 0 L 124.31445 0 z M 139.29492 0 L 139.29492 1024 L 140.79492 1024 L 140.79492 0 L 139.29492 0 z M 153.70312 0 L 153.70312 1024 L 155.20312 1024 L 155.20312 0 L 153.70312 0 z M 168.84766 0 L 168.84766 1024 L 170.34766 1024 L 170.34766 0 L 168.84766 0 z M 184.23828 0 L 184.23828 1024 L 185.73828 1024 L 185.73828 0 L 184.23828 0 z M 199.21875 0 L 199.21875 1024 L 200.71875 1024 L 200.71875 0 L 199.21875 0 z M 214.77344 0 L 214.77344 1024 L 216.27344 1024 L 216.27344 0 L 214.77344 0 z M 230.32812 0 L 230.32812 1024 L 231.82812 1024 L 231.82812 0 L 230.32812 0 z M 246.29102 0 L 246.29102 1024 L 247.79102 1024 L 247.79102 0 L 246.29102 0 z M 263.72852 0 L 263.72852 1024 L 265.22852 1024 L 265.22852 0 L 263.72852 0 z M 280.26367 0 L 280.26367 1024 L 281.76367 1024 L 281.76367 0 L 280.26367 0 z M 295.16406 0 L 295.16406 1024 L 296.66406 1024 L 296.66406 0 L 295.16406 0 z M 310.71875 0 L 310.71875 1024 L 312.21875 1024 L 312.21875 0 L 310.71875 0 z M 325.78125 0 L 325.78125 1024 L 327.28125 1024 L 327.28125 0 L 325.78125 0 z M 341.25391 0 L 341.25391 1024 L 342.75391 1024 L 342.75391 0 L 341.25391 0 z M 356.29297 0 L 356.29297 1024 L 357.79297 1024 L 357.79297 0 L 356.29297 0 z M 371.84766 0 L 371.84766 1024 L 373.34766 1024 L 373.34766 0 L 371.84766 0 z M 386.25586 0 L 386.25586 1024 L 387.75586 1024 L 387.75586 0 L 386.25586 0 z M 398.28906 0 L 398.28906 1024 L 399.78906 1024 L 399.78906 0 L 398.28906 0 z M 413.27148 0 L 413.27148 1024 L 414.77148 1024 L 414.77148 0 L 413.27148 0 z M 429.15234 0 L 429.15234 1024 L 430.65234 1024 L 430.65234 0 L 429.15234 0 z M 443.72461 0 L 443.72461 1024 L 445.22461 1024 L 445.22461 0 L 443.72461 0 z M 459.2793 0 L 459.2793 1024 L 460.7793 1024 L 460.7793 0 L 459.2793 0 z M 473.84961 0 L 473.84961 1024 L 475.34961 1024 L 475.34961 0 L 473.84961 0 z M 489.4043 0 L 489.4043 1024 L 490.9043 1024 L 490.9043 0 L 489.4043 0 z",{
@@ -5428,7 +5765,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPathStandardSleeves
+			clipPath: clippingPathStandardSleeves,
+			heightMap: false
 		});
 
 		sleevePinstripesColor = new fabric.Path("M 0 352.11523 L 0 353.61523 L 512 353.61523 L 512 352.11523 L 0 352.11523 z M 0 367.86523 L 0 369.36523 L 512 369.36523 L 512 367.86523 L 0 367.86523 z M 0 382.36523 L 0 383.86523 L 512 383.86523 L 512 382.36523 L 0 382.36523 z M 0 396.99023 L 0 398.49023 L 512 398.49023 L 512 396.99023 L 0 396.99023 z M 0 411.99023 L 0 413.49023 L 512 413.49023 L 512 411.99023 L 0 411.99023 z M 0 426.24023 L 0 427.74023 L 512 427.74023 L 512 426.24023 L 0 426.24023 z M 0 442.36523 L 0 443.86523 L 512 443.86523 L 512 442.36523 L 0 442.36523 z M 0 457.11523 L 0 458.61523 L 512 458.61523 L 512 457.11523 L 0 457.11523 z M 0 471.99023 L 0 473.49023 L 512 473.49023 L 512 471.99023 L 0 471.99023 z M 0 486.49023 L 0 487.99023 L 512 487.99023 L 512 486.49023 L 0 486.49023 z M 0 502.36523 L 0 503.86523 L 512 503.86523 L 512 502.36523 L 0 502.36523 z M 0 516.99023 L 0 518.49023 L 512 518.49023 L 512 516.99023 L 0 516.99023 z M 0 532.17188 L 0 533.67188 L 512 533.67188 L 512 532.17188 L 0 532.17188 z M 0 546.54688 L 0 548.04688 L 512 548.04688 L 512 546.54688 L 0 546.54688 z M 0 562.54688 L 0 564.04688 L 512 564.04688 L 512 562.54688 L 0 562.54688 z M 0 577.04688 L 0 578.54688 L 512 578.54688 L 512 577.04688 L 0 577.04688 z M 0 591.92188 L 0 593.42188 L 512 593.42188 L 512 591.92188 L 0 591.92188 z M 0 606.29688 L 0 607.79688 L 512 607.79688 L 512 606.29688 L 0 606.29688 z M 0 621.92188 L 0 623.42188 L 512 623.42188 L 512 621.92188 L 0 621.92188 z M 0 638.04688 L 0 639.54688 L 512 639.54688 L 512 638.04688 L 0 638.04688 z M 0 652.54688 L 0 654.04688 L 512 654.04688 L 512 652.54688 L 0 652.54688 z M 0 667.42188 L 0 668.92188 L 512 668.92188 L 512 667.42188 L 0 667.42188 z M 0 682.17188 L 0 683.67188 L 512 683.67188 L 512 682.17188 L 0 682.17188 z",{
@@ -5437,7 +5775,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: vestSleeveClippingPath
+			clipPath: vestSleeveClippingPath,
+			heightMap: false
 		});
 
 		placketPipingInnerColor = new fabric.Path("M 259.39062 457.78906 C 247.66213 457.78131 235.01622 458.13642 226.38672 458.85742 C 201.67072 460.92242 185.61373 471.04544 175.55273 490.89844 C 170.88573 500.10944 168.94336 509.97995 168.94336 524.50195 C 168.94336 557.70795 182.09108 577.24956 217.45508 596.60156 C 227.47608 602.08556 232.44444 606.49739 236.64844 613.65039 L 239.5 618.50195 L 239.76172 794.75195 C 239.97872 941.56095 240.01452 966.08269 238.85352 970.17969 L 241.95898 970.17969 C 242.04098 969.69169 242.0883 969.16272 242.1543 968.51172 C 242.4603 965.47172 242.62928 959.96025 242.73828 948.90625 C 242.95728 926.79725 242.88977 882.74595 242.75977 794.75195 L 242.5 617.68164 L 239.23828 612.13086 C 234.78428 604.55386 229.14353 599.5797 218.89453 593.9707 C 201.44853 584.4237 189.76073 574.97222 182.42773 564.07422 C 175.09473 553.17622 171.94531 540.70895 171.94531 524.50195 C 171.94531 510.24795 173.79856 500.99581 178.22656 492.25781 C 187.89156 473.18581 202.62567 463.85856 226.63867 461.85156 C 235.10667 461.14356 247.72463 460.78792 259.39062 460.79492 C 271.05662 460.80192 281.97213 461.21305 286.45312 461.87305 C 301.52513 464.09305 313.21222 469.72348 322.82422 479.27148 C 333.29722 489.67548 337.53545 502.72419 337.43945 525.99219 C 337.38545 539.11319 337.2572 540.37044 334.7832 547.52344 C 327.9992 567.13244 318.69355 578.50606 300.93555 588.91406 C 290.75455 594.88206 285.13208 598.2643 281.20508 601.5293 C 277.27508 604.7963 275.22314 607.98408 272.74414 612.58008 C 272.13914 613.70508 271.60394 615.44794 271.33594 619.21094 C 271.06794 622.97394 270.89788 629.24684 270.79688 640.71484 C 270.59388 663.65084 270.6615 707.28886 270.8125 792.00586 C 270.8985 839.99486 271.03945 883.93541 271.18945 916.06641 C 271.26445 932.13141 271.33997 945.24831 271.41797 954.44531 C 271.45697 959.04431 271.49716 962.66055 271.53516 965.18555 C 271.54216 965.64255 271.55159 965.87186 271.55859 966.25586 L 271.02734 966.25586 L 271.69141 969.80664 C 271.71541 969.93464 271.7513 970.05564 271.7793 970.18164 L 274.9043 970.18164 C 274.7973 969.89464 274.70558 969.58691 274.64258 969.25391 C 274.35658 967.73691 273.98255 887.975 273.81055 792 C 273.50855 622.566 273.55472 617.398 275.38672 614 C 280.25972 604.962 282.11522 603.41895 302.44922 591.50195 C 320.65622 580.82995 330.66323 568.594 337.61523 548.5 C 340.12723 541.239 340.38741 539.159 340.44141 526 C 340.53841 502.348 336.03841 488.16172 324.94141 477.13672 C 314.87641 467.13772 302.47367 461.19444 286.88867 458.89844 C 281.93117 458.16844 271.11912 457.79681 259.39062 457.78906 z",{
@@ -5445,7 +5784,8 @@
 			id: 'placketPipingInnerColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: true
 		});
 
 		placketPipingMiddleColor = new fabric.Path("M 252.50391 453.56055 C 234.62216 453.68005 217.13566 454.89277 209.53516 457.13477 C 195.06316 461.40377 185.04405 468.47127 176.49805 480.44727 C 167.09705 493.62327 164.61956 504.02095 165.22656 527.75195 C 165.60356 542.50195 165.97241 545.46412 168.31641 552.57812 C 174.38041 570.98212 188.61753 585.86045 213.39453 599.68945 C 225.93053 606.68645 229.46609 609.879 233.12109 617.5 L 235.99805 623.5 L 235.99805 797.25 C 235.99905 941.839 236.00202 966.10473 237.16602 970.17773 L 238.85156 970.17773 C 240.01256 966.08073 239.97872 941.559 239.76172 794.75 L 239.5 618.5 L 236.64844 613.64844 C 232.44444 606.49644 227.47708 602.08461 217.45508 596.59961 C 182.09208 577.24761 168.94336 557.70405 168.94336 524.49805 C 168.94336 509.97705 170.88378 500.10748 175.55078 490.89648 C 185.61178 471.04248 201.67072 460.92047 226.38672 458.85547 C 243.64572 457.41347 276.97172 457.43648 286.88672 458.89648 C 302.47172 461.19248 314.87345 467.13577 324.93945 477.13477 C 336.03645 488.15977 340.53645 502.34605 340.43945 525.99805 C 340.38545 539.15705 340.12528 541.23705 337.61328 548.49805 C 330.66128 568.59205 320.65622 580.828 302.44922 591.5 C 282.11522 603.417 280.26072 604.96005 275.38672 613.99805 C 273.55472 617.39605 273.50855 622.56405 273.81055 791.99805 C 273.98255 887.97305 274.35562 967.73505 274.64062 969.24805 C 274.70362 969.58105 274.79434 969.88878 274.90234 970.17578 L 277.30664 970.17578 C 278.16064 962.93578 278.19158 929.67405 277.89258 796.24805 L 277.49805 620.49805 L 280.1582 615.49805 C 283.5602 609.10305 287.75905 605.25005 296.49805 600.49805 C 321.79105 586.74405 334.9572 571.88027 342.1582 548.94727 C 344.2402 542.32227 344.49327 539.621 344.44727 524.5 C 344.36627 497.898 340.58397 486.56022 327.41797 473.44922 C 319.28597 465.35122 307.9977 458.89892 297.8457 456.54492 C 288.6632 454.41492 270.38566 453.44105 252.50391 453.56055 z ",{
@@ -5453,7 +5793,8 @@
 			id: 'placketPipingMiddleColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: true
 		});
 
 		placketPipingOuterColor = new fabric.Path("M 252.48047 450.55859 C 234.47647 450.67859 217.20059 451.74681 208.68359 454.25781 C 193.70959 458.67481 182.92164 466.28008 174.05664 478.70508 C 164.36664 492.28508 161.61747 503.86322 162.23047 527.82422 C 162.60847 542.61422 163.0787 546.25367 165.4707 553.51367 C 171.8217 572.78667 186.78164 588.27059 211.93164 602.30859 C 218.13464 605.77059 221.97217 608.23984 224.57617 610.58984 C 227.18017 612.93984 228.68102 615.18183 230.41602 618.79883 L 232.99805 624.17969 L 232.99805 797.24805 C 232.99805 883.94705 232.998 927.37459 233.25 949.18359 C 233.376 960.08759 233.55228 965.52611 233.86328 968.53711 C 233.92828 969.17411 233.97659 969.69478 234.05859 970.17578 L 237.16602 970.17578 C 236.00202 966.10378 235.99905 941.83705 235.99805 797.24805 L 235.99609 623.49805 L 233.11914 617.49805 C 229.46414 609.87805 225.92858 606.6845 213.39258 599.6875 C 188.61558 585.8585 174.38041 570.98017 168.31641 552.57617 C 165.97241 545.46217 165.60456 542.5 165.22656 527.75 C 164.61956 504.02 167.09705 493.62131 176.49805 480.44531 C 185.04405 468.46831 195.0612 461.40081 209.5332 457.13281 C 224.7342 452.64981 279.47775 452.28297 297.84375 456.54297 C 307.99575 458.89697 319.28597 465.35027 327.41797 473.44727 C 340.58397 486.55727 344.36627 497.89605 344.44727 524.49805 C 344.49327 539.61905 344.2392 542.32027 342.1582 548.94727 C 334.9572 571.88027 321.79105 586.74405 296.49805 600.49805 C 287.75905 605.25005 283.5602 609.10305 280.1582 615.49805 L 277.49805 620.49805 L 277.89258 796.24805 C 278.19158 929.67405 278.16164 962.93578 277.30664 970.17578 L 280.32812 970.17578 C 280.41413 969.34978 280.48087 968.34306 280.54688 967.03906 C 280.75687 962.87106 280.89556 955.79219 280.97656 943.74219 C 281.13656 919.64019 281.07253 875.70914 280.89453 796.24414 L 280.50195 621.24219 L 282.80664 616.9082 C 285.96264 610.9752 289.43664 607.75477 297.93164 603.13477 C 323.63864 589.15577 337.61848 573.41975 345.02148 549.84375 C 347.15248 543.06175 347.49522 539.64428 347.44922 524.48828 C 347.40822 511.04728 346.44755 501.24975 343.68555 492.96875 C 340.92255 484.68875 336.3202 478.08322 329.5332 471.32422 C 320.9812 462.80922 309.37248 456.13709 298.52148 453.62109 C 288.68148 451.33909 270.48547 450.43759 252.48047 450.55859 z ",{
@@ -5461,7 +5802,8 @@
 			id: 'placketPipingOuterColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: true
 		});
 
 		shoulderPipingInnerColor = new fabric.Path("M 395.45703 347.28125 C 395.79203 347.44125 396 347.65658 396 347.89258 C 396 348.38358 394.88834 356.98105 393.52734 366.99805 C 391.24134 383.83405 391.13136 386.43347 392.06836 401.35547 C 393.30536 421.06647 396.3883 455.46 399.0293 479 C 402.1773 507.067 402.98156 522.555 402.97656 555 C 402.97156 585.326 402.94784 585.688 398.58984 618.5 L 394.20703 651.5 L 400.95117 667 L 407.69336 682.5 L 414.75977 686.25391 C 421.45977 689.81391 422.44916 690.04025 433.91016 690.65625 C 443.74116 691.18525 445.67417 691.44861 445.95117 692.72461 L 445.53125 688.78125 C 445.23525 688.69825 444.93391 688.63041 444.62891 688.56641 C 442.49591 688.12541 439.51622 687.9502 434.07422 687.6582 C 422.64222 687.0432 422.80206 687.13247 416.16406 683.60547 L 410.02344 680.34375 L 403.70508 665.80078 L 397.28906 651.06641 L 401.5625 618.89648 C 405.9195 586.08348 405.97352 585.32605 405.97852 554.99805 C 405.98352 522.50305 405.16186 506.79411 402.00586 478.66211 C 399.37286 455.18711 396.29255 420.78497 395.06055 401.16797 C 394.12555 386.28097 394.21605 384.21034 396.49805 367.40234 C 397.17905 362.38834 397.79905 357.72786 398.24805 354.25586 C 398.47405 352.51986 398.6513 351.08602 398.7793 350.04102 C 398.8423 349.51902 398.89273 349.09448 398.92773 348.77148 C 398.96073 348.46748 398.99019 348.50633 398.99219 347.98633 L 395.45703 347.28125 z M 102.1582 354.40625 L 100.08008 357.94922 C 100.15108 358.05322 100.22288 358.15881 100.29688 358.25781 C 101.79587 360.26781 104.10603 361.97625 107.70703 364.40625 L 114.05664 368.69531 L 116.07812 379.26562 C 118.14812 390.05863 118.29948 393.44877 118.39648 428.50977 L 118.5 466.15039 L 115.08203 480.29492 L 111.50195 495.14844 L 111.5332 539.50586 C 111.5672 580.20786 111.7602 584.83416 113.7832 596.03516 C 116.9662 613.64816 118.92134 628.89322 119.65234 641.69922 L 120.26562 652.38867 L 115.3418 661.88867 C 113.8918 664.68667 112.48177 667.35005 111.38477 669.37305 C 110.83677 670.38505 110.37053 671.24433 110.01953 671.86133 C 109.95353 671.97833 109.98788 671.91444 109.92188 672.02344 C 109.63887 672.04544 109.41681 672.07055 108.88281 672.06055 C 107.28481 672.03055 104.70134 671.80419 101.15234 671.36719 C 89.577344 669.94019 73.339656 669.64097 62.472656 670.66797 C 59.599656 670.93897 57.860375 671.09841 56.234375 671.69141 C 56.158375 671.71941 56.078 671.75902 56 671.79102 L 56 676.11719 C 55.999 674.58919 57.11 674.18439 62.75 673.65039 C 73.274 672.65639 89.509062 672.95375 100.78906 674.34375 C 107.98306 675.23075 111.32262 675.29269 111.89062 674.55469 C 112.33763 673.97369 115.08986 668.89653 118.00586 663.26953 L 123.30859 653.03906 L 122.65039 641.52344 C 121.90939 628.54944 119.93728 613.2 116.73828 595.5 C 114.73328 584.401 114.56716 580.193 114.53516 539.5 L 114.50195 495.5 L 118.00195 481 L 121.50195 466.5 L 121.39648 428.5 C 121.29948 393.428 121.1183 389.59117 119.0293 378.70117 L 116.76562 366.90234 L 109.38477 361.91992 C 103.71277 358.09292 101.5292 355.89025 102.1582 354.40625 z",{
@@ -5469,7 +5811,8 @@
 			id: 'shoulderPipingInnerColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: true
 		});
 
 		shoulderPipingMiddleColor = new fabric.Path("M 394.04492 347.00195 C 391.81092 347.00195 391.96636 346.33483 388.94336 368.92383 C 387.06436 382.96883 386.979 385.91583 388 401.92383 C 389.3 422.32883 393.40223 468.11395 395.49023 485.50195 C 397.99323 506.35895 398.97867 525.64795 399.01367 554.50195 C 399.04767 582.07795 398.97941 583.03895 394.44141 618.00195 L 389.83594 653.50195 L 396.82031 669.50195 L 403.80469 685.50195 L 411.65234 689.69141 C 416.54434 692.30341 421.195 694.02572 424 694.26172 C 426.475 694.46972 432.43805 694.72031 437.24805 694.82031 C 445.15305 694.98331 445.99805 694.8233 445.99805 693.1543 C 445.99805 691.4973 444.76116 691.2422 433.91016 690.6582 C 422.44916 690.0422 421.45977 689.81586 414.75977 686.25586 L 407.69336 682.50195 L 400.95117 667.00195 L 394.20703 651.50195 L 398.58984 618.50195 C 402.94784 585.68995 402.97156 585.32795 402.97656 555.00195 C 402.98156 522.55695 402.1773 507.06895 399.0293 479.00195 C 396.3883 455.46195 393.30536 421.06842 392.06836 401.35742 C 391.13136 386.43542 391.24134 383.83795 393.52734 367.00195 C 394.88834 356.98495 396 348.38553 396 347.89453 C 396 347.40353 395.11992 347.00195 394.04492 347.00195 z M 103.45703 353.43555 C 103.27724 353.40515 103.14589 353.41153 103.07227 353.45703 C 100.68327 354.93303 102.36377 357.18388 109.38477 361.92188 L 116.76562 366.90234 L 119.0293 378.70117 C 121.1183 389.59117 121.29948 393.42995 121.39648 428.50195 L 121.50195 466.50195 L 118.00195 481.00195 L 114.50195 495.50195 L 114.53516 539.50195 C 114.56716 580.19495 114.73328 584.40295 116.73828 595.50195 C 119.93728 613.20195 121.90939 628.55139 122.65039 641.52539 L 123.30859 653.03906 L 118.00586 663.26953 C 115.08986 668.89653 112.33763 673.97564 111.89062 674.55664 C 111.32262 675.29464 107.98306 675.23075 100.78906 674.34375 C 89.509062 672.95375 73.274 672.65834 62.75 673.65234 C 57.11 674.18534 56 674.59114 56 676.11914 C 56 677.83514 56.964 677.91411 71.75 677.41211 C 82.636 677.04211 90.743 677.32055 98 678.31055 C 116.037 680.77155 113.65197 681.91195 121.16797 667.25195 L 127.70508 654.50195 L 126.9043 642.50195 C 125.8923 627.33295 124.46409 615.44695 121.37109 596.50195 C 118.14609 576.74495 116.71819 542.79892 117.99219 516.16992 C 118.79219 499.46692 119.42627 494.46695 122.19727 483.00195 L 125.45898 469.50195 L 125.41797 429.50195 C 125.37897 391.77395 125.24 388.76981 123 376.63281 L 120.625 363.76367 L 112.38477 358.2793 C 108.41839 355.63942 104.71558 353.64829 103.45703 353.43555 z",{
@@ -5477,7 +5820,8 @@
 			id: 'shoulderPipingMiddleColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: true
 		});
 
 		shoulderPipingOuterColor = new fabric.Path("M 389.58594 346.48047 C 389.23794 347.18547 389.07014 347.94655 388.86914 348.81055 C 388.16014 351.85555 387.47875 357.23534 385.96875 368.52734 C 384.08375 382.61534 383.98681 386.07228 385.00781 402.11328 C 386.31581 422.63528 390.40281 468.31633 392.50781 485.86133 C 394.99681 506.59333 395.97963 525.71886 396.01562 554.50586 C 396.04962 582.07686 396.00575 582.65328 391.46875 617.61328 L 386.75 653.93945 L 394.07227 670.70312 L 401.46875 687.66016 L 410.23828 692.3418 C 415.34328 695.0688 420.00605 696.935 423.74805 697.25 C 426.42405 697.475 432.32445 697.71836 437.18945 697.81836 C 441.16545 697.90036 443.29044 697.97214 445.14844 697.61914 C 445.20344 697.60814 445.25845 697.59598 445.31445 697.58398 C 445.53145 696.12598 445.74795 694.73802 445.87695 693.91602 C 445.46295 694.86802 443.731 694.95236 437.25 694.81836 C 432.437 694.71936 426.475 694.46777 424 694.25977 C 421.195 694.02377 416.54434 692.30145 411.65234 689.68945 L 403.80469 685.5 L 396.82031 669.5 L 389.83594 653.5 L 394.44141 618 C 398.97941 583.037 399.04767 582.076 399.01367 554.5 C 398.97867 525.646 397.99323 506.357 395.49023 485.5 C 393.40223 468.112 389.3 422.32883 388 401.92383 C 386.979 385.91583 387.06436 382.96883 388.94336 368.92383 C 391.96636 346.33483 391.81092 347.00195 394.04492 347.00195 L 389.58594 346.48047 z M 104.82031 350.70117 L 102.39648 354.02148 C 102.56348 353.82048 102.78727 353.63303 103.07227 353.45703 C 103.66127 353.09303 107.85177 355.2623 112.38477 358.2793 L 120.625 363.76367 L 123 376.63281 C 125.24 388.76981 125.37702 391.77395 125.41602 429.50195 L 125.45898 469.50195 L 122.19531 483.00195 C 119.42431 494.46695 118.79219 499.46692 117.99219 516.16992 C 116.71819 542.79892 118.14414 576.74495 121.36914 596.50195 C 124.46214 615.44695 125.8923 627.33295 126.9043 642.50195 L 127.70312 654.50195 L 121.16602 667.25195 C 113.64902 681.91295 116.036 680.7735 98 678.3125 L 97.998047 678.3125 C 90.741047 677.3225 82.634047 677.04406 71.748047 677.41406 C 56.962047 677.91606 55.998047 677.83514 55.998047 676.11914 L 55.574219 680.10156 C 56.399219 680.46256 57.188938 680.51684 58.085938 680.58984 C 60.581938 680.79484 64.453516 680.66216 71.853516 680.41016 C 82.638516 680.04516 90.55875 680.32125 97.59375 681.28125 C 97.71275 681.29725 97.751188 681.30531 97.867188 681.32031 C 102.15419 681.91031 105.34644 682.43687 107.89844 682.67188 C 110.51944 682.91386 112.74027 682.90416 114.82227 681.91016 C 116.90427 680.91616 118.26995 679.14044 119.50195 677.02344 C 120.73395 674.90644 121.97894 672.24505 123.83594 668.62305 L 130.75195 655.13086 L 129.89844 642.29883 C 128.88144 627.04683 127.43303 615.01848 124.33203 596.02148 C 121.17203 576.66548 119.72528 542.7125 120.98828 516.3125 C 121.78528 499.6555 122.36528 495.08003 125.11328 483.70703 L 128.45703 469.85742 L 128.41992 429.50195 C 128.37992 391.76795 128.19927 388.29089 125.94727 376.08789 L 123.3418 361.97266 L 114.04688 355.78711 C 111.70188 354.22611 109.451 352.88741 107.625 351.94141 C 106.712 351.46841 105.92197 351.09336 105.16797 350.81836 C 105.05297 350.77636 104.93631 350.74017 104.82031 350.70117 z",{
@@ -5485,7 +5829,8 @@
 			id: 'shoulderPipingOuterColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: true
 		});
 
 		sleevePipingOuterColor = new fabric.Path("M 4.7734375 373.71875 L 4.7734375 674.63672 L 8.5253906 674.63672 L 8.5253906 373.71875 L 4.7734375 373.71875 z M 501.65234 373.71875 L 501.65234 674.63672 L 505.4043 674.63672 L 505.4043 373.71875 L 501.65234 373.71875 z",{
@@ -5493,7 +5838,8 @@
 			id: 'sleevePipingOuterColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: true
 		});
 
 		sleevePipingMiddleColor = new fabric.Path("M 8.5253906 373.71875 L 8.5253906 674.63672 L 12.275391 674.63672 L 12.275391 373.71875 L 8.5253906 373.71875 z M 497.90234 373.71875 L 497.90234 674.63672 L 501.65234 674.63672 L 501.65234 373.71875 L 497.90234 373.71875 z",{
@@ -5501,7 +5847,8 @@
 			id: 'sleevePipingMiddleColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: true
 		});
 
 		sleevePipingInnerColor = new fabric.Path("M 12.275391 373.71875 L 12.275391 674.63672 L 16.025391 674.63672 L 16.025391 373.71875 L 12.275391 373.71875 z M 494.15039 373.71875 L 494.15039 674.63672 L 497.90234 674.63672 L 497.90234 373.71875 L 494.15039 373.71875 z",{
@@ -5509,7 +5856,8 @@
 			id: 'sleevePipingInnerColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: true
 		});
 
 		thinCuffOuterColor = new fabric.Path("M 0.05078125 373.95898 L 0.05078125 674.87695 L 3.8027344 674.87695 L 3.8027344 373.95898 L 0.05078125 373.95898 z M 507.43945 373.95898 L 507.43945 674.87695 L 511.19141 674.87695 L 511.19141 373.95898 L 507.43945 373.95898 z",{
@@ -5517,7 +5865,8 @@
 			id: 'thinCuffOuterColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: true
 		});
 
 		thinCuffMiddleColor = new fabric.Path("M 3.8027344 373.95898 L 3.8027344 674.87695 L 7.5527344 674.87695 L 7.5527344 373.95898 L 3.8027344 373.95898 z M 503.68945 373.95898 L 503.68945 674.87695 L 507.43945 674.87695 L 507.43945 373.95898 L 503.68945 373.95898 z",{
@@ -5525,7 +5874,8 @@
 			id: 'thinCuffMiddleColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: true
 		});
 
 		thinCuffInnerColor = new fabric.Path("M 7.5527344 373.95898 L 7.5527344 674.87695 L 11.302734 674.87695 L 11.302734 373.95898 L 7.5527344 373.95898 z M 499.9375 373.95898 L 499.9375 674.87695 L 503.68945 674.87695 L 503.68945 373.95898 L 499.9375 373.95898 z",{
@@ -5533,7 +5883,8 @@
 			id: 'thinCuffInnerColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: true
 		});
 
 		sleeveCuffOuterColor = new fabric.Path("M 0.05078125 373.95898 L 0.05078125 674.87695 L 3.8027344 674.87695 L 7.5527344 674.87695 L 11.302734 674.87695 L 11.302734 373.95898 L 7.5527344 373.95898 L 3.8027344 373.95898 L 0.05078125 373.95898 z M 499.9375 373.95898 L 499.9375 674.87695 L 503.68945 674.87695 L 507.43945 674.87695 L 511.19141 674.87695 L 511.19141 373.95898 L 507.43945 373.95898 L 503.68945 373.95898 L 499.9375 373.95898 z",{
@@ -5541,7 +5892,8 @@
 			id: 'sleeveCuffOuterColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: true
 		});
 
 		sleeveCuffMiddleColor = new fabric.Path("M 11.302734 373.95898 L 11.302734 674.87695 L 15.054688 674.87695 L 18.804688 674.87695 L 22.554688 674.87695 L 22.554688 373.95898 L 18.804688 373.95898 L 15.054688 373.95898 L 11.302734 373.95898 z M 488.68359 373.95898 L 488.68359 674.87695 L 492.43555 674.87695 L 496.18555 674.87695 L 499.9375 674.87695 L 499.9375 373.95898 L 496.18555 373.95898 L 492.43555 373.95898 L 488.68359 373.95898 z",{
@@ -5549,7 +5901,8 @@
 			id: 'sleeveCuffMiddleColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: true
 		});
 
 		sleeveCuffInnerColor = new fabric.Path("M 22.554688 373.95898 L 22.554688 674.87695 L 26.306641 674.87695 L 30.056641 674.87695 L 33.806641 674.87695 L 33.806641 373.95898 L 30.056641 373.95898 L 26.306641 373.95898 L 22.554688 373.95898 z M 477.42969 373.95898 L 477.42969 674.87695 L 481.18164 674.87695 L 484.93164 674.87695 L 488.68359 674.87695 L 488.68359 373.95898 L 484.93164 373.95898 L 481.18164 373.95898 L 477.42969 373.95898 z",{
@@ -5557,7 +5910,8 @@
 			id: 'sleeveCuffInnerColor',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: true
 		});
 
 		vNeckThickInnerColor = new fabric.Path("M 256.00391 496.26953 C 252.13341 496.26953 248.2568 496.63915 242.14844 497.37695 C 234.01077 498.35948 224.64932 500.22364 218.49609 502.16602 C 212.03412 504.20586 207.4044 505.7899 204.2793 509.94727 C 201.15419 514.10463 201.00003 518.98875 201.00781 525.55273 C 201.02671 541.77791 205.87901 551.88994 219.18359 563.60742 C 224.50502 568.294 229.49123 571.86456 234.05078 573.60938 C 235.83899 574.29369 241.70699 577.7255 245.19727 580.4375 C 247.19134 581.98692 249.0782 583.39014 250.5625 584.44531 C 250.717 584.55515 250.84888 584.64406 250.99414 584.74609 L 250.93555 584.74219 L 252.17773 585.55469 C 252.28239 585.62348 252.39799 585.70378 252.49805 585.76758 C 252.53409 585.79054 252.56822 585.8116 252.60352 585.83398 L 255.625 587.81055 L 257.49414 586.80469 C 257.718 586.72693 257.85408 586.64153 257.99023 586.58594 C 258.29411 586.46235 258.47324 586.37202 258.63867 586.2832 C 258.96976 586.10594 259.22079 585.94684 259.50195 585.76758 C 259.60752 585.70025 259.72916 585.61584 259.83984 585.54297 L 259.94922 585.48438 L 259.93164 585.48242 C 260.38662 585.18061 260.87243 584.84702 261.4375 584.44531 C 262.9218 583.39014 264.80866 581.98692 266.80273 580.4375 C 270.29305 577.7255 276.16101 574.29369 277.94922 573.60938 C 282.5088 571.86456 287.49498 568.29396 292.81641 563.60742 C 306.12102 551.88987 310.97231 541.77787 310.99219 525.55273 C 310.99975 518.98872 310.84592 514.09686 307.7207 509.93945 C 304.59553 505.78212 299.96588 504.20583 293.50391 502.16602 C 287.35076 500.22364 277.98923 498.35948 269.85156 497.37695 C 263.7432 496.63945 259.87437 496.26953 256.00391 496.26953 z M 212.92773 549.93164 C 212.97034 549.98837 213.01357 550.04483 213.05664 550.10156 C 213.01361 550.04488 212.97029 549.98831 212.92773 549.93164 z M 299.07227 549.93164 C 299.02971 549.98831 298.98639 550.04488 298.94336 550.10156 C 298.98643 550.04483 299.02966 549.98837 299.07227 549.93164 z M 227.89648 564.25 C 227.9884 564.31783 228.08045 564.38443 228.17188 564.45117 C 228.0804 564.38439 227.98845 564.31786 227.89648 564.25 z M 284.10352 564.25 C 284.01155 564.31786 283.9196 564.38439 283.82812 564.45117 C 283.91955 564.38443 284.0116 564.31783 284.10352 564.25 z M 231.33984 566.60742 C 231.41715 566.65591 231.49364 566.70454 231.57031 566.75195 C 231.49353 566.70448 231.41726 566.65597 231.33984 566.60742 z M 280.66016 566.60742 C 280.58274 566.65597 280.50647 566.70448 280.42969 566.75195 C 280.50636 566.70454 280.58285 566.65591 280.66016 566.60742 z M 235.83789 568.95703 C 236.19526 569.09379 236.59197 569.26406 237.01953 569.46289 C 236.59343 569.26485 236.19421 569.09339 235.83789 568.95703 z M 276.16211 568.95703 C 275.80579 569.09339 275.40657 569.26485 274.98047 569.46289 C 275.40803 569.26406 275.80474 569.09379 276.16211 568.95703 z M 237.12109 569.51172 C 237.54571 569.71136 237.99834 569.93578 238.47461 570.18555 C 239.47403 570.70967 240.57076 571.33367 241.69727 572.01758 C 242.78869 572.68019 243.90711 573.40039 244.99219 574.13672 C 243.90711 573.4005 242.78867 572.68002 241.69727 572.01758 C 240.57085 571.33388 239.47397 570.70951 238.47461 570.18555 C 237.997 569.93514 237.54674 569.71173 237.12109 569.51172 z M 274.87891 569.51172 C 274.45326 569.71173 274.003 569.93514 273.52539 570.18555 C 272.52604 570.70951 271.42915 571.33388 270.30273 572.01758 C 269.21133 572.68002 268.09289 573.4005 267.00781 574.13672 C 268.09289 573.40039 269.21132 572.68019 270.30273 572.01758 C 271.42923 571.33367 272.52597 570.70967 273.52539 570.18555 C 274.00166 569.93578 274.45429 569.71136 274.87891 569.51172 z M 245.18359 574.26758 C 246.26987 575.00965 247.32032 575.76593 248.26758 576.50195 C 247.32119 575.7666 246.26874 575.00884 245.18359 574.26758 z M 266.81641 574.26758 C 265.73125 575.00884 264.67881 575.7666 263.73242 576.50195 C 264.67968 575.76593 265.73013 575.00965 266.81641 574.26758 z",{
@@ -5626,17 +5980,20 @@
 
 		thickVNeck3 = new fabric.Group([vNeckThickOuterColor, vNeckThickMiddleColor, vNeckThickInnerColor],{
 			id: 'thickVNeck3',
-			visible: false
+			visible: false,
+			heightMap: true
 		})
 
 		thickVNeck2 = new fabric.Group([vNeck2OuterColor, vNeck2InnerColor],{
 			id: 'thickVNeck2',
-			visible: false
+			visible: false,
+			heightMap: true
 		})
 
 		offsetVNeck = new fabric.Group([vNeckOffsetOuterColor, vNeckOffsetMiddleColor, vNeckOffsetInnerColor],{
 			id: 'offsetVNeck',
-			visible: false
+			visible: false,
+			heightMap: true
 		})
 
 		cadetCollarColor = new fabric.Path("M 2.546875 182.25781 C 0.94568231 182.26181 0 182.28711 0 182.28711 L 0 198.98828 L 11.246094 198.81641 L 24.027344 200.17969 C 24.027344 200.17969 35.954454 207.16545 42.429688 215.00391 C 42.675056 215.3009 42.908008 215.6105 43.144531 215.91602 C 45.709908 220.77809 52.3125 233.91992 52.3125 233.91992 C 52.3125 233.91992 54.331956 234.49037 56.333984 234.70312 L 66.285156 236.64648 L 52.988281 239.08594 L 46.119141 245.95508 L 42.144531 253.78711 L 32.142578 264.99219 C 32.142578 264.99219 17.442909 273.06518 0.93554688 271.25781 L 0.93554688 287.88477 C 0.93554688 287.88477 23.708891 286.56126 28.769531 284.75391 C 33.830172 282.94653 39.734375 279.57227 39.734375 279.57227 L 56.722656 260.29297 C 56.722656 260.29297 66.161785 241.8379 70.482422 238.66211 L 70.482422 232.55859 L 68.888672 230.98242 C 65.603631 227.49448 59.400933 219.73231 53.847656 206.14453 C 53.793285 206.01141 53.741271 205.88891 53.6875 205.75781 C 53.614739 205.70124 53.544214 205.64764 53.470703 205.58984 C 33.760107 190.08826 28.090203 185.20994 26.830078 184.09375 C 18.055176 182.43027 7.350503 182.24581 2.546875 182.25781 z",{
@@ -5646,6 +6003,7 @@
 			selectable:false,
 			evented: false,
 			absolutePositioned: true
+			heightMap: false
 		});
 
 		highCollar1 = new fabric.Path("M 0.0078125 181.94922 L 0.0078125 189.69141 C 0.0078125 198.72103 -0.49947256 198.05529 6.2910156 197.91992 C 10.334116 197.8393 12.499257 198.13691 18.066406 199.54297 C 19.060781 199.79412 20.346762 200 20.923828 200 C 21.500913 200 22.993009 200.5625 24.240234 201.25 C 25.487475 201.9375 27.576574 203.07984 28.882812 203.78906 C 30.189032 204.49829 33.581319 207.36704 36.419922 210.16406 C 40.453819 214.13889 41.955423 216.0138 43.294922 218.74805 C 44.237498 220.67208 45.007812 222.78124 45.007812 223.43359 C 45.007812 224.61792 46.676414 230.24632 47.658203 232.375 C 47.943595 232.99375 48.264137 233.5 48.371094 233.5 C 48.749474 233.5 53.255612 230.87786 55.332031 229.44922 C 56.490475 228.65218 57.581879 228 57.757812 228 C 57.933712 228 59.058738 227.325 60.257812 226.5 C 61.456887 225.675 62.604805 225 62.808594 225 C 63.012386 225 63.561493 224.65383 64.029297 224.23047 C 64.823644 223.51159 64.746955 223.20069 62.865234 219.51758 C 61.757058 217.34853 60.22025 214.83311 59.449219 213.92969 C 58.678172 213.02627 57.096202 210.52368 55.935547 208.36719 C 53.573403 203.97836 49.065301 198.7672 45.572266 196.38867 C 44.299188 195.5218 42.92059 194.46102 42.507812 194.03125 C 41.13347 192.60026 37.60011 190.01966 36.169922 189.40234 C 35.393395 189.06718 33.857791 188.20348 32.757812 187.48242 C 29.974882 185.65816 27.030476 184.58013 23.109375 183.95117 C 21.266096 183.6555 18.632805 183.18054 17.257812 182.89453 C 15.882847 182.60853 11.439009 182.27876 7.3828125 182.16211 L 0.0078125 181.94922 z M 48.333984 236 C 48.070136 236 47.284949 238.15535 46.513672 241 C 46.178163 242.2375 45.701443 243.76675 45.455078 244.39844 C 45.208729 245.03013 45.007812 245.99856 45.007812 246.55078 C 45.007812 247.97083 42.11453 253.1854 40.103516 255.39062 C 32.686506 263.52402 30.505451 265.43608 26.289062 267.48633 C 23.945604 268.62585 20.841566 269.76976 19.392578 270.0293 C 17.943568 270.28884 15.407795 270.74854 13.757812 271.05078 C 12.107848 271.35303 8.7914621 271.55901 6.3867188 271.50977 C 2.084989 271.42166 2.0062397 271.44147 1.5117188 272.74219 C 1.2352841 273.46932 1.0078125 276.95587 1.0078125 280.48828 L 1.0078125 286.91016 L 5.3828125 287.24219 C 7.7890298 287.42444 9.9828216 287.65038 10.257812 287.74609 C 11.389913 288.14016 14.97095 287.96416 15.257812 287.5 C 15.427778 287.225 17.095192 287 18.962891 287 C 22.243955 287 24.091245 286.61357 27.257812 285.26172 C 33.828865 282.45645 35.773307 281.45451 39.507812 278.94922 C 44.623452 275.5174 47.83462 272.24476 51.96875 266.25 C 56.027989 260.36383 58.475333 257.28421 59.242188 257.10156 C 59.583328 257.02026 60.170763 256.34531 60.546875 255.60156 C 60.922976 254.85782 62.080485 252.9685 63.119141 251.40234 C 64.157774 249.83618 65.005796 248.26118 65.003906 247.90234 C 65.002005 247.54352 64.158264 246.68895 63.128906 246.00391 C 62.099552 245.31886 61.145387 244.62537 61.007812 244.46094 C 60.676223 244.06439 48.596469 236 48.333984 236 z M 200.00586 510.89453 L 200.02539 522.57227 C 200.03862 530.40742 200.27291 535.40167 200.73633 537.75 C 201.75518 542.9134 203.04993 548.13076 203.55859 549.11914 C 203.80434 549.59672 204.00586 550.29793 204.00586 550.67773 C 204.00586 552.01459 207.08439 560.69322 209.06836 564.94727 C 210.17213 567.31404 211.65689 571.0074 212.36719 573.15625 C 213.07748 575.30506 214.44534 578.34255 215.40625 579.90625 C 216.36716 581.46992 217.59491 583.65001 218.13477 584.75 C 218.67461 585.84999 219.58105 587.25625 220.14844 587.875 C 221.41157 589.25245 222.95503 589.3016 225.42578 588.04102 C 227.27972 587.09519 229.06256 584.63185 232.51172 578.25 C 235.46065 572.79384 236.15201 571.69257 237.55078 570.22656 C 238.35042 569.38845 239.00391 568.53992 239.00391 568.3418 C 239.00391 568.14375 239.90391 566.50011 241.00391 564.68945 C 242.10386 562.87883 243.00996 561.25242 243.01562 561.07422 C 243.02318 560.8962 243.46612 560.1875 244.00391 559.5 C 245.30127 557.84139 245.2515 556.37515 243.875 555.69922 C 238.88912 553.25122 238.19433 552.71182 230.67383 545.4707 C 227.34163 542.2623 226.21092 540.75782 224.51953 537.2793 C 223.38002 534.93576 222.23608 531.83376 221.97656 530.38477 C 221.71702 528.93573 221.2573 526.39999 220.95508 524.75 C 220.65275 523.10001 220.444 519.80494 220.49219 517.42773 C 220.55549 514.30864 220.39619 512.98641 219.91797 512.67773 C 219.55351 512.44227 215.88079 512.09705 211.75586 511.91016 C 207.63091 511.72345 203.29958 511.41819 202.13086 511.23242 L 200.00586 510.89453 z M 299.46094 511.06836 C 297.94191 511.0986 296.70468 511.15841 296.11719 511.24609 L 293.98047 511.56445 L 294.07617 516.6582 C 294.16235 521.26703 293.87887 523.44411 292.46094 529.05859 C 292.2096 530.05299 292.00391 531.33896 292.00391 531.91602 C 292.00391 532.49307 291.44136 533.98518 290.75391 535.23242 C 290.06641 536.47967 288.924 538.56876 288.21484 539.875 C 287.50573 541.18124 284.56412 544.63227 281.67773 547.54492 C 277.28755 551.97502 275.82322 553.11917 272.71875 554.54492 C 270.67769 555.48224 269.01187 556.475 269.01758 556.75 C 269.02136 557.02515 269.46616 557.8125 270.00391 558.5 C 270.54166 559.1875 270.98652 559.93471 270.99219 560.16016 C 270.99975 560.38579 271.67891 561.55091 272.50391 562.75 C 274.08152 565.043 274.42757 566.77402 273.37891 567.12695 C 272.9104 567.28456 272.89506 567.51342 273.31641 568.04297 C 273.62557 568.43143 274.37985 570.21247 274.99414 572 C 275.60847 573.78749 276.4463 575.78052 276.85547 576.42969 C 277.78799 577.90915 280.54599 585.26937 280.88086 587.17188 C 281.01843 587.9539 281.89734 589.36016 282.83398 590.29688 C 285.90871 593.3716 288.31282 592.38818 290.80859 587.03516 C 293.73633 580.75574 295.71087 577.0067 298.93359 571.61328 C 300.62176 568.78805 302.00391 566.36351 302.00391 566.22461 C 302.00391 566.0859 302.76367 564.34728 303.69336 562.36133 C 307.85345 553.47471 309.88807 547.80336 310.18945 544.25 C 310.3293 542.60001 310.67205 540.34999 310.95117 539.25 C 311.23048 538.15004 311.59907 536.575 311.76953 535.75 C 311.93999 534.925 312.3073 533.77446 312.58789 533.19336 C 312.86833 532.61226 312.97481 530.81224 312.82227 529.19336 C 312.09879 521.51158 311.50056 516.03068 311.13867 513.75 L 310.74219 511.25 L 304.49805 511.08789 C 302.78078 511.04329 300.97997 511.03926 299.46094 511.06836 z",{
@@ -5655,6 +6013,7 @@
 			selectable:false,
 			evented: false,
 			absolutePositioned: true
+			heightMap: false
 		});
 
 		highCollar1Laces = new fabric.Path("M 61.177734 224.5 C 60.671486 224.5 60.642321 224.80911 61.048828 225.875 C 61.568022 227.23638 61.200789 234 60.607422 234 C 60.446811 234 59.794676 233.51004 59.158203 232.91211 C 58.266726 232.0746 58 232.00072 58 232.58594 C 58 233.00375 58.450003 233.75226 59 234.25 C 60.263402 235.39335 60.263402 237.38485 59 239 C 58.46223 239.6875 58.011339 240.475 58 240.75 C 57.98775 241.025 57.53777 241.8125 57 242.5 C 56.025411 243.74593 55.701027 245.53306 56.333984 246.16602 C 56.97658 246.80861 57.824816 246.48801 59.083984 245.125 C 60.476344 243.61786 61.221863 242 60.525391 242 C 60.281932 242 59.979563 242.28125 59.853516 242.625 C 59.700275 243.04291 59.456412 243.08432 59.115234 242.75 C 58.418044 242.06684 59.259162 240 60.234375 240 C 60.655717 240 61 240.35057 61 240.7793 C 61 241.20804 61.225002 241.41997 61.5 241.25 C 61.774998 241.08004 62 240.51754 62 240 C 62 238.37275 62.840512 238.43671 65.210938 240.24609 C 67.440234 241.94775 68.507369 242.39592 68.494141 241.625 C 68.490641 241.41875 67.253174 240.1672 65.744141 238.84375 C 64.235107 237.5203 63.006113 236.0578 63.013672 235.59375 C 63.021472 235.12971 63.921483 233.74511 65.013672 232.51758 C 66.915511 230.38007 67.517016 229 66.544922 229 C 66.294377 229 65.508094 229.6903 64.798828 230.5332 C 63.130242 232.5162 62.443729 232.05042 62.833984 229.20312 C 63.163559 226.7987 62.35381 224.5 61.177734 224.5 z M 58.919922 225.06445 C 57.993116 225.11464 57 226.3477 57 227.57031 C 57 228.62427 57.111525 228.57836 58.453125 226.98047 C 59.508501 225.72347 59.715295 225.20517 59.205078 225.08789 C 59.111788 225.06649 59.015798 225.05925 58.919922 225.06445 z M 57.351562 229.70508 C 57.148361 229.71035 57 230.01064 57 230.4707 C 57 231.03693 57.225002 231.5 57.5 231.5 C 57.774998 231.5 58 231.17557 58 230.7793 C 58 230.38303 57.774998 229.91997 57.5 229.75 C 57.44844 229.7181 57.398455 229.70388 57.351562 229.70508 z",{
@@ -5662,7 +6021,8 @@
 			id: 'highCollar1Laces',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			heightMap: true
 		});
 
 		sunCollar1Color = new  fabric.Path("M 0.15039062 182 L 0.15039062 186.08008 L 0.15039062 190.16211 L 5.9003906 189.75977 C 14.18352 189.18148 25.248694 192.23091 32.9375 197.21094 C 40.625191 202.19023 51.24521 213.45475 54.236328 219.80273 C 57.593085 226.92672 60.838111 230.80041 65.402344 233.12891 L 69.541016 235.24023 L 66.595703 236.73828 C 61.887538 239.13461 58.236842 243.06902 54.871094 249.37695 C 51.170917 256.31166 39.827436 267.70075 31.808594 272.53125 C 24.568773 276.89246 17.48181 279.09202 8.1503906 279.87305 L 0.65039062 280.5 L 0.32421875 283.90625 L 0 287.31055 L 12.472656 286.72266 C 23.83903 286.1856 25.507553 285.85187 31.296875 282.97266 C 40.52452 278.38347 56.123112 262.82979 60.853516 253.5 C 62.805547 249.65 66.207374 243.91711 68.414062 240.75977 L 72.425781 235.01953 L 66.392578 225.75977 C 63.073907 220.66711 59.557556 214.7 58.578125 212.5 C 56.629563 208.12314 41.472312 192.78093 36.650391 190.30469 C 35.000393 189.45736 32.245981 187.71374 30.529297 186.42969 C 27.240496 183.96974 16.07861 182 5.4257812 182 L 0.15039062 182 z",{
@@ -5680,6 +6040,7 @@
 			visible: false,
 			selectable:false,
 			evented: false
+			heightMap: false
 		});
 
 		jerseyBelow.add(jerseyBackColor)
@@ -5920,7 +6281,7 @@
 		
 		swash6Stroke = new fabric.Path("m 414.18359,368.39844 c -0.75777,-0.0864 -0.74041,0.18296 -1.08852,0.34931 0,0 -0.38783,0.30411 -0.46997,0.35235 0,0 -1.88846,4.04871 -2.70118,5.92604 0,0 0.42739,-0.0607 1.12275,0.0113 -0.008,0.0636 -0.0108,0.1303 -0.0195,0.19336 -0.0167,0.0104 -0.005,0.0391 -0.008,0.0586 -0.56855,3.96907 -2.75649,6.85135 -6.49414,9.22071 -4.43613,2.81213 -10.92617,4.69091 -18.17383,5.91992 -14.49531,2.45801 -31.85157,2.39318 -42.76953,4.10156 -12.78065,1.99989 -26.18691,5.24018 -37.68359,8.91016 -11.49531,3.66953 -21.01446,7.6785 -26.35352,11.6289 -0.2527,0.18661 -0.50878,0.39982 -0.75,0.83594 -0.24122,0.43612 -0.48577,1.41082 0.0937,2.24609 0.57952,0.83527 1.43438,0.92921 1.89649,0.90235 0.4621,-0.0269 0.76821,-0.15308 1.04882,-0.29688 l 0.004,-0.002 0.004,-0.002 c 11.41904,-5.9188 23.73151,-5.77911 30.95703,-0.5586 l 1.23633,0.89258 1.1875,-0.95508 c 9.32412,-7.49115 19.38476,-10.14877 29.14648,-11.67969 7.76879,-1.21641 25.81539,-2.41906 41.92383,-6.43359 8.05422,-2.00727 15.66736,-4.70455 21.44336,-8.64258 5.776,-3.93802 9.78125,-9.37244 9.78125,-16.27929 3.2e-4,-1.67246 -0.31019,-2.99921 -0.65039,-3.93555 -0.17011,-0.46817 -0.34771,-0.8396 -0.4961,-1.11328 -0.14838,-0.27369 -0.16829,-0.32018 -0.34765,-0.5586 l -0.01,-0.0137 -0.01,-0.0117 c -0.36011,-0.46374 -1.05974,-0.97965 -1.82032,-1.0664 z m -13.34375,22.32226 c -4.47989,2.20875 -9.83496,4.00273 -15.51367,5.41797 -15.60693,3.88955 -33.28982,5.06418 -41.57422,6.36133 l -0.002,0 c -9.66267,1.51525 -20.1095,4.33016 -29.8457,11.7207 -4.2169,-2.64949 -9.33525,-4.00152 -14.8711,-3.96875 2.68644,-1.00814 5.06887,-2.03813 8.08203,-3 11.28756,-3.60321 24.53586,-6.80571 37.08594,-8.76953 10.24127,-1.60249 27.80325,-1.56289 42.82031,-4.10937 4.99472,-0.84697 9.67259,-2.01981 13.81836,-3.65235 z m -120.81836,24.47461 c -0.006,0.003 -0.0132,0.005 -0.0195,0.008 l 0.008,-0.006 c 0.002,-8.7e-4 0.01,-0.001 0.0117,-0.002 z",{
 			id: 'swash6Stroke',
-			fill: initialJerseyColors["swashStrokeColor"],
+			fill: initialJerseyColors["swashStrokeColor"]
 		});
 
 		wordmarkText = new fabric.Text('Bulldogs',{
@@ -5983,7 +6344,8 @@
 			originX: 'center',
 			originY: 'center',
 			left: 256,
-			top: 681
+			top: 681,
+			heightMap: true
 		})
 
 		swash1Group = new fabric.Group([swash1Stroke,swash1], {
@@ -5998,6 +6360,7 @@
 			cornerColor: 'yellow',
 			cornerSize: 12,
 			transparentCorners: false,
+			heightMap: true
 		});
 		
 		swash2Group = new fabric.Group([swash2Stroke,swash2], {
@@ -6011,7 +6374,8 @@
 			borderColor: 'red',
 			cornerColor: 'yellow',
 			cornerSize: 12,
-			transparentCorners: false
+			transparentCorners: false,
+			heightMap: true
 		});
 
 		swash3Group = new fabric.Group([swash3Stroke,swash3], {
@@ -6025,7 +6389,8 @@
 			borderColor: 'red',
 			cornerColor: 'yellow',
 			cornerSize: 12,
-			transparentCorners: false
+			transparentCorners: false,
+			heightMap: true
 		});
 
 		swash4Group = new fabric.Group([swash4Stroke,swash4], {
@@ -6039,7 +6404,8 @@
 			borderColor: 'red',
 			cornerColor: 'yellow',
 			cornerSize: 12,
-			transparentCorners: false
+			transparentCorners: false,
+			heightMap: true
 		});
 
 		swash5Group = new fabric.Group([swash5Stroke,swash5], {
@@ -6053,7 +6419,8 @@
 			borderColor: 'red',
 			cornerColor: 'yellow',
 			cornerSize: 12,
-			transparentCorners: false
+			transparentCorners: false,
+			heightMap: true
 		});
 
 		swash6Group = new fabric.Group([swash6Stroke,swash6], {
@@ -6067,7 +6434,8 @@
 			borderColor: 'red',
 			cornerColor: 'yellow',
 			cornerSize: 12,
-			transparentCorners: false
+			transparentCorners: false,
+			heightMap: true
 		});
 
 		swash1Group.scaleToWidth(210)
@@ -6109,7 +6477,8 @@
 			visible: false,
 			selectable: false,
 			scaleX: 0.75,
-			scaleY: 0.75
+			scaleY: 0.75,
+			heightMap: true
 		});
 
 		milbBaseColor = new fabric.Path("M 238.36133 469.07617 C 236.41908 469.07617 234.83984 470.66486 234.83984 472.61914 L 234.83984 488.36133 C 234.83984 489.31834 235.20576 490.2093 235.87109 490.87109 A 3.5164716 3.5164716 0 0 0 238.36133 491.89258 L 273.63281 491.89258 A 3.554037 3.554037 0 0 0 276.13281 490.87695 C 276.79901 490.21308 277.16211 489.32198 277.16211 488.35938 L 277.16211 472.61914 C 277.16211 471.65597 276.79704 470.76627 276.13672 470.11328 A 3.5331999 3.5331999 0 0 0 273.63281 469.07617 L 238.36133 469.07617 z",{
@@ -6144,7 +6513,8 @@
 			visible: false,
 			selectable: false,
 			scaleX: 0.75,
-			scaleY: 0.75
+			scaleY: 0.75,
+			heightMap: true
 		});
 
 		butterflyColor = new fabric.Path("M 182.91406 503.84961 L 171.69141 506.83398 L 186.9043 614.34961 L 232.19531 569.81641 L 255.66211 582.29883 L 222.46484 505.98633 L 210.61328 509.9375 L 205.83789 516.26562 L 194.01758 508.50586 L 182.91406 503.84961 z M 255.66211 582.29883 L 279.12891 569.81641 L 324.41992 614.34961 L 339.63281 506.83398 L 328.41016 503.84961 L 317.30664 508.50586 L 305.48633 516.26562 L 300.71094 509.9375 L 288.85938 505.98633 L 255.66211 582.29883 z",{
@@ -6153,7 +6523,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			clipPath: clippingPath
+			clipPath: clippingPath,
+			heightMap: true
 		});
 
 		butterflyColor.set('shadow', new fabric.Shadow({
@@ -6204,7 +6575,8 @@
 			id: 'buttons',
 			visible: true,
 			selectable: false,
-			evented: false
+			evented: false,
+			heightMap: true
 		})
 
 		fabric.Image.fromURL("./images/buttons_no_script.png", function (img) {
@@ -6562,6 +6934,185 @@
 		reRenderBG("pants")	
 	}
 
+	function initializeHeightMap() {
+		jerseyBelow.getObjects().forEach(function(o) {
+			if (o.id != "seams" && o.id != "buttons") {
+				if(o.heightMap == true) {
+					var _clipboard;
+					o.clone(function(cloned) {
+						cloned.set({
+							fill: tinycolor(o.fill).greyscale().lighten(35).toString(),
+							id: o.id,
+							heightMap: o.heightMap
+						})
+						if (cloned.type == 'group') {
+							cloned.getObjects().forEach(function(p) {
+								p.set({
+									fill: tinycolor(p.fill).greyscale().lighten(35).toString(),
+									id: p.id
+								})
+							})
+						}
+						heightMapCanvas.add(cloned)
+					});
+				}
+			}
+		})
+		jerseyLogoCanvas.getObjects().forEach(function(o) {
+			if (o.id != "seams" && o.id != "buttons") {
+				if(o.heightMap == true) {
+					var _clipboard;
+					o.clone(function(cloned) {
+						cloned.set({
+							fill: tinycolor(o.fill).greyscale().lighten(35).toString(),
+							id: o.id,
+							heightMap: o.heightMap
+						})
+						if (cloned.type == 'group') {
+							cloned.getObjects().forEach(function(p) {
+								p.set({
+									fill: tinycolor(p.fill).greyscale().lighten(35).toString(),
+									id: p.id
+								})
+							})
+						}
+						heightMapCanvas.add(cloned)
+					});
+				}
+			}
+		})
+		fabric.Image.fromURL('./images/planket.png', function(oImg) {
+			oImg.set({
+				id: 'planket',
+				visible: true,
+				opacity: 1.0
+			})
+			heightMapCanvas.add(oImg)
+			heightMapCanvas.sendToBack(oImg)
+		})
+
+		fabric.Image.fromURL('./images/seams/seams_button_pad.png', function(oImg) {
+			oImg.set({
+				id: 'seamsButtonPad',
+				visible: true,
+				opacity: 0.5
+			})
+			heightMapCanvas.add(oImg)
+			heightMapCanvas.sendToBack(oImg)
+		})
+
+		fabric.Image.fromURL('./images/seams/seams_standard_to_piping.png', function(oImg) {
+			oImg.set({
+				id: 'seamsStandardToPiping',
+				visible: true,
+				opacity: 0.5
+			})
+			heightMapCanvas.add(oImg)
+			heightMapCanvas.sendToBack(oImg)
+		})
+
+		fabric.Image.fromURL('./images/seams/seams_standard_to_collar.png', function(oImg) {
+			oImg.set({
+				id: 'seamsStandardToCollar',
+				visible: false,
+				opacity: 0.5
+			})
+			heightMapCanvas.add(oImg)
+			heightMapCanvas.sendToBack(oImg)
+		})
+
+		fabric.Image.fromURL('./images/seams/seams_raglan_to_piping.png', function(oImg) {
+			oImg.set({
+				id: 'seamsRaglanToPiping',
+				visible: false,
+				opacity: 0.5
+			})
+			heightMapCanvas.add(oImg)
+			heightMapCanvas.sendToBack(oImg)
+		})
+
+		fabric.Image.fromURL('./images/seams/seams_raglan_to_collar.png', function(oImg) {
+			oImg.set({
+				id: 'seamsRaglanToCollar',
+				visible: false,
+				opacity: 0.5
+			})
+			heightMapCanvas.add(oImg)
+			heightMapCanvas.sendToBack(oImg)
+		})
+
+		fabric.Image.fromURL("./images/buttons_no_script.png", function (oImg) {
+			oImg.set({
+				left: 0, 
+                top: 0,
+				id: 'buttonsNoScript',
+				visible: false,
+				selectable: false,
+				evented: false,
+				opacity: 0.75
+			})
+			oImg.set('shadow', new fabric.Shadow({
+				color: '#000000',
+				blur: 5,
+				offsetX: 0,
+				offsetY: 2
+			}))
+			heightMapCanvas.add(oImg)
+			heightMapCanvas.bringToFront(oImg)
+		})
+
+		fabric.Image.fromURL("./images/buttons_script.png", function (oImg) {
+			oImg.set({
+				left: 0, 
+                top: 0,
+				id: 'buttonsScript',
+				visible: true,
+				selectable: false,
+				evented: false,
+				opacity: 0.75
+			})
+			oImg.set('shadow', new fabric.Shadow({
+				color: '#000000',
+				blur: 5,
+				offsetX: 0,
+				offsetY: 2
+			}))
+			heightMapCanvas.add(oImg)
+			heightMapCanvas.bringToFront(oImg)
+		})
+
+ 		fabric.Image.fromURL("./images/zipper.png", function (oImg) {
+			oImg.set({
+				left: 0, 
+                top: 0,
+				id: 'zipper',
+				visible: false,
+				selectable: false,
+				evented: false,
+				clipPath: clippingPath
+			})
+			heightMapCanvas.add(oImg)
+			heightMapCanvas.bringToFront(oImg)
+		})
+
+		/* jerseyLogoCanvas.getObjects().forEach(function(o) {
+			if(o.visible && o.heightMap) {
+				var _clipboard;
+				o.clone(function(cloned) {
+					cloned.set({id: o.id})
+					console.log(cloned)
+					//heightMapCanvas.add(cloned)
+				});
+				
+				//console.log("ID: "+o.id+" VISIBLE: "+o.visible+" HEIGHTMAP:"+o.heightMap)
+			}
+		}) */
+		
+		heightMapCanvas.renderAll()
+		heightMapCanvas.getObjects().forEach(function(o) {
+			console.log(o.id)
+		})
+	}
 // GENERAL PURPOSE RENDERING FUNCTIONS
 
     function reRenderBG(target) {
@@ -6656,12 +7207,40 @@
 				lockUniScaling: true,
 				id: id,
 				fill: fill,
-				visible: visible
+				visible: visible,
+				heightMap: true
 			});
 			makersMark.setCoords();
 			canvas.add(makersMark);
 			canvas.renderAll();
 		})
+		if (type == "jersey") {
+			console.log("adding makers mark")
+			var o = heightMapCanvas.getObjects().find(o => o.id === id);
+			heightMapCanvas.remove(o);
+			fabric.loadSVGFromURL(mark,function(svg,options) {
+			var makersMark = new fabric.util.groupSVGElements(svg,options);
+				makersMark.set("angle", 0)
+				makersMark.scaleToHeight(height);
+				makersMark.setOptions ({
+					originX: 'center',
+					originY: 'center',
+					left: left,
+					top: top,
+					angle: angle,
+					centeredScaling: true,
+					transparentCorners: true,
+					lockUniScaling: true,
+					id: id,
+					fill: 'white',
+					visible: visible,
+					heightMap: true
+				});
+				makersMark.setCoords();
+				heightMapCanvas.add(makersMark);
+				heightMapCanvas.renderAll();
+			})
+		}
 	}
 
 	function uploadCustomTexture(type) {
