@@ -165,7 +165,7 @@
 					</div> 
 					<div class="accordion">	
                         <table style="width:100%; height:760px"><tr><td>
-                        <div id="tabContainer" class="skltbs-theme-light" data-skeletabs='{ "panelHeight": "adaptive", "keyboard": false, "startIndex": 0 }' style="position:absolute; top:60px;">
+                        <div id="tabContainer" class="skltbs-theme-light" data-skeletabs='{ "panelHeight": "adaptive", "keyboard": false, "startIndex": 0 }' style="position:absolute; top:80px;">
                             <ul class="skltbs-tab-group">
                                 <li class="skltbs-tab-item">
                                 <button class="skltbs-tab">Jersey</button>
@@ -1706,7 +1706,20 @@
 									</div>
                                 </div>
 								<div class="skltbs-panel" id="heightPanel">
-
+									<div class="heightmap-accord-header heightmap-active-header">Main Jersey Elements</div>
+                                    <div class="heightmap-accord-content" style="display:inline;">
+										<table style="width:100%;">
+                                            <tr class="color_tr" id="jerseyMakersMarkRow" style="display:none; width:100%;">
+												<td class="checkCell"><input type="checkbox" data-canvas="above"></td>
+												<td>
+													<label>Manufacturer's Mark:&nbsp;</label>
+												</td>
+												<td style="text-align:right;">													
+													<input class="jerseySelector selector" type="text" id="jerseyMakersMarkColor" data-element="jerseyMakersMark">
+												</td>
+											</tr>
+										</table>
+									</div>
 								</div>
                             </div>
                             </div>
@@ -1978,6 +1991,20 @@
 					$(this).removeClass("cap-active-header").addClass("cap-inactive-header");
 				}) 
 				$(this).removeClass("cap-inactive-header").addClass("cap-active-header");
+			}
+		});
+
+		$(".heightmap-accord-header").click(function() {
+			if($(this).next("div").is(":visible")){
+				$(this).next("div").slideUp("fast");
+				$(this).removeClass("heightmap-active-header").addClass("heightmap-inactive-header");
+			} else {
+				$(".heightmap-accord-content").slideUp("fast");
+				$(this).next("div").slideToggle("fast");
+				$(".heightmap-active-header").each(function() {
+					$(this).removeClass("heightmap-active-header").addClass("heightmap-inactive-header");
+				}) 
+				$(this).removeClass("heightmap-inactive-header").addClass("heightmap-active-header");
 			}
 		});
 		
@@ -2740,6 +2767,7 @@
 		heightMapCanvas.getObjects().forEach(function(o) {
 			if (o.id == id) {
 				o.set("visible", state)
+				$("#"+id+"Row").css("display",(state == true) ? "inline-block" : "none")
 			}
 		})
 		heightMapCanvas.renderAll()
