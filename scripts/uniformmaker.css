@@ -55,6 +55,12 @@ td {
 .checkCell {
 	text-align: center;
 }
+
+.checkCell2 {
+	text-align: center;
+	width: 25px;
+}
+
 .header {
 	font-family: "Rowdies", sans-serif;
 	color:#FFFFFF;
@@ -303,6 +309,14 @@ td {
 }
 
 .heightmap-accord-content { display: none; }
+
+.colorbox {
+	width: 25px;
+	height: 15px;
+	border: 1px solid black;
+	float:right;
+	margin-left:5px;
+}
 
 .locked {
 	background-color: #999999;

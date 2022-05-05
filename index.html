@@ -1708,14 +1708,51 @@
 								<div class="skltbs-panel" id="heightPanel">
 									<div class="heightmap-accord-header heightmap-active-header">Main Jersey Elements</div>
                                     <div class="heightmap-accord-content" style="display:inline;">
-										<table style="width:100%;">
-                                            <tr class="color_tr" id="jerseyMakersMarkRow" style="display:none; width:100%;">
-												<td class="checkCell"><input type="checkbox" data-canvas="above"></td>
-												<td>
+										<table style="width:478px;">
+                                            <tr class="color_tr" id="jerseyMakersMarkRow" style="display:none;">
+												<td class="checkCell2"><input type="checkbox" data-canvas="above" checked></td>
+												<td style="width:278px;">
 													<label>Manufacturer's Mark:&nbsp;</label>
 												</td>
-												<td style="text-align:right;">													
-													<input class="jerseySelector selector" type="text" id="jerseyMakersMarkColor" data-element="jerseyMakersMark">
+												<td style="text-align:right; width:175px;">													
+													<input type="range" class="range hmRange" data-element="jerseyMakersMark" value=75 min="0" max="255">
+													<div class="colorbox" data-element="jerseyMakersMark"></div>
+												</td>
+											</tr>
+											<tr class="color_tr" id="jerseyLeagueLogoRow" style="display:none;">
+												<td class="checkCell2"><input type="checkbox" data-canvas="above" checked></td>
+												<td style="width:278px;">
+													<label>League Logo:&nbsp;</label>
+												</td>
+												<td style="text-align:right; width:175px;">													
+													<span id="heightmMLBLogoSelectors" style="display:inline-block;">
+														<div>
+															<input type="range" class="range hmRange" data-element="mlb1Color" data-group="mlbLogo" value=0 min="0" max="255">
+															<div class="colorbox" data-element="mlb1Color" data-group="mlbLogo"></div>
+														</div>
+														<div>
+															<input type="range" class="range hmRange" data-element="mlbBaseColor" data-group="mlbLogo"value=0 min="0" max="255">
+															<div class="colorbox" data-element="mlbBaseColor" data-group="mlbLogo"></div>
+														</div>
+														<div>
+															<input type="range" class="range hmRange" data-element="mlb2Color" data-group="mlbLogo"value=0 min="0" max="255">
+															<div class="colorbox" data-element="mlb2Color" data-group="mlbLogo"></div>
+														</div>
+													</span>
+													<span id="jerseyMiLBLogoSelectors" style="display:none;">
+														<div>
+															<input type="range" class="range hmRange" data-element="milb2Color" data-group="milbLogo" value=75 min="0" max="255">
+															<div class="colorbox" data-element="milb2Color" data-group="milbLogo"></div>
+														</div>
+														<div>
+															<input type="range" class="range hmRange" data-element="milbBaseColor" data-group="milbLogo" value=75 min="0" max="255">
+															<div class="colorbox" data-element="milbBaseColor" data-group="milbLogo"></div>
+														</div>
+														<div>
+															<input type="range" class="range hmRange" data-element="milb1Color" data-group="milbLogo" value=75 min="0" max="255">
+															<div class="colorbox" data-element="milb1Color" data-group="milbLogo"></div>
+														</div>
+													</span>
 												</td>
 											</tr>
 										</table>
@@ -2187,6 +2224,30 @@
 				$("#pantsAndCapContainer").css("display","none")
 				$("#heightMapContainer").css("display","inline-block")
 				$("#eyedropper").css("display","none")
+				$(".colorbox").each(function() {
+					const box = $(this)
+					const element = $(this).data("element")
+					const group = $(this).data("group")
+					if (group == undefined) {
+						var o = heightMapCanvas.getObjects('path').find(o => o.id === element)
+						if (o != undefined) {
+							box.css("background-color",o.fill)
+							box.parent().find(".hmRange").each(function(e) {	
+								$(this).val(tinycolor(o.fill).getBrightness())
+							})
+						}
+					} else {
+						var g = heightMapCanvas.getObjects('group').find(o => o.id === group)
+						g.getObjects().forEach(function(o) {
+							if (o.id == element) {
+								box.css("background-color",o.fill)
+								box.parent().find(".hmRange").each(function(e) {	
+									$(this).val(tinycolor(o.fill).getBrightness())
+								})
+							}
+						})
+					}
+				})	
 		}
 	})
 
@@ -2827,22 +2888,32 @@
 
 	$("#jerseyLeagueLogoCheck").on("change",function(e) {
 		if ($(this).is(":checked")) {
+			$("#jerseyLeagueLogoRow").css("display","inline-block");
 			if ($("#jerseyLeagueLogoSelect").val() == "mlb") {
 				jerseyLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = true
 				jerseyLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
+				heightMapCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = true
+				heightMapCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
 				$("#jerseyMLBLogoSelectors").css("display","inline-block");
 				$("#jerseyMiLBLogoSelectors").css("display","none");
 			} else {
 				jerseyLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
 				jerseyLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = true
+				heightMapCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
+				heightMapCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = true
 				$("#jerseyMLBLogoSelectors").css("display","none");
 				$("#jerseyMiLBLogoSelectors").css("display","inline-block");
+				$("#jerseyLeagueLogoRow").css("display","inline-block");
 			}
 		} else {
 			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
 			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
+			heightMapCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
+			heightMapCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
+			$("#jerseyLeagueLogoRow").css("display","none");
 		}
 		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
 	})
 
 	$("#jerseyLeagueLogoSelect").on("change",function(e) {
@@ -2850,16 +2921,21 @@
 			if ($(this).val() == "mlb") {
 				jerseyLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = true
 				jerseyLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
+				heightMapCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = true
+				heightMapCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
 				$("#jerseyMLBLogoSelectors").css("display","inline-block");
 				$("#jerseyMiLBLogoSelectors").css("display","none");
 			} else {
 				jerseyLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
 				jerseyLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = true
+				heightMapCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
+				heightMapCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = true
 				$("#jerseyMLBLogoSelectors").css("display","none");
 				$("#jerseyMiLBLogoSelectors").css("display","inline-block");
 			}
 		}
 		jerseyLogoCanvas.renderAll()
+		heightMapCanvas.renderAll()
 	})
 
 	$("#sleeveType").on("change",function() {	
@@ -4792,6 +4868,29 @@
 // HEIGHT MAP SPECIFIC STUFF
 
 	initializeHeightMap()
+
+	$(".hmRange").on("input",function(){
+		const box = $(this).parent().find(".colorbox")
+		const element = $(this).data("element")
+		const group = $(this).data("group")
+		const color = tinycolor("rgb ("+$(this).val()+", "+$(this).val()+", "+$(this).val()+")")
+		box.css("background-color",color.toHexString())
+		if (group == undefined) {
+			var o = heightMapCanvas.getObjects('path').find(o => o.id === element)
+			if (o != undefined) {
+				o.set("fill", color)
+				heightMapCanvas.renderAll()
+			}
+		} else {
+			var g = heightMapCanvas.getObjects('group').find(o => o.id === group)
+			g.getObjects().forEach(function(o) {
+				if (o.id == element) {
+					o.set("fill",color)
+					heightMapCanvas.renderAll()
+				}
+			})
+		}
+	})
 
 // CANVAS INITIALIZE FUNCTIONS
 
@@ -6997,10 +7096,15 @@
 							heightMap: o.heightMap
 						})
 						if (cloned.type == 'group') {
-							cloned.getObjects().forEach(function(p) {
+							var idArr = []
+							idArr.splice(0, idArr.length)
+							o.getObjects().forEach(function callback(q, index) {
+								idArr.push(q.id)
+							})
+							cloned.getObjects().forEach(function callback(p, index) {
 								p.set({
 									fill: tinycolor(p.fill).greyscale().lighten(35).toString(),
-									id: p.id
+									id: idArr[index]
 								})
 							})
 						}
@@ -7138,7 +7242,7 @@
 		
 		heightMapCanvas.renderAll()
 		heightMapCanvas.getObjects().forEach(function(o) {
-			console.log(o.id)
+			//console.log(o.id)
 		})
 	}
 // GENERAL PURPOSE RENDERING FUNCTIONS
@@ -7243,7 +7347,7 @@
 			canvas.renderAll();
 		})
 		if (type == "jersey") {
-			console.log("adding makers mark")
+			//console.log("adding makers mark")
 			var o = heightMapCanvas.getObjects().find(o => o.id === id);
 			heightMapCanvas.remove(o);
 			fabric.loadSVGFromURL(mark,function(svg,options) {
