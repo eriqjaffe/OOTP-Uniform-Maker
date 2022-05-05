@@ -99,6 +99,10 @@
         <div class="section group" style="position:relative;">
             <div class="col span_3_of_5">
                 <div id="hiddenContainer" style="display:none;">
+					<canvas id="buttonPadCanvas" width="512" height="1024"></canvas>
+					<canvas id="seamsCanvas" width="512" height="1024"></canvas>
+					<canvas id="heightMapTexture" width="512" height="1024"></canvas>
+					<canvas id="heightMapBelow" width="512" height="1024"></canvas>
                     <canvas id="jerseyTexture" width="512" height="1024"></canvas>
                     <canvas id="jerseyBelow" width="512" height="1024"></canvas>
                     <canvas id="pantsTexture" width="512" height="512"></canvas>
@@ -119,7 +123,8 @@
 					</div>
 					<div>
 						<div id="heightMapContainer" style="display:none; float:right;">
-							<canvas id="heightMap" width="512" height="1024" style="position:relative; top:0; float:right; z-index:1;"></canvas>
+							<canvas id="heightMapComposite" width="384" height="768" style="position:relative; top:0; float:right; z-index:1;"></canvas>
+							<canvas id="heightMapAbove" width="512" height="1024" style="position:relative; top:0; float:right; z-index:2;"></canvas>
 						</div>
 						<div id="pantsAndCapContainer" style="display:inline-block;">
 							<div id="pantsContainer">
@@ -1722,7 +1727,7 @@
 													<label>Manufacturer's Mark:&nbsp;</label>
 												</td>
 												<td style="text-align:right; width:175px;">													
-													<input type="range" class="range hmRange" data-element="jerseyMakersMark" value=75 min="0" max="255">
+													<input type="range" class="range hmRange" data-canvas="above" data-element="jerseyMakersMark" value=75 min="0" max="255">
 													<div class="colorbox" data-element="jerseyMakersMark"></div>
 												</td>
 											</tr>
@@ -1734,29 +1739,29 @@
 												<td style="text-align:right; width:175px;">													
 													<span id="heightmMLBLogoSelectors" style="display:inline-block;">
 														<div>
-															<input type="range" class="range hmRange" data-element="mlb1Color" data-group="mlbLogo" value=0 min="0" max="255">
+															<input type="range" class="range hmRange" data-canvas="above" data-element="mlb1Color" data-group="mlbLogo" value=0 min="0" max="255">
 															<div class="colorbox" data-element="mlb1Color" data-group="mlbLogo"></div>
 														</div>
 														<div>
-															<input type="range" class="range hmRange" data-element="mlbBaseColor" data-group="mlbLogo"value=0 min="0" max="255">
+															<input type="range" class="range hmRange" data-canvas="above" data-element="mlbBaseColor" data-group="mlbLogo"value=0 min="0" max="255">
 															<div class="colorbox" data-element="mlbBaseColor" data-group="mlbLogo"></div>
 														</div>
 														<div>
-															<input type="range" class="range hmRange" data-element="mlb2Color" data-group="mlbLogo"value=0 min="0" max="255">
+															<input type="range" class="range hmRange" data-canvas="above" data-element="mlb2Color" data-group="mlbLogo"value=0 min="0" max="255">
 															<div class="colorbox" data-element="mlb2Color" data-group="mlbLogo"></div>
 														</div>
 													</span>
 													<span id="jerseyMiLBLogoSelectors" style="display:none;">
 														<div>
-															<input type="range" class="range hmRange" data-element="milb2Color" data-group="milbLogo" value=75 min="0" max="255">
+															<input type="range" class="range hmRange" data-canvas="above" data-element="milb2Color" data-group="milbLogo" value=75 min="0" max="255">
 															<div class="colorbox" data-element="milb2Color" data-group="milbLogo"></div>
 														</div>
 														<div>
-															<input type="range" class="range hmRange" data-element="milbBaseColor" data-group="milbLogo" value=75 min="0" max="255">
+															<input type="range" class="range hmRange" data-canvas="above" data-element="milbBaseColor" data-group="milbLogo" value=75 min="0" max="255">
 															<div class="colorbox" data-element="milbBaseColor" data-group="milbLogo"></div>
 														</div>
 														<div>
-															<input type="range" class="range hmRange" data-element="milb1Color" data-group="milbLogo" value=75 min="0" max="255">
+															<input type="range" class="range hmRange" data-canvas="above" data-element="milb1Color" data-group="milbLogo" value=75 min="0" max="255">
 															<div class="colorbox" data-element="milb1Color" data-group="milbLogo"></div>
 														</div>
 													</span>
@@ -1908,8 +1913,8 @@
     const capTextureCanvas = document.getElementById('capTexture');
 	const capTextureContext = capTextureCanvas.getContext('2d');
 
-	//const heightMap = document.getElementById('heightMap');
-	//const heightMapContext = heightMapCanvas.getContext('2d')
+	const heightMapTextureCanvas = document.getElementById('heightMapTexture');
+	const heightMapTextureContext = heightMapTextureCanvas.getContext('2d')
 
 // FABRIC JS STUFF
 
@@ -1920,7 +1925,7 @@
 		transparentCorners: true
 	});
 
-	var heightMapCanvas = new fabric.StaticCanvas('heightMap',{
+	var heightMapBelow = new fabric.StaticCanvas('heightMapBelow',{
 		enableRetinaScaling: false,
 		preserveObjectStacking: true,
 		backgroundColor: 'white'
@@ -1963,6 +1968,12 @@
 		id: 'capLogoCanvas'
 	});
 
+	var heightMapLogoCanvas = new fabric.Canvas('heightMapAbove',{
+		enableRetinaScaling:false,
+		controlsAboveOverlay:true,
+		id: 'heightMapCanvas'
+	})
+
 	var warpCanvas = new fabric.Canvas('textWarp',{
 		selection:false,
 		enableRetinaScaling:false
@@ -1983,10 +1994,12 @@
     capBelow.setZoom(scaleRatio)
 	capLogoCanvas.setDimensions({ width: capLogoCanvas.getWidth() * 0.75, height: capLogoCanvas.getHeight() * 0.75 });
     capLogoCanvas.setZoom(scaleRatio)
-	heightMapCanvas.setDimensions({ width: heightMapCanvas.getWidth() * 0.75, height: heightMapCanvas.getHeight() * 0.75 });
-    heightMapCanvas.setZoom(scaleRatio)
+	heightMapBelow.setDimensions({ width: heightMapBelow.getWidth() * 0.75, height: heightMapBelow.getHeight() * 0.75 });
+    heightMapBelow.setZoom(scaleRatio)
+	heightMapLogoCanvas.setDimensions({ width: heightMapLogoCanvas.getWidth() * 0.75, height: heightMapLogoCanvas.getHeight() * 0.75 });
+    heightMapLogoCanvas.setZoom(scaleRatio)
 	
-	heightMapCanvas.setBackgroundImage("./images/jersey_height_map.png", heightMapCanvas.renderAll.bind(heightMapCanvas));
+	//heightMapLogoCanvas.setBackgroundImage("./images/jersey_height_map.png", heightMapLogoCanvas.renderAll.bind(heightMapLogoCanvas));
 
 // DOCUMENT FUNCTIONS
 
@@ -2236,7 +2249,7 @@
 					const element = $(this).data("element")
 					const group = $(this).data("group")
 					if (group == undefined) {
-						var o = heightMapCanvas.getObjects('path').find(o => o.id === element)
+						var o = heightMapLogoCanvas.getObjects('path').find(o => o.id === element)
 						if (o != undefined) {
 							box.css("background-color",o.fill)
 							box.parent().find(".hmRange").each(function(e) {	
@@ -2244,7 +2257,7 @@
 							})
 						}
 					} else {
-						var g = heightMapCanvas.getObjects('group').find(o => o.id === group)
+						var g = heightMapLogoCanvas.getObjects('group').find(o => o.id === group)
 						g.getObjects().forEach(function(o) {
 							if (o.id == element) {
 								box.css("background-color",o.fill)
@@ -2826,25 +2839,28 @@
 		const id = $(this).data("id");
 		const state = $(this).is(':checked') ? true : false
 		const canvas = $(this).data('canvas') == 'below' ? jerseyBelow : jerseyLogoCanvas
+		const hmCanvas = $(this).data('canvas') == 'below' ? heightMapBelow : heightMapLogoCanvas
 		canvas.getObjects().forEach(function(o) {
 			if (o.id == id) {
 				o.set("visible", state)
 			}
         });
 		canvas.renderAll()
-		heightMapCanvas.getObjects().forEach(function(o) {
+		reRenderBG("jersey");
+		hmCanvas.getObjects().forEach(function(o) {
 			if (o.id == id) {
 				o.set("visible", state)
 				$("#"+id+"Row").css("display",(state == true) ? "inline-block" : "none")
 			}
 		})
-		heightMapCanvas.renderAll()
-		reRenderBG("jersey");
+		hmCanvas.renderAll()
+		reRenderBG("heightMap");
 	})
 
 	$(".jerseyMultiToggle").on("click",function() {
 		const state = $(this).is(':checked') ? true : false
 		const canvas = $(this).data('canvas') == 'below' ? jerseyBelow : jerseyLogoCanvas
+		const hmCanvas = $(this).data('canvas') == 'below' ? heightMapBelow : heightMapLogoCanvas
 		const ids = $(this).data("id").split(",");
 		canvas.getObjects().forEach(function(o) {
 			if ($.inArray(o.id, ids) > -1) {
@@ -2856,8 +2872,7 @@
 			}
 		})
 		canvas.renderAll();
-		heightMapCanvas.getObjects().forEach(function(o) {
-			console.log(o.id)
+		hmCanvas.getObjects().forEach(function(o) {
 			if ($.inArray(o.id, ids) > -1) {
 				
 				if (state == true) {
@@ -2867,8 +2882,9 @@
 				}
 			}
 		})
-		heightMapCanvas.renderAll()
+		hmCanvas.renderAll()
 		reRenderBG("jersey");
+		reRenderBG("heightMap")
 	})
 	
 	$(".jerseyTextToggle").on("click",function() {
@@ -2899,15 +2915,15 @@
 			if ($("#jerseyLeagueLogoSelect").val() == "mlb") {
 				jerseyLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = true
 				jerseyLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
-				heightMapCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = true
-				heightMapCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
+				heightMapLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = true
+				heightMapLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
 				$("#jerseyMLBLogoSelectors").css("display","inline-block");
 				$("#jerseyMiLBLogoSelectors").css("display","none");
 			} else {
 				jerseyLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
 				jerseyLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = true
-				heightMapCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
-				heightMapCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = true
+				heightMapLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
+				heightMapLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = true
 				$("#jerseyMLBLogoSelectors").css("display","none");
 				$("#jerseyMiLBLogoSelectors").css("display","inline-block");
 				$("#jerseyLeagueLogoRow").css("display","inline-block");
@@ -2915,12 +2931,12 @@
 		} else {
 			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
 			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
-			heightMapCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
-			heightMapCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
+			heightMapLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
+			heightMapLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
 			$("#jerseyLeagueLogoRow").css("display","none");
 		}
 		jerseyLogoCanvas.renderAll()
-		heightMapCanvas.renderAll()
+		heightMapLogoCanvas.renderAll()
 	})
 
 	$("#jerseyLeagueLogoSelect").on("change",function(e) {
@@ -2928,25 +2944,27 @@
 			if ($(this).val() == "mlb") {
 				jerseyLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = true
 				jerseyLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
-				heightMapCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = true
-				heightMapCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
+				heightMapLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = true
+				heightMapLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
 				$("#jerseyMLBLogoSelectors").css("display","inline-block");
 				$("#jerseyMiLBLogoSelectors").css("display","none");
 			} else {
 				jerseyLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
 				jerseyLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = true
-				heightMapCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
-				heightMapCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = true
+				heightMapLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
+				heightMapLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = true
 				$("#jerseyMLBLogoSelectors").css("display","none");
 				$("#jerseyMiLBLogoSelectors").css("display","inline-block");
 			}
 		}
 		jerseyLogoCanvas.renderAll()
-		heightMapCanvas.renderAll()
+		heightMapLogoCanvas.renderAll()
 	})
 
 	$("#sleeveType").on("change",function() {	
+		const bpVisible = ($('#buttonsCheck').is(":checked") && $("#buttonsType").val() != "zipper") ? true : false
 		if ($(this).val() == 'standard') {
+			var seam = (bpVisible == true) ? "seamsStandardToPiping" : "seamsStandardToCollar"
 			jerseyBelow.getObjects().find(o => o.id == 'leftSleeveColor').visible = true
 			jerseyBelow.getObjects().find(o => o.id == 'rightSleeveColor').visible = true
 			jerseyBelow.getObjects().find(o => o.id == 'leftSleeveRaglanColor').visible = false
@@ -2959,12 +2977,9 @@
 				clipPath:vestSleeveClippingPath,
 				visible:$("#jerseyPinstripesColorCheck").is(":checked")
 			})
-			if (jerseyLogoCanvas.backgroundImage == null) {
-				$("#seamsType").val("seamsStandardToCollar").trigger("change")
-			} else {
-				$("#seamsType").val("seamsStandardToPiping").trigger("change")
-			}
+			$("#seamsType").val(seam).trigger("change")
 		} else {
+			var seam = (bpVisible == true) ? "seamsRaglanToPiping" : "seamsRaglanToCollar"
 			$("#shoulderPipingInnerColorCheck").prop( "checked", false ).triggerHandler('click');
 			jerseyBelow.getObjects().find(o => o.id == 'leftSleeveColor').visible = false
 			jerseyBelow.getObjects().find(o => o.id == 'rightSleeveColor').visible = false
@@ -2978,15 +2993,11 @@
 				clipPath:raglanSleeveClippingPath,
 				visible:$("#jerseyPinstripesColorCheck").is(":checked")
 			})
-			if (jerseyLogoCanvas.backgroundImage == null) {
-				$("#seamsType").val("seamsRaglanToCollar").trigger("change")
-			} else {
-				$("#seamsType").val("seamsRaglanToPiping").trigger("change")
-			}
+			$("#seamsType").val(seam).trigger("change")
 		}
-		
 		jerseyBelow.renderAll()
 		reRenderBG('jersey')
+		reRenderBG("heightMap")
 	})
 
 	$("#sleeveCuffCheck").on("change",function() {
@@ -3317,15 +3328,12 @@
 	$("#seamsType").on("change",function() {
 		const g = jerseyLogoCanvas.getObjects().find(o => o.id === 'seams')
 		const id = $(this).val()
-		if ($("#seamsCheck").is(":checked")) {
-			g.getObjects().forEach(function(o) {
-				o.set("visible", o.id == id)
-				heightMapCanvas.getObjects('image').find(p => p.id == o.id).set("visible", o.visible)
-				heightMapCanvas.renderAll()
-			})
-			g.addWithUpdate()
-			
-		}
+		g.getObjects().forEach(function(o) {
+			o.set("visible", o.id == id)
+			heightMapBelow.getObjects('image').find(p => p.id == o.id).set("visible", o.visible)
+			heightMapBelow.renderAll()
+		})
+		g.addWithUpdate()
 		if (id.startsWith("seamsStandard")) {
 			jerseyBelow.getObjects().find(o => o.id == 'jerseyPinstripesColor').set({
 				clipPath:clippingPathStandardSleeves,
@@ -3347,6 +3355,7 @@
 		}
 	jerseyLogoCanvas.renderAll()
 	reRenderBG('jersey')
+	reRenderBG("heightMap")
 	})
 
 	$("#seamsButtonPadCheck").on("change",function() {
@@ -3370,9 +3379,9 @@
 					g.getObjects().find(o => o.id === 'buttonsScript').visible = true;
 					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
 					g.getObjects().find(o => o.id === 'zipper').visible = false;
-					heightMapCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = true;
-					heightMapCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
-					heightMapCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
+					heightMapLogoCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = true;
+					heightMapLogoCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+					heightMapLogoCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
 					//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 					//heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
 					//heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",true)
@@ -3387,9 +3396,9 @@
 					g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
 					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = true;
 					g.getObjects().find(o => o.id === 'zipper').visible = false;
-					heightMapCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
-					heightMapCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = true;
-					heightMapCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
+					heightMapLogoCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
+					heightMapLogoCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = true;
+					heightMapLogoCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
 					//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 					//heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
 					//heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",true)
@@ -3404,9 +3413,9 @@
 					g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
 					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
 					g.getObjects().find(o => o.id === 'zipper').visible = true;
-					heightMapCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
-					heightMapCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
-					heightMapCanvas.getObjects().find(o => o.id === 'zipper').visible = true;
+					heightMapLogoCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
+					heightMapLogoCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+					heightMapLogoCanvas.getObjects().find(o => o.id === 'zipper').visible = true;
 					//jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 					//heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",false)
 					//heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",false)
@@ -3422,16 +3431,17 @@
 			g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
 			g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
 			g.getObjects().find(o => o.id === 'zipper').visible = false;
-			heightMapCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
-			heightMapCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
-			heightMapCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
+			heightMapLogoCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
+			heightMapLogoCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+			heightMapLogoCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
 			//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 			//heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
 			setSeams(true)
 		}
 		g.addWithUpdate()
 		jerseyLogoCanvas.renderAll()
-		heightMapCanvas.renderAll()
+		heightMapLogoCanvas.renderAll()
+		reRenderBG("heightMap")
 	})
 
 	$("#buttonsCheck").on("change",function() {
@@ -3441,13 +3451,13 @@
 		if ($(this).is(":checked")) {
 			$("#buttonsType").trigger("change")
 		} else {
-			heightMapCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
-			heightMapCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
-			heightMapCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
+			heightMapLogoCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
+			heightMapLogoCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+			heightMapLogoCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
 			setSeams(false)
 		}
 		jerseyLogoCanvas.renderAll()
-		heightMapCanvas.renderAll()
+		heightMapLogoCanvas.renderAll()
 	})
 
 	$("#sleevesCheck").on("change",function() {
@@ -4161,9 +4171,9 @@
 	
 	function setSeams(buttonPadVisible) {
 		if (buttonPadVisible == true) {
-			jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
-			heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
-			heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",true)
+			//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+			//heightMapBelow.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
+			heightMapBelow.getObjects('image').find(o => o.id == "planket").set("visible",true)
 			if ($("#seamsType").val().startsWith("seamsStandard")) {
 				$("#seamsType").val("seamsStandardToPiping").trigger("change") 
 			} else {
@@ -4171,8 +4181,8 @@
 			}
 		} else {
 			jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
-			heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",false)
-			heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",false)
+			//heightMapBelow.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",false)
+			heightMapBelow.getObjects('image').find(o => o.id == "planket").set("visible",false)
 			if ($("#seamsType").val().startsWith("seamsStandard")) {
 				$("#seamsType").val("seamsStandardToCollar").trigger("change") 
 			} else {
@@ -4180,7 +4190,8 @@
 			}
 		}
 		jerseyLogoCanvas.renderAll()
-		heightMapCanvas.renderAll()
+		heightMapBelow.renderAll()
+		reRenderBG("heightMap")
 	}
 	
 	// PANTS SPECIFIC
@@ -4877,26 +4888,28 @@
 	initializeHeightMap()
 
 	$(".hmRange").on("input",function(){
+		const canvas = $(this).data('canvas') == 'below' ? heightMapBelow : heightMapLogoCanvas
 		const box = $(this).parent().find(".colorbox")
 		const element = $(this).data("element")
 		const group = $(this).data("group")
 		const color = tinycolor("rgb ("+$(this).val()+", "+$(this).val()+", "+$(this).val()+")")
 		box.css("background-color",color.toHexString())
 		if (group == undefined) {
-			var o = heightMapCanvas.getObjects('path').find(o => o.id === element)
+			var o = canvas.getObjects('path').find(o => o.id === element)
 			if (o != undefined) {
 				o.set("fill", color)
-				heightMapCanvas.renderAll()
+				canvas.renderAll()
 			}
 		} else {
-			var g = heightMapCanvas.getObjects('group').find(o => o.id === group)
+			var g = canvas.getObjects('group').find(o => o.id === group)
 			g.getObjects().forEach(function(o) {
 				if (o.id == element) {
 					o.set("fill",color)
-					heightMapCanvas.renderAll()
+					canvas.renderAll()
 				}
 			})
 		}
+		reRenderBG("heightMap")
 	})
 
 // CANVAS INITIALIZE FUNCTIONS
@@ -6786,7 +6799,7 @@
 		} else {
 			jerseyLogoCanvas.setOverlayImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 		}
-		jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+		//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 		reRenderBG("jersey")
 	}
 
@@ -7124,7 +7137,7 @@
 								})
 							})
 						}
-						heightMapCanvas.add(cloned)
+						heightMapBelow.add(cloned)
 					});
 				}
 			}
@@ -7152,7 +7165,7 @@
 								})
 							})
 						}
-						heightMapCanvas.add(cloned)
+						heightMapLogoCanvas.add(cloned)
 					});
 				}
 			}
@@ -7163,18 +7176,18 @@
 				visible: true,
 				opacity: 1.0
 			})
-			heightMapCanvas.add(oImg)
-			heightMapCanvas.sendToBack(oImg)
+			heightMapBelow.add(oImg)
+			heightMapBelow.sendToBack(oImg)
 		})
 
-		fabric.Image.fromURL('./images/seams/seams_button_pad.png', function(oImg) {
+ 		fabric.Image.fromURL('./images/seams/seams_button_pad.png', function(oImg) {
 			oImg.set({
 				id: 'seamsButtonPad',
 				visible: true,
 				opacity: 0.5
 			})
-			heightMapCanvas.add(oImg)
-			heightMapCanvas.sendToBack(oImg)
+			heightMapBelow.add(oImg)
+			heightMapBelow.sendToBack(oImg)
 		})
 
 		fabric.Image.fromURL('./images/seams/seams_standard_to_piping.png', function(oImg) {
@@ -7183,8 +7196,8 @@
 				visible: true,
 				opacity: 0.5
 			})
-			heightMapCanvas.add(oImg)
-			heightMapCanvas.sendToBack(oImg)
+			heightMapBelow.add(oImg)
+			heightMapBelow.sendToBack(oImg)
 		})
 
 		fabric.Image.fromURL('./images/seams/seams_standard_to_collar.png', function(oImg) {
@@ -7193,8 +7206,8 @@
 				visible: false,
 				opacity: 0.5
 			})
-			heightMapCanvas.add(oImg)
-			heightMapCanvas.sendToBack(oImg)
+			heightMapBelow.add(oImg)
+			heightMapBelow.sendToBack(oImg)
 		})
 
 		fabric.Image.fromURL('./images/seams/seams_raglan_to_piping.png', function(oImg) {
@@ -7203,8 +7216,8 @@
 				visible: false,
 				opacity: 0.5
 			})
-			heightMapCanvas.add(oImg)
-			heightMapCanvas.sendToBack(oImg)
+			heightMapBelow.add(oImg)
+			heightMapBelow.sendToBack(oImg)
 		})
 
 		fabric.Image.fromURL('./images/seams/seams_raglan_to_collar.png', function(oImg) {
@@ -7213,8 +7226,8 @@
 				visible: false,
 				opacity: 0.5
 			})
-			heightMapCanvas.add(oImg)
-			heightMapCanvas.sendToBack(oImg)
+			heightMapBelow.add(oImg)
+			heightMapBelow.sendToBack(oImg)
 		})
 
 		fabric.Image.fromURL("./images/buttons_no_script.png", function (oImg) {
@@ -7233,8 +7246,8 @@
 				offsetX: 0,
 				offsetY: 2
 			}))
-			heightMapCanvas.add(oImg)
-			heightMapCanvas.bringToFront(oImg)
+			heightMapLogoCanvas.add(oImg)
+			heightMapLogoCanvas.bringToFront(oImg)
 		})
 
 		fabric.Image.fromURL("./images/buttons_script.png", function (oImg) {
@@ -7253,8 +7266,8 @@
 				offsetX: 0,
 				offsetY: 2
 			}))
-			heightMapCanvas.add(oImg)
-			heightMapCanvas.bringToFront(oImg)
+			heightMapLogoCanvas.add(oImg)
+			heightMapLogoCanvas.bringToFront(oImg)
 		})
 
  		fabric.Image.fromURL("./images/zipper.png", function (oImg) {
@@ -7267,35 +7280,23 @@
 				evented: false,
 				clipPath: clippingPath
 			})
-			heightMapCanvas.add(oImg)
-			heightMapCanvas.bringToFront(oImg)
-		})
+			heightMapLogoCanvas.add(oImg)
+			heightMapLogoCanvas.bringToFront(oImg)
+		})	
 
-		/* jerseyLogoCanvas.getObjects().forEach(function(o) {
-			if(o.visible && o.heightMap) {
-				var _clipboard;
-				o.clone(function(cloned) {
-					cloned.set({id: o.id})
-					console.log(cloned)
-					//heightMapCanvas.add(cloned)
-				});
-				
-				//console.log("ID: "+o.id+" VISIBLE: "+o.visible+" HEIGHTMAP:"+o.heightMap)
-			}
-		}) */
-		
-		heightMapCanvas.renderAll()
-		heightMapCanvas.getObjects().forEach(function(o) {
-			//console.log(o.id)
-		})
+		heightMapLogoCanvas.renderAll()
+	
+		//heightMapBelow.getObjects().forEach(function(o) {
+			//console.log(o)
+		//})
+		reRenderBG("heightMap")
 	}
 // GENERAL PURPOSE RENDERING FUNCTIONS
 
     function reRenderBG(target) {
-		jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
-		pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));	
         switch (target) {
             case "jersey":
+				jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
 				var canvas = jerseyBelow
                 var textureCanvas = jerseyTextureContext
                 var can = document.getElementById('jerseyBelow')
@@ -7318,6 +7319,7 @@
                 var textureFile = ($("#capTextureSelect").val() == "custom") ? customCapTexture : './images/'+$("#capTextureSelect").val()
                 break;
             case "pants":
+				pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));	
                 var canvas = pantsBelow 
                 var textureCanvas = pantsTextureContext
                 var can = document.getElementById('pantsBelow')
@@ -7328,8 +7330,23 @@
                 var height = 384
                 var textureFile = ($("#pantsTextureSelect").val() == "custom") ? customPantsTexture : './images/'+$("#pantsTextureSelect").val()
                 break;
+			case "heightMap":
+				//heightMapBelow.setOverlayImage('./images/jersey_texture_default.png',heightMapBelow.renderAll.bind(heightMapBelow));	
+				var canvas = heightMapBelow
+				var textureCanvas = heightMapTextureContext
+				var can = document.getElementById('heightMapBelow')
+				var can2 = document.getElementById('heightMapTexture')
+				var can3 = document.getElementById('heightMapComposite')
+				var composite = can3.getContext('2d')
+				var can4 = document.getElementById('buttonPadCanvas')
+				var can5 = document.getElementById('seamsCanvas')
+				var width = 512
+				var height = 1024
+				//console.log(jerseyLogoCanvas.backgroundImage)
+				var textureFile = './images/jersey_height_map.png'
+				//var textureile = './images/seams/seams_button_pad.png'
+				break;
         }
-		
 		canvas.renderAll();
 		var img = new Image; 
 		img.onload = function(){
@@ -7392,8 +7409,8 @@
 		})
 		if (type == "jersey") {
 			//console.log("adding makers mark")
-			var o = heightMapCanvas.getObjects().find(o => o.id === id);
-			heightMapCanvas.remove(o);
+			var o = heightMapLogoCanvas.getObjects().find(o => o.id === id);
+			heightMapLogoCanvas.remove(o);
 			fabric.loadSVGFromURL(mark,function(svg,options) {
 			var makersMark = new fabric.util.groupSVGElements(svg,options);
 				makersMark.set("angle", 0)
@@ -7413,8 +7430,8 @@
 					heightMap: true
 				});
 				makersMark.setCoords();
-				heightMapCanvas.add(makersMark);
-				heightMapCanvas.renderAll();
+				heightMapLogoCanvas.add(makersMark);
+				heightMapLogoCanvas.renderAll();
 			})
 		}
 	}
@@ -8899,7 +8916,7 @@
 				jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
 
 				if (buttonPadSeams == true) {
-					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 				}
 
 				if ($("#toggleCapGuides").is(":checked")) {
