@@ -2214,6 +2214,7 @@
 	$("#tabContainer").on("skeletabs:move", function(event, info){
 		switch (info.nextIndex) {
 			case 0:
+				reRenderBG("jersey")
 				$("#jerseyOverlay").css("display","none");
 				$("#capOverlay").css("display","inline-block");
 				$("#pantsOverlay").css("display","inline-block");
@@ -2222,6 +2223,7 @@
 				$("#eyedropper").css("display","inline-block")
 				break;
 			case 1:
+				reRenderBG("pants")
 				$("#jerseyOverlay").css("display","inline-block");
 				$("#capOverlay").css("display","inline-block");
 				$("#pantsOverlay").css("display","none");
@@ -2230,6 +2232,7 @@
 				$("#eyedropper").css("display","inline-block")
 				break;
 			case 2:
+				reRenderBG("cap")
 				$("#jerseyOverlay").css("display","inline-block");
 				$("#capOverlay").css("display","none");
 				$("#pantsOverlay").css("display","inline-block");
@@ -2238,6 +2241,7 @@
 				$("#eyedropper").css("display","inline-block")
 				break;
 			case 3:
+				reRenderBG("heightMap")
 				$("#jerseyOverlay").css("display","none");
 				$("#capOverlay").css("display","none");
 				$("#pantsOverlay").css("display","none");
@@ -3384,7 +3388,7 @@
 					heightMapLogoCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
 					//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 					//heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
-					//heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",true)
+					heightMapBelow.getObjects('image').find(o => o.id == "planket").set({"visible":true})
 					setSeams(true)
 					if ($("#seamsType").val() == "seamsStandardToCollar") {
 						$("#seamsType").val("seamsStandardToPiping").trigger("change")
@@ -3401,7 +3405,7 @@
 					heightMapLogoCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
 					//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 					//heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
-					//heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",true)
+					heightMapBelow.getObjects('image').find(o => o.id == "planket").set({"visible":true})
 					setSeams(true)
 					if ($("#seamsType").val() == "seamsStandardToCollar") {
 						$("#seamsType").val("seamsStandardToPiping").trigger("change")
@@ -3418,7 +3422,7 @@
 					heightMapLogoCanvas.getObjects().find(o => o.id === 'zipper').visible = true;
 					//jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 					//heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",false)
-					//heightMapCanvas.getObjects('image').find(o => o.id == "planket").set("visible",false)
+					heightMapBelow.getObjects('image').find(o => o.id == "planket").set({"visible":false})
 					setSeams(false)
 					if ($("#seamsType").val() == "seamsStandardToPiping") {
 						$("#seamsType").val("seamsStandardToCollar").trigger("change")
@@ -3434,6 +3438,7 @@
 			heightMapLogoCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
 			heightMapLogoCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
 			heightMapLogoCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
+			heightMapBelow.getObjects('image').find(o => o.id == "planket").set({"visible":false})
 			//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 			//heightMapCanvas.getObjects('image').find(o => o.id == "seamsButtonPad").set("visible",true)
 			setSeams(true)
@@ -3454,6 +3459,7 @@
 			heightMapLogoCanvas.getObjects().find(o => o.id === 'buttonsScript').visible = false;
 			heightMapLogoCanvas.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
 			heightMapLogoCanvas.getObjects().find(o => o.id === 'zipper').visible = false;
+			heightMapBelow.getObjects('image').find(o => o.id == "planket").set({"visible":false})
 			setSeams(false)
 		}
 		jerseyLogoCanvas.renderAll()
@@ -7121,66 +7127,53 @@
 	function initializeHeightMap() {
 		jerseyBelow.getObjects().forEach(function(o) {
 			if (o.id != "seams" && o.id != "buttons") {
-				if(o.heightMap == true) {
-					var _clipboard;
-					o.clone(function(cloned) {
-						cloned.set({
-							fill: tinycolor(o.fill).greyscale().lighten(35).toString(),
-							id: o.id,
-							heightMap: o.heightMap
-						})
-						if (cloned.type == 'group') {
-							cloned.getObjects().forEach(function(p) {
-								p.set({
-									fill: tinycolor(p.fill).greyscale().lighten(35).toString(),
-									id: p.id
-								})
+				var _clipboard;
+				o.clone(function(cloned) {
+					cloned.set({
+						fill: tinycolor(o.fill).greyscale().lighten(35).toString(),
+						id: o.id,
+						heightMap: o.heightMap
+					})
+					if (cloned.type == 'group') {
+						cloned.getObjects().forEach(function(p) {
+							p.set({
+								fill: tinycolor(p.fill).greyscale().lighten(35).toString(),
+								id: p.id
 							})
-						}
-						heightMapBelow.add(cloned)
-					});
-				}
+						})
+					}
+					heightMapBelow.add(cloned)
+				});
 			}
 		})
 		jerseyLogoCanvas.getObjects().forEach(function(o) {
 			if (o.id != "seams" && o.id != "buttons") {
-				if(o.heightMap == true) {
-					var _clipboard;
-					o.clone(function(cloned) {
-						cloned.set({
-							fill: tinycolor(o.fill).greyscale().lighten(35).toString(),
-							id: o.id,
-							heightMap: o.heightMap
+				var _clipboard;
+				o.clone(function(cloned) {
+					cloned.set({
+						fill: tinycolor(o.fill).greyscale().lighten(35).toString(),
+						id: o.id,
+						heightMap: o.heightMap
+					})
+					if (cloned.type == 'group') {
+						var idArr = []
+						idArr.splice(0, idArr.length)
+						o.getObjects().forEach(function callback(q, index) {
+							idArr.push(q.id)
 						})
-						if (cloned.type == 'group') {
-							var idArr = []
-							idArr.splice(0, idArr.length)
-							o.getObjects().forEach(function callback(q, index) {
-								idArr.push(q.id)
+						cloned.getObjects().forEach(function callback(p, index) {
+							p.set({
+								fill: tinycolor(p.fill).greyscale().lighten(35).toString(),
+								id: idArr[index]
 							})
-							cloned.getObjects().forEach(function callback(p, index) {
-								p.set({
-									fill: tinycolor(p.fill).greyscale().lighten(35).toString(),
-									id: idArr[index]
-								})
-							})
-						}
-						heightMapLogoCanvas.add(cloned)
-					});
-				}
+						})
+					}
+					heightMapLogoCanvas.add(cloned)
+				});
 			}
 		})
-		fabric.Image.fromURL('./images/planket.png', function(oImg) {
-			oImg.set({
-				id: 'planket',
-				visible: true,
-				opacity: 1.0
-			})
-			heightMapBelow.add(oImg)
-			heightMapBelow.sendToBack(oImg)
-		})
 
- 		fabric.Image.fromURL('./images/seams/seams_button_pad.png', function(oImg) {
+ 		/* fabric.Image.fromURL('./images/seams/seams_button_pad.png', function(oImg) {
 			oImg.set({
 				id: 'seamsButtonPad',
 				visible: true,
@@ -7188,7 +7181,7 @@
 			})
 			heightMapBelow.add(oImg)
 			heightMapBelow.sendToBack(oImg)
-		})
+		}) */
 
 		fabric.Image.fromURL('./images/seams/seams_standard_to_piping.png', function(oImg) {
 			oImg.set({
@@ -7225,6 +7218,16 @@
 				id: 'seamsRaglanToCollar',
 				visible: false,
 				opacity: 0.5
+			})
+			heightMapBelow.add(oImg)
+			heightMapBelow.sendToBack(oImg)
+		})
+
+		fabric.Image.fromURL('./images/planket.png', function(oImg) {
+			oImg.set({
+				id: 'planket',
+				visible: true,
+				opacity: 1.0
 			})
 			heightMapBelow.add(oImg)
 			heightMapBelow.sendToBack(oImg)
@@ -7286,9 +7289,6 @@
 
 		heightMapLogoCanvas.renderAll()
 	
-		//heightMapBelow.getObjects().forEach(function(o) {
-			//console.log(o)
-		//})
 		reRenderBG("heightMap")
 	}
 // GENERAL PURPOSE RENDERING FUNCTIONS
@@ -7345,6 +7345,7 @@
 				//console.log(jerseyLogoCanvas.backgroundImage)
 				var textureFile = './images/jersey_height_map.png'
 				//var textureile = './images/seams/seams_button_pad.png'
+				
 				break;
         }
 		canvas.renderAll();
