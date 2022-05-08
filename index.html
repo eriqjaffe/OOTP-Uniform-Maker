@@ -1722,7 +1722,7 @@
                                     <div class="heightmap-accord-content" style="display:inline;">
 										<table style="width:478px;">
                                             <tr class="color_tr" id="jerseyMakersMarkRow" style="display:none;">
-												<td class="checkCell2"><input type="checkbox" data-canvas="above" checked></td>
+												<td class="checkCell2"><input type="checkbox" class="heightmapTextureToggle" data-id="jerseyMakersMark" data-canvas="above" checked></td>
 												<td style="width:278px;">
 													<label>Manufacturer's Mark:&nbsp;</label>
 												</td>
@@ -1767,6 +1767,41 @@
 													</span>
 												</td>
 											</tr>
+										</table>
+									</div>
+									<div class="heightmap-accord-header heightmap-inactive-header">Side Panels</div>
+									<div class="heightmap-accord-content">
+										<table style="width:100%;">
+											<tr class="color_tr" id="diagonalSide1Row" style="display:none;">
+												<td class="checkCell"><input type="checkbox" class="heightmapMultiToggle" data-id="diagonalSide1,diagonalSide2" data-canvas="below"></td>
+												<td><label>Angled Side Stripes: </label></td>
+												<td style="text-align:right;">
+													<div>
+														<input type="range" class="range hmRange" data-canvas="below" data-element="diagonalSide1" \value=75 min="0" max="255">
+														<div class="colorbox" data-element="diagonalSide1"></div>
+													</div>
+													<div>
+														<input type="range" class="range hmRange" data-canvas="below" data-element="diagonalSide2" value=75 min="0" max="255">
+														<div class="colorbox" data-element="diagonalSide2"></div>
+													</div>
+												</td>
+											</tr>
+											<tr class="color_tr" style="display:none;">
+												<td class="checkCell"><input type="checkbox" class="jerseyMultiToggle" data-id="kiaSide1,kiaSide2" id="kiaSide1Check" data-canvas="below"></td>
+												<td><label>Kia Side Stripes: </label></td>
+												<td style="text-align:right;">
+													<input class="jerseySelector selector" type="text" id="kiaSide1" data-element="kiaSide1" data-canvas="below">
+													<input class="jerseySelector selector" type="text" id="kiaSide2" data-element="kiaSide2" data-canvas="below">
+												</td>
+											</tr>	
+											<tr class="color_tr" style="display:none;">
+												<td class="checkCell"><input type="checkbox" class="jerseyMultiToggle" data-id="sideRacingStripeLargeColor,sideRacingStripeSmallColor" id="sideRacingStripeLargeColorCheck" data-canvas="below"></td>
+												<td><label>Side Racing Stripes: </label></td>
+												<td style="text-align:right;">
+													<input class="jerseySelector selector" type="text" id="sideRacingStripeLargeColor" data-element="sideRacingStripeLargeColor" data-canvas="below">
+													<input class="jerseySelector selector" type="text" id="sideRacingStripeSmallColor" data-element="sideRacingStripeSmallColor" data-canvas="below">
+												</td>
+											</tr>	
 										</table>
 									</div>
 								</div>
@@ -1930,6 +1965,8 @@
 		preserveObjectStacking: true,
 		backgroundColor: 'white'
 	})
+
+	heightMapBelow.setBackgroundImage("./images/jersey_height_map_2.png", heightMapBelow.renderAll.bind(heightMapBelow));
 
     var jerseyBelow = new fabric.StaticCanvas('jerseyBelow',{
 		enableRetinaScaling: false,
@@ -2253,6 +2290,15 @@
 					const element = $(this).data("element")
 					const group = $(this).data("group")
 					if (group == undefined) {
+						var o = heightMapBelow.getObjects('path').find(o => o.id === element)
+						if (o != undefined) {
+							console.log(o.id)
+							console.log(o.fill)
+							box.css("background-color",o.fill)
+							box.parent().find(".hmRange").each(function(e) {	
+								$(this).val(tinycolor(o.fill).getBrightness())
+							})
+						}
 						var o = heightMapLogoCanvas.getObjects('path').find(o => o.id === element)
 						if (o != undefined) {
 							box.css("background-color",o.fill)
@@ -2261,6 +2307,15 @@
 							})
 						}
 					} else {
+						/* var g = heightMapBelow.getObjects('group').find(o => o.id === group)
+						g.getObjects().forEach(function(o) {
+							if (o.id == element) {
+								box.css("background-color",o.fill)
+								box.parent().find(".hmRange").each(function(e) {	
+									$(this).val(tinycolor(o.fill).getBrightness())
+								})
+							}
+						}) */
 						var g = heightMapLogoCanvas.getObjects('group').find(o => o.id === group)
 						g.getObjects().forEach(function(o) {
 							if (o.id == element) {
@@ -2868,22 +2923,16 @@
 		const ids = $(this).data("id").split(",");
 		canvas.getObjects().forEach(function(o) {
 			if ($.inArray(o.id, ids) > -1) {
-				if (state == true) {
-					o.visible = true;
-				} else {
-					o.visible = false;
-				}
+				o.set("visible", state)
+				$("#"+o.id+"Row").css("display",(state == true) ? "inline-block" : "none")
 			}
 		})
 		canvas.renderAll();
 		hmCanvas.getObjects().forEach(function(o) {
 			if ($.inArray(o.id, ids) > -1) {
-				
-				if (state == true) {
-					o.visible = true;
-				} else {
-					o.visible = false;
-				}
+				console.log(o.visible)
+				o.set("visible", state)
+				$("#"+o.id+"Row").css("display",(state == true) ? "inline-block" : "none")
 			}
 		})
 		hmCanvas.renderAll()
@@ -4915,6 +4964,36 @@
 				}
 			})
 		}
+		reRenderBG("heightMap")
+	})
+
+	$(".heightmapTextureToggle").on("click",function() {
+		const id = $(this).data("id");
+		const state = $(this).is(':checked') ? true : false
+		const canvas = $(this).data('canvas') == 'below' ? heightMapBelow : heightMapLogoCanvas
+		canvas.getObjects().forEach(function(o) {
+			if (o.id == id) {
+				o.set("visible", state)
+			}
+        });
+		canvas.renderAll()
+		reRenderBG("heightMap");
+	})
+
+	$(".heightmapMultiToggle").on("click",function() {
+		const state = $(this).is(':checked') ? true : false
+		const canvas = $(this).data('canvas') == 'below' ? heightMapBelow : heightMapLogoCanvas
+		const ids = $(this).data("id").split(",");
+		canvas.getObjects().forEach(function(o) {
+			if ($.inArray(o.id, ids) > -1) {
+				if (state == true) {
+					o.visible = true;
+				} else {
+					o.visible = false;
+				}
+			}
+		})
+		canvas.renderAll();
 		reRenderBG("heightMap")
 	})
 
@@ -7129,10 +7208,13 @@
 			if (o.id != "seams" && o.id != "buttons") {
 				var _clipboard;
 				o.clone(function(cloned) {
+					console.log(o.id)
+					console.log(tinycolor(o.fill).greyscale().lighten(35).toString(),)
 					cloned.set({
 						fill: tinycolor(o.fill).greyscale().lighten(35).toString(),
 						id: o.id,
-						heightMap: o.heightMap
+						heightMap: o.heightMap,
+						visible: o.visible
 					})
 					if (cloned.type == 'group') {
 						cloned.getObjects().forEach(function(p) {
@@ -7153,7 +7235,8 @@
 					cloned.set({
 						fill: tinycolor(o.fill).greyscale().lighten(35).toString(),
 						id: o.id,
-						heightMap: o.heightMap
+						heightMap: o.heightMap,
+						visible: o.visible
 					})
 					if (cloned.type == 'group') {
 						var idArr = []
@@ -7305,6 +7388,7 @@
                 var composite = can3.getContext('2d')
                 var width = 384
                 var height = 768
+				var gco = "multiply"
                 var textureFile = ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : './images/'+$("#jerseyTextureSelect").val()
                 break;				
             case "cap":
@@ -7316,6 +7400,7 @@
                 var composite = can3.getContext('2d')
                 var width = 384
                 var height = 384
+				var gco = "multiply"
                 var textureFile = ($("#capTextureSelect").val() == "custom") ? customCapTexture : './images/'+$("#capTextureSelect").val()
                 break;
             case "pants":
@@ -7328,6 +7413,7 @@
                 var composite = can3.getContext('2d')
                 var width = 384
                 var height = 384
+				var gco = "multiply"
                 var textureFile = ($("#pantsTextureSelect").val() == "custom") ? customPantsTexture : './images/'+$("#pantsTextureSelect").val()
                 break;
 			case "heightMap":
@@ -7342,10 +7428,10 @@
 				var can5 = document.getElementById('seamsCanvas')
 				var width = 512
 				var height = 1024
+				var gco = "screen"
 				//console.log(jerseyLogoCanvas.backgroundImage)
 				var textureFile = './images/jersey_height_map.png'
 				//var textureile = './images/seams/seams_button_pad.png'
-				
 				break;
         }
 		canvas.renderAll();
@@ -7353,7 +7439,7 @@
 		img.onload = function(){
             textureCanvas.drawImage(img, 0, 0, img.width*scaleRatio, img.height*scaleRatio);
 			composite.clearRect(0, 0, width, height);
-			composite.globalCompositeOperation = "multiply";
+			composite.globalCompositeOperation = gco;
 			composite.drawImage(can, 0, 0);
 			composite.drawImage(can2, 0, 0);
 		};
