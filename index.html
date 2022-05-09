@@ -96,6 +96,7 @@
 <div class="title">
 	<span class="header">Welcome To The OOTP Uniform Maker!</span>
 </div>
+<div style="font-family:'MLBBlock';">&nbsp;</div>
 <div id="page">
     <div style="width: 1300px; margin:0 auto;">
         <div class="section group" style="position:relative;">
@@ -1002,26 +1003,26 @@
 											</tr>
 										</table>
 									</div>
-									<!-- <div class="jersey-accord-header jersey-inactive-header">Name & Number</div>
+									<div class="jersey-accord-header jersey-inactive-header">Name & Number</div>
 									<div class="jersey-accord-content">
 										<table style="width:100%">
 											<tr>
 												<td class="checkCell"><input type="checkbox" id="jerseyNameCheck" class="jerseyNameToggle" data-id="playerName"></td>
-												<td colspan="2"><label>Text: </label><input class="jerseyTextOption" type="text" id="jerseyNameTextBox" value="PLAYER" style="width:79%; text-align:center;"/></td>
+												<td colspan="2"><label>Text: </label><input class="jerseyNameOption" type="text" id="jerseyNameTextBox" value="PLAYER" style="width:79%; text-align:center;"/></td>
 											</tr>
 										</table>
 										<table style="width:100%;">
 											<tr>
 												<td style="text-align:center;">
-													<input type="checkbox" id="jerseyNameColorCheck" class="jerseyTextOption jerseyTextToggle" data-id="wordmarkText" checked>
+													<input type="checkbox" id="jerseyNameColorCheck" class="jerseyNameOption jerseyTextToggle" data-id="wordmarkText" checked>
 													<input class="jerseySelector selector jerseyNameColorSelector" type="text" id="jerseyNameColor" data-element="jerseyName">
 												</td>
 												<td style="text-align:center;">
-													<input type="checkbox" id="jesreyNameStroke1ColorCheck" class="jerseyTextOption jerseyTextToggle" data-id="jerseyNameStroke1" checked>
+													<input type="checkbox" id="jesreyNameStroke1ColorCheck" class="jerseyNameOption jerseyTextToggle" data-id="jerseyNameStroke1" checked>
 													<input class="jerseySelector selector jerseyNameColorSelector" type="text" id="jerseyNameStroke1" data-element="jerseyNameStroke1">
 												</td>
 												<td style="text-align:center;">
-													<input type="checkbox" id="jesreyNameStroke2ColorCheck" class="jerseyTextOption jerseyTextToggle" data-id="wordmarkTextStroke2" checked>
+													<input type="checkbox" id="jesreyNameStroke2ColorCheck" class="jerseyNameOption jerseyTextToggle" data-id="wordmarkTextStroke2" checked>
 													<input class="jerseySelector selector jerseyNameColorSelector" type="text" id="jesreyNameStroke2" data-element="jesreyNameStroke2">
 												</td>
 											<tr>
@@ -1029,7 +1030,7 @@
 										<table style="width:100%;">
 											<tr>
 												<td style="width:20%;">
-													<select id="warpEffect" class="jerseyTextOption msDropDown" style="width:100%;">
+													<select id="jerseyNameWarpEffect" class="jerseyNameOption msDropDown" style="width:100%;">
 														<option value="none" data-image="./images/none.png"></option>
 														<option value="arch" data-value="15" data-image="./images/arched.png"></option>
 														<option value="arc" data-value="70" data-image="./images/arced.png"></option>
@@ -1037,19 +1038,19 @@
 												</td>
 												<td style="width:80%;" colspan="2">
 													<div style="width:80%; text-align:center;" class="standardWarp">
-														<input type="range" class="range" class="jerseyTextOption" id="warpAmount" value="0" min="1" max="100" style="width:100%; float:left;">
+														<input type="range" class="range" class="jerseyNameOption" id="jerseyNameWarpAmount" value="0" min="1" max="100" style="width:100%; float:left;">
 													</div>
 													<div style="width:15%; text-align:right; float:right;" class="standardWarp">
-														<input type="number" class="jerseyTextOption" style="width:50px; text-align:center;" id="warpAmountDisplay" val="0">
+														<input type="number" class="jerseyNameOption" style="width:50px; text-align:center;" id="warpAmountDisplay" val="0">
 													</div>
 													<div style="width:49%; float:left; text-align:center; display:none;" class="diagonalWarp">
-														Horizontal Spacing: <input type="number" id="hSpacing" value="22" class="jerseyTextOption spacing" style="width:40px;">
+														Horizontal Spacing: <input type="number" id="hSpacing" value="22" class="jerseyNameOption spacing" style="width:40px;">
 													</div>
 													<div style="width:49%; text-align:center; display:none;" class="diagonalWarp">
-														Vertical Spacing: <input type="number" id="vSpacing" value="25" class="jerseyTextOption spacing" style="width:40px;">
+														Vertical Spacing: <input type="number" id="vSpacing" value="25" class="jerseyNameOption spacing" style="width:40px;">
 													</div>
 													<div style="width:99%; float:left; text-align:center; display:none;" class="verticalWarp">
-														Vertical Spacing: <input type="number" id="vSpacing2" value="35" class="jerseyTextOption" style="width:40px;">
+														Vertical Spacing: <input type="number" id="vSpacing2" value="35" class="jerseyNameOption" style="width:40px;">
 													</div>
 												</td>
 											</tr>
@@ -1057,7 +1058,7 @@
 										</table>	
 										<table style="width:100%;">
 											<tr>
-												<td colspan="3">
+												<td>
 													<select id="jerseyNameTypeCombo" class='BaseballBlock' style="width:100%;">
 														<optgroup class='BaseballBlock'>
 														<option value='BaseballBlock'>Baseball Block</option>
@@ -1067,28 +1068,16 @@
 														</optgroup>
 													</select>
 												</td>
+												<td style="text-align:right;">
+													<input id="jerseyCustomFont" type="file" name="customFont" accept=".ttf, .otf" style="display:none;" />
+													<input type="button" class="button jerseyNameOption localFontButton" id="jerseyNameFakeFontButton" data-canvas="jersey" value="Choose a Local Font..." />
+													<input type="button" class="button jerseyNameOption" id="jerseyNameUploadTheFont" value="Upload Font" style="display:none;" />
+												</td>
 											</tr>
-											<tr><td colspan="3" align="center">
-												<input id="jerseyCustomFont" type="file" name="customFont" accept=".ttf, .otf" style="display:none;" />
-												<input type="button" class="button jerseyTextOption localFontButton" id="jerseyFakeFontButton" data-canvas="jersey" value="Choose a Local Font..." />
-												<input type="button" class="button jerseyTextOption" id="jerseyUploadTheFont" value="Upload Font" style="display:none;" />
-											</td></tr>
 										</table>
 
 										<table style="width:100%">
 											<tr style="text-align:center;">
-												<td class="checkCell">
-													<input type="checkbox" id="jerseyNumberCheck" class="jerseyNumberToggle" data-id="jerseyNumber">
-													<label>Back</label>
-												</td>
-												<td class="checkCell">
-													<input type="checkbox" id="jerseyFrontNumberCheck" class="jerseyFrontNumberToggle" data-id="jerseyFrontNumber">
-													<label>Front</label>
-												</td>
-												<td class="checkCell">
-													<input type="checkbox" id="jerseySleeveNumberCheck" class="jerseySleeveNumberToggle" data-id="jerseySleeveNumber">
-													<label>Sleeve</label>
-												</td>
 												<td colspan="2"><label>Number: </label>
 													<input type="number" class="year" id="jerseyNumberTextBox" name="jerseyNumberTextBox" onkeypress="return isNumberKey(event)" style="width:50px; text-align:center;" min="0" max="99" value="23" >
 												</td>
@@ -1096,17 +1085,57 @@
 										</table>
 										<table style="width:100%;">
 											<tr>
-												<td style="text-align:center;">
-													<input type="checkbox" id="jerseyNameColorCheck" class="jerseyTextOption jerseyTextToggle" data-id="wordmarkText" checked>
-													<input class="jerseySelector selector jerseyNameColorSelector" type="text" id="jerseyNameColor" data-element="jerseyName">
+												<td class="checkCell" style="text-align:left;">
+													<input type="checkbox" id="jerseyNumberCheck" class="jerseyNumberToggle" data-id="jerseyNumber">
+													<label>&nbsp;Back</label>
 												</td>
 												<td style="text-align:center;">
-													<input type="checkbox" id="jesreyNameStroke1ColorCheck" class="jerseyTextOption jerseyTextToggle" data-id="jerseyNameStroke1" checked>
-													<input class="jerseySelector selector jerseyNameColorSelector" type="text" id="jerseyNameStroke1" data-element="jerseyNameStroke1">
+													<input type="checkbox" id="jerseyNameColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="wordmarkText" checked>
+													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jerseyNumberFill" data-element="jerseyName">
 												</td>
 												<td style="text-align:center;">
-													<input type="checkbox" id="jesreyNameStroke2ColorCheck" class="jerseyTextOption jerseyTextToggle" data-id="wordmarkTextStroke2" checked>
-													<input class="jerseySelector selector jerseyNameColorSelector" type="text" id="jesreyNameStroke2" data-element="jesreyNameStroke2">
+													<input type="checkbox" id="jesreyNameStroke1ColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="jerseyNameStroke1" checked>
+													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jerseyNumberStroke1" data-element="jerseyNameStroke1">
+												</td>
+												<td style="text-align:center;">
+													<input type="checkbox" id="jesreyNameStroke2ColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="wordmarkTextStroke2" checked>
+													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jesreyNumberStroke2" data-element="jesreyNameStroke2">
+												</td>
+											<tr>
+											<tr>
+												<td class="checkCell" style="text-align:left;">
+													<input type="checkbox" id="jerseyFrontNumberCheck" class="jerseyNumberToggle" data-id="jerseyFrontNumber">
+													<label>&nbsp;Front</label>
+												</td>
+												<td style="text-align:center;">
+													<input type="checkbox" id="jerseyNameColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="wordmarkText" checked>
+													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jerseyNumberFill" data-element="jerseyName">
+												</td>
+												<td style="text-align:center;">
+													<input type="checkbox" id="jesreyNameStroke1ColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="jerseyNameStroke1" checked>
+													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jerseyNumberStroke1" data-element="jerseyNameStroke1">
+												</td>
+												<td style="text-align:center;">
+													<input type="checkbox" id="jesreyNameStroke2ColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="wordmarkTextStroke2" checked>
+													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jesreyNumberStroke2" data-element="jesreyNameStroke2">
+												</td>
+											<tr>
+											<tr>
+												<td class="checkCell" style="text-align:left;">
+													<input type="checkbox" id="jerseySleeveNumberCheck" class="jerseyNumberToggle" data-id="jerseySleeveNumber">
+													<label>&nbsp;Sleeve</label>
+												</td>
+												<td style="text-align:center;">
+													<input type="checkbox" id="jerseyNameColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="wordmarkText" checked>
+													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jerseyNumberFill" data-element="jerseyName">
+												</td>
+												<td style="text-align:center;">
+													<input type="checkbox" id="jesreyNameStroke1ColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="jerseyNameStroke1" checked>
+													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jerseyNumberStroke1" data-element="jerseyNameStroke1">
+												</td>
+												<td style="text-align:center;">
+													<input type="checkbox" id="jesreyNameStroke2ColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="wordmarkTextStroke2" checked>
+													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jesreyNumberStroke2" data-element="jesreyNameStroke2">
 												</td>
 											<tr>
 										</table>	
@@ -1128,14 +1157,14 @@
 														</optgroup>
 													</select>
 												</td>
+												<td style="text-align:right;">
+													<input id="jerseyCustomFont" type="file" name="customFont" accept=".ttf, .otf" style="display:none;" />
+													<input type="button" class="button jerseyNumberOption localFontButton" id="jerseyFakeFontButton" data-canvas="jersey" value="Choose a Local Font..." />
+													<input type="button" class="button jerseyNumberOption" id="jerseyUploadTheFont" value="Upload Font" style="display:none;" />
+												</td>
 											</tr>
-											<<tr><td colspan="3" align="center">
-												<input id="jerseyCustomFont" type="file" name="customFont" accept=".ttf, .otf" style="display:none;" />
-												<input type="button" class="button jerseyTextOption localFontButton" id="jerseyFakeFontButton" data-canvas="jersey" value="Choose a Local Font..." />
-												<input type="button" class="button jerseyTextOption" id="jerseyUploadTheFont" value="Upload Font" style="display:none;" />
-											</td></tr>
 										</table>
-									</div> -->
+									</div>
                                 </div>
                                 <div class="skltbs-panel" id="PantsPanel">
                                     <div class="pants-accord-header pants-active-header">Main Pants Elements</div>
@@ -2167,17 +2196,21 @@
 			})
 		})
 		
-		$(".capTextToggle, .capText2Toggle, .textOption, .jerseyTextOption").each(function() {
+		$(".capTextToggle, .capText2Toggle, .textOption, .jerseyTextOption, .jerseyNameOption, .jerseyNumberOption").each(function() {
 			$(this).prop("disabled",true);
 		})
 		
-		$(".textColorSelector, .textColor2Selector, .jerseyTextColorSelector, .swashSelector").each(function() {
+		$(".textColorSelector, .textColor2Selector, .jerseyTextColorSelector, .swashSelector, .jerseyNameColorSelector, .jerseyNumberColorSelector").each(function() {
 			$(this).spectrum('disable')
 		})	
 		
 		$("#capFontTypeCombo").prop("disabled",true)
 
 		$("#jerseyFontTypeCombo").prop("disabled",true)
+
+		$("#jerseyNameTypeCombo").prop("disabled",true)
+
+		$("#jerseyNumberTypeCombo").prop("disabled",true)
 		
 		$(".msDropDown").msDropDown();
 
@@ -3547,14 +3580,14 @@
 
 	$("#jerseyNameCheck").on("click",function() {
 		jerseyLogoCanvas.getObjects().find(o => o.id === "playerName").visible = $(this).is(":checked");
-		/* $(".jerseyTextOption").each(function() {
-			$(this).prop("disabled",$("#wordmarkCheck").is(":checked") ? false : true);
+		$(".jerseyNameOption").each(function() {
+			$(this).prop("disabled",$("#jerseyNameCheck").is(":checked") ? false : true);
 		})
-	    $("#warpEffect").msDropDown().data("dd").set("disabled", $("#wordmarkCheck").is(":checked") ? false : true)
-		$("#jerseyFontTypeCombo").prop("disabled", $("#wordmarkCheck").is(":checked") ? false : true)
-		$(".jerseyTextColorSelector").each(function() {
-			$(this).spectrum($("#wordmarkCheck").is(":checked") ? 'enable' : 'disable')
-		}) */
+	    $("#jerseyNameWarpEffect").msDropDown().data("dd").set("disabled", $("#jerseyNameCheck").is(":checked") ? false : true)
+		$("#jerseyNameTypeCombo").prop("disabled", $("#jerseyNameCheck").is(":checked") ? false : true)
+		$(".jerseyNameColorSelector").each(function() {
+			$(this).spectrum($("#jerseyNameCheck").is(":checked") ? 'enable' : 'disable')
+		})
 		jerseyLogoCanvas.renderAll();
 	})
 
@@ -6322,126 +6355,6 @@
 			visible: false
 		})
 
-		/* jerseyName = new fabric.Text('PLAYERPLAYER',{
-			fontFamily: "MLBBlock",
-			fontSize: 30,
-			originX: 'center',
-			originY: 'center',
-			left: 256,
-			top: 425,
-			angle: 180,
-			textAlign: 'center',
-			id: 'jerseyName',
-			fill: initialJerseyColors["wordmarkTextColor"],
-			stroke: initialJerseyColors["wordmarkTextColor"],
-			strokeWidth: 0,
-		})
-
-		jerseyNameStroke1 = new fabric.Text('PLAYERPLAYER',{
-			fontFamily: "MLBBlock",
-			fontSize: 30,
-			originX: 'center',
-			originY: 'center',
-			left: 256,
-			top: 425,
-			angle: 180,
-			textAlign: 'center',
-			id: 'jerseyNameStroke1',
-			fill: 'white',
-			stroke: 'white',
-			strokeWidth: 6
-		})
-
-		jerseyNameStroke2 = new fabric.Text('PLAYERPLAYER',{
-			fontFamily: "MLBBlock",
-			fontSize: 30,
-			originX: 'center',
-			originY: 'center',
-			left: 256,
-			top: 425,
-			angle: 180,
-			textAlign: 'center',
-			id: 'jerseyNameStroke2',
-			fill: 'red',
-			stroke: 'red',
-			strokeWidth: 10
-		})
-
-		playerName = new fabric.Group ([tmpRect, jerseyNameStroke2, jerseyNameStroke1, jerseyName],{
-			visible: false,
-			id:'playerName',
-			borderColor: 'red',
-			cornerColor: 'yellow',
-			cornerSize: 12,
-			transparentCorners: false,
-			originX: 'center',
-			originY: 'center'
-		})
-
-		jerseyBackNumberFill = new fabric.Text('23',{
-			fontFamily: "MLBBlock",
-			fontSize: 150,
-			originX: 'center',
-			originY: 'center',
-			left: 256,
-			top: 256,
-			angle: 180,
-			textAlign: 'center',
-			centeredScaling: true,
-			centeredRotation: true,
-			id: 'jerseyBackNumberFill',
-			fill: 'blue',
-			stroke: 'blue',
-			strokeWidth: 0
-		})
-
-		jerseyBackNumberStroke1 = new fabric.Text('23',{
-			fontFamily: "MLBBlock",
-			fontSize: 150,
-			originX: 'center',
-			originY: 'center',
-			left: 256,
-			top: 256,
-			angle: 180,
-			textAlign: 'center',
-			centeredScaling: true,
-			centeredRotation: true,
-			id: 'jerseyBackNumberStroke1',
-			fill: 'white',
-			stroke: 'white',
-			strokeWidth: 5
-		})
-
-		jerseyBackNumberStroke2 = new fabric.Text('23',{
-			fontFamily: "MLBBlock",
-			fontSize: 150,
-			originX: 'center',
-			originY: 'center',
-			left: 256,
-			top: 256,
-			angle: 180,
-			textAlign: 'center',
-			centeredScaling: true,
-			centeredRotation: true,
-			id: 'jerseyBackNumberStroke2',
-			fill: 'red',
-			stroke: 'red',
-			strokeWidth: 10
-		})
-
-		jerseyBackNumber = new fabric.Group([jerseyBackNumberStroke2, jerseyBackNumberStroke1, jerseyBackNumberFill],{
-			visible: false,
-			id:'jerseyBackNumber',
-			borderColor: 'red',
-			cornerColor: 'yellow',
-			cornerSize: 12,
-			transparentCorners: false,
-			originX: 'center',
-			originY: 'center',
-			left: 256,
-			top: 256
-		}) */
-
 		swash1Group = new fabric.Group([swash1Stroke,swash1], {
 			originX: 'center',
 			originY: 'center',
@@ -6619,6 +6532,129 @@
 		    offsetY: 3
 		}))
 
+		jerseyNameFill = new fabric.Text('PLAYERPLAYER',{
+			fontFamily: "MLBBlock",
+			fontSize: 30,
+			originX: 'center',
+			originY: 'center',
+			left: 256,
+			top: 420,
+			angle: 180,
+			textAlign: 'center',
+			centeredScaling: true,
+			centeredRotation: true,
+			id: 'jerseyNameFill',
+			fill: initialJerseyColors["wordmarkTextColor"],
+			stroke: initialJerseyColors["wordmarkTextColor"],
+			strokeWidth: 0,
+		})
+
+		jerseyNameStroke1 = new fabric.Text('PLAYERPLAYER',{
+			fontFamily: "MLBBlock",
+			fontSize: 30,
+			originX: 'center',
+			originY: 'center',
+			left: 256,
+			top: 420,
+			angle: 180,
+			textAlign: 'center',
+			id: 'jerseyNameStroke1',
+			fill: 'white',
+			stroke: 'white',
+			strokeWidth: 6
+		})
+
+		jerseyNameStroke2 = new fabric.Text('PLAYERPLAYER',{
+			fontFamily: "MLBBlock",
+			fontSize: 30,
+			originX: 'center',
+			originY: 'center',
+			left: 256,
+			top: 420,
+			angle: 180,
+			textAlign: 'center',
+			id: 'jerseyNameStroke2',
+			fill: 'red',
+			stroke: 'red',
+			strokeWidth: 10
+		})
+
+		playerName = new fabric.Group ([jerseyNameStroke2, jerseyNameStroke1, jerseyNameFill],{
+			visible: false,
+			id:'playerName',
+			borderColor: 'red',
+			cornerColor: 'yellow',
+			cornerSize: 12,
+			transparentCorners: false,
+			originX: 'center',
+			originY: 'center',
+			visible: false
+		})
+
+		jerseyBackNumberFill = new fabric.Text('23',{
+			fontFamily: "MLBBlock",
+			fontSize: 130,
+			originX: 'center',
+			originY: 'center',
+			left: 256,
+			top: 312,
+			angle: 180,
+			textAlign: 'center',
+			centeredScaling: true,
+			centeredRotation: true,
+			id: 'jerseyBackNumberFill',
+			fill: 'blue',
+			stroke: 'blue',
+			strokeWidth: 0
+		})
+
+		jerseyBackNumberStroke1 = new fabric.Text('23',{
+			fontFamily: "MLBBlock",
+			fontSize: 130,
+			originX: 'center',
+			originY: 'center',
+			left: 256,
+			top: 312,
+			angle: 180,
+			textAlign: 'center',
+			centeredScaling: true,
+			centeredRotation: true,
+			id: 'jerseyBackNumberStroke1',
+			fill: 'white',
+			stroke: 'white',
+			strokeWidth: 5
+		})
+
+		jerseyBackNumberStroke2 = new fabric.Text('23',{
+			fontFamily: "MLBBlock",
+			fontSize: 130,
+			originX: 'center',
+			originY: 'center',
+			left: 256,
+			top: 312,
+			angle: 180,
+			textAlign: 'center',
+			centeredScaling: true,
+			centeredRotation: true,
+			id: 'jerseyBackNumberStroke2',
+			fill: 'red',
+			stroke: 'red',
+			strokeWidth: 10
+		})
+
+		jerseyBackNumber = new fabric.Group([jerseyBackNumberStroke2, jerseyBackNumberStroke1, jerseyBackNumberFill],{
+			visible: false,
+			id:'jerseyBackNumber',
+			borderColor: 'red',
+			cornerColor: 'yellow',
+			cornerSize: 12,
+			transparentCorners: false,
+			originX: 'center',
+			originY: 'center',
+			left: 256,
+			top: 312
+		})
+
 		jerseyBelow.add(seams)
 		jerseyLogoCanvas.add(placketPipingInnerColor)
 		jerseyLogoCanvas.add(placketPipingMiddleColor)
@@ -6646,8 +6682,8 @@
 		jerseyLogoCanvas.add(swash5Group)
 		jerseyLogoCanvas.add(swash6Group)
 		jerseyLogoCanvas.add(wordmark)
-		//jerseyLogoCanvas.add(playerName)
-		//jerseyLogoCanvas.add(jerseyBackNumber)
+		jerseyLogoCanvas.add(playerName)
+		jerseyLogoCanvas.add(jerseyBackNumber)
 		jerseyLogoCanvas.add(mlbLogo)
 		jerseyLogoCanvas.add(milbLogo)
 
