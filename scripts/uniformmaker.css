@@ -591,6 +591,66 @@ legend {
 
 }
 
+@font-face {
+    font-family: 'McAuliffe';
+    src: url('../fonts/MLBRedSox.eot');
+    src: url('../fonts/MLBRedSox.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/MLBRedSox.woff2') format('woff2'),
+        url('../fonts/MLBRedSox.woff') format('woff'),
+        url('../fonts/MLBRedSox.ttf') format('truetype'),
+        url('../fonts/MLBRedSox.svg#MLBRedSox') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'MLBBlock';
+    src: url('../fonts/MLBBlock.eot');
+    src: url('../fonts/MLBBlock.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/MLBBlock.woff2') format('woff2'),
+        url('../fonts/MLBBlock.woff') format('woff'),
+        url('../fonts/MLBBlock.ttf') format('truetype'),
+        url('../fonts/MLBBlock.svg#MLBBlock') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'ChicagoNL';
+    src: url('../fonts/MLBCubs.eot');
+    src: url('../fonts/MLBCubs.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/MLBCubs.woff2') format('woff2'),
+        url('../fonts/MLBCubs.woff') format('woff'),
+        url('../fonts/MLBCubs.ttf') format('truetype'),
+        url('../fonts/MLBCubs.svg#MLBCubs') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'VarsityBlock';
+    src: url('../fonts/SuperstarM54.eot');
+    src: url('../fonts/SuperstarM54.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/SuperstarM54.woff2') format('woff2'),
+        url('../fonts/SuperstarM54.woff') format('woff'),
+        url('../fonts/SuperstarM54.ttf') format('truetype'),
+        url('../fonts/SuperstarM54.svg#SuperstarM54') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BaseballBlock';
+    src: url('../fonts/JerseyM54.eot');
+    src: url('../fonts/JerseyM54.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/JerseyM54.woff2') format('woff2'),
+        url('../fonts/JerseyM54.woff') format('woff'),
+        url('../fonts/JerseyM54.ttf') format('truetype'),
+        url('../fonts/JerseyM54.svg#JerseyM54') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
 .Acme { font-family: "Acme"; font-size: 1.1em;}
 .AthleticGothic  { font-family: 'athletic_gothicregular'; font-size: 1.1em; }
 .AthleticGothicShadow { font-family: 'athletic_gothic_shadowregular'; font-size: 1.1em; }
@@ -648,6 +708,10 @@ legend {
 .Yellowtail { font-family: "Yellowtail"; font-size: 1.1em;}
 .spl28 { font-family: 'spl28scriptregular'; font-size: 1.1em; }
 .alegreya { font-family: 'Alegreya Sans SC'; font-size: 1.1em }
+.VarsityBlock { font-family: 'VarsityBlock'; font-size: 1.1em }
+.BaseballBlock { font-family: 'BaseballBlock'; font-size: 1.1em }
+.ChicagoNL { font-family: 'ChicagoNL'; font-size: 1.1em }
+.McAuliffe { font-family: 'McAuliffe'; font-size: 1.1em }
 
 /*  SECTIONS  */
 /* .section {
