@@ -441,7 +441,8 @@
                 $("#capOverlay").css("display","none");
                 $("#pantsOverlay").css("display","none");
                 eyeDropper.open().then(result => {
-			        if($("#toggleJerseyGrid").is(':checked')){
+			        console.log(result.sRGBHex)
+                    if($("#toggleJerseyGrid").is(':checked')){
                         jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
                     }
                     if($("#togglePantsGrid").is(':checked')){
@@ -468,15 +469,6 @@
                             break;
                     }
                     setFromTextInput(result.sRGBHex)
-                    if ($.inArray(result.sRGBHex, commonPalette) < 0) {
-                        commonPalette.push(result.sRGBHex)
-                    }
-                    if ($.inArray(result.sRGBHex, jerseyPalette) < 0) {
-                        jerseyPalette.push(result.sRGBHex)
-                    }
-                    if ($.inArray(result.sRGBHex, capPalette) < 0) {
-                        capPalette.push(result.sRGBHex)
-                    }
                     hide()
                 })
             })
