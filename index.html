@@ -9452,7 +9452,12 @@
 			teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
 		}
 		teamName = teamName.split(' ').join('_');
-		var fileName = "jerseys_"+teamName+"_"+$("#uniformType").val()+yearRange;
+		if ($("#uniformType").val() != "Home") {
+			var fileName = "jerseys_"+teamName+"_"+$("#uniformType").val().toLowerCase()+yearRange;
+		} else {
+			var fileName = "jerseys_"+teamName+yearRange;
+		}
+		
 
 		if ($("#toggleJerseyGrid").is(':checked')){
 			jerseyLogoCanvas.setOverlayImage(null,jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
@@ -9668,7 +9673,11 @@
 			teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
 		}
 		teamName = teamName.split(' ').join('_');
-		var fileName = teamName+"_"+$("#uniformType").val()+yearRange;
+		if ($("#uniformType").val() != "Home") {
+			var fileName = teamName+"_"+$("#uniformType").val().toLowerCase()+yearRange;
+		} else {
+			var fileName = teamName+yearRange;
+		}
 		
 		if ($("#toggleCapGuides").is(":checked")) {
 			capLogoCanvas.setOverlayImage(null,capLogoCanvas.renderAll.bind(capLogoCanvas));
