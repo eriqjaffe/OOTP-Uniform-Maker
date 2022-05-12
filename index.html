@@ -112,7 +112,7 @@
                 </div>
                 <div id="canvasContainer" style="position:absolute; height:828px; width:768px;">
 					<div id="overlay">
-						<div id="jerseyOverlay"></div>
+						<div id="jerseyOverlay" class="jerseyOverlay"></div>
 						<div id="pantsOverlay"></div>
 						<div id="capOverlay"></div>
 					</div>
@@ -676,7 +676,7 @@
 											</tr>
 										</table>
 									</div>
-									<div class="jersey-accord-header jersey-inactive-header">Images</div>
+									<div class="jersey-accord-header jersey-inactive-header" id="jerseyImagesHeader">Images</div>
 									<div class="jersey-accord-content">
 									<div id="jerseyUploadImageDiv">
 										<table style="width:100%;">
@@ -1712,7 +1712,7 @@
 											</tr>
 										</table>
 									</div>
-									<div class="cap-accord-header cap-inactive-header">Images</div>
+									<div class="cap-accord-header cap-inactive-header" id="capImagesHeader">Images</div>
 									<div class="cap-accord-content">
 										<div id="capUploadImageDiv">
 										<table style="width:100%;">
@@ -2511,6 +2511,71 @@
 			}
 		});
 	})
+
+	$("#jerseyContainer").on('dragover', function() {
+		activeCanvas = jerseyLogoCanvas;
+		$("#jerseyContainer").addClass('hover')
+		return false;
+	});
+
+	$("#jerseyContainer").on('dragleave', function() {
+		$("#jerseyContainer").removeClass('hover');
+		return false;
+	});
+
+	$("#jerseyContainer").on('drop', function(e) {
+		activeCanvas = jerseyLogoCanvas;
+		$("#jerseyContainer").removeClass('hover');
+		e.stopPropagation();
+		e.preventDefault();
+		var files = e.originalEvent.dataTransfer.files;
+		dropImage(jerseyLogoCanvas, files[0].path)
+		$("#tabContainer").skeletabs('goTo', 0)
+		return false;
+	});
+
+	$("#capContainer").on('dragover', function() {
+		$("#capContainer").addClass('hover')
+		return false;
+	});
+
+	$("#capContainer").on('dragleave', function() {
+		$("#capContainer").removeClass('hover');
+		return false;
+	});
+
+	$("#capContainer").on('drop', function(e) {
+		$("#capContainer").removeClass('hover');
+		e.stopPropagation();
+		e.preventDefault();
+		var files = e.originalEvent.dataTransfer.files;
+		dropImage(capLogoCanvas, files[0].path)
+		$("#tabContainer").skeletabs('goTo', 2)
+		return false;
+	});
+
+	/* COMMENTED OUT FOR FUTURE USE
+	
+	$("#pantsContainer").on('dragover', function() {
+		$("#pantsContainer").addClass('hover')
+		return false;
+	});
+
+	$("#pantsContainer").on('dragleave', function() {
+		$("#pantsContainer").removeClass('hover');
+		return false;
+	});
+
+	$("#pantsContainer").on('drop', function(e) {
+		$("#pantsContainer").removeClass('hover');
+		e.stopPropagation();
+		e.preventDefault();
+		var files = e.originalEvent.dataTransfer.files;
+		dropImage(pantsLogoCanvas, files[0].path)
+		$("#tabContainer").skeletabs('goTo', 1)
+		return false;
+	}); */
+
 
 	// JERSEY SPECIFIC
 
@@ -10275,6 +10340,98 @@
 				activeCanvas.requestRenderAll();
 			});
 		}
+	}
+
+	function dropImage(dropCanvas, file) {
+		console.log(dropCanvas.id)
+		$.ajax({
+			type: "GET",
+			url: "http://127.0.0.1:"+port+"/dropImage",
+			data: {file:file},
+			success: function(data) { 
+				var imgObj = new Image();
+				imgObj.src = data.image;
+				$("#fileName").html(data.filename);
+				imgObj.onload = function () {
+					switch (dropCanvas.id) {
+						case "jerseyLogoCanvas":
+							var canvas = jerseyLogoCanvas
+							var imLeft = 256
+							var imTop = 512
+							var moveBelow = 'buttons'
+							var header = $("#jerseyImagesHeader")
+							break;
+						case "capLogoCanvas":
+							var canvas = capLogoCanvas
+							var imLeft = 256
+							var imTop = 256
+							var moveBelow = 'eyeletGroup'
+							var header = $("#capImagesHeader")
+							break;
+						case "pantsLogoCanvas":
+							var canvas = pantsLogoCanvas
+							var imLeft = 256
+							var imTop = 256
+							var moveBelow = null
+							var header = $("#pantsImagesHeader")
+							break;
+					} 
+					var image = new fabric.Image(imgObj);
+					image.set({
+						originX: 'center',
+						originY: 'center',
+						perPixelTargetFind: true,
+						centeredScaling: true,
+						centeredRotation: true,
+						name: data.filename,
+						id: data.filename
+					});
+					image.filters.push(new fabric.Image.filters.Resize({
+						resizeType: 'lanczos', // typo fixed
+						lanczosLobes: 2 // typo fixed
+					}));
+					image.on('object:modified',function() {
+						imLeft = image.get('left')
+						imTop = image.get('top');
+					})
+					image.on('selected',function() {
+						switch (activeCanvas.id) {
+							case "jerseyLogoCanvas":
+								var canStr = "jersey"
+								break;
+							case "capLogoCanvas":
+								var canStr = "cap"
+								break;
+							case "pantsLogoCanvas":
+								var canStr = "pants"
+								break;
+						} 
+						$("#"+canStr+"FileName").html(image.get('id'));
+						if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+							$("#"+canStr+"TrimImageDiv").css("display","block");
+							$("#"+canStr+"UploadImageDiv").css("display","none");
+							$("#"+canStr+"SelectedImageDiv").css("display","block");
+						}
+						$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+						$(".copypaste").each(function() {
+							$(this).css("display","inline-block")
+						})
+					})
+					var h = image.height;
+					var w = image.width;
+					canvas.add(image);
+					image.set({"left":imLeft,"top":imTop});
+					image.setCoords();
+					if (moveBelow != null) {
+						canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
+					}
+					canvas.setActiveObject(image)
+					canvas.requestRenderAll()
+					canvas.renderAll();
+					header.click()
+				}
+			}
+		})
 	}
 
 	function getNumberAtEnd(str) {

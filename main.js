@@ -62,6 +62,18 @@ app2.get("/checkForUpdate", (req,res) => {
 	});
 })
 
+app2.get("/dropImage", (req, res) => {
+	console.log(req.query.file)
+	Jimp.read(req.query.file, (err, image) => {
+		image.getBase64(Jimp.AUTO, (err, ret) => {
+			res.json({
+				"filename": path.basename(req.query.file),
+				"image": ret
+			});
+		})
+	})
+})
+
 app2.get("/uploadImage", (req, res) => {
 	dialog.showOpenDialog(null, {
 		properties: ['openFile'],

@@ -422,6 +422,11 @@ legend {
 	font-weight: bold;
 }
 
+.hover{
+	box-shadow: 0 0 20px blue;
+}
+
+
 @font-face {
     font-family: 'rawlings_old_englishmedium';
     src: url('../fonts/rawlingsoldenglish-webfont.eot');
