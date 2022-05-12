@@ -2572,7 +2572,7 @@
 		e.preventDefault();
 		var files = e.originalEvent.dataTransfer.files;
 		dropImage(pantsLogoCanvas, files[0].path)
-		$("#tabContainer").skeletabs('goTo', 1)
+		$("#tabContainer").skeletabs('goTo', 2)
 		return false;
 	}); */
 
@@ -5985,7 +5985,7 @@
 			id: 'jerseyBackColor',
 			fill: initialJerseyColors['jerseyBackColor'],
 			visible: false,
-			clipPath: vestSleeveClippingPath
+			clipPath: clippingPath
 		})
 
 		jerseyFrontColor = new fabric.Path("M 183.15234 503.60938 L 172.28711 506.83398 L 149.24414 508.625 L 132.05078 511.13281 L 116.43164 512 L 0 512 L 0 1024 L 512 1024 L 512 512 L 383.08398 512 L 364.51367 509.58008 L 338.72461 507.55078 L 327.85938 504.08789 L 316.39844 508.26758 L 301.47461 515.66992 L 205.59961 516.26562 L 194.01758 508.50586 L 183.15234 503.60938 z",{
