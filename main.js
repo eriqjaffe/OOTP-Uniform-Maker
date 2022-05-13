@@ -14,6 +14,7 @@ const { SVG, registerWindow } = require('@svgdotjs/svg.js')
 const { createSVGWindow } = require('svgdom')
 const versionCheck = require('github-version-checker');
 const pkg = require('./package.json');
+const { RESIZE_BEZIER } = require('jimp');
 
 const isMac = process.platform === 'darwin'
 const tempDir = os.tmpdir()
@@ -30,6 +31,10 @@ const preferredColorFormat = store.get("preferredColorFormat", "hex")
 const preferredJerseyTexture = store.get("preferredJerseyTexture", "jersey_texture_default.png")
 const preferredPantsTexture = store.get("preferredPantsTexture", "pants_texture_default.png")
 const preferredCapTexture = store.get("preferredCapTexture", "cap_texture_wool.png")
+const preferredPlayerName = store.get("preferredPlayerName", "PLAYER")
+const preferredPlayerNumber = store.get("preferredPlayerNumber", "23")
+const preferredJerseyFont = store.get("preferredJerseyFont", "Leckerli_One")
+const preferredCapFont = store.get("preferredCapFont", "Graduate")
 const gridsVisible = store.get("gridsVisible", true)
 const checkForUpdates = store.get("checkForUpdates", true)
 
@@ -65,12 +70,19 @@ app2.get("/checkForUpdate", (req,res) => {
 app2.get("/dropImage", (req, res) => {
 	console.log(req.query.file)
 	Jimp.read(req.query.file, (err, image) => {
-		image.getBase64(Jimp.AUTO, (err, ret) => {
+		if (err) {
 			res.json({
-				"filename": path.basename(req.query.file),
-				"image": ret
-			});
-		})
+				"filename": "error not an image",
+				"image": "error not an image"
+			})
+		} else {
+			image.getBase64(Jimp.AUTO, (err, ret) => {
+				res.json({
+					"filename": path.basename(req.query.file),
+					"image": ret
+				});
+			})
+		}
 	})
 })
 
@@ -1117,7 +1129,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredPlayerName=${preferredPlayerName}&preferredPlayerNumber=${preferredPlayerNumber}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}`);
     //mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}`);
 	
   
