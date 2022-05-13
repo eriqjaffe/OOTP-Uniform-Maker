@@ -62,7 +62,7 @@
 		const swashFills = ['swash1Fill', 'swash2Fill', 'swash3Fill', 'swash4Fill', 'swash5Fill', 'swash6Fill']
 		const swashStrokes = ['swash1Stroke', 'swash2Stroke', 'swash3Stroke', 'swash4Stroke', 'swash5Stroke', 'swash6Stroke']
 		
-		const initialCapColors = {capColor:"#ba0c2f",underBrimColor:"#656765",topsideBrimColor:"#1d1654",squatcheeColor:"yellow",frontPanelColor:"#FFFFFF",smallFrontPanelColor:"yellow",capPinstripeColor:"blue",capPinstripe2Color:"cyan", horizontalPinstripeColor:"yellow",capLogoTextColor:"white",capLogoStroke1Color:"green",capLogoStroke2Color:"black",capLogo2TextColor:"white",capLogo2Stroke1Color:"green",capLogo2Stroke2Color:"black",bandBoxSingleThickColor:"orange",bandBoxDoubleThickColor:"greenyellow",jockeyColor:"gray",braidStripeInnerColor:"red",braidStripeOuterColor:"blue",soutache:"goldenrod",frontPanelBorderColor:"cyan",bostonColor:"yellowgreen",smallPanelBorderColor:"cyan",curvedBrimColor:"cyan",curvedBrimBorderColor:"blue",peakBandColor:"orange",stingyBrimColor:"red",lidPinstripesColor:"blue",stingyLidPinstripesColor:"yellow",eyeletFillColor:"black",eyelet1Color:"yellow",eyelet2Color:"yellow",eyelet3Color:"yellow",eyelet4Color:"yellow",eyelet5Color:"yellow",eyelet6Color:"yellow",snakeskinColor:"#000000",scrambledEggColor:"#FED141",capMakersMarkColor:"#FFFFFF",triColor:"#003087"}
+		const initialCapColors = {capColor:"#ba0c2f",underBrimColor:"#656765",topsideBrimColor:"#1d1654",squatcheeColor:"yellow",frontPanelColor:"#FFFFFF",smallFrontPanelColor:"yellow",capPinstripeColor:"blue",capPinstripe2Color:"cyan", horizontalPinstripeColor:"yellow",capLogoTextColor:"white",capLogoStroke1Color:"green",capLogoStroke2Color:"black",capLogo2TextColor:"white",capLogo2Stroke1Color:"green",capLogo2Stroke2Color:"black",bandBoxSingleThickColor:"orange",bandBoxDoubleThickColor:"greenyellow",jockeyColor:"gray",braidStripeInnerColor:"red",braidStripeOuterColor:"blue",soutache:"goldenrod",frontPanelBorderColor:"cyan",bostonColor:"yellowgreen",smallPanelBorderColor:"cyan",curvedBrimColor:"cyan",curvedBrimBorderColor:"blue",peakBandColor:"orange",stingyBrimColor:"red",lidPinstripesColor:"blue",stingyLidPinstripesColor:"yellow",eyeletFillColor:"black",eyelet1Color:"yellow",eyelet2Color:"yellow",eyelet3Color:"yellow",eyelet4Color:"yellow",eyelet5Color:"yellow",eyelet6Color:"yellow",snakeskinColor:"#000000",scrambledEggColor:"#FED141",capMakersMarkColor:"#FFFFFF",triColor:"#003087",halo:"#8D9093"}
 
         //var prefs['preferredColorFormat'] = "hex"
 		var capMakersMarkColor = initialCapColors['capMakersMarkColor']
@@ -1681,6 +1681,11 @@
 												<td><label>Snakeskin: </label></td>
 												<td style="text-align:right;"><input class="capSelector selector" type="text" id="snakeskinColor" data-element="snakeskinColor" data-canvas="below"></td>
 											</tr>
+											<!-- <tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" class="capTextureToggle" data-id="halo" id="haloCheck" data-canvas="above"></td>
+												<td><label>Halo: </label></td>
+												<td style="text-align:right;"><input class="capSelector selector" type="text" id="halo" data-element="halo" data-canvas="above"></td>
+											</tr> -->
 											<tr class="color_tr">
 												<td class="checkCell"><input type="checkbox" class="capTextureToggle" data-id="bostonColor" id="bostonColorCheck" data-canvas="below"></td>
 												<td><label>Boston Stripes: </label></td>
@@ -5473,9 +5478,16 @@
     capLogoCanvas.on('selection:created', function(e) {
 		activeCanvas = capLogoCanvas;
 		var obj = e.selected[0];
-		if (obj.id == 'wordmark') {
-			$("#tipSpan").html("If you're trying to select an image instead of the text, you have to hide the text first.");
+		$("#capFileName").html(obj.id);
+		if ($("#capTrimImageDiv").css("display") == "none") {
+			$("#capTrimImageDiv").css("display","block");
+			$("#capUploadImageDiv").css("display","none");
+			$("#capSelectedImageDiv").css("display","block");
 		}
+		$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+		$(".copypaste").each(function() {
+			$(this).css("display","inline-block")
+		})
 	})
 
 	capLogoCanvas.on('selection:cleared', function(e) {
@@ -6092,6 +6104,14 @@
 			selectable:false
 		});
 
+		halo = new fabric.Path("M 11.132812 237.73242 L 10.970703 243.62695 L 22.289062 244.5 L 43.894531 245.58984 C 67.135372 246.76176 152.1275 246.66693 178.76758 245.43945 C 194.66283 244.70706 195.02224 244.6427 194.39453 242.5957 C 194.04118 241.44344 193.60247 240.33218 193.41992 240.12695 C 193.23733 239.92184 177.10503 240.32614 157.57031 241.02539 C 123.71243 242.2373 66.585026 241.92734 36.460938 240.36719 C 31.967531 240.13448 29.150285 239.98999 27.328125 240.02539 L 11.132812 237.73242 z M 441.45117 344.97461 L 436.22266 351.21094 C 435.89312 351.54402 435.6172 351.74665 435.25781 352.1582 C 433.74105 353.89509 431.5247 356.39676 430.33203 357.7168 C 429.13936 359.03683 425.3525 363.25558 421.91797 367.0918 C 418.48344 370.92802 414.28569 375.55194 412.58789 377.36914 C 396.93645 394.12122 387.33407 404.43475 386.5 405.39062 C 385.95 406.02097 383.70003 408.55985 381.5 411.03125 C 379.30001 413.50265 375.69999 417.72299 373.5 420.41016 C 371.29997 423.09732 369.03983 425.79235 368.47656 426.39844 C 363.06243 432.22435 352.52789 448.9124 347.19531 460.11133 C 340.88545 473.36265 335.62251 491.50336 334.43555 501.66602 L 334.41406 501.66211 L 332.98242 511.97852 C 332.98242 511.97852 337.1159 512.46795 337.44336 512.01758 C 337.65355 511.72843 338.41721 507.84684 338.93945 505.0918 C 339.30604 503.45703 339.69581 501.37405 340.17578 498.52344 C 343.67865 477.71967 353.38701 454.915 365.75 438.44922 C 367.53753 436.06853 369.11523 433.37891 369.11523 433.37891 C 369.11523 433.37891 368.5804 434.06813 371 431.07617 C 371.44329 430.82875 372.23751 428.87861 373.75 427.32031 C 375.26249 425.76201 378.18475 422.52122 380.24414 420.11914 C 385.42066 414.08119 397.60885 400.59636 402.87305 395.08203 C 405.27849 392.56226 411.35349 386.03188 416.37305 380.57031 C 421.3926 375.10878 426.175 369.91638 427 369.03125 C 432.69255 362.92381 437.39277 357.18478 439.86719 353.65625 L 439.9375 353.69336 L 444.48047 347.10352 L 441.45117 344.97461 z M 192.72461 403.07812 C 169.6225 402.94195 145.36545 407.73044 117.5 417.63477 C 105.06618 422.05417 83.017361 430.81343 72 435.71094 C 69.524999 436.81112 65.024998 438.723 62 439.95898 C 58.974998 441.195 54.128199 443.28503 51.228516 444.60352 C 48.328828 445.922 45.291329 447 44.478516 447 C 44.013532 447 43.673174 447.05813 43.439453 447.17188 L 43.388672 447.14062 L 26.851562 452.70898 L 29.634766 459.09375 L 49.074219 450.69336 L 49.03125 450.66797 C 49.150262 450.61929 49.2195 450.60272 49.347656 450.54883 C 51.081239 449.81983 54.750001 448.31423 57.5 447.20312 C 60.249999 446.09199 68.575001 442.61019 76 439.4668 C 83.424999 436.3234 90.625 433.31124 92 432.77148 C 93.375003 432.23173 95.849998 431.22515 97.5 430.53516 C 108.4297 425.96461 117.77607 422.58292 129.5 418.95703 C 157.28211 410.36484 175.81824 407.43773 197 408.30078 C 209.20863 408.7982 224.73982 411.17118 233.99414 413.95117 C 235.38199 414.36807 236.27876 414.60843 236.98242 414.74219 L 248.53906 418.16211 L 249.68555 413.57617 L 237.40625 409.64844 L 237.37109 409.75977 C 236.49385 409.42273 235.3699 409.06986 233.5918 408.59961 C 220.03183 405.01331 206.58587 403.15984 192.72461 403.07812 z",{
+			fill:initialCapColors["halo"],
+			id:'halo',
+			visible: false,
+			selectable:false,
+			clipPath:capClippingPath
+		});
+
 		capLogoText = new fabric.Text('L',{
 			fontFamily: 'Graduate',
 			fontsize: 60,
@@ -6229,6 +6249,7 @@
 		capLogoCanvas.add(textLogo2);
 		capLogoCanvas.add(eyeletGroup);
 		capLogoCanvas.add(scrambledEggColor);
+		capLogoCanvas.add(halo)
 
 		loadMakersMark("cap",$("#capMakersMarkSelect").find(':selected').data('top'),$("#capMakersMarkSelect").find(':selected').data('left'),$("#capMakersMarkSelect").find(':selected').data('angle'),$("#capMakersMarkSelect").find(':selected').data('height'));
         
