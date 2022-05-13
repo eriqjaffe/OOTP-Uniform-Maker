@@ -30,6 +30,24 @@
 		const appVersion = params.get('appVersion')
 		const gridsVisible = (params.get('gridsVisible').toLowerCase() == "true") ? true : false
 		const checkForUpdates = (params.get('checkForUpdates').toLowerCase() == "true") ? true : false
+		const preferredPlayerName = params.get('preferredPlayerName')
+		const preferredPlayerNumber = params.get('preferredPlayerNumber')
+
+		var prefs = {
+			appVersion: params.get('appVersion'),
+			gridsVisible: (params.get('gridsVisible').toLowerCase() == "true") ? true : false,
+			checkForUpdates: (params.get('checkForUpdates').toLowerCase() == "true") ? true : false,
+			preferredPlayerName: params.get('preferredPlayerName'),
+			preferredPlayerNumber: params.get('preferredPlayerNumber'),
+			preferredJerseyTexture: params.get('preferredJerseyTexture'),
+			preferredPantsTexture: params.get('preferredPantsTexture'),
+			preferredCapTexture: params.get('preferredCapTexture'),
+			preferredColorFormat: params.get('preferredColorFormat'),
+			preferredJerseyFont: params.get('preferredJerseyFont'),
+			preferredCapFont: params.get('preferredCapFont')
+		}
+
+		console.log(prefs)
 
 		var defaultJerseyTexture = params.get('preferredJerseyTexture')
 		var defaultPantsTexture = params.get('preferredPantsTexture')
@@ -46,7 +64,7 @@
 		
 		const initialCapColors = {capColor:"#ba0c2f",underBrimColor:"#656765",topsideBrimColor:"#1d1654",squatcheeColor:"yellow",frontPanelColor:"#FFFFFF",smallFrontPanelColor:"yellow",capPinstripeColor:"blue",capPinstripe2Color:"cyan", horizontalPinstripeColor:"yellow",capLogoTextColor:"white",capLogoStroke1Color:"green",capLogoStroke2Color:"black",capLogo2TextColor:"white",capLogo2Stroke1Color:"green",capLogo2Stroke2Color:"black",bandBoxSingleThickColor:"orange",bandBoxDoubleThickColor:"greenyellow",jockeyColor:"gray",braidStripeInnerColor:"red",braidStripeOuterColor:"blue",soutache:"goldenrod",frontPanelBorderColor:"cyan",bostonColor:"yellowgreen",smallPanelBorderColor:"cyan",curvedBrimColor:"cyan",curvedBrimBorderColor:"blue",peakBandColor:"orange",stingyBrimColor:"red",lidPinstripesColor:"blue",stingyLidPinstripesColor:"yellow",eyeletFillColor:"black",eyelet1Color:"yellow",eyelet2Color:"yellow",eyelet3Color:"yellow",eyelet4Color:"yellow",eyelet5Color:"yellow",eyelet6Color:"yellow",snakeskinColor:"#000000",scrambledEggColor:"#FED141",capMakersMarkColor:"#FFFFFF",triColor:"#003087"}
 
-        var prefColorFormat = "hex"
+        //var prefs['preferredColorFormat'] = "hex"
 		var capMakersMarkColor = initialCapColors['capMakersMarkColor']
 		var jerseyMakersMarkColor = initialJerseyColors['jerseyMakersMarkColor']
 		var pantsMakersMarkColor = initialPantsColors['pantsMakersMarkColor']
@@ -97,6 +115,7 @@
 	<span class="header">Welcome To The OOTP Uniform Maker!</span>
 </div>
 <div style="font-family:'MLBBlock';">&nbsp;</div>
+<div id="capFontPreInit">&nbsp;</div>
 <div id="page">
     <div style="width: 1300px; margin:0 auto;">
         <div class="section group" style="position:relative;">
@@ -1015,7 +1034,7 @@
 										<table style="width:100%">
 											<tr>
 												<td class="checkCell"><input type="checkbox" id="jerseyNameCheck" data-id="playerName"></td>
-												<td colspan="2"><label>Text: </label><input class="jerseyNameOption" type="text" id="jerseyNameTextBox" value="PLAYER" style="width:79%; text-align:center;"/></td>
+												<td colspan="2"><label>Text: </label><input class="jerseyNameOption" type="text" id="jerseyNameTextBox" style="width:79%; text-align:center;"/></td>
 											</tr>
 										</table>
 										<table style="width:100%;">
@@ -1086,7 +1105,7 @@
 										<table style="width:100%">
 											<tr style="text-align:center;">
 												<td colspan="2"><label>Jersey Number: </label>
-													<input type="number" class="year numberTextBox" id="jerseyNumberTextBox" name="jerseyNumberTextBox" onkeypress="return isNumberKey(event)" style="width:50px; text-align:center;" min="0" max="99" value="23" >
+													<input type="number" class="year numberTextBox" id="jerseyNumberTextBox" name="jerseyNumberTextBox" onkeypress="return isNumberKey(event)" style="width:50px; text-align:center;" min="0" max="99" >
 												</td>
 											</tr>
 										</table>
@@ -2006,7 +2025,7 @@
 						<input type="button" class="button" id="saveJersey" value="Save Jersey" style="display:none;">
                         <input type="button" class="button" id="save" value="Save Uniform">
                         <input type="button" class="button" id="load" value="Load Uniform">
-						<input type="button" class="button" id="eyedropper" value="Eyedropper">
+						<!--<input type="button" class="button" id="eyedropper" value="Eyedropper">-->
                         <input type="button" class="button copypaste" id="copy" value="Copy Object" onclick="copy()">
 						<input type="button" class="button copypaste" id="paste" value="Paste Object" onclick="paste()">
 						<input type="button" class="button" id="prefsButton" value="Preferences" style="display:none;">
@@ -2032,7 +2051,7 @@
 			<div class="answer">That would be me.  My name is Eriq Jaffe, and I've been playing OOTP Baseball since 2004.  Feel free to <a href="mailto:eriqjaffe@gmail.com">shoot me an email</a> with any questions or comments.  You can also view the source code for this on <a href="https://github.com/eriqjaffe/OOTP-Uniform-Maker" target="_blank">GitHub</a>.<br><br>Some of the textures and shapes are taken directly from OOTP, but a lot of them are based on the work of Gern44, silvam14, txranger, Deft, NoPepper, Reds1, davwms and probably several others (my record keeping isn't all that great, and I'm not 100% sure where every piece came from - if I'm using one of your components and I forgot to give you credit, thanks!).<br><br>I'd also like to give an additional shout out to Conrad Burry, who created some of the default fonts.</div><br>
 		</div>
 	</div>
-	<div id="prefs" class="jm-white-popup mfp-hide" style="height:200px!important;">
+	<div id="prefs" class="jm-white-popup mfp-hide" style="height:300px!important;">
 		<div style="width:100%; text-align:center;">	
 			<span class="header" style="color:#103959!important; font-size:2em!important;">Uniform Maker Preferences</span>
 		</div><br>
@@ -2111,6 +2130,363 @@
 						<option value="cap_texture_mesh.png">Mesh</option>
 						<option value="cap_texture_none.png">None</option>
 					</select>
+				</center></td>
+			</tr>
+		</table>
+		<br>
+		<table class="prefs" style="width:100%;">
+			<tr>
+				<td><center>
+					<label>Preferred Jersey Font:&nbsp;</label>
+					<select id="preferredJerseyFont" class='Leckerli_One'>
+						<optgroup class='Acme'>
+						<option value='Acme'>Acme</option>
+						</optgroup>
+						<optgroup class='AthleticGothic'>
+						<option value='AthleticGothic'>Athletic Gothic</option>
+						</optgroup>
+						<optgroup class='AthleticGothicShadow'>
+						<option value='AthleticGothicShadow'>Athletic Gothic Shadow</option>
+						</optgroup>
+						<optgroup class='BeavertonScript'>
+						<option value='BeavertonScript'>Fancy Block</option>
+						</optgroup>
+						<optgroup class='Berkshire_Swash'>
+						<option value='Berkshire_Swash'>Berkshire Swash</option>
+						</optgroup>
+						<optgroup class='Cantora_One'>
+						<option value='Cantora_One'>Cantora</option>
+						</optgroup>
+						<optgroup class='CaxtonRoman'>
+						<option value='CaxtonRoman'>Caxton Roman</option>
+						</optgroup>
+						<optgroup class='Chela_One'>
+						<option value='Chela_One'>Chela</option>
+						</optgroup>
+						<optgroup class='Circus'>
+						<option value='Circus'>Circus</option>
+						</optgroup>
+						<optgroup class='Condiment'>
+						<option value='Condiment'>Condiment</option>
+						</optgroup>
+						<optgroup class='Cookie'>
+						<option value='Cookie'>Cookie</option>
+						</optgroup>
+						<optgroup class='Courgette'>
+						<option value='Courgette'>Courgette</option>
+						</optgroup>
+						<optgroup class='Croissant_One'>
+						<option value='Croissant_One'>Croissant</option>
+						</optgroup>
+						<optgroup class='Damion'>
+						<option value='Damion'>Damion</option>
+						</optgroup>
+						<optgroup class='Engagement'>
+						<option value='Engagement'>Engagement</option>
+						</optgroup>
+						<optgroup class='RawlingsFancyBlock'>
+						<option value='RawlingsFancyBlock'>Fancy Block</option>
+						</optgroup>
+						<optgroup class='Germania_One'>
+						<option value='Germania_One'>Germania</option>
+						</optgroup>
+						<optgroup class='Graduate'>
+						<option value='Graduate'>Graduate</option>
+						</optgroup>
+						<optgroup class='Grand_Hotel'>
+						<option value='Grand_Hotel'>Grand Hotel</option>
+						</optgroup>
+						<optgroup class='Jockey_One'>
+						<option value='Jockey_One'>Jockey</option>
+						</optgroup>
+						<optgroup class='Kansas'>
+						<option value='Kansas'>Kansas Tuscan</option>
+						</optgroup>
+						<optgroup class='Kaushan_Script'>
+						<option value='Kaushan_Script'>Kaushan Script</option>
+						</optgroup>
+						<optgroup class='Leckerli_One'>
+						<option value='Leckerli_One' selected>Leckerli</option>
+						</optgroup>
+						<optgroup class='Lily_Script_One'>
+						<option value='Lily_Script_One'>Lily Script</option>
+						</optgroup>
+						<optgroup class='Lobster'>
+						<option value='Lobster'>Lobster</option>
+						</optgroup>
+						<optgroup class='Lobster_Two'>
+						<option value='Lobster_Two'>Lobster Two</option>
+						</optgroup>
+						<optgroup class='Metal_Mania'>
+						<option value='Metal_Mania'>Metal Mania</option>
+						</optgroup>
+						<optgroup class='Miniver'>
+						<option value='Miniver'>Miniver</option>
+						</optgroup>
+						<optgroup class='Molle'>
+						<option value='Molle'>Molle</option>
+						</optgroup>
+						<optgroup class='New_Rocker'>
+						<option value='New_Rocker'>New Rocker</option>
+						</optgroup>
+						<optgroup class='Norican'>
+						<option value='Norican'>Norican</option>
+						</optgroup>
+						<optgroup class='OldEnglish'>
+						<option value='OldEnglish'>Old English</option>
+						</optgroup>
+						<optgroup class='Oleo_Script'>
+						<option value='Oleo_Script'>Oleo Script</option>
+						</optgroup>
+						<optgroup class='Oleo_Script_Swash_Caps'>
+						<option value='Oleo_Script_Swash_Caps'>Oleo Script Swash Caps</option>
+						</optgroup>
+						<optgroup class='Pacifico'>
+						<option value='Pacifico'>Pacifico</option>
+						</optgroup>
+						<optgroup class='Pirata_One'>
+						<option value='Pirata_One'>Pirata</option>
+						</optgroup>
+						<optgroup class='Playball'>
+						<option value='Playball'>Playball</option>
+						</optgroup>
+						<optgroup class='ProFullBlock'>
+						<option value='ProFullBlock'>Pro Full Block</option>
+						</optgroup>
+						<!--<optgroup class='Quicksand'>
+						<option value='Quicksand'>Quicksand</option>
+						</optgroup>-->
+						<optgroup class='RichardsonFancyBlock'>
+						<option value='RichardsonFancyBlock'>Richardson Block</option>
+						</optgroup>
+						<optgroup class='Rubik_One'>
+						<option value='Rubik_One'>Rubik</option>
+						</optgroup>
+						<optgroup class='Rum_Raisin'>
+						<option value='Rum_Raisin'>Rum Raisin</option>
+						</optgroup>
+						<optgroup class='Satisfy'>
+						<option value='Satisfy'>Satisfy</option>
+						</optgroup>
+						<optgroup class='Seymour_One'>
+						<option value='Seymour_One'>Seymour</option>
+						</optgroup>
+						<optgroup class='spl28'>
+						<option value='spl28'>SPL28 Script</option>
+						</optgroup>
+						<optgroup class='TiffanyRegular'>
+						<option value='TiffanyRegular'>Tiffany Regular</option>
+						</optgroup>
+						<optgroup class='Trade_Winds'>
+						<option value='Trade_Winds'>Trade Winds</option>
+						</optgroup>
+						<optgroup class='Tuscan'>
+						<option value='Tuscan'>Tuscan</option>
+						</optgroup>
+						<optgroup class='UnifrakturCook'>
+						<option value='UnifrakturCook'>Unifraktur Cook</option>
+						</optgroup>
+						<optgroup class='UnifrakturMaguntia'>
+						<option value='UnifrakturMaguntia'>Unifraktur Maguntia</option>
+						</optgroup>
+						<optgroup class='Vibur'>
+						<option value='Vibur'>Vibur</option>
+						</optgroup>
+						<optgroup class='Viga'>
+						<option value='Viga'>Viga</option>
+						</optgroup>
+						<optgroup class='Wellfleet'>
+						<option value='Wellfleet'>Wellfleet</option>
+						</optgroup>
+						<optgroup class='Wendy_One'>
+						<option value='Wendy_One'>Wendy</option>
+						</optgroup>
+						<optgroup class='Yellowtail'>
+						<option value='Yellowtail'>Yellowtail</option>
+						</optgroup>
+					</select>
+				</center></td>
+				<td><center>
+					<label>Preferred Cap Font:&nbsp;</label>
+					<select id="preferredCapFont" class='Graduate'>
+						<optgroup class='Acme'>
+						<option value='Acme'>Acme</option>
+						</optgroup>
+						<optgroup class='AthleticGothic'>
+						<option value='AthleticGothic'>Athletic Gothic</option>
+						</optgroup>
+						<optgroup class='AthleticGothicShadow'>
+						<option value='AthleticGothicShadow'>Athletic Gothic Shadow</option>
+						</optgroup>
+						<optgroup class='BeavertonScript'>
+						<option value='BeavertonScript'>Fancy Block</option>
+						</optgroup>
+						<optgroup class='Berkshire_Swash'>
+						<option value='Berkshire_Swash'>Berkshire Swash</option>
+						</optgroup>
+						<optgroup class='Cantora_One'>
+						<option value='Cantora_One'>Cantora</option>
+						</optgroup>
+						<optgroup class='CaxtonRoman'>
+						<option value='CaxtonRoman'>Caxton Roman</option>
+						</optgroup>
+						<optgroup class='Chela_One'>
+						<option value='Chela_One'>Chela</option>
+						</optgroup>
+						<optgroup class='Circus'>
+						<option value='Circus'>Circus</option>
+						</optgroup>
+						<optgroup class='Condiment'>
+						<option value='Condiment'>Condiment</option>
+						</optgroup>
+						<optgroup class='Cookie'>
+						<option value='Cookie'>Cookie</option>
+						</optgroup>
+						<optgroup class='Courgette'>
+						<option value='Courgette'>Courgette</option>
+						</optgroup>
+						<optgroup class='Croissant_One'>
+						<option value='Croissant_One'>Croissant</option>
+						</optgroup>
+						<optgroup class='Damion'>
+						<option value='Damion'>Damion</option>
+						</optgroup>
+						<optgroup class='Engagement'>
+						<option value='Engagement'>Engagement</option>
+						</optgroup>
+						<optgroup class='RawlingsFancyBlock'>
+						<option value='RawlingsFancyBlock'>Fancy Block</option>
+						</optgroup>
+						<optgroup class='Germania_One'>
+						<option value='Germania_One'>Germania</option>
+						</optgroup>
+						<optgroup class='Graduate'>
+						<option value='Graduate' selected>Graduate</option>
+						</optgroup>
+						<optgroup class='Grand_Hotel'>
+						<option value='Grand_Hotel'>Grand Hotel</option>
+						</optgroup>
+						<optgroup class='Jockey_One'>
+						<option value='Jockey_One'>Jockey</option>
+						</optgroup>
+						<optgroup class='Kansas'>
+						<option value='Kansas'>Kansas Tuscan</option>
+						</optgroup>
+						<optgroup class='Kaushan_Script'>
+						<option value='Kaushan_Script'>Kaushan Script</option>
+						</optgroup>
+						<optgroup class='Leckerli_One'>
+						<option value='Leckerli_One'>Leckerli</option>
+						</optgroup>
+						<optgroup class='Lily_Script_One'>
+						<option value='Lily_Script_One'>Lily Script</option>
+						</optgroup>
+						<optgroup class='Lobster'>
+						<option value='Lobster'>Lobster</option>
+						</optgroup>
+						<optgroup class='Lobster_Two'>
+						<option value='Lobster_Two'>Lobster Two</option>
+						</optgroup>
+						<optgroup class='Metal_Mania'>
+						<option value='Metal_Mania'>Metal Mania</option>
+						</optgroup>
+						<optgroup class='Miniver'>
+						<option value='Miniver'>Miniver</option>
+						</optgroup>
+						<optgroup class='Molle'>
+						<option value='Molle'>Molle</option>
+						</optgroup>
+						<optgroup class='New_Rocker'>
+						<option value='New_Rocker'>New Rocker</option>
+						</optgroup>
+						<optgroup class='Norican'>
+						<option value='Norican'>Norican</option>
+						</optgroup>
+						<optgroup class='OldEnglish'>
+						<option value='OldEnglish'>Old English</option>
+						</optgroup>
+						<optgroup class='Oleo_Script'>
+						<option value='Oleo_Script'>Oleo Script</option>
+						</optgroup>
+						<optgroup class='Oleo_Script_Swash_Caps'>
+						<option value='Oleo_Script_Swash_Caps'>Oleo Script Swash Caps</option>
+						</optgroup>
+						<optgroup class='Pacifico'>
+						<option value='Pacifico'>Pacifico</option>
+						</optgroup>
+						<optgroup class='Pirata_One'>
+						<option value='Pirata_One'>Pirata</option>
+						</optgroup>
+						<optgroup class='Playball'>
+						<option value='Playball'>Playball</option>
+						</optgroup>
+						<optgroup class='ProFullBlock'>
+						<option value='ProFullBlock'>Pro Full Block</option>
+						</optgroup>
+						<!--<optgroup class='Quicksand'>
+						<option value='Quicksand'>Quicksand</option>
+						</optgroup>-->
+						<optgroup class='RichardsonFancyBlock'>
+						<option value='RichardsonFancyBlock'>Richardson Block</option>
+						</optgroup>
+						<optgroup class='Rubik_One'>
+						<option value='Rubik_One'>Rubik</option>
+						</optgroup>
+						<optgroup class='Rum_Raisin'>
+						<option value='Rum_Raisin'>Rum Raisin</option>
+						</optgroup>
+						<optgroup class='Satisfy'>
+						<option value='Satisfy'>Satisfy</option>
+						</optgroup>
+						<optgroup class='Seymour_One'>
+						<option value='Seymour_One'>Seymour</option>
+						</optgroup>
+						<optgroup class='spl28'>
+						<option value='spl28'>SPL28 Script</option>
+						</optgroup>
+						<optgroup class='TiffanyRegular'>
+						<option value='TiffanyRegular'>Tiffany Regular</option>
+						</optgroup>
+						<optgroup class='Trade_Winds'>
+						<option value='Trade_Winds'>Trade Winds</option>
+						</optgroup>
+						<optgroup class='Tuscan'>
+						<option value='Tuscan'>Tuscan</option>
+						</optgroup>
+						<optgroup class='UnifrakturCook'>
+						<option value='UnifrakturCook'>Unifraktur Cook</option>
+						</optgroup>
+						<optgroup class='UnifrakturMaguntia'>
+						<option value='UnifrakturMaguntia'>Unifraktur Maguntia</option>
+						</optgroup>
+						<optgroup class='Vibur'>
+						<option value='Vibur'>Vibur</option>
+						</optgroup>
+						<optgroup class='Viga'>
+						<option value='Viga'>Viga</option>
+						</optgroup>
+						<optgroup class='Wellfleet'>
+						<option value='Wellfleet'>Wellfleet</option>
+						</optgroup>
+						<optgroup class='Wendy_One'>
+						<option value='Wendy_One'>Wendy</option>
+						</optgroup>
+						<optgroup class='Yellowtail'>
+						<option value='Yellowtail'>Yellowtail</option>
+						</optgroup>
+					</select>
+				</center></td>
+		</table>
+		<br>
+		<table class="prefs" style="width:100%;">
+			<tr>
+				<td><center>
+					<label>Preferred Player Name:&nbsp;</label>
+					<input type="text"  class="preference" id="preferredPlayerName" value="PLAYER" style="text-align:center;"/>
+				</center></td>
+				<td><center>
+					<label>Preferred Player Number:&nbsp;</label>
+					<input type="number" class="preference" id="preferredPlayerNumber" onkeypress="return isNumberKey(event)" style="width:50px; text-align:center;" min="0" max="99" value="23">
 				</center></td>
 			</tr>
 		</table>
@@ -2211,6 +2587,17 @@
 		$("#toggleCapGuides").prop( "checked", gridsVisible )
 		$("#gridsVisible").prop( "checked", gridsVisible )
 		$("#checkForUpdatesPref").prop("checked", checkForUpdates)
+		$("#jerseyNameTextBox").val(prefs['preferredPlayerName'])
+		$("#jerseyNumberTextBox").val(prefs['preferredPlayerNumber'])
+		$("#pantsNumberTextBox").val(prefs['preferredPlayerNumber'])
+
+		$("#jerseyFontTypeCombo").val(prefs['preferredJerseyFont']).trigger("change")
+		$("#capFontTypeCombo").val(prefs['preferredCapFont']).trigger('change')
+
+		$(".preference").each(function() {
+			$(this).val(prefs[$(this).attr("id")])
+		})
+
 		$(".jersey-accord-header").click(function() {
 			if($(this).next("div").is(":visible")){
 				$(this).next("div").slideUp("fast");
@@ -2337,6 +2724,7 @@
 				}
 			})
 		}
+
     })
 
 	$(document).keydown(function(e) {   
@@ -2529,8 +2917,7 @@
 		e.stopPropagation();
 		e.preventDefault();
 		var files = e.originalEvent.dataTransfer.files;
-		dropImage(jerseyLogoCanvas, files[0].path)
-		$("#tabContainer").skeletabs('goTo', 0)
+		dropImage(jerseyLogoCanvas, files[0].path, 0)
 		return false;
 	});
 
@@ -2549,8 +2936,7 @@
 		e.stopPropagation();
 		e.preventDefault();
 		var files = e.originalEvent.dataTransfer.files;
-		dropImage(capLogoCanvas, files[0].path)
-		$("#tabContainer").skeletabs('goTo', 2)
+		dropImage(capLogoCanvas, files[0].path, 2)
 		return false;
 	});
 
@@ -2571,8 +2957,7 @@
 		e.stopPropagation();
 		e.preventDefault();
 		var files = e.originalEvent.dataTransfer.files;
-		dropImage(pantsLogoCanvas, files[0].path)
-		$("#tabContainer").skeletabs('goTo', 2)
+		dropImage(pantsLogoCanvas, files[0].path, 1)
 		return false;
 	}); */
 
@@ -2631,7 +3016,7 @@
 			type: "color",
 			showAlpha: false,
 			showInput: true,
-			preferredFormat: prefColorFormat,
+			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
@@ -2912,7 +3297,7 @@
 			type: "color",
 			showAlpha: false,
 			showInput: true,
-			preferredFormat: prefColorFormat,
+			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
@@ -3008,7 +3393,7 @@
 			type: "color",
 			showAlpha: false,
 			showInput: true,
-			preferredFormat: prefColorFormat,
+			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
@@ -3061,7 +3446,7 @@
 			type: "color",
 			showAlpha: false,
 			showInput: true,
-			preferredFormat: prefColorFormat,
+			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
@@ -3149,7 +3534,7 @@
 			type: "color",
 			showAlpha: false,
 			showInput: true,
-			preferredFormat: prefColorFormat,
+			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
@@ -3753,27 +4138,6 @@
 		handleElement(e.selected[0])
 	})
 
-	function handleElement(obj) {
-		switch (obj.id) {
-			case "wordmark":
-				$("#tipSpan").html("If you're trying to select an image instead of the text, you have to hide the text first.");
-				break;
-			case "jerseyFrontNumber":
-				$("#jerseyNumberCtl").css("display","inline-block")
-				$(".frontButton").css("display","inline-block")
-				$(".sleeveButton").css("display","none")
-				break;
-			case "jerseySleeveNumber":
-				$("#jerseyNumberCtl").css("display","inline-block")
-				$(".frontButton").css("display","none")
-				$(".sleeveButton").css("display","inline-block")
-				break;
-			default:
-				$("#tipSpan").html("");
-				$("#jerseyNumberCtl").css("display","none")
-		}
-	}
-
 	jerseyLogoCanvas.on('selection:cleared', function(e) {
 		if ($("#jerseyReplaceColorDiv").css("display") == "block") {
 			$("#jerseyReplaceColorDiv").slideToggle();
@@ -3855,7 +4219,7 @@
 		type: "color",
 		showAlpha: false,
 		showInput: true,
-		preferredFormat: prefColorFormat,
+		preferredFormat: prefs['preferredColorFormat'],
 		showInitial: true,
 		showPalette: true,
 		showButtons: true,
@@ -4708,7 +5072,7 @@
 			type: "color",
 			showAlpha: false,
 			showInput: true,
-			preferredFormat: prefColorFormat,
+			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
@@ -4837,7 +5201,7 @@
 			type: "color",
 			showAlpha: false,
 			showInput: true,
-			preferredFormat: prefColorFormat,
+			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
@@ -5141,7 +5505,7 @@
 			type: "color",
 			showAlpha: false,
 			showInput: true,
-			preferredFormat: prefColorFormat,
+			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
@@ -5244,7 +5608,7 @@
 		type: "color",
 		showAlpha: false,
 		showInput: true,
-		preferredFormat: prefColorFormat,
+		preferredFormat: prefs['preferredColorFormat'],
 		showInitial: true,
 		showPalette: true,
 		showButtons: true,
@@ -6776,6 +7140,7 @@
 		loadMakersMark("jersey",$("#jerseyMakersMarkSelect").find(':selected').data('top'),$("#jerseyMakersMarkSelect").find(':selected').data('left'),$("#jerseyMakersMarkSelect").find(':selected').data('angle'),$("#jerseyMakersMarkSelect").find(':selected').data('height'));
 
 		jerseyBelow.renderAll()
+		reRenderBG("jersey")
 
 		swatch1Color = new fabric.Rect({
 			id: 'swatch1Color',
@@ -7214,7 +7579,7 @@
 		    offsetY: 3
 		}))
 
-		jerseyNameFill = new fabric.Text('PLAYER',{
+		jerseyNameFill = new fabric.Text(prefs['preferredPlayerName'],{
 			fontFamily: "MLBBlock",
 			fontSize: 30,
 			originX: 'center',
@@ -7231,7 +7596,7 @@
 			strokeWidth: 0,
 		})
 
-		jerseyNameStroke1 = new fabric.Text('PLAYER',{
+		jerseyNameStroke1 = new fabric.Text(prefs['preferredPlayerName'],{
 			fontFamily: "MLBBlock",
 			fontSize: 30,
 			originX: 'center',
@@ -7246,7 +7611,7 @@
 			strokeWidth: 6
 		})
 
-		jerseyNameStroke2 = new fabric.Text('PLAYER',{
+		jerseyNameStroke2 = new fabric.Text(prefs['preferredPlayerName'],{
 			fontFamily: "MLBBlock",
 			fontSize: 30,
 			originX: 'center',
@@ -7275,7 +7640,7 @@
 			visible: false
 		})
 
-		jerseyBackNumberFill = new fabric.Text('23',{
+		jerseyBackNumberFill = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 130,
 			originX: 'center',
@@ -7292,7 +7657,7 @@
 			strokeWidth: 0
 		})
 
-		jerseyBackNumberStroke1 = new fabric.Text('23',{
+		jerseyBackNumberStroke1 = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 130,
 			originX: 'center',
@@ -7309,7 +7674,7 @@
 			strokeWidth: 5
 		})
 
-		jerseyBackNumberStroke2 = new fabric.Text('23',{
+		jerseyBackNumberStroke2 = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 130,
 			originX: 'center',
@@ -7341,7 +7706,7 @@
 			top: 312
 		})
 
-		jerseyFrontNumberFill = new fabric.Text('23',{
+		jerseyFrontNumberFill = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 75,
 			originX: 'center',
@@ -7357,7 +7722,7 @@
 			strokeWidth: 0
 		})
 
-		jerseyFrontNumberStroke1 = new fabric.Text('23',{
+		jerseyFrontNumberStroke1 = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 75,
 			originX: 'center',
@@ -7373,7 +7738,7 @@
 			strokeWidth: 5
 		})
 
-		jerseyFrontNumberStroke2 = new fabric.Text('23',{
+		jerseyFrontNumberStroke2 = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 75,
 			originX: 'center',
@@ -7404,7 +7769,7 @@
 			top: 679
 		})
 
-		jerseySleeveNumberFill = new fabric.Text('23',{
+		jerseySleeveNumberFill = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 50,
 			originX: 'center',
@@ -7421,7 +7786,7 @@
 			strokeWidth: 0
 		})
 
-		jerseySleeveNumberStroke1 = new fabric.Text('23',{
+		jerseySleeveNumberStroke1 = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 50,
 			originX: 'center',
@@ -7438,7 +7803,7 @@
 			strokeWidth: 5
 		})
 
-		jerseySleeveNumberStroke2 = new fabric.Text('23',{
+		jerseySleeveNumberStroke2 = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 50,
 			originX: 'center',
@@ -7470,7 +7835,7 @@
 			top: 528
 		})
 
-		jerseyBelow.add(seams)
+		jerseyLogoCanvas.add(seams)
 		jerseyLogoCanvas.add(placketPipingInnerColor)
 		jerseyLogoCanvas.add(placketPipingMiddleColor)
 		jerseyLogoCanvas.add(placketPipingOuterColor)
@@ -7864,7 +8229,7 @@
 			opacity: 0.25
 		})
 
-		pantsNumberFill = new fabric.Text('23',{
+		pantsNumberFill = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 40,
 			originX: 'center',
@@ -7881,7 +8246,7 @@
 			visible: true
 		})
 
-		pantsNumberStroke1 = new fabric.Text('23',{
+		pantsNumberStroke1 = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 40,
 			originX: 'center',
@@ -7898,7 +8263,7 @@
 			visible: true
 		})
 
-		pantsNumberStroke2 = new fabric.Text('23',{
+		pantsNumberStroke2 = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 40,
 			originX: 'center',
@@ -10342,93 +10707,95 @@
 		}
 	}
 
-	function dropImage(dropCanvas, file) {
-		console.log(dropCanvas.id)
+	function dropImage(dropCanvas, file, tab) {
 		$.ajax({
 			type: "GET",
 			url: "http://127.0.0.1:"+port+"/dropImage",
 			data: {file:file},
 			success: function(data) { 
-				var imgObj = new Image();
-				imgObj.src = data.image;
-				$("#fileName").html(data.filename);
-				imgObj.onload = function () {
-					switch (dropCanvas.id) {
-						case "jerseyLogoCanvas":
-							var canvas = jerseyLogoCanvas
-							var imLeft = 256
-							var imTop = 512
-							var moveBelow = 'buttons'
-							var header = $("#jerseyImagesHeader")
-							break;
-						case "capLogoCanvas":
-							var canvas = capLogoCanvas
-							var imLeft = 256
-							var imTop = 256
-							var moveBelow = 'eyeletGroup'
-							var header = $("#capImagesHeader")
-							break;
-						case "pantsLogoCanvas":
-							var canvas = pantsLogoCanvas
-							var imLeft = 256
-							var imTop = 256
-							var moveBelow = null
-							var header = $("#pantsImagesHeader")
-							break;
-					} 
-					var image = new fabric.Image(imgObj);
-					image.set({
-						originX: 'center',
-						originY: 'center',
-						perPixelTargetFind: true,
-						centeredScaling: true,
-						centeredRotation: true,
-						name: data.filename,
-						id: data.filename
-					});
-					image.filters.push(new fabric.Image.filters.Resize({
-						resizeType: 'lanczos', // typo fixed
-						lanczosLobes: 2 // typo fixed
-					}));
-					image.on('object:modified',function() {
-						imLeft = image.get('left')
-						imTop = image.get('top');
-					})
-					image.on('selected',function() {
-						switch (activeCanvas.id) {
+				if (data.image != "error not an image") {
+					var imgObj = new Image();
+					imgObj.src = data.image;
+					$("#fileName").html(data.filename);
+					imgObj.onload = function () {
+						switch (dropCanvas.id) {
 							case "jerseyLogoCanvas":
-								var canStr = "jersey"
+								var canvas = jerseyLogoCanvas
+								var imLeft = 256
+								var imTop = 512
+								var moveBelow = 'buttons'
+								var header = $("#jerseyImagesHeader")
 								break;
 							case "capLogoCanvas":
-								var canStr = "cap"
+								var canvas = capLogoCanvas
+								var imLeft = 256
+								var imTop = 256
+								var moveBelow = 'eyeletGroup'
+								var header = $("#capImagesHeader")
 								break;
 							case "pantsLogoCanvas":
-								var canStr = "pants"
+								var canvas = pantsLogoCanvas
+								var imLeft = 256
+								var imTop = 256
+								var moveBelow = null
+								var header = $("#pantsImagesHeader")
 								break;
 						} 
-						$("#"+canStr+"FileName").html(image.get('id'));
-						if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-							$("#"+canStr+"TrimImageDiv").css("display","block");
-							$("#"+canStr+"UploadImageDiv").css("display","none");
-							$("#"+canStr+"SelectedImageDiv").css("display","block");
-						}
-						$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-						$(".copypaste").each(function() {
-							$(this).css("display","inline-block")
+						var image = new fabric.Image(imgObj);
+						image.set({
+							originX: 'center',
+							originY: 'center',
+							perPixelTargetFind: true,
+							centeredScaling: true,
+							centeredRotation: true,
+							name: data.filename,
+							id: data.filename
+						});
+						image.filters.push(new fabric.Image.filters.Resize({
+							resizeType: 'lanczos', // typo fixed
+							lanczosLobes: 2 // typo fixed
+						}));
+						image.on('object:modified',function() {
+							imLeft = image.get('left')
+							imTop = image.get('top');
 						})
-					})
-					var h = image.height;
-					var w = image.width;
-					canvas.add(image);
-					image.set({"left":imLeft,"top":imTop});
-					image.setCoords();
-					if (moveBelow != null) {
-						canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
+						image.on('selected',function() {
+							switch (activeCanvas.id) {
+								case "jerseyLogoCanvas":
+									var canStr = "jersey"
+									break;
+								case "capLogoCanvas":
+									var canStr = "cap"
+									break;
+								case "pantsLogoCanvas":
+									var canStr = "pants"
+									break;
+							} 
+							$("#"+canStr+"FileName").html(image.get('id'));
+							if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+								$("#"+canStr+"TrimImageDiv").css("display","block");
+								$("#"+canStr+"UploadImageDiv").css("display","none");
+								$("#"+canStr+"SelectedImageDiv").css("display","block");
+							}
+							$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+							$(".copypaste").each(function() {
+								$(this).css("display","inline-block")
+							})
+						})
+						var h = image.height;
+						var w = image.width;
+						canvas.add(image);
+						image.set({"left":imLeft,"top":imTop});
+						image.setCoords();
+						if (moveBelow != null) {
+							canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
+						}
+						canvas.setActiveObject(image)
+						canvas.requestRenderAll()
+						canvas.renderAll();
+						$("#tabContainer").skeletabs('goTo', tab)
+						header.click()
 					}
-					canvas.setActiveObject(image)
-					canvas.requestRenderAll()
-					canvas.renderAll();
-					header.click()
 				}
 			}
 		})
@@ -10513,6 +10880,55 @@
 		})
 	})
 
+	$("#preferredJerseyFont").on("change",function() {
+		const pref = $(this).attr("id")
+		const style = $(this).val();
+		const font_family = $("."+style).css("font-family");
+		var g = jerseyLogoCanvas.getObjects().find(o => o.id === 'wordmark');
+		g.getObjects().forEach(function(o) {
+			o.set("fontFamily", font_family)
+			wordmark.dirty = true;
+		})
+		jerseyLogoCanvas.renderAll();
+		$(this).removeClass().addClass(style);
+		$("#jerseyFontTypeCombo").val(style);
+		$("#jerseyFontTypeCombo").removeClass().addClass(style);
+		$.ajax({
+			type: "POST",
+			url: "http://127.0.0.1:"+port+"/setPreference",
+			data: {pref:pref,val:style},
+			success: function(result) {
+			}
+		})
+	})
+
+	$("#preferredCapFont").on("change",function() {
+		const pref = $(this).attr("id")
+		const style = $(this).val();
+		const font_family = $("."+style).css("font-family");
+		var g = capLogoCanvas.getObjects().find(o => o.id === 'textLogo');
+		g.getObjects().forEach(function(o) {
+			o.set("fontFamily", font_family)
+			textLogo.dirty = true;
+		})
+		var g = capLogoCanvas.getObjects().find(o => o.id === 'textLogo2');
+		g.getObjects().forEach(function(o) {
+			o.set("fontFamily", font_family)
+			textLogo2.dirty = true;
+		})
+		capLogoCanvas.renderAll();
+		$(this).removeClass().addClass(style);
+		$("#capFontTypeCombo").val(style);
+		$("#capFontTypeCombo").removeClass().addClass(style);
+		$.ajax({
+			type: "POST",
+			url: "http://127.0.0.1:"+port+"/setPreference",
+			data: {pref:pref,val:style},
+			success: function(result) {
+			}
+		})
+	})
+
 	$("#checkForUpdatesPref").on("change",function() {
 		const pref = "checkForUpdates"
 		const val = $(this).is(':checked')
@@ -10539,5 +10955,26 @@
 			}
 		})
 	})
+
+	function handleElement(obj) {
+		switch (obj.id) {
+			case "wordmark":
+				$("#tipSpan").html("If you're trying to select an image instead of the text, you have to hide the text first.");
+				break;
+			case "jerseyFrontNumber":
+				$("#jerseyNumberCtl").css("display","inline-block")
+				$(".frontButton").css("display","inline-block")
+				$(".sleeveButton").css("display","none")
+				break;
+			case "jerseySleeveNumber":
+				$("#jerseyNumberCtl").css("display","inline-block")
+				$(".frontButton").css("display","none")
+				$(".sleeveButton").css("display","inline-block")
+				break;
+			default:
+				$("#tipSpan").html("");
+				$("#jerseyNumberCtl").css("display","none")
+		}
+	}
 </script>
 </html>
