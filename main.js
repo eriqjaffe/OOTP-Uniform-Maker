@@ -38,6 +38,10 @@ const preferredCapFont = store.get("preferredCapFont", "Graduate")
 const gridsVisible = store.get("gridsVisible", true)
 const checkForUpdates = store.get("checkForUpdates", true)
 
+for (const dependency of ['chrome', 'node', 'electron']) {
+    console.log(dependency+", "+process.versions[dependency])
+}
+
 const fontArray = {"Acme": "Acme-Regular.ttf", "athletic_gothicregular": "athletic_gothic-webfont.ttf", "athletic_gothic_shadowregular": "athletic_gothic_shadow-webfont.ttf", "beaverton_scriptregular": "beaverton_script-webfont.ttf", "BerkshireSwash": "BerkshireSwash-Regular.ttf", "CantoraOne": "CantoraOne-Regular.ttf", "caxton_romanregular": "caxton_roman-webfont.ttf", "ChelaOne": "ChelaOne-Regular.ttf", "russell_circusregular": "circus-webfont.ttf", "Condiment": "Condiment-Regular.ttf", "Cookie": "Cookie-Regular.ttf", "Courgette": "Courgette-Regular.ttf", "CroissantOne": "CroissantOne-Regular.ttf", "Damion": "Damion-Regular.ttf", "Engagement": "Engagement-Regular.ttf", "rawlings_fancy_blockregular": "rawlingsfancyblock-regular-webfont.ttf", "GermaniaOne": "GermaniaOne-Regular.ttf", "Graduate": "Graduate-Regular.ttf", "GrandHotel": "GrandHotel-Regular.ttf", "JockeyOne": "JockeyOne-Regular.ttf", "kansasregular": "tuscan-webfont.ttf", "KaushanScript": "KaushanScript-Regular.ttf", "LeckerliOne": "LeckerliOne-Regular.ttf", "LilyScriptOne": "LilyScriptOne-Regular.ttf", "Lobster": "Lobster-Regular.ttf", "LobsterTwo": "LobsterTwo-Regular.ttf", "MetalMania": "MetalMania-Regular.ttf", "Miniver": "Miniver-Regular.ttf", "Molle,italic": "Molle-Regular.ttf", "NewRocker": "NewRocker-Regular.ttf", "Norican": "Norican-Regular.ttf", "rawlings_old_englishmedium": "rawlingsoldenglish-webfont.ttf", "OleoScript": "OleoScript-Regular.ttf", "OleoScriptSwashCaps": "OleoScriptSwashCaps-Regular.ttf", "Pacifico": "Pacifico.ttf", "PirataOne": "PirataOne-Regular.ttf", "Playball": "Playball-Regular.ttf", "pro_full_blockregular": "pro_full_block-webfont.ttf", "richardson_fancy_blockregular": "richardson_fancy_block-webfont.ttf", "RubikOne": "RubikOne-Regular.ttf", "RumRaisin": "RumRaisin-Regular.ttf", "Satisfy": "Satisfy-Regular.ttf", "SeymourOne": "SeymourOne-Regular.ttf", "spl28scriptregular": "spl28script-webfont.ttf", "ua_tiffanyregular": "tiffany-webfont.ttf", "TradeWinds": "TradeWinds-Regular.ttf", "mlb_tuscan_newmedium": "mlb_tuscan_new-webfont.ttf", "UnifrakturCook": "UnifrakturCook-Bold.ttf", "UnifrakturMaguntia": "UnifrakturMaguntia-Book.ttf", "Vibur": "Vibur-Regular.ttf", "Viga": "Viga-Regular.ttf", "Wellfleet": "Wellfleet-Regular.ttf", "WendyOne": "WendyOne-Regular.ttf", "Yellowtail": "Yellowtail-Regular.ttf"};
 
 const options = {
@@ -87,13 +91,16 @@ app2.get("/dropImage", (req, res) => {
 })
 
 app2.get("/uploadImage", (req, res) => {
-	dialog.showOpenDialog(null, {
+	const options = {
+		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
 		properties: ['openFile'],
 		filters: [
 			{ name: 'Images', extensions: ['jpg', 'png'] }
 		]
-	  }).then(result => {
+	}
+	dialog.showOpenDialog(null, options).then(result => {
 		  if(!result.canceled) {
+			store.set("uploadImagePath", path.dirname(result.filePaths[0]))
 			Jimp.read(result.filePaths[0], (err, image) => {
 				if (err) {
 					console.log(err);
@@ -240,13 +247,16 @@ app2.post('/removeAllColor', (req, res) => {
 });
 
 app2.get("/customFont", (req, res) => {
-	dialog.showOpenDialog(null, {
+	const options = {
+		defaultPath: store.get("uploadFontPath", app.getPath('desktop')),
 		properties: ['openFile'],
 		filters: [
 			{ name: 'Fonts', extensions: ['ttf', 'otf'] }
 		]
-	}).then(result => {
+	}
+	dialog.showOpenDialog(null, options).then(result => {
 		if(!result.canceled) {
+			store.set("uploadFontPath", path.dirname(result.filePaths[0]))
 			ttfInfo(result.filePaths[0], function(err, info) {
 			var ext = getExtension(result.filePaths[0])
 				const dataUrl = font2base64.encodeToDataUrlSync(result.filePaths[0])
@@ -256,6 +266,7 @@ app2.get("/customFont", (req, res) => {
 						console.log(err)
 					} else {
 						res.json({
+							"status": "ok",
 							"fontName": info.tables.name[1],
 							"fontStyle": info.tables.name[2],
 							"familyName": info.tables.name[6],
@@ -268,6 +279,10 @@ app2.get("/customFont", (req, res) => {
 					}
 				})
 			});
+		} else {
+			res.json({"status":"cancelled"})
+			res.end()
+			console.log("cancelled")
 		}
 	}).catch(err => {
 		console.log(err)
