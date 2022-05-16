@@ -47,8 +47,6 @@
 			preferredCapFont: params.get('preferredCapFont')
 		}
 
-		console.log(prefs)
-
 		var defaultJerseyTexture = params.get('preferredJerseyTexture')
 		var defaultPantsTexture = params.get('preferredPantsTexture')
 		var defaultCapTexture = params.get('preferredCapTexture')
@@ -9039,13 +9037,14 @@
 			type: "GET",
 			url: "http://127.0.0.1:"+port+"/customFont",
 			success: function(data) {
-				customFonts.push(data)
-				$("head").prepend("<style>@font-face {\n   font-family: '"+data.familyName+"';\n   src: url('"+data.fontData+"') format('truetype');\n}\n."+data.familyName+" { font-family: '"+data.familyName+"'; font-size: 1.1em;}\n</style>");
-				fontSources[data.familyName] = data.fontData;
-				var style = data.familyName;
-				var font_family = $("."+style).css("font-family");
-				var myfont = new FontFaceObserver(data.familyName)
-				myfont.load()
+				if (data.status != "cancelled") {
+					customFonts.push(data)
+					$("head").prepend("<style>@font-face {\n   font-family: '"+data.familyName+"';\n   src: url('"+data.fontData+"') format('truetype');\n}\n."+data.familyName+" { font-family: '"+data.familyName+"'; font-size: 1.1em;}\n</style>");
+					fontSources[data.familyName] = data.fontData;
+					var style = data.familyName;
+					var font_family = $("."+style).css("font-family");
+					var myfont = new FontFaceObserver(data.familyName)
+					myfont.load()
 					.then(function() {
 					// when font is loaded, use it.
 						switch (type) {
@@ -9203,7 +9202,9 @@
 						alert('font loading failed ' + data.familyName);
 						hideOverlay();
 					});
-					
+				} else {
+					hideOverlay();
+				}
 			}
 		})
 	})
