@@ -746,6 +746,7 @@ app2.post('/saveUniform', (req, res) => {
 	const pantsBelow = Buffer.from(req.body.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const nameCanvas = Buffer.from(req.body.nameCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const tmpCapTexture = req.body.capTexture
 	const tmpJerseyTexture = req.body.jerseyTexture
 	const tmpPantsTexture = req.body.pantsTexture
@@ -892,6 +893,8 @@ app2.post('/saveUniform', (req, res) => {
 		let jerseyWM = await Jimp.read(__dirname+"/images/jersey_watermark.png")
 		await jerseyWM.color([{ apply: "mix", params: [req.body.jerseyWatermarkColor, 100] }]);
 		await jerseyBase.composite(jerseyWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		let nameImage = await Jimp.read(nameCanvas)
+		await jerseyBase.composite(nameImage, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBuffer = await jerseyBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(jerseyBuffer, {name: "jerseys_"+req.body.name+".png"})
 		//await jerseyBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'.png')
@@ -968,6 +971,8 @@ app2.post('/saveUniform', (req, res) => {
 		let jerseyBakedWM = await Jimp.read(__dirname+"/images/jersey_watermark.png")
 		await jerseyBakedWM.color([{ apply: "mix", params: [req.body.jerseyWatermarkColor, 100] }]);
 		await jerseyBakedBase.composite(jerseyBakedWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		let nameImageBaked = await Jimp.read(nameCanvas)
+		await jerseyBakedBase.composite(nameImageBaked, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBakedBuffer = await jerseyBakedBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(jerseyBakedBuffer, {name: "jerseys_"+req.body.name+"_textured.png"})
 		//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'_textured.png')
