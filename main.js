@@ -1020,7 +1020,7 @@ app2.post('/setPreference', (req, res) => {
 function createWindow () {
     const mainWindow = new BrowserWindow({
       width: 1400,
-      height: 1000,
+      height: 1020,
       icon: (__dirname + '/images/ballcap.png'),
       webPreferences: {
           nodeIntegration: true,
