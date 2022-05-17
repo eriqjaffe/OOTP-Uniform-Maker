@@ -402,8 +402,14 @@
 										<table style="width:100%;">
 											<tr class="color_tr">
 												<td class="checkCell"><input type="checkbox" class="jerseyMultiToggle" data-id="jerseyPinstripesColor,sleevePinstripesColor" id="jerseyPinstripesColorCheck" data-canvas="below"></td>
-												<td><label>Pinstripes: </label></td>
+												<td>
+													<label>Pinstripes:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+													<input type="button" class="button rangeButton" value="-" data-span="jerseyPinstripeOpacityDisplay">
+													<input type="range" class="range" id="jerseyPinstripeOpacity" value="100" min="1" max="100" style="margin-left:5px; margin-right:5px;">
+													<input type="button" class="button rangeButton" value="+">
+												</td>
 												<td style="text-align:right;">
+													
 													<input class="jerseySelector selector" type="text" id="jerseyPinstripesColor" data-element="jerseyPinstripesColor" data-canvas="below">
 													<input class="jerseySelector selector" type="text" id="sleevePinstripesColor" data-element="sleevePinstripesColor" data-canvas="below">
 												</td>
@@ -501,8 +507,13 @@
 									<div class="jersey-accord-content">
 										<table style="width:100%;">
 											<tr class="color_tr">
-												<td class="checkCell"><input type="checkbox" class="panelTextureToggle" data-id="brooklynCheckGroup" id="brooklynCheckGroupCheck" data-canvas="below"></td>
-												<td><label>Brooklyn Checkerboard: </label></td>
+												<td class="checkCell"><input type="checkbox" class="jerseyTextureToggle" data-id="brooklynCheckGroup" id="brooklynCheckGroupCheck" data-canvas="below"></td>
+												<td>
+													<label>Brooklyn Check:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+													<input type="button" class="button rangeButton" value="-" data-span="brooklynOpacityDisplay">
+													<input type="range" class="range" id="brooklynPinstripeOpacity" value="100" min="1" max="100" style="margin-left:5px; margin-right:5px;">
+													<input type="button" class="button rangeButton" value="+">
+												</td>
 												<td style="text-align:right;">
 													<input class="jerseySelector selector" type="text" id="brooklynCheck" data-element="brooklynCheck" data-canvas="below">
 													<input class="jerseySelector selector" type="text" id="brooklynCheckStroke" data-element="brooklynCheckStroke" data-canvas="below">
@@ -1334,14 +1345,28 @@
 										<table style="width:100%;">
 											<tr class="color_tr">
 												<td class="checkCell"><input type="checkbox" class="pantsTextureToggle" data-id="pantsPinstripes" id="pantsPinstripesCheck" data-canvas="below"></td>
-												<td><label>Pinstripes: </label></td>
+												<td>
+													<label>Pinstripes: </label>
+													<input type="button" class="button rangeButton" value="-" data-span="pantsPinstripeOpacityDisplay">
+													<input type="range" class="range" id="pantsPinstripeOpacity" value="100" min="1" max="100" style="margin-left:5px; margin-right:5px;">
+													<input type="button" class="button rangeButton" value="+">
+												</td>
 												<td style="text-align:right;">
 													<input class="pantsSelector selector" type="text" id="pantsPinstripes" data-element="pantsPinstripes" data-canvas="below">
 												</td>
 											</tr>
 											<tr class="color_tr">
 												<td class="checkCell"><input type="checkbox" class="pantsTextureToggle" data-id="brooklynPantsCheckGroup" id="brooklynPantsCheckGroupCheck" data-canvas="below"></td>
-												<td><label>Brooklyn Checkerboard: </label></td>
+												<td>
+													<div>
+													<label>Brooklyn Checkerboard: </label>
+													</div>
+													<div></div>
+													<input type="button" class="button rangeButton" value="-" data-span="brooklynOpacityDisplay">
+													<input type="range" class="range" id="brooklynPantsPinstripeOpacity" value="100" min="1" max="100" style="margin-left:5px; margin-right:5px;">
+													<input type="button" class="button rangeButton" value="+">
+													</div>
+												</td>
 												<td style="text-align:right;">
 													<input class="pantsSelector selector" type="text" id="brooklynPantsCheck" data-element="brooklynPantsCheck" data-canvas="below">
 													<input class="pantsSelector selector" type="text" id="brooklynPantsCheckStroke" data-element="brooklynPantsCheckStroke" data-canvas="below">
@@ -5036,6 +5061,19 @@
 		reRenderBG("jersey")
 	})
 	
+	$("#jerseyPinstripeOpacity").on("change",function() {
+		jerseyBelow.getObjects().find(o => o.id == "jerseyPinstripesColor").set({opacity: $(this).val()/100})
+		jerseyBelow.getObjects().find(o => o.id == "sleevePinstripesColor").set({opacity: $(this).val()/100})
+		jerseyBelow.renderAll()
+		reRenderBG("jersey")
+	})
+
+	$("#brooklynPinstripeOpacity").on("change",function() {
+		jerseyBelow.getObjects().find(o => o.id == "brooklynCheckGroup").set({opacity: $(this).val()/100})
+		jerseyBelow.renderAll()
+		reRenderBG("jersey")
+	})
+
 	function setSeams(buttonPadVisible) {
 		if (buttonPadVisible == true) {
 			jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
@@ -5461,6 +5499,18 @@
 		})
 		pantsLogoCanvas.renderAll()
 	})
+
+	$("#pantsPinstripeOpacity").on("change",function() {
+		pantsBelow.getObjects().find(o => o.id == "pantsPinstripes").set({opacity: $(this).val()/100})
+		pantsBelow.renderAll()
+		reRenderBG("pants")
+	})
+
+ 	$("#brooklynPantsPinstripeOpacity").on("change",function() {
+		pantsBelow.getObjects().find(o => o.id == "brooklynPantsCheckGroup").set({opacity: $(this).val()/100})
+		pantsBelow.renderAll()
+		reRenderBG("pants")
+	}) 
 
 // CAP SPECIFIC 
 
@@ -9420,11 +9470,12 @@
 		if ($(this).val() == "-") {
 			$(this).next().val(parseInt($(this).next().val())-1);
 			$("#"+$(this).data("span")).html($(this).next().val())
+			$(this).next().trigger("change")
 		} else if ($(this).val() == "+") {
 			$(this).prev().val(parseInt($(this).prev().val())+1);
 			$("#"+$(this).data("span")).html($(this).prev().val())
+			$(this).prev().trigger("change")
 		}
-		//$(this).next().attr("id").html(val);
 		$("#"+$(this).data('span')).change();
 	})
 
