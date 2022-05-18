@@ -1278,7 +1278,7 @@
                                             <tr class="color_tr">
                                                 <td class="checkCell">&nbsp;</td>
                                                 <td>
-                                                    <label>Belt: </label>
+                                                    <label>Belt:&nbsp;</label>
                                                     <select id="beltSelect">
                                                         <option value="belt" selected>Leather Belt</option>
                                                         <option value="elastic">Elastic Waistband</option>
@@ -1286,12 +1286,12 @@
                                                 </td>
                                                 <td style="text-align:right;">
                                                     <div id="beltSelector" style="display: inline-block;">
-                                                        <input class="pantsSelector selector" type="text" id="belt" data-element="belt" data-canvas="below">
+                                                        <input class="pantsSelector selector" type="text" id="belt" data-element="belt" data-canvas="above">
                                                     </div>
                                                     <div id="elasticSelector" style="display: none;">
-                                                        <input class="pantsSelector selector" type="text" id="elasticTop" data-element="elasticTop" data-canvas="below">
-                                                        <input class="pantsSelector selector" type="text" id="elasticMiddle" data-element="elasticMiddle" data-canvas="below">
-                                                        <input class="pantsSelector selector" type="text" id="elasticBottom" data-element="elasticBottom" data-canvas="below">
+                                                        <input class="pantsSelector selector" type="text" id="elasticTop" data-element="elasticTop" data-canvas="above">
+                                                        <input class="pantsSelector selector" type="text" id="elasticMiddle" data-element="elasticMiddle" data-canvas="above">
+                                                        <input class="pantsSelector selector" type="text" id="elasticBottom" data-element="elasticBottom" data-canvas="above">
                                                     </div>
                                                 </td>
                                             </tr>
@@ -1445,16 +1445,64 @@
 												</td>
 											</tr>
 											<tr class="color_tr">
-												<td class="checkCell"><input type="checkbox" class="pantsMultiToggle" data-id="atlBelt1,atlBelt2,atlBelt3,atlBelt4" id="atlBelt1Check" data-canvas="below"></td>
+												<td class="checkCell"><input type="checkbox" class="pantsMultiToggle" data-id="atlBelt1,atlBelt2,atlBelt3,atlBelt4" id="atlBelt1Check" data-canvas="above"></td>
 												<td><label>Atlanta Belt Loops: </label></td>
 												<td style="text-align:right;">
 													<!-- <input class="pantsSelector selector" type="text" id="atlBelt1" data-element="atlBelt1" data-canvas="below"> -->
-													<input class="pantsSelector selector" type="text" id="atlBelt2" data-element="atlBelt2" data-canvas="below">
-													<input class="pantsSelector selector" type="text" id="atlBelt3" data-element="atlBelt3" data-canvas="below">
-													<input class="pantsSelector selector" type="text" id="atlBelt4" data-element="atlBelt4" data-canvas="below">
+													<input class="pantsSelector selector" type="text" id="atlBelt2" data-element="atlBelt2" data-canvas="above">
+													<input class="pantsSelector selector" type="text" id="atlBelt3" data-element="atlBelt3" data-canvas="above">
+													<input class="pantsSelector selector" type="text" id="atlBelt4" data-element="atlBelt4" data-canvas="above">
 												</td>
 											</tr>
 										</table>
+									</div>
+									<div class="pants-accord-header pants-inactive-header" id="pantsImagesHeader">Images</div>
+									<div class="pants-accord-content">
+										<div id="pantsUploadImageDiv">
+										<table style="width:100%;">
+											<tr>
+												<!--<input type="file" id="uploadedImg" accept="image/*" style="display:none;"/>-->
+												<td><center>
+													<input type="button" class="button fakeImageButton" id="pantsImageButton" data-canvas='pants' value="Upload An Image">
+												</td>
+											</tr>
+										</table>
+										</div>
+										<div id="pantsSelectedImageDiv" style="display:none;">
+											<table style="width:100%;"><tr><td><center>
+											<b>Selected Image:</b> <span id="pantsFileName"></span>
+											</td></tr></table>
+										</div>
+										<div id="pantsTrimImageDiv" style="display:none;">
+											<table style="width:100%;">
+												<tr>
+													<td><center>
+														<input type="button" id="pantsColorSquare" class="colorSquare" value="Pick Color" style="margin-right:10px;" data-canvas="pantsLogoCanvas"><span id="chosenCoordinates" style="margin-right:5px;"></span>
+														Fuzz %:
+														<input type="button" class="button rangeButton" value="-">
+														<input type="range" class="range" id="pantsColorFuzz" value="50" min="1" max="100" style="margin-left:5px; margin-right:5px;">
+														<input type="button" class="button rangeButton" value="+">
+														<span id="fuzzAmount">50</span>%
+													</td>
+												</tr>
+												<tr>
+													<td><center>
+														<input type="button" class="button border" id="pantsBorder" value="Remove Border" data-canvas="pantsLogoCanvas">
+														<input type="button" class="button removeColor removeColorRange" id="pantsRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
+														<input type="button" class="button removeColor removeAllColor" id="pantsRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
+														<input type="button" class="button replaceColor replaceColorRange" id="pantsReplaceColorRange" value="Replace Section" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
+													</td>
+												</tr>
+											</table>
+										</div>
+										<div id="pantsReplaceColorDiv" class="replaceColorDiv" style="display:none;">
+											<table style="width:100%;"><tr>
+											<td><center>
+											Select Replacement Color:
+											<input class="colorSelector" type="text" id="pantsReplacementColor" value="#FF0000">
+											<input type="button" class="button replaceColorSubmit removeColor" id="pantsReplaceColorSubmit" value="Replace Color" data-x="0" data-y="0" data-action="null" data-canvas="pantsLogoCanvas">
+											</tr></table>
+										</div>
 									</div>
 									<div class="pants-accord-header">Number</div>
 									<div class="pants-accord-content">
@@ -2590,6 +2638,7 @@
 	var pantsLogoCanvas = new fabric.Canvas('pantsAbove',{
 		enableRetinaScaling:false,
 		controlsAboveOverlay:true,
+		preserveObjectStacking:true,
 		id: 'pantsLogoCanvas'
 	});
 
@@ -2986,8 +3035,6 @@
 		return false;
 	});
 
-	/* COMMENTED OUT FOR FUTURE USE
-	
 	$("#pantsContainer").on('dragover', function() {
 		$("#pantsContainer").addClass('hover')
 		return false;
@@ -3005,8 +3052,7 @@
 		var files = e.originalEvent.dataTransfer.files;
 		dropImage(pantsLogoCanvas, files[0].path, 1)
 		return false;
-	}); */
-
+	});
 
 	// JERSEY SPECIFIC
 
@@ -5351,6 +5397,20 @@
 		})
 	})
 
+	$("#pantsReplacementColor").spectrum({
+		type: "color",
+		showAlpha: false,
+		showInput: true,
+		preferredFormat: prefs['preferredColorFormat'],
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		color: "#FF0000",
+		show: function(color) {
+			$(this).spectrum("option", "palette", commonPalette)
+		},
+	})
+
 	$("#pantsTextureSelect").on("change",function(){
 		if ($(this).val() == "custom") {
 			if (customPantsTexture == null) {
@@ -5397,27 +5457,27 @@
         switch ($(this).val()) {
             case "belt":
                 beltObjects.forEach(function(obj) {
-                    pantsBelow.getObjects().find(o => o.id === obj).visible = true;
+                    pantsLogoCanvas.getObjects().find(o => o.id === obj).visible = true;
                 })
                 elasticObjects.forEach(function(obj) {
-                    pantsBelow.getObjects().find(o => o.id === obj).visible = false;
+                    pantsLogoCanvas.getObjects().find(o => o.id === obj).visible = false;
                 })
                 $("#beltSelector").show();
                 $("#elasticSelector").hide();
                 break;
             case "elastic":
                 beltObjects.forEach(function(obj) {
-                    pantsBelow.getObjects().find(o => o.id === obj).visible = false;
+                    pantsLogoCanvas.getObjects().find(o => o.id === obj).visible = false;
                 })
                 elasticObjects.forEach(function(obj) {
-                    pantsBelow.getObjects().find(o => o.id === obj).visible = true;
+                    pantsLogoCanvas.getObjects().find(o => o.id === obj).visible = true;
                 })
                 $("#beltSelector").hide();
                 $("#elasticSelector").show();
                 break;
         }
-        pantsBelow.renderAll()
-        reRenderBG("pants")
+        pantsLogoCanvas.renderAll()
+        //reRenderBG("pants")
     })
 
 	$("#pantsMakersMarkSelect").on("change",function(e) {
@@ -5447,6 +5507,67 @@
 		$("#capOverlay").css("display","inline-block");
 		$("#pantsOverlay").css("display","none");
 		$("#tabContainer").skeletabs('goTo', 1)
+		if (pantsLogoCanvas.hoverCursor != "move") {
+			var ctx = pantsLogoCanvas.contextContainer;
+			$("#colorSquare").removeClass("colorSquareActive").addClass("colorSquareSelected");
+			pantsLogoCanvas.hoverCursor='move';
+			pantsLogoCanvas.off('mouse:move');
+			var object = pantsLogoCanvas.getActiveObject();
+			var mouse = object.getLocalPointer(e.e);
+			var imageX = parseInt(mouse.x);
+			var imageY = parseInt(mouse.y);
+			$("#chosenCoordinates").html("(X:"+imageX+", Y:"+imageY+")");
+			var mouse2 = pantsLogoCanvas.getPointer(e.e);
+			var x = parseInt(mouse2.x);
+			var y = parseInt(mouse2.y);
+			var px = ctx.getImageData(x, y, 1, 1).data;
+			var hex = rgb2hex(px[0],px[1],px[2]);
+			$(".removeColor").each(function(e) {
+				$(this).data("x",imageX);
+				$(this).data("y",imageY);
+			})
+			$(".replaceColor").each(function(e) {
+				$(this).data("x",imageX);
+				$(this).data("y",imageY);
+			})
+		}
+	})
+
+	pantsLogoCanvas.on('selection:created', function(e) {
+		activeCanvas = pantsLogoCanvas;
+		var obj = e.selected[0];
+		$("#pantsFileName").html(obj.id);
+		if ($("#pantsTrimImageDiv").css("display") == "none") {
+			$("#pantsTrimImageDiv").css("display","block");
+			$("#pantsUploadImageDiv").css("display","none");
+			$("#pantsSelectedImageDiv").css("display","block");
+		}
+		$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+		$(".copypaste").each(function() {
+			$(this).css("display","inline-block")
+		})
+	})
+
+	pantsLogoCanvas.on('selection:cleared', function(e) {
+		if ($("#pantsReplaceColorDiv").css("display") == "block") {
+			$("#pantsReplaceColorDiv").slideToggle();
+		}
+		if ($("#pantsTrimImageDiv").css("display") == "block") {		
+			$("#pantsTrimImageDiv").slideToggle();
+			$("#pantsColorSquare").val("Select Color");
+			$("#pantsColorSquare").css("background","#FFFFFF");
+			$("#pantsColorSquare").css("color","#000000");
+			$("#pantsChosenCoordinates").html("");
+		}
+		$("#pantsUploadImageDiv").css("display","block");
+		$("#pantsSelectedImageDiv").css("display","none");
+		$("#pantsReplaceColorDiv").css("display", "none")
+		$("#pantsNumberCtl").css("display","none")
+		$("#pantsFileName").html("");
+		$("#tipSpan").html("");
+		$(".copypaste").each(function() {
+			$(this).css("display","none")
+		})
 	})
 
 	$("#togglePantsGrid").on("click",function() {
@@ -5560,7 +5681,6 @@
 	})
 
     capLogoCanvas.on('selection:created', function(e) {
-		console.log("got here")
 		activeCanvas = capLogoCanvas;
 		var obj = e.selected[0];
 		$("#capFileName").html(obj.id);
@@ -8469,8 +8589,8 @@
 				selectable: false,
 				evented: false
 			})
-			pantsBelow.add(buckle)
-			pantsBelow.renderAll();
+			pantsLogoCanvas.add(buckle)
+			pantsLogoCanvas.renderAll();
 		})
 
 		pantsBelow.add(chaps)
@@ -8492,15 +8612,15 @@
 		pantsBelow.add(pantsTequila2)
 		pantsBelow.add(pantsTequila3)
 		pantsBelow.add(pantsTequila4)
-        pantsBelow.add(belt)
-        pantsBelow.add(elasticMiddle)
-        pantsBelow.add(elasticTop)
-        pantsBelow.add(elasticBottom)
-		pantsBelow.add(elasticRibbing)
-		pantsBelow.add(atlBelt1)
-		pantsBelow.add(atlBelt2)
-		pantsBelow.add(atlBelt3)
-		pantsBelow.add(atlBelt4)
+        pantsLogoCanvas.add(belt)
+        pantsLogoCanvas.add(elasticMiddle)
+        pantsLogoCanvas.add(elasticTop)
+        pantsLogoCanvas.add(elasticBottom)
+		pantsLogoCanvas.add(elasticRibbing)
+		pantsLogoCanvas.add(atlBelt1)
+		pantsLogoCanvas.add(atlBelt2)
+		pantsLogoCanvas.add(atlBelt3)
+		pantsLogoCanvas.add(atlBelt4)
 		pantsLogoCanvas.add(pantsNumber)
 
 		loadMakersMark("pants",$("#pantsMakersMarkSelect").find(':selected').data('top'),$("#pantsMakersMarkSelect").find(':selected').data('left'),$("#pantsMakersMarkSelect").find(':selected').data('angle'),$("#pantsMakersMarkSelect").find(':selected').data('height'));
@@ -9066,7 +9186,9 @@
 		}
 		if ($(this).data("canvas") == "pants") {
 			var canvas = pantsLogoCanvas
-			var moveBelow = null
+			var imLeft = 256
+			var imTop = 256
+			var moveBelow = 'belt'
 			//var canStr = "pants"
 		}
 		/* switch (activeCanvas.id) {
@@ -9134,8 +9256,10 @@
 					canvas.add(image);
 					image.set({"left":imLeft,"top":imTop});
 					image.setCoords();
-					if (moveBelow != null) {
+					if (moveBelow != 'belt') {
 						canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
+					} else {
+						canvas.sendToBack(image)	
 					}
 					canvas.setActiveObject(image)
 					canvas.requestRenderAll()
@@ -9749,6 +9873,15 @@
 				$("#jerseyReplaceColorDiv").slideToggle();
 			}
 		}
+		if ($(this).data("canvas") == "pantsLogoCanvas") {
+			$("#pantsReplaceColorSubmit").data("action",$(this).attr("id"))
+			$("#pantsReplaceColorSubmit").data("x",$(this).data("x"))
+			$("#pantsReplaceColorSubmit").data("y",$(this).data("y"))
+			var color = $("#pantsColorSquare").val();
+			if ($("#pantsReplaceColorDiv").css("display") == "none") {
+				$("#pantsReplaceColorDiv").slideToggle();
+			}
+		}
 	})
 	
 	$(".replaceColorSubmit").on("click",function(e) {
@@ -9807,6 +9940,7 @@
 						var imgObj = new Image();
 						imgObj.src = data;
 						imgObj.onload = function () {
+							console.log("HELLO THERE")
 							var image = new fabric.Image(imgObj);
 							image.set({
 								originX: 'center',
@@ -10944,7 +11078,7 @@
 								var canvas = pantsLogoCanvas
 								var imLeft = 256
 								var imTop = 256
-								var moveBelow = null
+								var moveBelow = belt
 								var header = $("#pantsImagesHeader")
 								break;
 						} 
@@ -10994,8 +11128,10 @@
 						canvas.add(image);
 						image.set({"left":imLeft,"top":imTop});
 						image.setCoords();
-						if (moveBelow != null) {
+						if (moveBelow != 'belt') {
 							canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
+						} else {
+							canvas.sendToBack(image)	
 						}
 						canvas.setActiveObject(image)
 						canvas.requestRenderAll()
