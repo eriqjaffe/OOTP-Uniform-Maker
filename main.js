@@ -14,7 +14,6 @@ const { SVG, registerWindow } = require('@svgdotjs/svg.js')
 const { createSVGWindow } = require('svgdom')
 const versionCheck = require('github-version-checker');
 const pkg = require('./package.json');
-const { RESIZE_BEZIER } = require('jimp');
 
 const isMac = process.platform === 'darwin'
 const tempDir = os.tmpdir()
