@@ -10987,56 +10987,54 @@
 	}
 
 	function paste() {
-		if (activeCanvas != pantsLogoCanvas) {
-			const objID = _clipboard.id
-			switch (activeCanvas.id) {
-				case "jerseyLogoCanvas":
-					var canStr = "jersey"
-					break;
-				case "capLogoCanvas":
-					var canStr = "cap"
-					break;
-				case "pantsLogoCanvas":
-					var canStr = "pants"
-					break;
-			}
-			var id = (getNumberAtEnd(_clipboard) == null) ? 0 : getNumberAtEnd(_clipboard)
-			_clipboard.clone(function(clonedObj) {
-				activeCanvas.discardActiveObject();
-				clonedObj.set({
-					left: clonedObj.left + 10,
-					top: clonedObj.top + 10,
-					evented: true,
-					id: _clipboard.get("id")+"_"+(id+1)
-				});
-				clonedObj.on('selected',function() {
-					$("#"+canStr+"FileName").html(clonedObj.get('id'));
-					if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-						$("#"+canStr+"TrimImageDiv").css("display","block");
-						$("#"+canStr+"UploadImageDiv").css("display","none");
-						$("#"+canStr+"SelectedImageDiv").css("display","block");
-					}
-					$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-					$(".copypaste").each(function() {
-						$(this).css("display","inline-block")
-					})
-				})
-				if (clonedObj.type === 'activeSelection') {
-					// active selection needs a reference to the canvas.
-					clonedObj.canvas = activeCanvas;
-					clonedObj.forEachObject(function(obj) {
-						activeCanvas.add(obj);
-					});
-					// this should solve the unselectability
-					clonedObj.setCoords();
-				} else {
-					activeCanvas.add(clonedObj);
-				}
-				_clipboard.top += 10;
-				_clipboard.left += 10;
-				activeCanvas.requestRenderAll();
-			});
+		const objID = _clipboard.id
+		switch (activeCanvas.id) {
+			case "jerseyLogoCanvas":
+				var canStr = "jersey"
+				break;
+			case "capLogoCanvas":
+				var canStr = "cap"
+				break;
+			case "pantsLogoCanvas":
+				var canStr = "pants"
+				break;
 		}
+		var id = (getNumberAtEnd(_clipboard) == null) ? 0 : getNumberAtEnd(_clipboard)
+		_clipboard.clone(function(clonedObj) {
+			activeCanvas.discardActiveObject();
+			clonedObj.set({
+				left: clonedObj.left + 10,
+				top: clonedObj.top + 10,
+				evented: true,
+				id: _clipboard.get("id")+"_"+(id+1)
+			});
+			clonedObj.on('selected',function() {
+				$("#"+canStr+"FileName").html(clonedObj.get('id'));
+				if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+					$("#"+canStr+"TrimImageDiv").css("display","block");
+					$("#"+canStr+"UploadImageDiv").css("display","none");
+					$("#"+canStr+"SelectedImageDiv").css("display","block");
+				}
+				$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+				$(".copypaste").each(function() {
+					$(this).css("display","inline-block")
+				})
+			})
+			if (clonedObj.type === 'activeSelection') {
+				// active selection needs a reference to the canvas.
+				clonedObj.canvas = activeCanvas;
+				clonedObj.forEachObject(function(obj) {
+					activeCanvas.add(obj);
+				});
+				// this should solve the unselectability
+				clonedObj.setCoords();
+			} else {
+				activeCanvas.add(clonedObj);
+			}
+			_clipboard.top += 10;
+			_clipboard.left += 10;
+			activeCanvas.requestRenderAll();
+		});
 	}
 
 	function dropImage(dropCanvas, file, tab) {
