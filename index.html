@@ -2127,7 +2127,7 @@
     </div>
 	<div id="FAQ" class="jm-white-popup mfp-hide">
 		<div style="width:100%; text-align:center;">	
-			<span class="header" style="color:#103959!important; font-size:2em!important;">About The OOTP Uniform Maker</span>
+			<span class="header" style="color:#103959!important; font-size:2em!important;">About The OOTP Uniform Maker</span><div id="currentVersion"></div>
 		</div>
 		<div id="faqContainer" style="width:100%; height:90%; overflow:auto;">
 			<div class="question" style="margin-top:10px!important;">So what is this thing?</div><br>
@@ -2677,6 +2677,7 @@
 // DOCUMENT FUNCTIONS
 
     $(document).ready(function() {
+		$("#currentVersion").html("Version "+appVersion)
 		$("#toggleJerseyGrid").prop( "checked", gridsVisible )
 		$("#togglePantsGrid").prop( "checked", gridsVisible )
 		$("#toggleCapGuides").prop( "checked", gridsVisible )
@@ -2928,7 +2929,6 @@
 			return;
 		}
 		const currentTab = $('#tabContainer').skeletabs('getCurrentInfo');
-		console.log(currentTab.currentIndex)
 		const eyeDropper = new EyeDropper();
 		jerseyLogoCanvas.setOverlayImage(null,jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 		pantsLogoCanvas.setOverlayImage(null,pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
@@ -2938,7 +2938,6 @@
 		$("#pantsOverlay").css("display","none");
 		eyeDropper.open().then(result => {
 			clipboard.writeText(result.sRGBHex)
-			console.log(clipboard.readText('selection'))
 			if($("#toggleJerseyGrid").is(':checked')){
 				jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 			}
@@ -3551,7 +3550,6 @@
 			},
 			move: function(color) {
 				var type = $(this).attr("id");
-				console.log(type)
 				$(this).data('changed', true);
 				var c = (color == null) ? 'transparent' : color.toHexString()
 				jerseyLogoCanvas.getObjects('group').forEach(function(o){
@@ -3743,11 +3741,9 @@
 
 	$(".jerseyPanelToggle").on("click",function() {
 		const id = $(this).data("id");
-		console.log(id)
 		const state = $(this).is(':checked') ? true : false
 		const canvas = $(this).data('canvas') == 'below' ? jerseyBelow : jerseyLogoCanvas
 		canvas.getObjects().forEach(function(o) {
-			console.log(o.id)
 			if (o.id == id) {
 				o.set("visible", state)
 			}
@@ -5208,7 +5204,6 @@
 			move: function(color) {
 				$(this).data('changed', true);
 				const id = $(this).data('element');
-				console.log(id)
 				const canvas = $(this).data('canvas') == 'below' ? pantsBelow : pantsLogoCanvas
 				var c = (color == null) ? 'transparent' : color.toHexString()
 				canvas.getObjects().forEach(function(o) {
@@ -8746,7 +8741,6 @@
 			data: {type:type},
 			success: function(data) { 
 				if (data.image != undefined) {
-					console.log(data.filename)
 					var imgObj = new Image();
 					imgObj.src = data.image;
 					imgObj.onload = function () {
@@ -9618,7 +9612,6 @@
 		$("#pantsOverlay").css("display","none");
 		eyeDropper.open().then(result => {
 			clipboard.writeText(result.sRGBHex)
-			console.log(clipboard.readText('selection'))
 			if($("#toggleJerseyGrid").is(':checked')){
 				jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 			}
@@ -9940,7 +9933,6 @@
 						var imgObj = new Image();
 						imgObj.src = data;
 						imgObj.onload = function () {
-							console.log("HELLO THERE")
 							var image = new fabric.Image(imgObj);
 							image.set({
 								originX: 'center',
@@ -10465,7 +10457,6 @@
 			angle: 270
 		})
 
-		console.log(text.width)
 		if (text.width > 225) {
 			text.scaleToHeight(225)
 		}
