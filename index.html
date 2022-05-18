@@ -5157,13 +5157,13 @@
 		move: function(color) {
 			$(this).data('changed', true);
 			pantsBelow.setBackgroundColor(color.toHexString(), pantsBelow.renderAll.bind(pantsBelow))
-			pantsBelow.getObjects().find(o => o.id === 'atlBelt1').set("fill", color.toHexString())
+			pantsLogoCanvas.getObjects().find(o => o.id === 'atlBelt1').set("fill", color.toHexString())
 			reRenderBG("pants")
 		},
 		change: function(color) {
 			$(this).data('changed', true);
 			pantsBelow.setBackgroundColor(color.toHexString(), pantsBelow.renderAll.bind(pantsBelow))
-			pantsBelow.getObjects().find(o => o.id === 'atlBelt1').set("fill", color.toHexString())
+			pantsLogoCanvas.getObjects().find(o => o.id === 'atlBelt1').set("fill", color.toHexString())
 			reRenderBG("pants")
 			if (color !=  null) {
 				if ($.inArray(color.toHexString(), commonPalette) < 0) {
@@ -5180,7 +5180,7 @@
 		hide: function(color) {
 			$(this).data('changed', false);
 			pantsBelow.setBackgroundColor(color.toHexString(), pantsBelow.renderAll.bind(pantsBelow))
-			pantsBelow.getObjects().find(o => o.id === 'atlBelt1').set("fill", color.toHexString())
+			pantsLogoCanvas.getObjects().find(o => o.id === 'atlBelt1').set("fill", color.toHexString())
 			reRenderBG("pants")
 		}
 	})
@@ -10025,11 +10025,18 @@
 		capLogoCanvas.setDimensions({ width: 512, height: 512 });
     	capLogoCanvas.setZoom(1)
 
+		var textLine = teamName.split('_').join(' ')+" "+$("#uniformType").val()
+		
+		if (yearRange.length > 0) {
+			textLine += yearRange.split('_').join(' ')
+		}
+
 		$.ajax({
 		 	type: "POST",
 			url: "http://127.0.0.1:"+port+"/saveCap",
 			dataType: "json",
 			data: {
+				text: textLine,
 				capLogoCanvas: capLogoCanvas.toDataURL(),
 				capBelow: capBelow.toDataURL(),
 				name: fileName,
@@ -10103,11 +10110,18 @@
 		pantsLogoCanvas.setDimensions({ width: 512, height: 512 });
     	pantsLogoCanvas.setZoom(1)
 
+		var textLine = teamName.split('_').join(' ')+" "+$("#uniformType").val()
+		
+		if (yearRange.length > 0) {
+			textLine += yearRange.split('_').join(' ')
+		}
+
 		$.ajax({
 		 	type: "POST",
 			url: "http://127.0.0.1:"+port+"/savePants",
 			dataType: "json",
 			data: {
+				text: textLine,
 				pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
 				pantsBelow: pantsBelow.toDataURL(),
 				name: fileName,
@@ -10207,11 +10221,48 @@
 		jerseyLogoCanvas.setDimensions({ width: 512, height: 1024 });
     	jerseyLogoCanvas.setZoom(1)
 
+		nameCanvas.clear()
+		var text = new fabric.Text(teamName.split('_').join(' '), {
+			fill: idealTextColor(jerseyBelow.backgroundColor),
+			fontFamily: "Rowdies",
+			fontsize: 20,
+			originX: 'center',
+			originY: 'center',
+			textAlign: 'center',
+			left: 17,
+			top: 830,
+			angle: 270
+		})
+
+		var text2 = new fabric.Text((yearRange.length > 0) ? $("#uniformType").val()+" "+yearRange.split('_').join(' ') : $("#uniformType").val(), {
+			fill: idealTextColor(jerseyBelow.backgroundColor),
+			fontFamily: "Rowdies",
+			fontsize: 20,
+			originX: 'center',
+			originY: 'center',
+			textAlign: 'center',
+			left: 495,
+			top: 830,
+			angle: 270
+		})
+
+		if (text.width > 225) {
+			text.scaleToHeight(225)
+		}
+		
+		if (text2.width > 225) {
+			text2.scaleToHeight(225)
+		}
+
+		nameCanvas.add(text)
+		nameCanvas.add(text2)
+
 		$.ajax({
 		 	type: "POST",
 			url: "http://127.0.0.1:"+port+"/saveJersey",
 			dataType: "json",
 			data: {
+				nameCanvas: nameCanvas.toDataURL(),
 				jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
 				jerseyBelow: jerseyBelow.toDataURL(),
 				name: fileName,
@@ -10433,6 +10484,7 @@
     	capLogoCanvas.setZoom(1)
 
 		nameCanvas.clear()
+
 		var text = new fabric.Text(teamName.split('_').join(' '), {
 			fill: idealTextColor(jerseyBelow.backgroundColor),
 			fontFamily: "Rowdies",
@@ -10467,12 +10519,19 @@
 
 		nameCanvas.add(text)
 		nameCanvas.add(text2)
+
+		var textLine = teamName.split('_').join(' ')+" "+$("#uniformType").val()
+		
+		if (yearRange.length > 0) {
+			textLine += yearRange.split('_').join(' ')
+		}
 		
 		$.ajax({
 		 	type: "POST",
 			url: "http://127.0.0.1:"+port+"/saveUniform",
 			dataType: "json",
 			data: {
+				text: textLine,
 				nameCanvas: nameCanvas.toDataURL(),
 				capLogoCanvas: capLogoCanvas.toDataURL(),
 				capBelow: capBelow.toDataURL(),

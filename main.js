@@ -476,6 +476,7 @@ app2.post('/jitterText', (req, res) => {
 app2.post('/savePants', (req, res) => {
 	const pantsLogoCanvas = Buffer.from(req.body.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const pantsBelow = Buffer.from(req.body.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const text = req.body.text
 	const tmpPantsTexture = req.body.pantsTexture
 
 	const options = {
@@ -495,11 +496,18 @@ app2.post('/savePants', (req, res) => {
 		let pantsBase = await Jimp.read(pantsBelow)
 		let pantsTextureFile = await Jimp.read(pantsTexture)
 		let pantsOverlay = await Jimp.read(pantsLogoCanvas)
+		let font = await Jimp.loadFont(__dirname+"/fonts/rowdies.fnt")
+		let blankImage = new Jimp(3000, 500)
+		await blankImage.print(font, 10, 10, text)
+		await blankImage.autocrop()
+		await blankImage.scaleToFit(500,15)
+		await blankImage.color([{ apply: "mix", params: [req.body.pantsWatermarkColor, 100] }]);
 		await pantsBase.composite(pantsTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await pantsBase.composite(pantsOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let pantsWM = await Jimp.read(__dirname+"/images/pants_watermark.png")
 		await pantsWM.color([{ apply: "mix", params: [req.body.pantsWatermarkColor, 100] }]);
 		await pantsBase.composite(pantsWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await pantsBase.blit(blankImage, 256-(blankImage.bitmap.width/2), 12.5-(blankImage.bitmap.height/2))
 		let pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
 		let finalImage = Buffer.from(pantsBuffer).toString('base64');
 		dialog.showSaveDialog(null, options).then((result) => {
@@ -521,6 +529,7 @@ app2.post('/savePants', (req, res) => {
 app2.post('/saveCap', (req, res) => {
 	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const text = req.body.text
 	const tmpCapTexture = req.body.capTexture
 
 	const options = {
@@ -540,11 +549,18 @@ app2.post('/saveCap', (req, res) => {
 		let capBase = await Jimp.read(capBelow)
 		let capOverlay = await Jimp.read(capLogoCanvas)
 		let capTextureFile = await Jimp.read(capTexture)
+		let font = await Jimp.loadFont(__dirname+"/fonts/rowdies.fnt")
+		let blankImage = new Jimp(3000, 500)
+		await blankImage.print(font, 10, 10, text)
+		await blankImage.autocrop()
+		await blankImage.scaleToFit(290,15)
+		await blankImage.color([{ apply: "mix", params: [req.body.capWatermarkColor, 100] }]);
 		let capWM = await Jimp.read(__dirname+"/images/cap_watermark.png")
 		await capWM.color([{ apply: "mix", params: [req.body.capWatermarkColor, 100] }]);
 		await capBase.composite(capTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await capBase.composite(capOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await capBase.composite(capWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await capBase.blit(blankImage, 357-(blankImage.bitmap.width/2), 120-(blankImage.bitmap.height/2))
 		let capBuffer = await capBase.getBufferAsync(Jimp.MIME_PNG)
 		let finalImage = Buffer.from(capBuffer).toString('base64');
 		dialog.showSaveDialog(null, options).then((result) => {
@@ -566,6 +582,7 @@ app2.post('/saveCap', (req, res) => {
 app2.post('/saveJersey', (req, res) => {
 	const jerseyLogoCanvas = Buffer.from(req.body.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const jerseyBelow = Buffer.from(req.body.jerseyBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const nameCanvas = Buffer.from(req.body.nameCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const tmpJerseyTexture = req.body.jerseyTexture
 	const showPlanket = req.body.showPlanket
 	const buttonPadSeams = req.body.buttonPadSeams
@@ -638,35 +655,13 @@ app2.post('/saveJersey', (req, res) => {
 		let jerseyBase = await Jimp.read(jerseyBelow)
 		let jerseyTextureFile = await Jimp.read(jerseyTexture)
 		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
+		let nameImage = await Jimp.read(nameCanvas)
 		await jerseyBase.composite(jerseyTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
-		/*if (buttonPadSeams == "true") {
-			let bpSeamImg = await Jimp.read(__dirname+"/images/seams/seams_button_pad.png")
-			await bpSeamImg.opacity(.25)
-			await jerseyBase.composite(bpSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		}
-		if (seamsVisible == "true") {
-			switch (seamsOption) {
-				case "seamsStandardToPiping":
-					var seamSrc = __dirname+"/images/seams/seams_standard_to_piping.png"
-					break;
-				case "seamsStandardToCollar":
-					var seamSrc = __dirname+"/images/seams/seams_standard_to_collar.png"
-					break;
-				case "seamsRaglanToPiping":
-					var seamSrc = __dirname+"/images/seams/seams_raglan_to_piping.png"
-					break;
-				case "seamsRaglanToCollar":
-					var seamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
-					break;
-			}
-			let seamsImg = await Jimp.read(seamSrc)
-			await seamsImg.opacity(.25)
-			await jerseyBase.composite(seamsImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		} */
 		await jerseyBase.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyWM = await Jimp.read(__dirname+"/images/jersey_watermark.png")
 		await jerseyWM.color([{ apply: "mix", params: [req.body.jerseyWatermarkColor, 100] }]);
 		await jerseyBase.composite(jerseyWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await jerseyBase.composite(nameImage, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBuffer = await jerseyBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(jerseyBuffer, {name: req.body.name+".png"})
 		//await jerseyBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'.png')
@@ -713,6 +708,7 @@ app2.post('/saveJersey', (req, res) => {
 		let jerseyBakedOverlay = await Jimp.read(jerseyLogoCanvas)
 		let jerseyBakedTexture = await Jimp.read(jerseyTexture)
 		let jerseyBakedTexture2 = await Jimp.read(__dirname+"/images/texture_jersey_default.png")
+		let bakedNameImage = await Jimp.read(nameCanvas)
 		if (buttonPadSeams == "true") {
 			let bpBakedSeamImg = await Jimp.read(__dirname+"/images/seams/seams_button_pad.png")
 			await bpBakedSeamImg.opacity(.1)
@@ -743,6 +739,7 @@ app2.post('/saveJersey', (req, res) => {
 		let jerseyBakedWM = await Jimp.read(__dirname+"/images/jersey_watermark.png")
 		await jerseyBakedWM.color([{ apply: "mix", params: [req.body.jerseyWatermarkColor, 100] }]);
 		await jerseyBakedBase.composite(jerseyBakedWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await jerseyBakedBase.composite(bakedNameImage, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBakedBuffer = await jerseyBakedBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(jerseyBakedBuffer, {name: req.body.name+"_textured.png"})
 		//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'_textured.png')
@@ -761,6 +758,7 @@ app2.post('/saveUniform', (req, res) => {
 	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const nameCanvas = Buffer.from(req.body.nameCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const text = req.body.text;
 	const tmpCapTexture = req.body.capTexture
 	const tmpJerseyTexture = req.body.jerseyTexture
 	const tmpPantsTexture = req.body.pantsTexture
@@ -848,15 +846,23 @@ app2.post('/saveUniform', (req, res) => {
 	prepareImages()
 
 	async function prepareImages() {
+		let font = await Jimp.loadFont(__dirname+"/fonts/rowdies.fnt")
+
 		// cap
 		let capBase = await Jimp.read(capBelow)
 		let capOverlay = await Jimp.read(capLogoCanvas)
 		let capTextureFile = await Jimp.read(capTexture)
+		let blankCapImage = new Jimp(3000, 500)
+		await blankCapImage.print(font, 10, 10, text)
+		await blankCapImage.autocrop()
+		await blankCapImage.scaleToFit(500,15)
+		await blankCapImage.color([{ apply: "mix", params: [req.body.capWatermarkColor, 100] }]);
 		let capWM = await Jimp.read(__dirname+"/images/cap_watermark.png")
 		await capWM.color([{ apply: "mix", params: [req.body.capWatermarkColor, 100] }]);
 		await capBase.composite(capTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await capBase.composite(capOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await capBase.composite(capWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await capBase.blit(blankCapImage, 357-(blankCapImage.bitmap.width/2), 120-(blankCapImage.bitmap.height/2))
 		let capBuffer = await capBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(capBuffer, {name: "caps_"+req.body.name+".png"})
 		//await capBase.write(app.getPath('desktop') + '/uniform_Unknown_Team_Home/caps_' + req.body.name+'.png')
@@ -865,11 +871,17 @@ app2.post('/saveUniform', (req, res) => {
 		let pantsBase = await Jimp.read(pantsBelow)
 		let pantsTextureFile = await Jimp.read(pantsTexture)
 		let pantsOverlay = await Jimp.read(pantsLogoCanvas)
+		let blankPantsImage = new Jimp(3000, 500)
+		await blankPantsImage.print(font, 10, 10, text)
+		await blankPantsImage.autocrop()
+		await blankPantsImage.scaleToFit(500,15)
+		await blankPantsImage.color([{ apply: "mix", params: [req.body.pantsWatermarkColor, 100] }]);
 		await pantsBase.composite(pantsTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await pantsBase.composite(pantsOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let pantsWM = await Jimp.read(__dirname+"/images/pants_watermark.png")
 		await pantsWM.color([{ apply: "mix", params: [req.body.pantsWatermarkColor, 100] }]);
 		await pantsBase.composite(pantsWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await pantsBase.blit(blankPantsImage, 256-(blankPantsImage.bitmap.width/2), 12.5-(blankPantsImage.bitmap.height/2))
 		let pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(pantsBuffer, {name: "pants_"+req.body.name+".png"})
 		//await pantsBase.write(app.getPath('downloads') + '/pants_' + req.body.name+'.png')
