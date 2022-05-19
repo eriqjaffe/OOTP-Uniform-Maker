@@ -71,7 +71,6 @@ app2.get("/checkForUpdate", (req,res) => {
 })
 
 app2.get("/dropImage", (req, res) => {
-	console.log(req.query.file)
 	Jimp.read(req.query.file, (err, image) => {
 		if (err) {
 			res.json({
