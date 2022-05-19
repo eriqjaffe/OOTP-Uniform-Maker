@@ -586,6 +586,7 @@ app2.post('/saveJersey', (req, res) => {
 	const tmpJerseyTexture = req.body.jerseyTexture
 	const showPlanket = req.body.showPlanket
 	const buttonPadSeams = req.body.buttonPadSeams
+	const buttonType = req.body.buttonType
 	const seamsVisible = req.body.seamsVisible
 	const seamsOption = req.body.seamsOption
 
@@ -671,7 +672,12 @@ app2.post('/saveJersey', (req, res) => {
 		await jerseyOverlay.grayscale()
 		await jerseyOverlay.brightness(.5)
 		if (buttonPadSeams == "true") {
-			let bpHMSeamImg = await Jimp.read(__dirname+"/images/seams/seams_button_pad.png")
+			if (buttonType != "buttonsHenley") {
+				var seamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+			} else {
+				var seamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+			}
+			let bpHMSeamImg = await Jimp.read(seamsSrc)
 			await bpHMSeamImg.brightness(.33)
 			await jerseyHeightMap.composite(bpHMSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
@@ -695,7 +701,12 @@ app2.post('/saveJersey', (req, res) => {
 			await jerseyHeightMap.composite(seamsHMImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
 		if (showPlanket == "true") {
-			let planket = await Jimp.read(__dirname+"/images/planket.png")
+			if (buttonType != "buttonsHenley") {
+				var planketSrc = __dirname+"/images/planket.png"
+			} else {
+				var planketSrc = __dirname+"/images/planket_henley.png"
+			}
+			let planket = await Jimp.read(planketSrc)
 			await jerseyHeightMap.composite(planket, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
 		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
@@ -710,7 +721,12 @@ app2.post('/saveJersey', (req, res) => {
 		let jerseyBakedTexture2 = await Jimp.read(__dirname+"/images/texture_jersey_default.png")
 		let bakedNameImage = await Jimp.read(nameCanvas)
 		if (buttonPadSeams == "true") {
-			let bpBakedSeamImg = await Jimp.read(__dirname+"/images/seams/seams_button_pad.png")
+			if (buttonType != "buttonsHenley") {
+				var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+			} else {
+				var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+			}
+			let bpBakedSeamImg = await Jimp.read(bakedSeamsSrc)
 			await bpBakedSeamImg.opacity(.1)
 			await jerseyBakedBase.composite(bpBakedSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
@@ -764,6 +780,7 @@ app2.post('/saveUniform', (req, res) => {
 	const tmpPantsTexture = req.body.pantsTexture
 	const showPlanket = req.body.showPlanket
 	const buttonPadSeams = req.body.buttonPadSeams
+	const buttonType = req.body.buttonType
 	const seamsVisible = req.body.seamsVisible
 	const seamsOption = req.body.seamsOption
 	const json = Buffer.from(req.body.json, 'utf8')
@@ -890,31 +907,7 @@ app2.post('/saveUniform', (req, res) => {
 		let jerseyBase = await Jimp.read(jerseyBelow)
 		let jerseyTextureFile = await Jimp.read(jerseyTexture)
 		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
-		await jerseyBase.composite(jerseyTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
-		/* if (buttonPadSeams == "true") {
-			let bpSeamImg = await Jimp.read(__dirname+"/images/seams/seams_button_pad.png")
-			await bpSeamImg.opacity(.25)
-			await jerseyBase.composite(bpSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		}
-		if (seamsVisible == "true") {
-			switch (seamsOption) {
-				case "seamsStandardToPiping":
-					var seamSrc = __dirname+"/images/seams/seams_standard_to_piping.png"
-					break;
-				case "seamsStandardToCollar":
-					var seamSrc = __dirname+"/images/seams/seams_standard_to_collar.png"
-					break;
-				case "seamsRaglanToPiping":
-					var seamSrc = __dirname+"/images/seams/seams_raglan_to_piping.png"
-					break;
-				case "seamsRaglanToCollar":
-					var seamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
-					break;
-			}
-			let seamsImg = await Jimp.read(seamSrc)
-			await seamsImg.opacity(.25)
-			await jerseyBase.composite(seamsImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		} */
+		await jerseyBase.composite(jerseyTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})	
 		await jerseyBase.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyWM = await Jimp.read(__dirname+"/images/jersey_watermark.png")
 		await jerseyWM.color([{ apply: "mix", params: [req.body.jerseyWatermarkColor, 100] }]);
@@ -930,7 +923,12 @@ app2.post('/saveUniform', (req, res) => {
 		await jerseyOverlay.grayscale()
 		await jerseyOverlay.brightness(.5)
 		if (buttonPadSeams == "true") {
-			let bpHMSeamImg = await Jimp.read(__dirname+"/images/seams/seams_button_pad.png")
+			if (buttonType != "buttonsHenley") {
+				var seamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+			} else {
+				var seamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+			}
+			let bpHMSeamImg = await Jimp.read(seamsSrc)
 			await bpHMSeamImg.brightness(.33)
 			await jerseyHeightMap.composite(bpHMSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
@@ -954,7 +952,12 @@ app2.post('/saveUniform', (req, res) => {
 			await jerseyHeightMap.composite(seamsHMImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
 		if (showPlanket == "true") {
-			let planket = await Jimp.read(__dirname+"/images/planket.png")
+			if (buttonType != "buttonsHenley") {
+				var planketSrc = __dirname+"/images/planket.png"
+			} else {
+				var planketSrc = __dirname+"/images/planket_henley.png"
+			}
+			let planket = await Jimp.read(planketSrc)
 			await jerseyHeightMap.composite(planket, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
 		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
@@ -968,7 +971,12 @@ app2.post('/saveUniform', (req, res) => {
 		let jerseyBakedTexture = await Jimp.read(jerseyTexture)
 		let jerseyBakedTexture2 = await Jimp.read(__dirname+"/images/texture_jersey_default.png")
 		if (buttonPadSeams == "true") {
-			let bpBakedSeamImg = await Jimp.read(__dirname+"/images/seams/seams_button_pad.png")
+			if (buttonType != "buttonsHenley") {
+				var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+			} else {
+				var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+			}
+			let bpBakedSeamImg = await Jimp.read(bakedSeamsSrc)
 			await bpBakedSeamImg.opacity(.1)
 			await jerseyBakedBase.composite(bpBakedSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}

@@ -272,6 +272,7 @@
 													<select id="buttonsType">
                                                         <option value="buttonsScript" selected>Staggered</option>
                                                         <option value="buttonsNoScript">Even</option>
+														<option value="buttonsHenley">2-Button Henley</option>
 														<option value="zipper">Zipper</option>
                                                     </select>
 													(Opacity: <span id="buttonOpacitySpan">75</span>%)
@@ -4147,35 +4148,50 @@
 				case "buttonsScript":
 					g.getObjects().find(o => o.id === 'buttonsScript').visible = true;
 					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+					g.getObjects().find(o => o.id === 'buttonsHenley').visible = false;
 					g.getObjects().find(o => o.id === 'zipper').visible = false;
 					setSeams(true)
-					if ($("#seamsType").val() == "seamsStandardToCollar") {
+					/* if ($("#seamsType").val() == "seamsStandardToCollar") {
 						$("#seamsType").val("seamsStandardToPiping").trigger("change")
 					} else if ($("#seamsType").val() == "seamsRaglanToCollar") {
 						$("#seamsType").val("seamsRaglanToPiping").trigger("change")
-					}
+					} */
 					break;
 				case "buttonsNoScript":
 					g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
 					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = true;
+					g.getObjects().find(o => o.id === 'buttonsHenley').visible = false;
 					g.getObjects().find(o => o.id === 'zipper').visible = false;
 					setSeams(true)
-					if ($("#seamsType").val() == "seamsStandardToCollar") {
+					/* if ($("#seamsType").val() == "seamsStandardToCollar") {
 						$("#seamsType").val("seamsStandardToPiping").trigger("change")
 					} else if ($("#seamsType").val() == "seamsRaglanToCollar") {
 						$("#seamsType").val("seamsRaglanToPiping").trigger("change")
-					}
+					} */
+					break;
+				case "buttonsHenley":
+					g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
+					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+					g.getObjects().find(o => o.id === 'buttonsHenley').visible = true;
+					g.getObjects().find(o => o.id === 'zipper').visible = false;
+					setSeams(true)
+					/* if ($("#seamsType").val() == "seamsStandardToCollar") {
+						$("#seamsType").val("seamsStandardToPiping").trigger("change")
+					} else if ($("#seamsType").val() == "seamsRaglanToCollar") {
+						$("#seamsType").val("seamsRaglanToPiping").trigger("change")
+					} */
 					break;
 				case "zipper":
 					g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
 					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+					g.getObjects().find(o => o.id === 'buttonsHenley').visible = false;
 					g.getObjects().find(o => o.id === 'zipper').visible = true;
 					setSeams(false)
-					if ($("#seamsType").val() == "seamsStandardToPiping") {
+					/* if ($("#seamsType").val() == "seamsStandardToPiping") {
 						$("#seamsType").val("seamsStandardToCollar").trigger("change")
 					} else if ($("#seamsType").val() == "seamsRaglanToPiping") {
 						$("#seamsType").val("seamsRaglanToCollar").trigger("change")
-					}
+					} */
 					break;
 			}
 		} else {
@@ -5118,7 +5134,11 @@
 
 	function setSeams(buttonPadVisible) {
 		if (buttonPadVisible == true) {
-			jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+			if ($("#buttonsType").val() != "buttonsHenley") {
+				jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+			} else {
+				jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+			}
 			if ($("#seamsType").val().startsWith("seamsStandard")) {
 				$("#seamsType").val("seamsStandardToPiping").trigger("change") 
 			} else {
@@ -8216,6 +8236,32 @@
 			//jerseyLogoCanvas.renderAll();
 		})
 
+		fabric.Image.fromURL("./images/buttons_henley.png", function (img) {
+			var tmp = img.set({
+				left: 0, 
+                top: 0,
+				id: 'buttonsHenley',
+				visible: true,
+				selectable: false,
+				evented: false,
+				opacity: 0.75
+			})
+			tmp.set('shadow', new fabric.Shadow({
+				color: '#000000',
+				blur: 5,
+				offsetX: 0,
+				offsetY: 2
+			}))
+			tmp.filters.push(new fabric.Image.filters.BlendColor({
+  				color: "#ffffff",
+				mode: 'multiply',
+  				alpha: 1.0
+			}))
+			tmp.applyFilters()
+			buttons.addWithUpdate(tmp)
+			//jerseyLogoCanvas.renderAll();
+		})
+
  		fabric.Image.fromURL("./images/zipper.png", function (img) {
 			var tmp = img.set({
 				left: 0, 
@@ -10270,6 +10316,7 @@
 				jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
 				showPlanket: showPlanket,
 				buttonPadSeams: buttonPadSeams,
+				buttonType: $("#buttonsType").val(),
 				seamsVisible: seamsVisible,
 				seamsOption: $("#seamsType").val()
 			},
@@ -10543,6 +10590,7 @@
 				showPlanket: showPlanket,
 				buttonPadSeams: buttonPadSeams,
 				seamsVisible: seamsVisible,
+				buttonType: $("#buttonsType").val(),
 				seamsOption: $("#seamsType").val(),
 				jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
 				capWatermarkColor: idealTextColor(capBelow.backgroundColor),
@@ -10584,7 +10632,12 @@
 				jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
 
 				if (buttonPadSeams == true) {
-					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					if ($("#buttonsType").val() != "buttonsHenley") {
+						jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					} else {
+						jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					}
+					//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 				}
 
 				if ($("#toggleCapGuides").is(":checked")) {
