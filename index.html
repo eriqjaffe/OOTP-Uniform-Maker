@@ -8241,7 +8241,7 @@
 				left: 0, 
                 top: 0,
 				id: 'buttonsHenley',
-				visible: true,
+				visible: false,
 				selectable: false,
 				evented: false,
 				opacity: 0.75
@@ -10203,6 +10203,9 @@
 		showOverlay()
 		jerseyBelow.setOverlayImage(null,jerseyBelow.renderAll.bind(jerseyBelow));
 		var showPlanket = false
+		var buttonStyle = "blank"
+		var buttonPadStyle = "blank"
+		var seamStyle = "blank"
 		
 		const buttonGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons')
 		const seamsGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'seams')
@@ -10252,7 +10255,7 @@
 		jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 		seamsGroup.visible = false;
 
-		if (buttonGroup.visible == true) {
+/* 		if (buttonGroup.visible == true) {
 			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons').getObjects().forEach(function(o) {
 				if (o.id != "zipper" && o.visible == true) {
 					showPlanket = true
@@ -10260,7 +10263,41 @@
 			})
 		} else {
 			showPlanket = false
+		} */
+
+		if (buttonGroup.visible == true) {
+			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons').getObjects().forEach(function(o) {
+				if (o.id != "zipper" && o.visible == true) {
+					showPlanket = true
+				}		
+			})
+			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons').getObjects().forEach(function(o) {
+				if (o.visible == true) {
+					buttonStyle = o.id
+				}		
+			})
+		} else {
+			showPlanket = false
+			buttonStyle = "blank"
 		}
+
+		switch ($("#buttonsType").val()) {
+			case "buttonsScript":
+				buttonPadStyle = "buttonpad"
+				break;
+			case "buttonsNoScript":
+				buttonPadStyle = "buttonpad"
+				break;
+			case "buttonsHenley":
+				buttonPadStyle = "henley"
+				break;
+			case "zipper":
+				buttonPadStyle = "blank"
+		}
+
+		if (showPlanket == false) { buttonPadStyle = "blank" }
+
+		var normalMap = buttonPadStyle+"_"+buttonStyle+"_"+$("#sleeveType").val()+"_n.png"
 
 		jerseyBelow.setDimensions({ width: 512, height: 1024 });
     	jerseyBelow.setZoom(1)
@@ -10309,6 +10346,7 @@
 			dataType: "json",
 			data: {
 				nameCanvas: nameCanvas.toDataURL(),
+				normalMap: normalMap,
 				jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
 				jerseyBelow: jerseyBelow.toDataURL(),
 				name: fileName,
@@ -10340,6 +10378,19 @@
 					jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 				}
 
+				if (seamsVisible == true) {
+					seamsGroup.visible = true
+				}
+
+				if (buttonPadSeams == true) {
+					if ($("#buttonsType").val() != "buttonsHenley") {
+						jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					} else {
+						jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					}
+					//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+				}
+
 				hideOverlay()
 			}
 		})
@@ -10348,6 +10399,9 @@
 	$("#save").on("click",function(e) {
 		showOverlay();
 		var showPlanket = false
+		var buttonStyle = "blank"
+		var buttonPadStyle = "blank"
+		var seamStyle = "blank"
 
 		const buttonGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons')
 		const seamsGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'seams')
@@ -10449,9 +10503,33 @@
 					showPlanket = true
 				}		
 			})
+			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons').getObjects().forEach(function(o) {
+				if (o.visible == true) {
+					buttonStyle = o.id
+				}		
+			})
 		} else {
 			showPlanket = false
+			buttonStyle = "blank"
 		}
+
+		switch ($("#buttonsType").val()) {
+			case "buttonsScript":
+				buttonPadStyle = "buttonpad"
+				break;
+			case "buttonsNoScript":
+				buttonPadStyle = "buttonpad"
+				break;
+			case "buttonsHenley":
+				buttonPadStyle = "henley"
+				break;
+			case "zipper":
+				buttonPadStyle = "blank"
+		}
+
+		if (showPlanket == false) { buttonPadStyle = "blank" }
+
+		var normalMap = buttonPadStyle+"_"+buttonStyle+"_"+$("#sleeveType").val()+"_n.png"
 
 		exportMeta.checkboxes = checkboxes
 		exportMeta.selects = selects
@@ -10579,6 +10657,7 @@
 			dataType: "json",
 			data: {
 				text: textLine,
+				normalMap: normalMap,
 				nameCanvas: nameCanvas.toDataURL(),
 				capLogoCanvas: capLogoCanvas.toDataURL(),
 				capBelow: capBelow.toDataURL(),

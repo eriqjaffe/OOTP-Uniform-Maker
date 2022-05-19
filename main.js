@@ -589,6 +589,7 @@ app2.post('/saveJersey', (req, res) => {
 	const buttonType = req.body.buttonType
 	const seamsVisible = req.body.seamsVisible
 	const seamsOption = req.body.seamsOption
+	const normalMap = req.body.normalMap;
 
 	if (tmpJerseyTexture.startsWith("data:image")) {
 		fs.writeFileSync(tempDir+"/tempJerseyTexture.png", tmpJerseyTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
@@ -761,7 +762,7 @@ app2.post('/saveJersey', (req, res) => {
 		//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'_textured.png')
 
 		archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });
-		archive.append(fs.createReadStream(__dirname+"/images/jersey_normal_map.png"), { name: req.body.name+"_n.png" });
+		archive.append(fs.createReadStream(__dirname+"/images/"+normalMap), { name: req.body.name+"_n.png" });
 	    archive.finalize()
 	}
 })
@@ -783,7 +784,17 @@ app2.post('/saveUniform', (req, res) => {
 	const buttonType = req.body.buttonType
 	const seamsVisible = req.body.seamsVisible
 	const seamsOption = req.body.seamsOption
+	const normalMap = req.body.normalMap
 	const json = Buffer.from(req.body.json, 'utf8')
+	/* if (seamsVisible == false) {
+		var nmBase = "blank"
+	} else {
+		switch (buttonPadSeams) {
+			case 
+		}
+	} */
+	var nmBase = null;
+	var nmSleeve = null;
 
 	if (tmpCapTexture.startsWith("data:image")) {
 		fs.writeFileSync(tempDir+"/tempCapTexture.png", tmpCapTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
@@ -922,6 +933,8 @@ app2.post('/saveUniform', (req, res) => {
 		let jerseyHeightMap = await Jimp.read(__dirname+"/images/jersey_height_map.png")
 		await jerseyOverlay.grayscale()
 		await jerseyOverlay.brightness(.5)
+		//var nmBase = null;
+		//var nmSleeve = null;
 		if (buttonPadSeams == "true") {
 			if (buttonType != "buttonsHenley") {
 				var seamsSrc = __dirname+"/images/seams/seams_button_pad.png"
@@ -1013,7 +1026,7 @@ app2.post('/saveUniform', (req, res) => {
 
 		archive.append(json, {name: "uniform_"+req.body.name+".uni"})
 		archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });
-		archive.append(fs.createReadStream(__dirname+"/images/jersey_normal_map.png"), { name: "jerseys_"+req.body.name+"_n.png" });
+		archive.append(fs.createReadStream(__dirname+"/images/"+normalMap), { name: "jerseys_"+req.body.name+"_n.png" });
 	    archive.finalize()
 	}
 })
