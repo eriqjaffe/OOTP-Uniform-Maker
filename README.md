@@ -4,7 +4,7 @@
 
 # OOTP Uniform Maker
 
-An Electron-based dekstop app allowing users to make custom uniforms for <a href="https://www.ootpdevelopments.com/out-of-the-park-baseball-home/" target="_blank">Out of the Park Baseball 23</a>.  If you don't have OOTP 23, then this will be of little use to you.  Owners of older versions of OOTP should check out my stand-alone [Jersey Maker](https://github.com/eriqjaffe/OOTP-Jersey-Maker) and [Cap Maker](https://github.com/eriqjaffe/OOTP-Cap-Maker) applications, although they will probably not see much further development.
+An Electron-based dekstop app allowing users to make custom uniforms for [Out of the Park Baseball 23](https://www.ootpdevelopments.com/out-of-the-park-baseball-home).  If you don't have OOTP 23, then this will be of little use to you.  Owners of older versions of OOTP should check out my stand-alone [Jersey Maker](https://github.com/eriqjaffe/OOTP-Jersey-Maker) and [Cap Maker](https://github.com/eriqjaffe/OOTP-Cap-Maker) applications, although they will probably not see much further development.
 
 # Pre-requisites
 
