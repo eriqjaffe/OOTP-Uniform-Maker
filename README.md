@@ -12,7 +12,7 @@ Image processing (for uploaded logos and some of the jersey text effects) *requi
 
 # Installation notes
 
-To run this from source, you will need to install node.js and yarn, and then...
+To run this from source, you will need to install [node.js](https://nodejs.org/en/download/) and [yarn](https://yarnpkg.com/getting-started/install), and then...
 
 ```
 git clone https://github.com/eriqjaffe/OOTP-Uniform-Maker && cd OOTP-Uniform-Maker
