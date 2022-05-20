@@ -30,8 +30,16 @@ const preferredColorFormat = store.get("preferredColorFormat", "hex")
 const preferredJerseyTexture = store.get("preferredJerseyTexture", "jersey_texture_default.png")
 const preferredPantsTexture = store.get("preferredPantsTexture", "pants_texture_default.png")
 const preferredCapTexture = store.get("preferredCapTexture", "cap_texture_wool.png")
+const preferredPlayerName = store.get("preferredPlayerName", "PLAYER")
+const preferredPlayerNumber = store.get("preferredPlayerNumber", "23")
+const preferredJerseyFont = store.get("preferredJerseyFont", "Leckerli_One")
+const preferredCapFont = store.get("preferredCapFont", "Graduate")
 const gridsVisible = store.get("gridsVisible", true)
 const checkForUpdates = store.get("checkForUpdates", true)
+
+for (const dependency of ['chrome', 'node', 'electron']) {
+    console.log(dependency+", "+process.versions[dependency])
+}
 
 const fontArray = {"Acme": "Acme-Regular.ttf", "athletic_gothicregular": "athletic_gothic-webfont.ttf", "athletic_gothic_shadowregular": "athletic_gothic_shadow-webfont.ttf", "beaverton_scriptregular": "beaverton_script-webfont.ttf", "BerkshireSwash": "BerkshireSwash-Regular.ttf", "CantoraOne": "CantoraOne-Regular.ttf", "caxton_romanregular": "caxton_roman-webfont.ttf", "ChelaOne": "ChelaOne-Regular.ttf", "russell_circusregular": "circus-webfont.ttf", "Condiment": "Condiment-Regular.ttf", "Cookie": "Cookie-Regular.ttf", "Courgette": "Courgette-Regular.ttf", "CroissantOne": "CroissantOne-Regular.ttf", "Damion": "Damion-Regular.ttf", "Engagement": "Engagement-Regular.ttf", "rawlings_fancy_blockregular": "rawlingsfancyblock-regular-webfont.ttf", "GermaniaOne": "GermaniaOne-Regular.ttf", "Graduate": "Graduate-Regular.ttf", "GrandHotel": "GrandHotel-Regular.ttf", "JockeyOne": "JockeyOne-Regular.ttf", "kansasregular": "tuscan-webfont.ttf", "KaushanScript": "KaushanScript-Regular.ttf", "LeckerliOne": "LeckerliOne-Regular.ttf", "LilyScriptOne": "LilyScriptOne-Regular.ttf", "Lobster": "Lobster-Regular.ttf", "LobsterTwo": "LobsterTwo-Regular.ttf", "MetalMania": "MetalMania-Regular.ttf", "Miniver": "Miniver-Regular.ttf", "Molle,italic": "Molle-Regular.ttf", "NewRocker": "NewRocker-Regular.ttf", "Norican": "Norican-Regular.ttf", "rawlings_old_englishmedium": "rawlingsoldenglish-webfont.ttf", "OleoScript": "OleoScript-Regular.ttf", "OleoScriptSwashCaps": "OleoScriptSwashCaps-Regular.ttf", "Pacifico": "Pacifico.ttf", "PirataOne": "PirataOne-Regular.ttf", "Playball": "Playball-Regular.ttf", "pro_full_blockregular": "pro_full_block-webfont.ttf", "richardson_fancy_blockregular": "richardson_fancy_block-webfont.ttf", "RubikOne": "RubikOne-Regular.ttf", "RumRaisin": "RumRaisin-Regular.ttf", "Satisfy": "Satisfy-Regular.ttf", "SeymourOne": "SeymourOne-Regular.ttf", "spl28scriptregular": "spl28script-webfont.ttf", "ua_tiffanyregular": "tiffany-webfont.ttf", "TradeWinds": "TradeWinds-Regular.ttf", "mlb_tuscan_newmedium": "mlb_tuscan_new-webfont.ttf", "UnifrakturCook": "UnifrakturCook-Bold.ttf", "UnifrakturMaguntia": "UnifrakturMaguntia-Book.ttf", "Vibur": "Vibur-Regular.ttf", "Viga": "Viga-Regular.ttf", "Wellfleet": "Wellfleet-Regular.ttf", "WendyOne": "WendyOne-Regular.ttf", "Yellowtail": "Yellowtail-Regular.ttf"};
 
@@ -62,14 +70,35 @@ app2.get("/checkForUpdate", (req,res) => {
 	});
 })
 
+app2.get("/dropImage", (req, res) => {
+	Jimp.read(req.query.file, (err, image) => {
+		if (err) {
+			res.json({
+				"filename": "error not an image",
+				"image": "error not an image"
+			})
+		} else {
+			image.getBase64(Jimp.AUTO, (err, ret) => {
+				res.json({
+					"filename": path.basename(req.query.file),
+					"image": ret
+				});
+			})
+		}
+	})
+})
+
 app2.get("/uploadImage", (req, res) => {
-	dialog.showOpenDialog(null, {
+	const options = {
+		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
 		properties: ['openFile'],
 		filters: [
 			{ name: 'Images', extensions: ['jpg', 'png'] }
 		]
-	  }).then(result => {
+	}
+	dialog.showOpenDialog(null, options).then(result => {
 		  if(!result.canceled) {
+			store.set("uploadImagePath", path.dirname(result.filePaths[0]))
 			Jimp.read(result.filePaths[0], (err, image) => {
 				if (err) {
 					console.log(err);
@@ -216,13 +245,16 @@ app2.post('/removeAllColor', (req, res) => {
 });
 
 app2.get("/customFont", (req, res) => {
-	dialog.showOpenDialog(null, {
+	const options = {
+		defaultPath: store.get("uploadFontPath", app.getPath('desktop')),
 		properties: ['openFile'],
 		filters: [
 			{ name: 'Fonts', extensions: ['ttf', 'otf'] }
 		]
-	}).then(result => {
+	}
+	dialog.showOpenDialog(null, options).then(result => {
 		if(!result.canceled) {
+			store.set("uploadFontPath", path.dirname(result.filePaths[0]))
 			ttfInfo(result.filePaths[0], function(err, info) {
 			var ext = getExtension(result.filePaths[0])
 				const dataUrl = font2base64.encodeToDataUrlSync(result.filePaths[0])
@@ -232,6 +264,7 @@ app2.get("/customFont", (req, res) => {
 						console.log(err)
 					} else {
 						res.json({
+							"status": "ok",
 							"fontName": info.tables.name[1],
 							"fontStyle": info.tables.name[2],
 							"familyName": info.tables.name[6],
@@ -244,6 +277,10 @@ app2.get("/customFont", (req, res) => {
 					}
 				})
 			});
+		} else {
+			res.json({"status":"cancelled"})
+			res.end()
+			console.log("cancelled")
 		}
 	}).catch(err => {
 		console.log(err)
@@ -438,6 +475,7 @@ app2.post('/jitterText', (req, res) => {
 app2.post('/savePants', (req, res) => {
 	const pantsLogoCanvas = Buffer.from(req.body.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const pantsBelow = Buffer.from(req.body.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const text = req.body.text
 	const tmpPantsTexture = req.body.pantsTexture
 
 	const options = {
@@ -457,11 +495,18 @@ app2.post('/savePants', (req, res) => {
 		let pantsBase = await Jimp.read(pantsBelow)
 		let pantsTextureFile = await Jimp.read(pantsTexture)
 		let pantsOverlay = await Jimp.read(pantsLogoCanvas)
+		let font = await Jimp.loadFont(__dirname+"/fonts/rowdies.fnt")
+		let blankImage = new Jimp(3000, 500)
+		await blankImage.print(font, 10, 10, text)
+		await blankImage.autocrop()
+		await blankImage.scaleToFit(500,15)
+		await blankImage.color([{ apply: "mix", params: [req.body.pantsWatermarkColor, 100] }]);
 		await pantsBase.composite(pantsTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await pantsBase.composite(pantsOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let pantsWM = await Jimp.read(__dirname+"/images/pants_watermark.png")
 		await pantsWM.color([{ apply: "mix", params: [req.body.pantsWatermarkColor, 100] }]);
 		await pantsBase.composite(pantsWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await pantsBase.blit(blankImage, 256-(blankImage.bitmap.width/2), 12.5-(blankImage.bitmap.height/2))
 		let pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
 		let finalImage = Buffer.from(pantsBuffer).toString('base64');
 		dialog.showSaveDialog(null, options).then((result) => {
@@ -483,6 +528,7 @@ app2.post('/savePants', (req, res) => {
 app2.post('/saveCap', (req, res) => {
 	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const text = req.body.text
 	const tmpCapTexture = req.body.capTexture
 
 	const options = {
@@ -502,11 +548,18 @@ app2.post('/saveCap', (req, res) => {
 		let capBase = await Jimp.read(capBelow)
 		let capOverlay = await Jimp.read(capLogoCanvas)
 		let capTextureFile = await Jimp.read(capTexture)
+		let font = await Jimp.loadFont(__dirname+"/fonts/rowdies.fnt")
+		let blankImage = new Jimp(3000, 500)
+		await blankImage.print(font, 10, 10, text)
+		await blankImage.autocrop()
+		await blankImage.scaleToFit(290,15)
+		await blankImage.color([{ apply: "mix", params: [req.body.capWatermarkColor, 100] }]);
 		let capWM = await Jimp.read(__dirname+"/images/cap_watermark.png")
 		await capWM.color([{ apply: "mix", params: [req.body.capWatermarkColor, 100] }]);
 		await capBase.composite(capTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await capBase.composite(capOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await capBase.composite(capWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await capBase.blit(blankImage, 357-(blankImage.bitmap.width/2), 120-(blankImage.bitmap.height/2))
 		let capBuffer = await capBase.getBufferAsync(Jimp.MIME_PNG)
 		let finalImage = Buffer.from(capBuffer).toString('base64');
 		dialog.showSaveDialog(null, options).then((result) => {
@@ -528,11 +581,14 @@ app2.post('/saveCap', (req, res) => {
 app2.post('/saveJersey', (req, res) => {
 	const jerseyLogoCanvas = Buffer.from(req.body.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const jerseyBelow = Buffer.from(req.body.jerseyBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const nameCanvas = Buffer.from(req.body.nameCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const tmpJerseyTexture = req.body.jerseyTexture
 	const showPlanket = req.body.showPlanket
 	const buttonPadSeams = req.body.buttonPadSeams
+	const buttonType = req.body.buttonType
 	const seamsVisible = req.body.seamsVisible
 	const seamsOption = req.body.seamsOption
+	const normalMap = req.body.normalMap;
 
 	if (tmpJerseyTexture.startsWith("data:image")) {
 		fs.writeFileSync(tempDir+"/tempJerseyTexture.png", tmpJerseyTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
@@ -600,35 +656,13 @@ app2.post('/saveJersey', (req, res) => {
 		let jerseyBase = await Jimp.read(jerseyBelow)
 		let jerseyTextureFile = await Jimp.read(jerseyTexture)
 		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
+		let nameImage = await Jimp.read(nameCanvas)
 		await jerseyBase.composite(jerseyTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
-		/*if (buttonPadSeams == "true") {
-			let bpSeamImg = await Jimp.read(__dirname+"/images/seams/seams_button_pad.png")
-			await bpSeamImg.opacity(.25)
-			await jerseyBase.composite(bpSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		}
-		if (seamsVisible == "true") {
-			switch (seamsOption) {
-				case "seamsStandardToPiping":
-					var seamSrc = __dirname+"/images/seams/seams_standard_to_piping.png"
-					break;
-				case "seamsStandardToCollar":
-					var seamSrc = __dirname+"/images/seams/seams_standard_to_collar.png"
-					break;
-				case "seamsRaglanToPiping":
-					var seamSrc = __dirname+"/images/seams/seams_raglan_to_piping.png"
-					break;
-				case "seamsRaglanToCollar":
-					var seamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
-					break;
-			}
-			let seamsImg = await Jimp.read(seamSrc)
-			await seamsImg.opacity(.25)
-			await jerseyBase.composite(seamsImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		} */
 		await jerseyBase.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyWM = await Jimp.read(__dirname+"/images/jersey_watermark.png")
 		await jerseyWM.color([{ apply: "mix", params: [req.body.jerseyWatermarkColor, 100] }]);
 		await jerseyBase.composite(jerseyWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await jerseyBase.composite(nameImage, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBuffer = await jerseyBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(jerseyBuffer, {name: req.body.name+".png"})
 		//await jerseyBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'.png')
@@ -638,7 +672,12 @@ app2.post('/saveJersey', (req, res) => {
 		await jerseyOverlay.grayscale()
 		await jerseyOverlay.brightness(.5)
 		if (buttonPadSeams == "true") {
-			let bpHMSeamImg = await Jimp.read(__dirname+"/images/seams/seams_button_pad.png")
+			if (buttonType != "buttonsHenley") {
+				var seamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+			} else {
+				var seamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+			}
+			let bpHMSeamImg = await Jimp.read(seamsSrc)
 			await bpHMSeamImg.brightness(.33)
 			await jerseyHeightMap.composite(bpHMSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
@@ -662,7 +701,12 @@ app2.post('/saveJersey', (req, res) => {
 			await jerseyHeightMap.composite(seamsHMImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
 		if (showPlanket == "true") {
-			let planket = await Jimp.read(__dirname+"/images/planket.png")
+			if (buttonType != "buttonsHenley") {
+				var planketSrc = __dirname+"/images/planket.png"
+			} else {
+				var planketSrc = __dirname+"/images/planket_henley.png"
+			}
+			let planket = await Jimp.read(planketSrc)
 			await jerseyHeightMap.composite(planket, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
 		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
@@ -675,8 +719,14 @@ app2.post('/saveJersey', (req, res) => {
 		let jerseyBakedOverlay = await Jimp.read(jerseyLogoCanvas)
 		let jerseyBakedTexture = await Jimp.read(jerseyTexture)
 		let jerseyBakedTexture2 = await Jimp.read(__dirname+"/images/texture_jersey_default.png")
+		let bakedNameImage = await Jimp.read(nameCanvas)
 		if (buttonPadSeams == "true") {
-			let bpBakedSeamImg = await Jimp.read(__dirname+"/images/seams/seams_button_pad.png")
+			if (buttonType != "buttonsHenley") {
+				var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+			} else {
+				var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+			}
+			let bpBakedSeamImg = await Jimp.read(bakedSeamsSrc)
 			await bpBakedSeamImg.opacity(.1)
 			await jerseyBakedBase.composite(bpBakedSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
@@ -705,12 +755,13 @@ app2.post('/saveJersey', (req, res) => {
 		let jerseyBakedWM = await Jimp.read(__dirname+"/images/jersey_watermark.png")
 		await jerseyBakedWM.color([{ apply: "mix", params: [req.body.jerseyWatermarkColor, 100] }]);
 		await jerseyBakedBase.composite(jerseyBakedWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await jerseyBakedBase.composite(bakedNameImage, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBakedBuffer = await jerseyBakedBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(jerseyBakedBuffer, {name: req.body.name+"_textured.png"})
 		//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'_textured.png')
 
 		archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });
-		archive.append(fs.createReadStream(__dirname+"/images/jersey_normal_map.png"), { name: req.body.name+"_n.png" });
+		archive.append(fs.createReadStream(__dirname+"/images/"+normalMap), { name: req.body.name+"_n.png" });
 	    archive.finalize()
 	}
 })
@@ -722,14 +773,27 @@ app2.post('/saveUniform', (req, res) => {
 	const pantsBelow = Buffer.from(req.body.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const nameCanvas = Buffer.from(req.body.nameCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const text = req.body.text;
 	const tmpCapTexture = req.body.capTexture
 	const tmpJerseyTexture = req.body.jerseyTexture
 	const tmpPantsTexture = req.body.pantsTexture
 	const showPlanket = req.body.showPlanket
 	const buttonPadSeams = req.body.buttonPadSeams
+	const buttonType = req.body.buttonType
 	const seamsVisible = req.body.seamsVisible
 	const seamsOption = req.body.seamsOption
+	const normalMap = req.body.normalMap
 	const json = Buffer.from(req.body.json, 'utf8')
+	/* if (seamsVisible == false) {
+		var nmBase = "blank"
+	} else {
+		switch (buttonPadSeams) {
+			case 
+		}
+	} */
+	var nmBase = null;
+	var nmSleeve = null;
 
 	if (tmpCapTexture.startsWith("data:image")) {
 		fs.writeFileSync(tempDir+"/tempCapTexture.png", tmpCapTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
@@ -809,15 +873,23 @@ app2.post('/saveUniform', (req, res) => {
 	prepareImages()
 
 	async function prepareImages() {
+		let font = await Jimp.loadFont(__dirname+"/fonts/rowdies.fnt")
+
 		// cap
 		let capBase = await Jimp.read(capBelow)
 		let capOverlay = await Jimp.read(capLogoCanvas)
 		let capTextureFile = await Jimp.read(capTexture)
+		let blankCapImage = new Jimp(3000, 500)
+		await blankCapImage.print(font, 10, 10, text)
+		await blankCapImage.autocrop()
+		await blankCapImage.scaleToFit(500,15)
+		await blankCapImage.color([{ apply: "mix", params: [req.body.capWatermarkColor, 100] }]);
 		let capWM = await Jimp.read(__dirname+"/images/cap_watermark.png")
 		await capWM.color([{ apply: "mix", params: [req.body.capWatermarkColor, 100] }]);
 		await capBase.composite(capTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await capBase.composite(capOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await capBase.composite(capWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await capBase.blit(blankCapImage, 357-(blankCapImage.bitmap.width/2), 120-(blankCapImage.bitmap.height/2))
 		let capBuffer = await capBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(capBuffer, {name: "caps_"+req.body.name+".png"})
 		//await capBase.write(app.getPath('desktop') + '/uniform_Unknown_Team_Home/caps_' + req.body.name+'.png')
@@ -826,11 +898,17 @@ app2.post('/saveUniform', (req, res) => {
 		let pantsBase = await Jimp.read(pantsBelow)
 		let pantsTextureFile = await Jimp.read(pantsTexture)
 		let pantsOverlay = await Jimp.read(pantsLogoCanvas)
+		let blankPantsImage = new Jimp(3000, 500)
+		await blankPantsImage.print(font, 10, 10, text)
+		await blankPantsImage.autocrop()
+		await blankPantsImage.scaleToFit(500,15)
+		await blankPantsImage.color([{ apply: "mix", params: [req.body.pantsWatermarkColor, 100] }]);
 		await pantsBase.composite(pantsTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await pantsBase.composite(pantsOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let pantsWM = await Jimp.read(__dirname+"/images/pants_watermark.png")
 		await pantsWM.color([{ apply: "mix", params: [req.body.pantsWatermarkColor, 100] }]);
 		await pantsBase.composite(pantsWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await pantsBase.blit(blankPantsImage, 256-(blankPantsImage.bitmap.width/2), 12.5-(blankPantsImage.bitmap.height/2))
 		let pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(pantsBuffer, {name: "pants_"+req.body.name+".png"})
 		//await pantsBase.write(app.getPath('downloads') + '/pants_' + req.body.name+'.png')
@@ -839,35 +917,13 @@ app2.post('/saveUniform', (req, res) => {
 		let jerseyBase = await Jimp.read(jerseyBelow)
 		let jerseyTextureFile = await Jimp.read(jerseyTexture)
 		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
-		await jerseyBase.composite(jerseyTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
-		/* if (buttonPadSeams == "true") {
-			let bpSeamImg = await Jimp.read(__dirname+"/images/seams/seams_button_pad.png")
-			await bpSeamImg.opacity(.25)
-			await jerseyBase.composite(bpSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		}
-		if (seamsVisible == "true") {
-			switch (seamsOption) {
-				case "seamsStandardToPiping":
-					var seamSrc = __dirname+"/images/seams/seams_standard_to_piping.png"
-					break;
-				case "seamsStandardToCollar":
-					var seamSrc = __dirname+"/images/seams/seams_standard_to_collar.png"
-					break;
-				case "seamsRaglanToPiping":
-					var seamSrc = __dirname+"/images/seams/seams_raglan_to_piping.png"
-					break;
-				case "seamsRaglanToCollar":
-					var seamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
-					break;
-			}
-			let seamsImg = await Jimp.read(seamSrc)
-			await seamsImg.opacity(.25)
-			await jerseyBase.composite(seamsImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		} */
+		await jerseyBase.composite(jerseyTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})	
 		await jerseyBase.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyWM = await Jimp.read(__dirname+"/images/jersey_watermark.png")
 		await jerseyWM.color([{ apply: "mix", params: [req.body.jerseyWatermarkColor, 100] }]);
 		await jerseyBase.composite(jerseyWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		let nameImage = await Jimp.read(nameCanvas)
+		await jerseyBase.composite(nameImage, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBuffer = await jerseyBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(jerseyBuffer, {name: "jerseys_"+req.body.name+".png"})
 		//await jerseyBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'.png')
@@ -876,8 +932,15 @@ app2.post('/saveUniform', (req, res) => {
 		let jerseyHeightMap = await Jimp.read(__dirname+"/images/jersey_height_map.png")
 		await jerseyOverlay.grayscale()
 		await jerseyOverlay.brightness(.5)
+		//var nmBase = null;
+		//var nmSleeve = null;
 		if (buttonPadSeams == "true") {
-			let bpHMSeamImg = await Jimp.read(__dirname+"/images/seams/seams_button_pad.png")
+			if (buttonType != "buttonsHenley") {
+				var seamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+			} else {
+				var seamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+			}
+			let bpHMSeamImg = await Jimp.read(seamsSrc)
 			await bpHMSeamImg.brightness(.33)
 			await jerseyHeightMap.composite(bpHMSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
@@ -901,7 +964,12 @@ app2.post('/saveUniform', (req, res) => {
 			await jerseyHeightMap.composite(seamsHMImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
 		if (showPlanket == "true") {
-			let planket = await Jimp.read(__dirname+"/images/planket.png")
+			if (buttonType != "buttonsHenley") {
+				var planketSrc = __dirname+"/images/planket.png"
+			} else {
+				var planketSrc = __dirname+"/images/planket_henley.png"
+			}
+			let planket = await Jimp.read(planketSrc)
 			await jerseyHeightMap.composite(planket, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
 		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
@@ -915,7 +983,12 @@ app2.post('/saveUniform', (req, res) => {
 		let jerseyBakedTexture = await Jimp.read(jerseyTexture)
 		let jerseyBakedTexture2 = await Jimp.read(__dirname+"/images/texture_jersey_default.png")
 		if (buttonPadSeams == "true") {
-			let bpBakedSeamImg = await Jimp.read(__dirname+"/images/seams/seams_button_pad.png")
+			if (buttonType != "buttonsHenley") {
+				var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+			} else {
+				var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+			}
+			let bpBakedSeamImg = await Jimp.read(bakedSeamsSrc)
 			await bpBakedSeamImg.opacity(.1)
 			await jerseyBakedBase.composite(bpBakedSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
@@ -944,13 +1017,15 @@ app2.post('/saveUniform', (req, res) => {
 		let jerseyBakedWM = await Jimp.read(__dirname+"/images/jersey_watermark.png")
 		await jerseyBakedWM.color([{ apply: "mix", params: [req.body.jerseyWatermarkColor, 100] }]);
 		await jerseyBakedBase.composite(jerseyBakedWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		let nameImageBaked = await Jimp.read(nameCanvas)
+		await jerseyBakedBase.composite(nameImageBaked, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBakedBuffer = await jerseyBakedBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(jerseyBakedBuffer, {name: "jerseys_"+req.body.name+"_textured.png"})
 		//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'_textured.png')
 
 		archive.append(json, {name: "uniform_"+req.body.name+".uni"})
 		archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });
-		archive.append(fs.createReadStream(__dirname+"/images/jersey_normal_map.png"), { name: "jerseys_"+req.body.name+"_n.png" });
+		archive.append(fs.createReadStream(__dirname+"/images/"+normalMap), { name: "jerseys_"+req.body.name+"_n.png" });
 	    archive.finalize()
 	}
 })
@@ -976,7 +1051,7 @@ app2.post('/setPreference', (req, res) => {
 function createWindow () {
     const mainWindow = new BrowserWindow({
       width: 1400,
-      height: 1000,
+      height: 1020,
       icon: (__dirname + '/images/ballcap.png'),
       webPreferences: {
           nodeIntegration: true,
@@ -1105,7 +1180,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredPlayerName=${preferredPlayerName}&preferredPlayerNumber=${preferredPlayerNumber}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}`);
     //mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}`);
 	
   

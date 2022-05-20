@@ -30,12 +30,28 @@
 		const appVersion = params.get('appVersion')
 		const gridsVisible = (params.get('gridsVisible').toLowerCase() == "true") ? true : false
 		const checkForUpdates = (params.get('checkForUpdates').toLowerCase() == "true") ? true : false
+		const preferredPlayerName = params.get('preferredPlayerName')
+		const preferredPlayerNumber = params.get('preferredPlayerNumber')
+
+		var prefs = {
+			appVersion: params.get('appVersion'),
+			gridsVisible: (params.get('gridsVisible').toLowerCase() == "true") ? true : false,
+			checkForUpdates: (params.get('checkForUpdates').toLowerCase() == "true") ? true : false,
+			preferredPlayerName: params.get('preferredPlayerName'),
+			preferredPlayerNumber: params.get('preferredPlayerNumber'),
+			preferredJerseyTexture: params.get('preferredJerseyTexture'),
+			preferredPantsTexture: params.get('preferredPantsTexture'),
+			preferredCapTexture: params.get('preferredCapTexture'),
+			preferredColorFormat: params.get('preferredColorFormat'),
+			preferredJerseyFont: params.get('preferredJerseyFont'),
+			preferredCapFont: params.get('preferredCapFont')
+		}
 
 		var defaultJerseyTexture = params.get('preferredJerseyTexture')
 		var defaultPantsTexture = params.get('preferredPantsTexture')
 		var defaultCapTexture = params.get('preferredCapTexture')
 
-        const initialJerseyColors = {jerseyColor:"#FFFFFF",jerseyFrontColor:"#008800",jerseyBackColor:"#880000",buttonPadFillColor:"#FFFFFF",buttonPadColor:"#000000",collarColor:"#103959",leftSleeveColor:"#FFFFFF",rightSleeveColor:"#FFFFFF",leftSleeveRaglanColor:"#FFFFFF",rightSleeveRaglanColor:"#FFFFFF",jerseyPinstripesColor:"#0c2340",sleevePinstripesColor:"#0c2340",jerseyPinstripesStrokeColor:"transparent",undershirtColor:"#103959",sleeveSeamAngledColor:"#0202f0",sleeveSeamAngledStrokeColor:"#000000",racingStripeLargeColor:"#ff0000",racingStripeSmallColor:"#00FF00",sideRacingStripeLargeColor:"#ff0000",sideRacingStripeSmallColor:"#00FF00",sleeveSeamXLColor:"#971717",sleeveSeamXLStrokeColor:"#000000",smallTopShouldersColor:"#999999",smallTopShouldersStrokeColor:"#000000",bigTopShouldersColor:"#00FF00",bigTopShouldersStrokeColor:"#000000",sidePanelSmallColor:"#FF0000",sidePanelSmallStrokeColor:"#0000FF",sidePanelSmallRoundedColor:"#0000FF",sidePanelSmallRoundedStrokeColor:"#FF0000",sidePanelLargeRoundedColor:"#00FF00",sidePanelLargeRoundedStrokeColor:"yellow",sidePanelVColor:"yellow",sidePanelVStrokeColor:"#00FF00",arcedStripeColor:"#003399",placketPipingInnerColor:"#FF0000",placketPipingMiddleColor:"#00FF00",placketPipingOuterColor:"#0000FF",widePlacketPipingInnerColor:"#FF0000",widePlacketPipingMiddleColor:"#00FF00",widePlacketPipingOuterColor:"#0000FF",tequilaSunrise1Color:"#d50032",tequilaSunrise2Color:"#ff8200",tequilaSunrise3Color:"#ffcd00",tequilaSunrise4Color:"#e87722",sleevePipingInnerColor:"#FF0000",sleevePipingMiddleColor:"#FFFFFF",sleevePipingOuterColor:"#0000FF",thinCuffInnerColor:"#FF0000",thinCuffMiddleColor:"#FFFFFF",thinCuffOuterColor:"#0000FF",sleeveCuffInnerColor:"#FF0000",sleeveCuffMiddleColor:"#FFFFFF",sleeveCuffOuterColor:"#0000FF",shoulderPipingInnerColor:"#FF0000",shoulderPipingMiddleColor:"#FFFFFF",shoulderPipingOuterColor:"#0000FF",swashFillColor:"#000000",swashStrjerseyNameFillokeColor:"#FF0000",wordmarkTextColor:"#103959",wordmarkTextStroke1Color:"#FFFFFF",wordmarkTextStroke2Color:"#FF0000",beachBlanketTopColor:"#C8102E",beachBlanketMiddleColor:"#0C2340",beachBlanketBottomColor:"#C8102E",vNeckThinInnerColor:"#FF0000",vNeckThinMiddleColor:"#FFFFFF",vNeckThinOuterColor:"#0000FF",vNeckOffsetInnerColor:"#FF0000",vNeckOffsetMiddleColor:"#FFFFFF",vNeckOffsetOuterColor:"#0000FF",vNeckThickInnerColor:"#FF0000",vNeckThickMiddleColor:"#FFFFFF",vNeckThickOuterColor:"#0000FF",vNeck2OuterColor:"#0000FF",vNeck2InnerColor:"#FF0000",buttonsColor:"#FFFFFF",camoBaseColor:"#4a551e",camoLayer1Color:"#052503",camoLayer2Color:"#beb585",digiCamoBaseColor:"#9a8b62",digiCamoLayer1Color:"#372900",digiCamoLayer2Color:"#736632",butterflyColor:"#103959",cadetCollarColor:"#FF0000",fullCollarColor:"#00FF00",neckCollarColor:"#0000FF",sunCollar1Color:"#FF0000",sunCollar2Color:"#00FF00",buttonDownCollarColor:"#00FFFF",jerseyFlapColor:"#191970",jerseyFlapTrimColor:"#800000",jerseyFlapButtonsColor:"#FFFFFF",jerseyShield1WideStrokeColor:"#FF0000",jerseyShield1WideColor:"#0000FF",jerseyShield1InnerStrokeColor:"#000000",jerseyShield1InnerColor:"#00FF00",jerseyShield1ButtonsColor:"#FFFFFF",jerseyShield2StrokeColor:"#FF0000",jerseyShield2InnerColor:"#0000FF",jerseyShield2ButtonsColor:"#FFFFFF",jerseyPanelStrokeColor:"#FF0000",jerseyPanelFillColor:"#00FF00",jerseyPanelButtonColor:"#FFFFFF",bowTie1Color:"#0000FF",bowTie2Color:"#FF0000",tieColor:"#272A26",pocketFillColor:"#fffdd0",xLacesColor:"#0000FF",vLacesColor:"#FF0000",hockeyLacesColor:"#CFCFCF",suspendersColor:"#228b22",nikeHornsColor:"#FF9933",shoulderLoops1Color:"#6600CC",shoulderLoops2Color:"#339933",ncaaShoulderColor:"#996633",makersMarkColor:"#000000",jerseySnakeskinColor:"#A41E20",rainbowShoulder1Color:"#041E42",rainbowShoulder2Color:"#D50032",rainbowShoulder3Color:"#FA4616",rainbowShoulder4Color:"#FFCD00",jerseyMakersMarkColor:"#000000",mlbBaseColor:"#FFFFFF",mlb1Color:"#041e42",mlb2Color:"#bf0d3e",milbBaseColor:"#FFFFFF",milb1Color:"#041e42",milb2Color:"#bf0d3e",highCollar1:"#00FF00",highCollar1Laces:"#ffffff",diagonalSide1:"#FF0000",diagonalSide2:"#0000FF",kiaSide1:"#00FF00",kiaSide2:"#FF0000",rainbowR:"#ff0000",rainbowO:"#ff7700",rainbowY:"#ffdd00",rainbowG:"#00ff00",rainbowB:"#4700ff",rainbowI:"#8a2be2",rainbowV:"#c77df3",brooklynCheck:"#003087",brooklynCheckStroke:"#E35205",collarPinstripeColor:"transparent",swatch1Color:'#FF0000',swatch2Color:'#008000',swatch3Color:'#0000FF',swatch4Color:'#808080',montrealShoulderFront:"#E4002B",montrealShoulderBack:"#003087",montrealSideFront:"#E4002B",montrealSideBack:"#003087",jerseyBackNumberFill:"#103959",jerseyBackNumberStroke1:"#FFFFFF",jerseyBackNumberStroke2:"#FF0000",jerseyFrontNumberFill:"#103959",jerseyFrontNumberStroke1:"#FFFFFF",jerseyFrontNumberStroke2:"#FF0000",jerseySleeveNumberFill:"#103959",jerseySleeveNumberStroke1:"#FFFFFF",jerseySleeveNumberStroke2:"#FF0000",jerseyNameFill:"#103959",jerseyNameStroke1:"#FFFFFF",jerseyNameStroke2:"#FF0000",placketDoublePiping:"#C8102E"}
+        const initialJerseyColors = {jerseyColor:"#FFFFFF",jerseyFrontColor:"#008800",jerseyBackColor:"#880000",buttonPadFillColor:"#FFFFFF",buttonPadColor:"#000000",collarColor:"#103959",leftSleeveColor:"#FFFFFF",rightSleeveColor:"#FFFFFF",leftSleeveRaglanColor:"#FFFFFF",rightSleeveRaglanColor:"#FFFFFF",jerseyPinstripesColor:"#0c2340",sleevePinstripesColor:"#0c2340",jerseyPinstripesStrokeColor:"transparent",undershirtColor:"#103959",sleeveSeamAngledColor:"#0202f0",sleeveSeamAngledStrokeColor:"#000000",racingStripeLargeColor:"#ff0000",racingStripeSmallColor:"#00FF00",sideRacingStripeLargeColor:"#ff0000",sideRacingStripeSmallColor:"#00FF00",sleeveSeamXLColor:"#971717",sleeveSeamXLStrokeColor:"#000000",smallTopShouldersColor:"#999999",smallTopShouldersStrokeColor:"#000000",bigTopShouldersColor:"#00FF00",bigTopShouldersStrokeColor:"#000000",sidePanelSmallColor:"#FF0000",sidePanelSmallStrokeColor:"#0000FF",sidePanelSmallRoundedColor:"#0000FF",sidePanelSmallRoundedStrokeColor:"#FF0000",sidePanelLargeRoundedColor:"#00FF00",sidePanelLargeRoundedStrokeColor:"yellow",sidePanelVColor:"yellow",sidePanelVStrokeColor:"#00FF00",arcedStripeColor:"#003399",placketPipingInnerColor:"#FF0000",placketPipingMiddleColor:"#00FF00",placketPipingOuterColor:"#0000FF",widePlacketPipingInnerColor:"#FF0000",widePlacketPipingMiddleColor:"#00FF00",widePlacketPipingOuterColor:"#0000FF",tequilaSunrise1Color:"#d50032",tequilaSunrise2Color:"#ff8200",tequilaSunrise3Color:"#ffcd00",tequilaSunrise4Color:"#e87722",sleevePipingInnerColor:"#FF0000",sleevePipingMiddleColor:"#FFFFFF",sleevePipingOuterColor:"#0000FF",thinCuffInnerColor:"#FF0000",thinCuffMiddleColor:"#FFFFFF",thinCuffOuterColor:"#0000FF",sleeveCuffInnerColor:"#FF0000",sleeveCuffMiddleColor:"#FFFFFF",sleeveCuffOuterColor:"#0000FF",shoulderPipingInnerColor:"#FF0000",shoulderPipingMiddleColor:"#FFFFFF",shoulderPipingOuterColor:"#0000FF",swashFillColor:"#000000",swashStrjerseyNameFillokeColor:"#FF0000",wordmarkTextColor:"#103959",wordmarkTextStroke1Color:"#FFFFFF",wordmarkTextStroke2Color:"#FF0000",beachBlanketTopColor:"#C8102E",beachBlanketMiddleColor:"#0C2340",beachBlanketBottomColor:"#C8102E",vNeckThinInnerColor:"#FF0000",vNeckThinMiddleColor:"#FFFFFF",vNeckThinOuterColor:"#0000FF",vNeckOffsetInnerColor:"#FF0000",vNeckOffsetMiddleColor:"#FFFFFF",vNeckOffsetOuterColor:"#0000FF",vNeckThickInnerColor:"#FF0000",vNeckThickMiddleColor:"#FFFFFF",vNeckThickOuterColor:"#0000FF",vNeck2OuterColor:"#0000FF",vNeck2InnerColor:"#FF0000",buttonsColor:"#FFFFFF",camoBaseColor:"#4a551e",camoLayer1Color:"#052503",camoLayer2Color:"#beb585",digiCamoBaseColor:"#9a8b62",digiCamoLayer1Color:"#372900",digiCamoLayer2Color:"#736632",butterflyColor:"#103959",cadetCollarColor:"#FF0000",fullCollarColor:"#00FF00",neckCollarColor:"#0000FF",sunCollar1Color:"#FF0000",sunCollar2Color:"#00FF00",buttonDownCollarColor:"#00FFFF",bowTie1Color:"#0000FF",bowTie2Color:"#FF0000",tieColor:"#272A26",pocketFillColor:"#fffdd0",xLacesColor:"#0000FF",vLacesColor:"#FF0000",hockeyLacesColor:"#CFCFCF",suspendersColor:"#228b22",nikeHornsColor:"#FF9933",shoulderLoops1Color:"#6600CC",shoulderLoops2Color:"#339933",ncaaShoulderColor:"#996633",makersMarkColor:"#000000",jerseySnakeskinColor:"#A41E20",rainbowShoulder1Color:"#041E42",rainbowShoulder2Color:"#D50032",rainbowShoulder3Color:"#FA4616",rainbowShoulder4Color:"#FFCD00",jerseyMakersMarkColor:"#000000",mlbBaseColor:"#FFFFFF",mlb1Color:"#041e42",mlb2Color:"#bf0d3e",milbBaseColor:"#FFFFFF",milb1Color:"#041e42",milb2Color:"#bf0d3e",highCollar1:"#00FF00",highCollar1Laces:"#ffffff",diagonalSide1:"#FF0000",diagonalSide2:"#0000FF",kiaSide1:"#00FF00",kiaSide2:"#FF0000",rainbowR:"#ff0000",rainbowO:"#ff7700",rainbowY:"#ffdd00",rainbowG:"#00ff00",rainbowB:"#4700ff",rainbowI:"#8a2be2",rainbowV:"#c77df3",brooklynCheck:"#003087",brooklynCheckStroke:"#E35205",collarPinstripeColor:"transparent",swatch1Color:'#FF0000',swatch2Color:'#008000',swatch3Color:'#0000FF',swatch4Color:'#808080',montrealShoulderFront:"#E4002B",montrealShoulderBack:"#003087",montrealSideFront:"#E4002B",montrealSideBack:"#003087",jerseyBackNumberFill:"#103959",jerseyBackNumberStroke1:"#FFFFFF",jerseyBackNumberStroke2:"#FF0000",jerseyFrontNumberFill:"#103959",jerseyFrontNumberStroke1:"#FFFFFF",jerseyFrontNumberStroke2:"#FF0000",jerseySleeveNumberFill:"#103959",jerseySleeveNumberStroke1:"#FFFFFF",jerseySleeveNumberStroke2:"#FF0000",jerseyNameFill:"#103959",jerseyNameStroke1:"#FFFFFF",jerseyNameStroke2:"#FF0000",placketDoublePiping:"#C8102E",boston1871fill:"#ede3d2",boston1871stroke1:"#ffffff",boston1871stroke2:"#c6463b"}
         
 		const initialPantsColors = {pantsColor:"#ffffff", belt:"#050505", pantsPinstripes:"#0c2340", pantsSingleStripe:"#ff0000", pantsDoubleStripeFront:"#ff0000", pantsDoubleStripeMiddle:"#0000ff", pantsDoubleStripeBack:"#00ff00",pantsTuxedoStripeBack:"#3c3c3c", pantsTuxedoStripeFront:"#00ff00", elasticBottom:"#0000ff", elasticMiddle:"#ffffff", elasticTop:"#ff0000", pantsTequila1:"#D50032", pantsTequila2:"#E87722", pantsTequila3:"#FF8200", pantsTequila4:"#FFCD00", atlBelt1:"#FFFFFF", atlBelt2: "#0C2340", atlBelt3: "#BA0C2F", atlBelt4: "#0C2340", pantsMakersMarkColor: "#000000", pantsSnakeskinColor:"#A41E20",pantsRacingStripeLarge:"#ff0000",pantsRacingStripeSmall:"#00FF00",brooklynPantsCheck:"#003087",brooklynPantsCheckStroke:"#E35205",montrealFront:"#E4002B",montrealBack:"#003087",chaps:"#ff6600",adidasStripeFront:"#202020",adidasStripeBack:"#FFFFFF",pantsNumberFill:"#103959",pantsNumberStroke1:"#FFFFFF",pantsNumberStroke2:"#FF0000"}
 
@@ -44,9 +60,9 @@
 		const swashFills = ['swash1Fill', 'swash2Fill', 'swash3Fill', 'swash4Fill', 'swash5Fill', 'swash6Fill']
 		const swashStrokes = ['swash1Stroke', 'swash2Stroke', 'swash3Stroke', 'swash4Stroke', 'swash5Stroke', 'swash6Stroke']
 		
-		const initialCapColors = {capColor:"#ba0c2f",underBrimColor:"#656765",topsideBrimColor:"#1d1654",squatcheeColor:"yellow",frontPanelColor:"#FFFFFF",smallFrontPanelColor:"yellow",capPinstripeColor:"blue",capPinstripe2Color:"cyan", horizontalPinstripeColor:"yellow",capLogoTextColor:"white",capLogoStroke1Color:"green",capLogoStroke2Color:"black",capLogo2TextColor:"white",capLogo2Stroke1Color:"green",capLogo2Stroke2Color:"black",bandBoxSingleThickColor:"orange",bandBoxDoubleThickColor:"greenyellow",jockeyColor:"gray",braidStripeInnerColor:"red",braidStripeOuterColor:"blue",soutache:"goldenrod",frontPanelBorderColor:"cyan",bostonColor:"yellowgreen",smallPanelBorderColor:"cyan",curvedBrimColor:"cyan",curvedBrimBorderColor:"blue",peakBandColor:"orange",stingyBrimColor:"red",lidPinstripesColor:"blue",stingyLidPinstripesColor:"yellow",eyeletFillColor:"black",eyelet1Color:"yellow",eyelet2Color:"yellow",eyelet3Color:"yellow",eyelet4Color:"yellow",eyelet5Color:"yellow",eyelet6Color:"yellow",snakeskinColor:"#000000",scrambledEggColor:"#FED141",capMakersMarkColor:"#FFFFFF",triColor:"#003087"}
+		const initialCapColors = {capColor:"#ba0c2f",underBrimColor:"#656765",topsideBrimColor:"#1d1654",squatcheeColor:"yellow",frontPanelColor:"#FFFFFF",smallFrontPanelColor:"yellow",capPinstripeColor:"blue",capPinstripe2Color:"cyan", horizontalPinstripeColor:"yellow",capLogoTextColor:"white",capLogoStroke1Color:"green",capLogoStroke2Color:"black",capLogo2TextColor:"white",capLogo2Stroke1Color:"green",capLogo2Stroke2Color:"black",bandBoxSingleThickColor:"orange",bandBoxDoubleThickColor:"greenyellow",jockeyColor:"gray",braidStripeInnerColor:"red",braidStripeOuterColor:"blue",soutache:"goldenrod",frontPanelBorderColor:"cyan",bostonColor:"yellowgreen",smallPanelBorderColor:"cyan",curvedBrimColor:"cyan",curvedBrimBorderColor:"blue",peakBandColor:"orange",stingyBrimColor:"red",lidPinstripesColor:"blue",stingyLidPinstripesColor:"yellow",eyeletFillColor:"black",eyelet1Color:"yellow",eyelet2Color:"yellow",eyelet3Color:"yellow",eyelet4Color:"yellow",eyelet5Color:"yellow",eyelet6Color:"yellow",snakeskinColor:"#000000",scrambledEggColor:"#FED141",capMakersMarkColor:"#FFFFFF",triColor:"#003087",halo:"#8D9093"}
 
-        var prefColorFormat = "hex"
+        //var prefs['preferredColorFormat'] = "hex"
 		var capMakersMarkColor = initialCapColors['capMakersMarkColor']
 		var jerseyMakersMarkColor = initialJerseyColors['jerseyMakersMarkColor']
 		var pantsMakersMarkColor = initialPantsColors['pantsMakersMarkColor']
@@ -97,11 +113,13 @@
 	<span class="header">Welcome To The OOTP Uniform Maker!</span>
 </div>
 <div style="font-family:'MLBBlock';">&nbsp;</div>
+<div id="capFontPreInit">&nbsp;</div>
 <div id="page">
     <div style="width: 1300px; margin:0 auto;">
         <div class="section group" style="position:relative;">
             <div class="col span_3_of_5">
                 <div id="hiddenContainer" style="display:none;">
+					<canvas id="nameCanvas" width="512" height="1024"></canvas>
                     <canvas id="jerseyTexture" width="512" height="1024"></canvas>
                     <canvas id="jerseyBelow" width="512" height="1024"></canvas>
                     <canvas id="pantsTexture" width="512" height="512"></canvas>
@@ -112,7 +130,7 @@
                 </div>
                 <div id="canvasContainer" style="position:absolute; height:828px; width:768px;">
 					<div id="overlay">
-						<div id="jerseyOverlay"></div>
+						<div id="jerseyOverlay" class="jerseyOverlay"></div>
 						<div id="pantsOverlay"></div>
 						<div id="capOverlay"></div>
 					</div>
@@ -137,30 +155,30 @@
             </div>
             <div class="col span_2_of_5">
                 <div id="text">
-					<div> 
 					<table style="width:100%;">
 						<tr>
 							<td>
 								Team Name: <input type="text" id="teamName">
 							</td>
 							<td>
-								Uniform Type: <select id="uniformType">
-									<option value="Home">Home</option>
-									<option value="Away">Away</option>
-									<option value="Alternate">Alternate</option>
-									<option value="Throwback">Throwback</option>
-									<option value="Fauxback">Fauxback</option>
-								</select>
+								Uniform Type: <input type="text" id="uniformType" list="types" value="Home">
+								<datalist id="types">
+									<option>Home</option>
+									<option>Away</option>
+									<option>Alternate</option>
+									<option>Throwback</option>
+									<option>Fauxback</option>
+									<option>Sunday Special</option>
+								</datalist>
 							</td>
 							<td><label for="startYear">Start:</label>
-								<input type="number" class="year" id="startYear" name="startYear" onkeypress="return isNumberKey(event)" style="width:50px;">
+								<input type="number" class="year" id="startYear" name="startYear" onkeypress="return isNumberKey(event)" style="width:35px;">
 							</td>
 							<td><label for="endYear">End:</label>
-								<input type="number" class="year" id="endYear" name="endYear" onkeypress="return isNumberKey(event)" style="width:50px;">
+								<input type="number" class="year" id="endYear" name="endYear" onkeypress="return isNumberKey(event)" style="width:35px;">
 							</td>
 						</tr>	
 					<table>
-					</div> 
 					<div class="accordion">	
                         <table style="width:100%; height:760px"><tr><td>
                         <div id="tabContainer" class="skltbs-theme-light" data-skeletabs='{ "panelHeight": "adaptive", "keyboard": false, "startIndex": 0 }' style="position:absolute; top:60px;">
@@ -254,6 +272,7 @@
 													<select id="buttonsType">
                                                         <option value="buttonsScript" selected>Staggered</option>
                                                         <option value="buttonsNoScript">Even</option>
+														<option value="buttonsHenley">2-Button Henley</option>
 														<option value="zipper">Zipper</option>
                                                     </select>
 													(Opacity: <span id="buttonOpacitySpan">75</span>%)
@@ -384,8 +403,14 @@
 										<table style="width:100%;">
 											<tr class="color_tr">
 												<td class="checkCell"><input type="checkbox" class="jerseyMultiToggle" data-id="jerseyPinstripesColor,sleevePinstripesColor" id="jerseyPinstripesColorCheck" data-canvas="below"></td>
-												<td><label>Pinstripes: </label></td>
+												<td>
+													<label>Pinstripes:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+													<input type="button" class="button rangeButton" value="-" data-span="jerseyPinstripeOpacityDisplay">
+													<input type="range" class="range" id="jerseyPinstripeOpacity" value="100" min="1" max="100" style="margin-left:5px; margin-right:5px;">
+													<input type="button" class="button rangeButton" value="+">
+												</td>
 												<td style="text-align:right;">
+													
 													<input class="jerseySelector selector" type="text" id="jerseyPinstripesColor" data-element="jerseyPinstripesColor" data-canvas="below">
 													<input class="jerseySelector selector" type="text" id="sleevePinstripesColor" data-element="sleevePinstripesColor" data-canvas="below">
 												</td>
@@ -484,7 +509,12 @@
 										<table style="width:100%;">
 											<tr class="color_tr">
 												<td class="checkCell"><input type="checkbox" class="jerseyTextureToggle" data-id="brooklynCheckGroup" id="brooklynCheckGroupCheck" data-canvas="below"></td>
-												<td><label>Brooklyn Checkerboard: </label></td>
+												<td>
+													<label>Brooklyn Check:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+													<input type="button" class="button rangeButton" value="-" data-span="brooklynOpacityDisplay">
+													<input type="range" class="range" id="brooklynPinstripeOpacity" value="100" min="1" max="100" style="margin-left:5px; margin-right:5px;">
+													<input type="button" class="button rangeButton" value="+">
+												</td>
 												<td style="text-align:right;">
 													<input class="jerseySelector selector" type="text" id="brooklynCheck" data-element="brooklynCheck" data-canvas="below">
 													<input class="jerseySelector selector" type="text" id="brooklynCheckStroke" data-element="brooklynCheckStroke" data-canvas="below">
@@ -512,7 +542,18 @@
 													</span>
 													<input class="jerseySelector selector" type="text" id="collarPinstripeColor" data-element="collarPinstripeColor" data-canvas="below">
 												</td>
-											</tr>				
+											</tr>
+											<!-- <tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" class="jerseyPanelToggle" id="boston1781toggle" data-id="boston1871" data-canvas="below"></td>
+												<td>
+													<label>Jersey Panel 1:&nbsp;</label>
+												</td>
+												<td style="text-align:right;">
+													<input class="jerseySelector selector" type="text" id="boston1871fill" data-element="boston1871fill" data-canvas="below">
+													<input class="jerseySelector selector" type="text" id="boston1871stroke1" data-element="boston1871stroke1" data-canvas="below">
+													<input class="jerseySelector selector" type="text" id="boston1871stroke2" data-element="boston1871stroke2" data-canvas="below">
+												</td>
+											</tr> -->		
 										</table>
 									</div>
 									<div class="jersey-accord-header jersey-inactive-header">Modern Striping and Jersey Elements</div>
@@ -676,7 +717,7 @@
 											</tr>
 										</table>
 									</div>
-									<div class="jersey-accord-header jersey-inactive-header">Images</div>
+									<div class="jersey-accord-header jersey-inactive-header" id="jerseyImagesHeader">Images</div>
 									<div class="jersey-accord-content">
 									<div id="jerseyUploadImageDiv">
 										<table style="width:100%;">
@@ -1015,7 +1056,7 @@
 										<table style="width:100%">
 											<tr>
 												<td class="checkCell"><input type="checkbox" id="jerseyNameCheck" data-id="playerName"></td>
-												<td colspan="2"><label>Text: </label><input class="jerseyNameOption" type="text" id="jerseyNameTextBox" value="PLAYER" style="width:79%; text-align:center;"/></td>
+												<td colspan="2"><label>Text: </label><input class="jerseyNameOption" type="text" id="jerseyNameTextBox" style="width:79%; text-align:center;"/></td>
 											</tr>
 										</table>
 										<table style="width:100%;">
@@ -1086,7 +1127,7 @@
 										<table style="width:100%">
 											<tr style="text-align:center;">
 												<td colspan="2"><label>Jersey Number: </label>
-													<input type="number" class="year numberTextBox" id="jerseyNumberTextBox" name="jerseyNumberTextBox" onkeypress="return isNumberKey(event)" style="width:50px; text-align:center;" min="0" max="99" value="23" >
+													<input type="number" class="year numberTextBox" id="jerseyNumberTextBox" name="jerseyNumberTextBox" onkeypress="return isNumberKey(event)" style="width:50px; text-align:center;" min="0" max="99" >
 												</td>
 											</tr>
 										</table>
@@ -1237,7 +1278,7 @@
                                             <tr class="color_tr">
                                                 <td class="checkCell">&nbsp;</td>
                                                 <td>
-                                                    <label>Belt: </label>
+                                                    <label>Belt:&nbsp;</label>
                                                     <select id="beltSelect">
                                                         <option value="belt" selected>Leather Belt</option>
                                                         <option value="elastic">Elastic Waistband</option>
@@ -1245,12 +1286,12 @@
                                                 </td>
                                                 <td style="text-align:right;">
                                                     <div id="beltSelector" style="display: inline-block;">
-                                                        <input class="pantsSelector selector" type="text" id="belt" data-element="belt" data-canvas="below">
+                                                        <input class="pantsSelector selector" type="text" id="belt" data-element="belt" data-canvas="above">
                                                     </div>
                                                     <div id="elasticSelector" style="display: none;">
-                                                        <input class="pantsSelector selector" type="text" id="elasticTop" data-element="elasticTop" data-canvas="below">
-                                                        <input class="pantsSelector selector" type="text" id="elasticMiddle" data-element="elasticMiddle" data-canvas="below">
-                                                        <input class="pantsSelector selector" type="text" id="elasticBottom" data-element="elasticBottom" data-canvas="below">
+                                                        <input class="pantsSelector selector" type="text" id="elasticTop" data-element="elasticTop" data-canvas="above">
+                                                        <input class="pantsSelector selector" type="text" id="elasticMiddle" data-element="elasticMiddle" data-canvas="above">
+                                                        <input class="pantsSelector selector" type="text" id="elasticBottom" data-element="elasticBottom" data-canvas="above">
                                                     </div>
                                                 </td>
                                             </tr>
@@ -1304,14 +1345,28 @@
 										<table style="width:100%;">
 											<tr class="color_tr">
 												<td class="checkCell"><input type="checkbox" class="pantsTextureToggle" data-id="pantsPinstripes" id="pantsPinstripesCheck" data-canvas="below"></td>
-												<td><label>Pinstripes: </label></td>
+												<td>
+													<label>Pinstripes: </label>
+													<input type="button" class="button rangeButton" value="-" data-span="pantsPinstripeOpacityDisplay">
+													<input type="range" class="range" id="pantsPinstripeOpacity" value="100" min="1" max="100" style="margin-left:5px; margin-right:5px;">
+													<input type="button" class="button rangeButton" value="+">
+												</td>
 												<td style="text-align:right;">
 													<input class="pantsSelector selector" type="text" id="pantsPinstripes" data-element="pantsPinstripes" data-canvas="below">
 												</td>
 											</tr>
 											<tr class="color_tr">
 												<td class="checkCell"><input type="checkbox" class="pantsTextureToggle" data-id="brooklynPantsCheckGroup" id="brooklynPantsCheckGroupCheck" data-canvas="below"></td>
-												<td><label>Brooklyn Checkerboard: </label></td>
+												<td>
+													<div>
+													<label>Brooklyn Checkerboard: </label>
+													</div>
+													<div></div>
+													<input type="button" class="button rangeButton" value="-" data-span="brooklynOpacityDisplay">
+													<input type="range" class="range" id="brooklynPantsPinstripeOpacity" value="100" min="1" max="100" style="margin-left:5px; margin-right:5px;">
+													<input type="button" class="button rangeButton" value="+">
+													</div>
+												</td>
 												<td style="text-align:right;">
 													<input class="pantsSelector selector" type="text" id="brooklynPantsCheck" data-element="brooklynPantsCheck" data-canvas="below">
 													<input class="pantsSelector selector" type="text" id="brooklynPantsCheckStroke" data-element="brooklynPantsCheckStroke" data-canvas="below">
@@ -1390,16 +1445,64 @@
 												</td>
 											</tr>
 											<tr class="color_tr">
-												<td class="checkCell"><input type="checkbox" class="pantsMultiToggle" data-id="atlBelt1,atlBelt2,atlBelt3,atlBelt4" id="atlBelt1Check" data-canvas="below"></td>
+												<td class="checkCell"><input type="checkbox" class="pantsMultiToggle" data-id="atlBelt1,atlBelt2,atlBelt3,atlBelt4" id="atlBelt1Check" data-canvas="above"></td>
 												<td><label>Atlanta Belt Loops: </label></td>
 												<td style="text-align:right;">
 													<!-- <input class="pantsSelector selector" type="text" id="atlBelt1" data-element="atlBelt1" data-canvas="below"> -->
-													<input class="pantsSelector selector" type="text" id="atlBelt2" data-element="atlBelt2" data-canvas="below">
-													<input class="pantsSelector selector" type="text" id="atlBelt3" data-element="atlBelt3" data-canvas="below">
-													<input class="pantsSelector selector" type="text" id="atlBelt4" data-element="atlBelt4" data-canvas="below">
+													<input class="pantsSelector selector" type="text" id="atlBelt2" data-element="atlBelt2" data-canvas="above">
+													<input class="pantsSelector selector" type="text" id="atlBelt3" data-element="atlBelt3" data-canvas="above">
+													<input class="pantsSelector selector" type="text" id="atlBelt4" data-element="atlBelt4" data-canvas="above">
 												</td>
 											</tr>
 										</table>
+									</div>
+									<div class="pants-accord-header pants-inactive-header" id="pantsImagesHeader">Images</div>
+									<div class="pants-accord-content">
+										<div id="pantsUploadImageDiv">
+										<table style="width:100%;">
+											<tr>
+												<!--<input type="file" id="uploadedImg" accept="image/*" style="display:none;"/>-->
+												<td><center>
+													<input type="button" class="button fakeImageButton" id="pantsImageButton" data-canvas='pants' value="Upload An Image">
+												</td>
+											</tr>
+										</table>
+										</div>
+										<div id="pantsSelectedImageDiv" style="display:none;">
+											<table style="width:100%;"><tr><td><center>
+											<b>Selected Image:</b> <span id="pantsFileName"></span>
+											</td></tr></table>
+										</div>
+										<div id="pantsTrimImageDiv" style="display:none;">
+											<table style="width:100%;">
+												<tr>
+													<td><center>
+														<input type="button" id="pantsColorSquare" class="colorSquare" value="Pick Color" style="margin-right:10px;" data-canvas="pantsLogoCanvas"><span id="chosenCoordinates" style="margin-right:5px;"></span>
+														Fuzz %:
+														<input type="button" class="button rangeButton" value="-">
+														<input type="range" class="range" id="pantsColorFuzz" value="50" min="1" max="100" style="margin-left:5px; margin-right:5px;">
+														<input type="button" class="button rangeButton" value="+">
+														<span id="fuzzAmount">50</span>%
+													</td>
+												</tr>
+												<tr>
+													<td><center>
+														<input type="button" class="button border" id="pantsBorder" value="Remove Border" data-canvas="pantsLogoCanvas">
+														<input type="button" class="button removeColor removeColorRange" id="pantsRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
+														<input type="button" class="button removeColor removeAllColor" id="pantsRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
+														<input type="button" class="button replaceColor replaceColorRange" id="pantsReplaceColorRange" value="Replace Section" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
+													</td>
+												</tr>
+											</table>
+										</div>
+										<div id="pantsReplaceColorDiv" class="replaceColorDiv" style="display:none;">
+											<table style="width:100%;"><tr>
+											<td><center>
+											Select Replacement Color:
+											<input class="colorSelector" type="text" id="pantsReplacementColor" value="#FF0000">
+											<input type="button" class="button replaceColorSubmit removeColor" id="pantsReplaceColorSubmit" value="Replace Color" data-x="0" data-y="0" data-action="null" data-canvas="pantsLogoCanvas">
+											</tr></table>
+										</div>
 									</div>
 									<div class="pants-accord-header">Number</div>
 									<div class="pants-accord-content">
@@ -1662,6 +1765,11 @@
 												<td><label>Snakeskin: </label></td>
 												<td style="text-align:right;"><input class="capSelector selector" type="text" id="snakeskinColor" data-element="snakeskinColor" data-canvas="below"></td>
 											</tr>
+											<!-- <tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" class="capTextureToggle" data-id="halo" id="haloCheck" data-canvas="above"></td>
+												<td><label>Halo: </label></td>
+												<td style="text-align:right;"><input class="capSelector selector" type="text" id="halo" data-element="halo" data-canvas="above"></td>
+											</tr> -->
 											<tr class="color_tr">
 												<td class="checkCell"><input type="checkbox" class="capTextureToggle" data-id="bostonColor" id="bostonColorCheck" data-canvas="below"></td>
 												<td><label>Boston Stripes: </label></td>
@@ -1712,7 +1820,7 @@
 											</tr>
 										</table>
 									</div>
-									<div class="cap-accord-header cap-inactive-header">Images</div>
+									<div class="cap-accord-header cap-inactive-header" id="capImagesHeader">Images</div>
 									<div class="cap-accord-content">
 										<div id="capUploadImageDiv">
 										<table style="width:100%;">
@@ -2006,7 +2114,7 @@
 						<input type="button" class="button" id="saveJersey" value="Save Jersey" style="display:none;">
                         <input type="button" class="button" id="save" value="Save Uniform">
                         <input type="button" class="button" id="load" value="Load Uniform">
-						<input type="button" class="button" id="eyedropper" value="Eyedropper">
+						<!--<input type="button" class="button" id="eyedropper" value="Eyedropper">-->
                         <input type="button" class="button copypaste" id="copy" value="Copy Object" onclick="copy()">
 						<input type="button" class="button copypaste" id="paste" value="Paste Object" onclick="paste()">
 						<input type="button" class="button" id="prefsButton" value="Preferences" style="display:none;">
@@ -2019,7 +2127,7 @@
     </div>
 	<div id="FAQ" class="jm-white-popup mfp-hide">
 		<div style="width:100%; text-align:center;">	
-			<span class="header" style="color:#103959!important; font-size:2em!important;">About The OOTP Uniform Maker</span>
+			<span class="header" style="color:#103959!important; font-size:2em!important;">About The OOTP Uniform Maker</span><div id="currentVersion"></div>
 		</div>
 		<div id="faqContainer" style="width:100%; height:90%; overflow:auto;">
 			<div class="question" style="margin-top:10px!important;">So what is this thing?</div><br>
@@ -2032,7 +2140,7 @@
 			<div class="answer">That would be me.  My name is Eriq Jaffe, and I've been playing OOTP Baseball since 2004.  Feel free to <a href="mailto:eriqjaffe@gmail.com">shoot me an email</a> with any questions or comments.  You can also view the source code for this on <a href="https://github.com/eriqjaffe/OOTP-Uniform-Maker" target="_blank">GitHub</a>.<br><br>Some of the textures and shapes are taken directly from OOTP, but a lot of them are based on the work of Gern44, silvam14, txranger, Deft, NoPepper, Reds1, davwms and probably several others (my record keeping isn't all that great, and I'm not 100% sure where every piece came from - if I'm using one of your components and I forgot to give you credit, thanks!).<br><br>I'd also like to give an additional shout out to Conrad Burry, who created some of the default fonts.</div><br>
 		</div>
 	</div>
-	<div id="prefs" class="jm-white-popup mfp-hide" style="height:200px!important;">
+	<div id="prefs" class="jm-white-popup mfp-hide" style="height:300px!important;">
 		<div style="width:100%; text-align:center;">	
 			<span class="header" style="color:#103959!important; font-size:2em!important;">Uniform Maker Preferences</span>
 		</div><br>
@@ -2114,6 +2222,363 @@
 				</center></td>
 			</tr>
 		</table>
+		<br>
+		<table class="prefs" style="width:100%;">
+			<tr>
+				<td><center>
+					<label>Preferred Jersey Font:&nbsp;</label>
+					<select id="preferredJerseyFont" class='Leckerli_One'>
+						<optgroup class='Acme'>
+						<option value='Acme'>Acme</option>
+						</optgroup>
+						<optgroup class='AthleticGothic'>
+						<option value='AthleticGothic'>Athletic Gothic</option>
+						</optgroup>
+						<optgroup class='AthleticGothicShadow'>
+						<option value='AthleticGothicShadow'>Athletic Gothic Shadow</option>
+						</optgroup>
+						<optgroup class='BeavertonScript'>
+						<option value='BeavertonScript'>Fancy Block</option>
+						</optgroup>
+						<optgroup class='Berkshire_Swash'>
+						<option value='Berkshire_Swash'>Berkshire Swash</option>
+						</optgroup>
+						<optgroup class='Cantora_One'>
+						<option value='Cantora_One'>Cantora</option>
+						</optgroup>
+						<optgroup class='CaxtonRoman'>
+						<option value='CaxtonRoman'>Caxton Roman</option>
+						</optgroup>
+						<optgroup class='Chela_One'>
+						<option value='Chela_One'>Chela</option>
+						</optgroup>
+						<optgroup class='Circus'>
+						<option value='Circus'>Circus</option>
+						</optgroup>
+						<optgroup class='Condiment'>
+						<option value='Condiment'>Condiment</option>
+						</optgroup>
+						<optgroup class='Cookie'>
+						<option value='Cookie'>Cookie</option>
+						</optgroup>
+						<optgroup class='Courgette'>
+						<option value='Courgette'>Courgette</option>
+						</optgroup>
+						<optgroup class='Croissant_One'>
+						<option value='Croissant_One'>Croissant</option>
+						</optgroup>
+						<optgroup class='Damion'>
+						<option value='Damion'>Damion</option>
+						</optgroup>
+						<optgroup class='Engagement'>
+						<option value='Engagement'>Engagement</option>
+						</optgroup>
+						<optgroup class='RawlingsFancyBlock'>
+						<option value='RawlingsFancyBlock'>Fancy Block</option>
+						</optgroup>
+						<optgroup class='Germania_One'>
+						<option value='Germania_One'>Germania</option>
+						</optgroup>
+						<optgroup class='Graduate'>
+						<option value='Graduate'>Graduate</option>
+						</optgroup>
+						<optgroup class='Grand_Hotel'>
+						<option value='Grand_Hotel'>Grand Hotel</option>
+						</optgroup>
+						<optgroup class='Jockey_One'>
+						<option value='Jockey_One'>Jockey</option>
+						</optgroup>
+						<optgroup class='Kansas'>
+						<option value='Kansas'>Kansas Tuscan</option>
+						</optgroup>
+						<optgroup class='Kaushan_Script'>
+						<option value='Kaushan_Script'>Kaushan Script</option>
+						</optgroup>
+						<optgroup class='Leckerli_One'>
+						<option value='Leckerli_One' selected>Leckerli</option>
+						</optgroup>
+						<optgroup class='Lily_Script_One'>
+						<option value='Lily_Script_One'>Lily Script</option>
+						</optgroup>
+						<optgroup class='Lobster'>
+						<option value='Lobster'>Lobster</option>
+						</optgroup>
+						<optgroup class='Lobster_Two'>
+						<option value='Lobster_Two'>Lobster Two</option>
+						</optgroup>
+						<optgroup class='Metal_Mania'>
+						<option value='Metal_Mania'>Metal Mania</option>
+						</optgroup>
+						<optgroup class='Miniver'>
+						<option value='Miniver'>Miniver</option>
+						</optgroup>
+						<optgroup class='Molle'>
+						<option value='Molle'>Molle</option>
+						</optgroup>
+						<optgroup class='New_Rocker'>
+						<option value='New_Rocker'>New Rocker</option>
+						</optgroup>
+						<optgroup class='Norican'>
+						<option value='Norican'>Norican</option>
+						</optgroup>
+						<optgroup class='OldEnglish'>
+						<option value='OldEnglish'>Old English</option>
+						</optgroup>
+						<optgroup class='Oleo_Script'>
+						<option value='Oleo_Script'>Oleo Script</option>
+						</optgroup>
+						<optgroup class='Oleo_Script_Swash_Caps'>
+						<option value='Oleo_Script_Swash_Caps'>Oleo Script Swash Caps</option>
+						</optgroup>
+						<optgroup class='Pacifico'>
+						<option value='Pacifico'>Pacifico</option>
+						</optgroup>
+						<optgroup class='Pirata_One'>
+						<option value='Pirata_One'>Pirata</option>
+						</optgroup>
+						<optgroup class='Playball'>
+						<option value='Playball'>Playball</option>
+						</optgroup>
+						<optgroup class='ProFullBlock'>
+						<option value='ProFullBlock'>Pro Full Block</option>
+						</optgroup>
+						<!--<optgroup class='Quicksand'>
+						<option value='Quicksand'>Quicksand</option>
+						</optgroup>-->
+						<optgroup class='RichardsonFancyBlock'>
+						<option value='RichardsonFancyBlock'>Richardson Block</option>
+						</optgroup>
+						<optgroup class='Rubik_One'>
+						<option value='Rubik_One'>Rubik</option>
+						</optgroup>
+						<optgroup class='Rum_Raisin'>
+						<option value='Rum_Raisin'>Rum Raisin</option>
+						</optgroup>
+						<optgroup class='Satisfy'>
+						<option value='Satisfy'>Satisfy</option>
+						</optgroup>
+						<optgroup class='Seymour_One'>
+						<option value='Seymour_One'>Seymour</option>
+						</optgroup>
+						<optgroup class='spl28'>
+						<option value='spl28'>SPL28 Script</option>
+						</optgroup>
+						<optgroup class='TiffanyRegular'>
+						<option value='TiffanyRegular'>Tiffany Regular</option>
+						</optgroup>
+						<optgroup class='Trade_Winds'>
+						<option value='Trade_Winds'>Trade Winds</option>
+						</optgroup>
+						<optgroup class='Tuscan'>
+						<option value='Tuscan'>Tuscan</option>
+						</optgroup>
+						<optgroup class='UnifrakturCook'>
+						<option value='UnifrakturCook'>Unifraktur Cook</option>
+						</optgroup>
+						<optgroup class='UnifrakturMaguntia'>
+						<option value='UnifrakturMaguntia'>Unifraktur Maguntia</option>
+						</optgroup>
+						<optgroup class='Vibur'>
+						<option value='Vibur'>Vibur</option>
+						</optgroup>
+						<optgroup class='Viga'>
+						<option value='Viga'>Viga</option>
+						</optgroup>
+						<optgroup class='Wellfleet'>
+						<option value='Wellfleet'>Wellfleet</option>
+						</optgroup>
+						<optgroup class='Wendy_One'>
+						<option value='Wendy_One'>Wendy</option>
+						</optgroup>
+						<optgroup class='Yellowtail'>
+						<option value='Yellowtail'>Yellowtail</option>
+						</optgroup>
+					</select>
+				</center></td>
+				<td><center>
+					<label>Preferred Cap Font:&nbsp;</label>
+					<select id="preferredCapFont" class='Graduate'>
+						<optgroup class='Acme'>
+						<option value='Acme'>Acme</option>
+						</optgroup>
+						<optgroup class='AthleticGothic'>
+						<option value='AthleticGothic'>Athletic Gothic</option>
+						</optgroup>
+						<optgroup class='AthleticGothicShadow'>
+						<option value='AthleticGothicShadow'>Athletic Gothic Shadow</option>
+						</optgroup>
+						<optgroup class='BeavertonScript'>
+						<option value='BeavertonScript'>Fancy Block</option>
+						</optgroup>
+						<optgroup class='Berkshire_Swash'>
+						<option value='Berkshire_Swash'>Berkshire Swash</option>
+						</optgroup>
+						<optgroup class='Cantora_One'>
+						<option value='Cantora_One'>Cantora</option>
+						</optgroup>
+						<optgroup class='CaxtonRoman'>
+						<option value='CaxtonRoman'>Caxton Roman</option>
+						</optgroup>
+						<optgroup class='Chela_One'>
+						<option value='Chela_One'>Chela</option>
+						</optgroup>
+						<optgroup class='Circus'>
+						<option value='Circus'>Circus</option>
+						</optgroup>
+						<optgroup class='Condiment'>
+						<option value='Condiment'>Condiment</option>
+						</optgroup>
+						<optgroup class='Cookie'>
+						<option value='Cookie'>Cookie</option>
+						</optgroup>
+						<optgroup class='Courgette'>
+						<option value='Courgette'>Courgette</option>
+						</optgroup>
+						<optgroup class='Croissant_One'>
+						<option value='Croissant_One'>Croissant</option>
+						</optgroup>
+						<optgroup class='Damion'>
+						<option value='Damion'>Damion</option>
+						</optgroup>
+						<optgroup class='Engagement'>
+						<option value='Engagement'>Engagement</option>
+						</optgroup>
+						<optgroup class='RawlingsFancyBlock'>
+						<option value='RawlingsFancyBlock'>Fancy Block</option>
+						</optgroup>
+						<optgroup class='Germania_One'>
+						<option value='Germania_One'>Germania</option>
+						</optgroup>
+						<optgroup class='Graduate'>
+						<option value='Graduate' selected>Graduate</option>
+						</optgroup>
+						<optgroup class='Grand_Hotel'>
+						<option value='Grand_Hotel'>Grand Hotel</option>
+						</optgroup>
+						<optgroup class='Jockey_One'>
+						<option value='Jockey_One'>Jockey</option>
+						</optgroup>
+						<optgroup class='Kansas'>
+						<option value='Kansas'>Kansas Tuscan</option>
+						</optgroup>
+						<optgroup class='Kaushan_Script'>
+						<option value='Kaushan_Script'>Kaushan Script</option>
+						</optgroup>
+						<optgroup class='Leckerli_One'>
+						<option value='Leckerli_One'>Leckerli</option>
+						</optgroup>
+						<optgroup class='Lily_Script_One'>
+						<option value='Lily_Script_One'>Lily Script</option>
+						</optgroup>
+						<optgroup class='Lobster'>
+						<option value='Lobster'>Lobster</option>
+						</optgroup>
+						<optgroup class='Lobster_Two'>
+						<option value='Lobster_Two'>Lobster Two</option>
+						</optgroup>
+						<optgroup class='Metal_Mania'>
+						<option value='Metal_Mania'>Metal Mania</option>
+						</optgroup>
+						<optgroup class='Miniver'>
+						<option value='Miniver'>Miniver</option>
+						</optgroup>
+						<optgroup class='Molle'>
+						<option value='Molle'>Molle</option>
+						</optgroup>
+						<optgroup class='New_Rocker'>
+						<option value='New_Rocker'>New Rocker</option>
+						</optgroup>
+						<optgroup class='Norican'>
+						<option value='Norican'>Norican</option>
+						</optgroup>
+						<optgroup class='OldEnglish'>
+						<option value='OldEnglish'>Old English</option>
+						</optgroup>
+						<optgroup class='Oleo_Script'>
+						<option value='Oleo_Script'>Oleo Script</option>
+						</optgroup>
+						<optgroup class='Oleo_Script_Swash_Caps'>
+						<option value='Oleo_Script_Swash_Caps'>Oleo Script Swash Caps</option>
+						</optgroup>
+						<optgroup class='Pacifico'>
+						<option value='Pacifico'>Pacifico</option>
+						</optgroup>
+						<optgroup class='Pirata_One'>
+						<option value='Pirata_One'>Pirata</option>
+						</optgroup>
+						<optgroup class='Playball'>
+						<option value='Playball'>Playball</option>
+						</optgroup>
+						<optgroup class='ProFullBlock'>
+						<option value='ProFullBlock'>Pro Full Block</option>
+						</optgroup>
+						<!--<optgroup class='Quicksand'>
+						<option value='Quicksand'>Quicksand</option>
+						</optgroup>-->
+						<optgroup class='RichardsonFancyBlock'>
+						<option value='RichardsonFancyBlock'>Richardson Block</option>
+						</optgroup>
+						<optgroup class='Rubik_One'>
+						<option value='Rubik_One'>Rubik</option>
+						</optgroup>
+						<optgroup class='Rum_Raisin'>
+						<option value='Rum_Raisin'>Rum Raisin</option>
+						</optgroup>
+						<optgroup class='Satisfy'>
+						<option value='Satisfy'>Satisfy</option>
+						</optgroup>
+						<optgroup class='Seymour_One'>
+						<option value='Seymour_One'>Seymour</option>
+						</optgroup>
+						<optgroup class='spl28'>
+						<option value='spl28'>SPL28 Script</option>
+						</optgroup>
+						<optgroup class='TiffanyRegular'>
+						<option value='TiffanyRegular'>Tiffany Regular</option>
+						</optgroup>
+						<optgroup class='Trade_Winds'>
+						<option value='Trade_Winds'>Trade Winds</option>
+						</optgroup>
+						<optgroup class='Tuscan'>
+						<option value='Tuscan'>Tuscan</option>
+						</optgroup>
+						<optgroup class='UnifrakturCook'>
+						<option value='UnifrakturCook'>Unifraktur Cook</option>
+						</optgroup>
+						<optgroup class='UnifrakturMaguntia'>
+						<option value='UnifrakturMaguntia'>Unifraktur Maguntia</option>
+						</optgroup>
+						<optgroup class='Vibur'>
+						<option value='Vibur'>Vibur</option>
+						</optgroup>
+						<optgroup class='Viga'>
+						<option value='Viga'>Viga</option>
+						</optgroup>
+						<optgroup class='Wellfleet'>
+						<option value='Wellfleet'>Wellfleet</option>
+						</optgroup>
+						<optgroup class='Wendy_One'>
+						<option value='Wendy_One'>Wendy</option>
+						</optgroup>
+						<optgroup class='Yellowtail'>
+						<option value='Yellowtail'>Yellowtail</option>
+						</optgroup>
+					</select>
+				</center></td>
+		</table>
+		<br>
+		<table class="prefs" style="width:100%;">
+			<tr>
+				<td><center>
+					<label>Preferred Player Name:&nbsp;</label>
+					<input type="text"  class="preference" id="preferredPlayerName" value="PLAYER" style="text-align:center;"/>
+				</center></td>
+				<td><center>
+					<label>Preferred Player Number:&nbsp;</label>
+					<input type="number" class="preference" id="preferredPlayerNumber" onkeypress="return isNumberKey(event)" style="width:50px; text-align:center;" min="0" max="99" value="23">
+				</center></td>
+			</tr>
+		</table>
 	</div>
 </div>
 </body>
@@ -2173,6 +2638,7 @@
 	var pantsLogoCanvas = new fabric.Canvas('pantsAbove',{
 		enableRetinaScaling:false,
 		controlsAboveOverlay:true,
+		preserveObjectStacking:true,
 		id: 'pantsLogoCanvas'
 	});
 
@@ -2186,6 +2652,11 @@
 		selection:false,
 		enableRetinaScaling:false
 	});
+
+	var nameCanvas = new fabric.Canvas('nameCanvas',{
+		selection:false,
+		enableeRetinaScaling:false
+	})
 
 // SCALING FUNCTIONS
 
@@ -2206,11 +2677,23 @@
 // DOCUMENT FUNCTIONS
 
     $(document).ready(function() {
+		$("#currentVersion").html("Version "+appVersion)
 		$("#toggleJerseyGrid").prop( "checked", gridsVisible )
 		$("#togglePantsGrid").prop( "checked", gridsVisible )
 		$("#toggleCapGuides").prop( "checked", gridsVisible )
 		$("#gridsVisible").prop( "checked", gridsVisible )
 		$("#checkForUpdatesPref").prop("checked", checkForUpdates)
+		$("#jerseyNameTextBox").val(prefs['preferredPlayerName'])
+		$("#jerseyNumberTextBox").val(prefs['preferredPlayerNumber'])
+		$("#pantsNumberTextBox").val(prefs['preferredPlayerNumber'])
+
+		$("#jerseyFontTypeCombo").val(prefs['preferredJerseyFont']).trigger("change")
+		$("#capFontTypeCombo").val(prefs['preferredCapFont']).trigger('change')
+
+		$(".preference").each(function() {
+			$(this).val(prefs[$(this).attr("id")])
+		})
+
 		$(".jersey-accord-header").click(function() {
 			if($(this).next("div").is(":visible")){
 				$(this).next("div").slideUp("fast");
@@ -2337,6 +2820,7 @@
 				}
 			})
 		}
+
     })
 
 	$(document).keydown(function(e) {   
@@ -2445,7 +2929,6 @@
 			return;
 		}
 		const currentTab = $('#tabContainer').skeletabs('getCurrentInfo');
-		console.log(currentTab.currentIndex)
 		const eyeDropper = new EyeDropper();
 		jerseyLogoCanvas.setOverlayImage(null,jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 		pantsLogoCanvas.setOverlayImage(null,pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
@@ -2455,7 +2938,6 @@
 		$("#pantsOverlay").css("display","none");
 		eyeDropper.open().then(result => {
 			clipboard.writeText(result.sRGBHex)
-			console.log(clipboard.readText('selection'))
 			if($("#toggleJerseyGrid").is(':checked')){
 				jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 			}
@@ -2512,6 +2994,65 @@
 		});
 	})
 
+	$("#jerseyContainer").on('dragover', function() {
+		activeCanvas = jerseyLogoCanvas;
+		$("#jerseyContainer").addClass('hover')
+		return false;
+	});
+
+	$("#jerseyContainer").on('dragleave', function() {
+		$("#jerseyContainer").removeClass('hover');
+		return false;
+	});
+
+	$("#jerseyContainer").on('drop', function(e) {
+		activeCanvas = jerseyLogoCanvas;
+		$("#jerseyContainer").removeClass('hover');
+		e.stopPropagation();
+		e.preventDefault();
+		var files = e.originalEvent.dataTransfer.files;
+		dropImage(jerseyLogoCanvas, files[0].path, 0)
+		return false;
+	});
+
+	$("#capContainer").on('dragover', function() {
+		$("#capContainer").addClass('hover')
+		return false;
+	});
+
+	$("#capContainer").on('dragleave', function() {
+		$("#capContainer").removeClass('hover');
+		return false;
+	});
+
+	$("#capContainer").on('drop', function(e) {
+		$("#capContainer").removeClass('hover');
+		e.stopPropagation();
+		e.preventDefault();
+		var files = e.originalEvent.dataTransfer.files;
+		dropImage(capLogoCanvas, files[0].path, 2)
+		return false;
+	});
+
+	$("#pantsContainer").on('dragover', function() {
+		$("#pantsContainer").addClass('hover')
+		return false;
+	});
+
+	$("#pantsContainer").on('dragleave', function() {
+		$("#pantsContainer").removeClass('hover');
+		return false;
+	});
+
+	$("#pantsContainer").on('drop', function(e) {
+		$("#pantsContainer").removeClass('hover');
+		e.stopPropagation();
+		e.preventDefault();
+		var files = e.originalEvent.dataTransfer.files;
+		dropImage(pantsLogoCanvas, files[0].path, 1)
+		return false;
+	});
+
 	// JERSEY SPECIFIC
 
 	initializeJersey()
@@ -2566,7 +3107,7 @@
 			type: "color",
 			showAlpha: false,
 			showInput: true,
-			preferredFormat: prefColorFormat,
+			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
@@ -2847,7 +3388,7 @@
 			type: "color",
 			showAlpha: false,
 			showInput: true,
-			preferredFormat: prefColorFormat,
+			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
@@ -2943,7 +3484,7 @@
 			type: "color",
 			showAlpha: false,
 			showInput: true,
-			preferredFormat: prefColorFormat,
+			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
@@ -2996,7 +3537,7 @@
 			type: "color",
 			showAlpha: false,
 			showInput: true,
-			preferredFormat: prefColorFormat,
+			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
@@ -3009,7 +3550,6 @@
 			},
 			move: function(color) {
 				var type = $(this).attr("id");
-				console.log(type)
 				$(this).data('changed', true);
 				var c = (color == null) ? 'transparent' : color.toHexString()
 				jerseyLogoCanvas.getObjects('group').forEach(function(o){
@@ -3084,7 +3624,7 @@
 			type: "color",
 			showAlpha: false,
 			showInput: true,
-			preferredFormat: prefColorFormat,
+			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
@@ -3174,7 +3714,7 @@
 		const state = $(this).is(':checked') ? true : false
 		const canvas = $(this).data('canvas') == 'below' ? jerseyBelow : jerseyLogoCanvas
 		canvas.getObjects().forEach(function(o) {
-			if (o.id == id) {
+			if (o.id == id) {	
 				o.set("visible", state)
 			}
         });
@@ -3197,6 +3737,19 @@
 		})
 		canvas.renderAll();
 		reRenderBG("jersey")
+	})
+
+	$(".jerseyPanelToggle").on("click",function() {
+		const id = $(this).data("id");
+		const state = $(this).is(':checked') ? true : false
+		const canvas = $(this).data('canvas') == 'below' ? jerseyBelow : jerseyLogoCanvas
+		canvas.getObjects().forEach(function(o) {
+			if (o.id == id) {
+				o.set("visible", state)
+			}
+        });
+		canvas.renderAll()
+		reRenderBG("jersey");
 	})
 	
 	$(".jerseyTextToggle").on("click",function() {
@@ -3594,35 +4147,50 @@
 				case "buttonsScript":
 					g.getObjects().find(o => o.id === 'buttonsScript').visible = true;
 					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+					g.getObjects().find(o => o.id === 'buttonsHenley').visible = false;
 					g.getObjects().find(o => o.id === 'zipper').visible = false;
 					setSeams(true)
-					if ($("#seamsType").val() == "seamsStandardToCollar") {
+					/* if ($("#seamsType").val() == "seamsStandardToCollar") {
 						$("#seamsType").val("seamsStandardToPiping").trigger("change")
 					} else if ($("#seamsType").val() == "seamsRaglanToCollar") {
 						$("#seamsType").val("seamsRaglanToPiping").trigger("change")
-					}
+					} */
 					break;
 				case "buttonsNoScript":
 					g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
 					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = true;
+					g.getObjects().find(o => o.id === 'buttonsHenley').visible = false;
 					g.getObjects().find(o => o.id === 'zipper').visible = false;
 					setSeams(true)
-					if ($("#seamsType").val() == "seamsStandardToCollar") {
+					/* if ($("#seamsType").val() == "seamsStandardToCollar") {
 						$("#seamsType").val("seamsStandardToPiping").trigger("change")
 					} else if ($("#seamsType").val() == "seamsRaglanToCollar") {
 						$("#seamsType").val("seamsRaglanToPiping").trigger("change")
-					}
+					} */
+					break;
+				case "buttonsHenley":
+					g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
+					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+					g.getObjects().find(o => o.id === 'buttonsHenley').visible = true;
+					g.getObjects().find(o => o.id === 'zipper').visible = false;
+					setSeams(true)
+					/* if ($("#seamsType").val() == "seamsStandardToCollar") {
+						$("#seamsType").val("seamsStandardToPiping").trigger("change")
+					} else if ($("#seamsType").val() == "seamsRaglanToCollar") {
+						$("#seamsType").val("seamsRaglanToPiping").trigger("change")
+					} */
 					break;
 				case "zipper":
 					g.getObjects().find(o => o.id === 'buttonsScript').visible = false;
 					g.getObjects().find(o => o.id === 'buttonsNoScript').visible = false;
+					g.getObjects().find(o => o.id === 'buttonsHenley').visible = false;
 					g.getObjects().find(o => o.id === 'zipper').visible = true;
 					setSeams(false)
-					if ($("#seamsType").val() == "seamsStandardToPiping") {
+					/* if ($("#seamsType").val() == "seamsStandardToPiping") {
 						$("#seamsType").val("seamsStandardToCollar").trigger("change")
 					} else if ($("#seamsType").val() == "seamsRaglanToPiping") {
 						$("#seamsType").val("seamsRaglanToCollar").trigger("change")
-					}
+					} */
 					break;
 			}
 		} else {
@@ -3687,27 +4255,6 @@
 	jerseyLogoCanvas.on('selection:updated', function(e) {
 		handleElement(e.selected[0])
 	})
-
-	function handleElement(obj) {
-		switch (obj.id) {
-			case "wordmark":
-				$("#tipSpan").html("If you're trying to select an image instead of the text, you have to hide the text first.");
-				break;
-			case "jerseyFrontNumber":
-				$("#jerseyNumberCtl").css("display","inline-block")
-				$(".frontButton").css("display","inline-block")
-				$(".sleeveButton").css("display","none")
-				break;
-			case "jerseySleeveNumber":
-				$("#jerseyNumberCtl").css("display","inline-block")
-				$(".frontButton").css("display","none")
-				$(".sleeveButton").css("display","inline-block")
-				break;
-			default:
-				$("#tipSpan").html("");
-				$("#jerseyNumberCtl").css("display","none")
-		}
-	}
 
 	jerseyLogoCanvas.on('selection:cleared', function(e) {
 		if ($("#jerseyReplaceColorDiv").css("display") == "block") {
@@ -3790,7 +4337,7 @@
 		type: "color",
 		showAlpha: false,
 		showInput: true,
-		preferredFormat: prefColorFormat,
+		preferredFormat: prefs['preferredColorFormat'],
 		showInitial: true,
 		showPalette: true,
 		showButtons: true,
@@ -4137,6 +4684,9 @@
 		})
 		jerseyLogoCanvas.renderAll();
 		$(this).removeClass().addClass(style);
+		if (imNeeded) {
+			warpText()
+		}
 	})
 
 	$("#warpEffect").on("change",function(e) {
@@ -4568,9 +5118,26 @@
 		reRenderBG("jersey")
 	})
 	
+	$("#jerseyPinstripeOpacity").on("change",function() {
+		jerseyBelow.getObjects().find(o => o.id == "jerseyPinstripesColor").set({opacity: $(this).val()/100})
+		jerseyBelow.getObjects().find(o => o.id == "sleevePinstripesColor").set({opacity: $(this).val()/100})
+		jerseyBelow.renderAll()
+		reRenderBG("jersey")
+	})
+
+	$("#brooklynPinstripeOpacity").on("change",function() {
+		jerseyBelow.getObjects().find(o => o.id == "brooklynCheckGroup").set({opacity: $(this).val()/100})
+		jerseyBelow.renderAll()
+		reRenderBG("jersey")
+	})
+
 	function setSeams(buttonPadVisible) {
 		if (buttonPadVisible == true) {
-			jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+			if ($("#buttonsType").val() != "buttonsHenley") {
+				jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+			} else {
+				jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+			}
 			if ($("#seamsType").val().startsWith("seamsStandard")) {
 				$("#seamsType").val("seamsStandardToPiping").trigger("change") 
 			} else {
@@ -4609,13 +5176,13 @@
 		move: function(color) {
 			$(this).data('changed', true);
 			pantsBelow.setBackgroundColor(color.toHexString(), pantsBelow.renderAll.bind(pantsBelow))
-			pantsBelow.getObjects().find(o => o.id === 'atlBelt1').set("fill", color.toHexString())
+			pantsLogoCanvas.getObjects().find(o => o.id === 'atlBelt1').set("fill", color.toHexString())
 			reRenderBG("pants")
 		},
 		change: function(color) {
 			$(this).data('changed', true);
 			pantsBelow.setBackgroundColor(color.toHexString(), pantsBelow.renderAll.bind(pantsBelow))
-			pantsBelow.getObjects().find(o => o.id === 'atlBelt1').set("fill", color.toHexString())
+			pantsLogoCanvas.getObjects().find(o => o.id === 'atlBelt1').set("fill", color.toHexString())
 			reRenderBG("pants")
 			if (color !=  null) {
 				if ($.inArray(color.toHexString(), commonPalette) < 0) {
@@ -4632,7 +5199,7 @@
 		hide: function(color) {
 			$(this).data('changed', false);
 			pantsBelow.setBackgroundColor(color.toHexString(), pantsBelow.renderAll.bind(pantsBelow))
-			pantsBelow.getObjects().find(o => o.id === 'atlBelt1').set("fill", color.toHexString())
+			pantsLogoCanvas.getObjects().find(o => o.id === 'atlBelt1').set("fill", color.toHexString())
 			reRenderBG("pants")
 		}
 	})
@@ -4643,7 +5210,7 @@
 			type: "color",
 			showAlpha: false,
 			showInput: true,
-			preferredFormat: prefColorFormat,
+			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
@@ -4656,7 +5223,6 @@
 			move: function(color) {
 				$(this).data('changed', true);
 				const id = $(this).data('element');
-				console.log(id)
 				const canvas = $(this).data('canvas') == 'below' ? pantsBelow : pantsLogoCanvas
 				var c = (color == null) ? 'transparent' : color.toHexString()
 				canvas.getObjects().forEach(function(o) {
@@ -4772,7 +5338,7 @@
 			type: "color",
 			showAlpha: false,
 			showInput: true,
-			preferredFormat: prefColorFormat,
+			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
@@ -4845,6 +5411,20 @@
 		})
 	})
 
+	$("#pantsReplacementColor").spectrum({
+		type: "color",
+		showAlpha: false,
+		showInput: true,
+		preferredFormat: prefs['preferredColorFormat'],
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		color: "#FF0000",
+		show: function(color) {
+			$(this).spectrum("option", "palette", commonPalette)
+		},
+	})
+
 	$("#pantsTextureSelect").on("change",function(){
 		if ($(this).val() == "custom") {
 			if (customPantsTexture == null) {
@@ -4891,27 +5471,27 @@
         switch ($(this).val()) {
             case "belt":
                 beltObjects.forEach(function(obj) {
-                    pantsBelow.getObjects().find(o => o.id === obj).visible = true;
+                    pantsLogoCanvas.getObjects().find(o => o.id === obj).visible = true;
                 })
                 elasticObjects.forEach(function(obj) {
-                    pantsBelow.getObjects().find(o => o.id === obj).visible = false;
+                    pantsLogoCanvas.getObjects().find(o => o.id === obj).visible = false;
                 })
                 $("#beltSelector").show();
                 $("#elasticSelector").hide();
                 break;
             case "elastic":
                 beltObjects.forEach(function(obj) {
-                    pantsBelow.getObjects().find(o => o.id === obj).visible = false;
+                    pantsLogoCanvas.getObjects().find(o => o.id === obj).visible = false;
                 })
                 elasticObjects.forEach(function(obj) {
-                    pantsBelow.getObjects().find(o => o.id === obj).visible = true;
+                    pantsLogoCanvas.getObjects().find(o => o.id === obj).visible = true;
                 })
                 $("#beltSelector").hide();
                 $("#elasticSelector").show();
                 break;
         }
-        pantsBelow.renderAll()
-        reRenderBG("pants")
+        pantsLogoCanvas.renderAll()
+        //reRenderBG("pants")
     })
 
 	$("#pantsMakersMarkSelect").on("change",function(e) {
@@ -4941,6 +5521,67 @@
 		$("#capOverlay").css("display","inline-block");
 		$("#pantsOverlay").css("display","none");
 		$("#tabContainer").skeletabs('goTo', 1)
+		if (pantsLogoCanvas.hoverCursor != "move") {
+			var ctx = pantsLogoCanvas.contextContainer;
+			$("#colorSquare").removeClass("colorSquareActive").addClass("colorSquareSelected");
+			pantsLogoCanvas.hoverCursor='move';
+			pantsLogoCanvas.off('mouse:move');
+			var object = pantsLogoCanvas.getActiveObject();
+			var mouse = object.getLocalPointer(e.e);
+			var imageX = parseInt(mouse.x);
+			var imageY = parseInt(mouse.y);
+			$("#chosenCoordinates").html("(X:"+imageX+", Y:"+imageY+")");
+			var mouse2 = pantsLogoCanvas.getPointer(e.e);
+			var x = parseInt(mouse2.x);
+			var y = parseInt(mouse2.y);
+			var px = ctx.getImageData(x, y, 1, 1).data;
+			var hex = rgb2hex(px[0],px[1],px[2]);
+			$(".removeColor").each(function(e) {
+				$(this).data("x",imageX);
+				$(this).data("y",imageY);
+			})
+			$(".replaceColor").each(function(e) {
+				$(this).data("x",imageX);
+				$(this).data("y",imageY);
+			})
+		}
+	})
+
+	pantsLogoCanvas.on('selection:created', function(e) {
+		activeCanvas = pantsLogoCanvas;
+		var obj = e.selected[0];
+		$("#pantsFileName").html(obj.id);
+		if ($("#pantsTrimImageDiv").css("display") == "none") {
+			$("#pantsTrimImageDiv").css("display","block");
+			$("#pantsUploadImageDiv").css("display","none");
+			$("#pantsSelectedImageDiv").css("display","block");
+		}
+		$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+		$(".copypaste").each(function() {
+			$(this).css("display","inline-block")
+		})
+	})
+
+	pantsLogoCanvas.on('selection:cleared', function(e) {
+		if ($("#pantsReplaceColorDiv").css("display") == "block") {
+			$("#pantsReplaceColorDiv").slideToggle();
+		}
+		if ($("#pantsTrimImageDiv").css("display") == "block") {		
+			$("#pantsTrimImageDiv").slideToggle();
+			$("#pantsColorSquare").val("Select Color");
+			$("#pantsColorSquare").css("background","#FFFFFF");
+			$("#pantsColorSquare").css("color","#000000");
+			$("#pantsChosenCoordinates").html("");
+		}
+		$("#pantsUploadImageDiv").css("display","block");
+		$("#pantsSelectedImageDiv").css("display","none");
+		$("#pantsReplaceColorDiv").css("display", "none")
+		$("#pantsNumberCtl").css("display","none")
+		$("#pantsFileName").html("");
+		$("#tipSpan").html("");
+		$(".copypaste").each(function() {
+			$(this).css("display","none")
+		})
 	})
 
 	$("#togglePantsGrid").on("click",function() {
@@ -4994,6 +5635,18 @@
 		pantsLogoCanvas.renderAll()
 	})
 
+	$("#pantsPinstripeOpacity").on("change",function() {
+		pantsBelow.getObjects().find(o => o.id == "pantsPinstripes").set({opacity: $(this).val()/100})
+		pantsBelow.renderAll()
+		reRenderBG("pants")
+	})
+
+ 	$("#brooklynPantsPinstripeOpacity").on("change",function() {
+		pantsBelow.getObjects().find(o => o.id == "brooklynPantsCheckGroup").set({opacity: $(this).val()/100})
+		pantsBelow.renderAll()
+		reRenderBG("pants")
+	}) 
+
 // CAP SPECIFIC 
 
 	initializeCap()
@@ -5044,9 +5697,16 @@
     capLogoCanvas.on('selection:created', function(e) {
 		activeCanvas = capLogoCanvas;
 		var obj = e.selected[0];
-		if (obj.id == 'wordmark') {
-			$("#tipSpan").html("If you're trying to select an image instead of the text, you have to hide the text first.");
+		$("#capFileName").html(obj.id);
+		if ($("#capTrimImageDiv").css("display") == "none") {
+			$("#capTrimImageDiv").css("display","block");
+			$("#capUploadImageDiv").css("display","none");
+			$("#capSelectedImageDiv").css("display","block");
 		}
+		$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+		$(".copypaste").each(function() {
+			$(this).css("display","inline-block")
+		})
 	})
 
 	capLogoCanvas.on('selection:cleared', function(e) {
@@ -5076,7 +5736,7 @@
 			type: "color",
 			showAlpha: false,
 			showInput: true,
-			preferredFormat: prefColorFormat,
+			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
 			showButtons: true,
@@ -5179,7 +5839,7 @@
 		type: "color",
 		showAlpha: false,
 		showInput: true,
-		preferredFormat: prefColorFormat,
+		preferredFormat: prefs['preferredColorFormat'],
 		showInitial: true,
 		showPalette: true,
 		showButtons: true,
@@ -5265,36 +5925,40 @@
 	})
 
 	$(".capPlace").on("click",function(e) {
-		const loc = $(this).data("loc")
-		const object = capLogoCanvas.getActiveObject();
-		const imageHeight = object.get("height");
-		const imageWidth = object.get("width")
-		const dim = fitInBox(object.get("width"), object.get("height"), 50, 50, false)
+		var object = capLogoCanvas.getActiveObject();
 		if (object.get('type') == "image") {
-			switch (loc) {
+			const imageHeight = object.height;
+			const imageWidth = object.width
+			switch ($(this).data("loc")) {
 				case "front":
 					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0});	
 					object.setCoords();
-					object.scaleToWidth(dim.width)
+					var dim = fitInBox(object.get("width"), object.get("height"), 50, 50, false)
+					object.scaleToHeight(dim.height)
 					object.set({"left":106.5,"top":284,"angle":0});
+					object.setCoords()
 					break;
 				case "left":
 					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0});	
 					object.setCoords();
+					var dim = fitInBox(object.get("width"), object.get("height"), 50, 50, false)
 					object.scaleToWidth(dim.width)
 					object.set({"left":130,"top":360,"angle":capMakersMarkCoords['leftA']});
+					object.setCoords()
 					break;
 				case "right":
 					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0});	
 					object.setCoords();
+					var dim = fitInBox(object.get("width"), object.get("height"), 50, 50, false)
 					object.scaleToWidth(dim.width)
 					object.set({"left":327,"top":388,"angle":capMakersMarkCoords['rightA']});
+					object.setCoords()
 					break;
 				case "reset":
-					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0});					
+					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0});	
+					object.setCoords()				
 					break;
 			}
-			object.setCoords();
 		}
 		capLogoCanvas.renderAll();
 	})
@@ -5663,6 +6327,14 @@
 			selectable:false
 		});
 
+		halo = new fabric.Path("M 11.132812 237.73242 L 10.970703 243.62695 L 22.289062 244.5 L 43.894531 245.58984 C 67.135372 246.76176 152.1275 246.66693 178.76758 245.43945 C 194.66283 244.70706 195.02224 244.6427 194.39453 242.5957 C 194.04118 241.44344 193.60247 240.33218 193.41992 240.12695 C 193.23733 239.92184 177.10503 240.32614 157.57031 241.02539 C 123.71243 242.2373 66.585026 241.92734 36.460938 240.36719 C 31.967531 240.13448 29.150285 239.98999 27.328125 240.02539 L 11.132812 237.73242 z M 441.45117 344.97461 L 436.22266 351.21094 C 435.89312 351.54402 435.6172 351.74665 435.25781 352.1582 C 433.74105 353.89509 431.5247 356.39676 430.33203 357.7168 C 429.13936 359.03683 425.3525 363.25558 421.91797 367.0918 C 418.48344 370.92802 414.28569 375.55194 412.58789 377.36914 C 396.93645 394.12122 387.33407 404.43475 386.5 405.39062 C 385.95 406.02097 383.70003 408.55985 381.5 411.03125 C 379.30001 413.50265 375.69999 417.72299 373.5 420.41016 C 371.29997 423.09732 369.03983 425.79235 368.47656 426.39844 C 363.06243 432.22435 352.52789 448.9124 347.19531 460.11133 C 340.88545 473.36265 335.62251 491.50336 334.43555 501.66602 L 334.41406 501.66211 L 332.98242 511.97852 C 332.98242 511.97852 337.1159 512.46795 337.44336 512.01758 C 337.65355 511.72843 338.41721 507.84684 338.93945 505.0918 C 339.30604 503.45703 339.69581 501.37405 340.17578 498.52344 C 343.67865 477.71967 353.38701 454.915 365.75 438.44922 C 367.53753 436.06853 369.11523 433.37891 369.11523 433.37891 C 369.11523 433.37891 368.5804 434.06813 371 431.07617 C 371.44329 430.82875 372.23751 428.87861 373.75 427.32031 C 375.26249 425.76201 378.18475 422.52122 380.24414 420.11914 C 385.42066 414.08119 397.60885 400.59636 402.87305 395.08203 C 405.27849 392.56226 411.35349 386.03188 416.37305 380.57031 C 421.3926 375.10878 426.175 369.91638 427 369.03125 C 432.69255 362.92381 437.39277 357.18478 439.86719 353.65625 L 439.9375 353.69336 L 444.48047 347.10352 L 441.45117 344.97461 z M 192.72461 403.07812 C 169.6225 402.94195 145.36545 407.73044 117.5 417.63477 C 105.06618 422.05417 83.017361 430.81343 72 435.71094 C 69.524999 436.81112 65.024998 438.723 62 439.95898 C 58.974998 441.195 54.128199 443.28503 51.228516 444.60352 C 48.328828 445.922 45.291329 447 44.478516 447 C 44.013532 447 43.673174 447.05813 43.439453 447.17188 L 43.388672 447.14062 L 26.851562 452.70898 L 29.634766 459.09375 L 49.074219 450.69336 L 49.03125 450.66797 C 49.150262 450.61929 49.2195 450.60272 49.347656 450.54883 C 51.081239 449.81983 54.750001 448.31423 57.5 447.20312 C 60.249999 446.09199 68.575001 442.61019 76 439.4668 C 83.424999 436.3234 90.625 433.31124 92 432.77148 C 93.375003 432.23173 95.849998 431.22515 97.5 430.53516 C 108.4297 425.96461 117.77607 422.58292 129.5 418.95703 C 157.28211 410.36484 175.81824 407.43773 197 408.30078 C 209.20863 408.7982 224.73982 411.17118 233.99414 413.95117 C 235.38199 414.36807 236.27876 414.60843 236.98242 414.74219 L 248.53906 418.16211 L 249.68555 413.57617 L 237.40625 409.64844 L 237.37109 409.75977 C 236.49385 409.42273 235.3699 409.06986 233.5918 408.59961 C 220.03183 405.01331 206.58587 403.15984 192.72461 403.07812 z",{
+			fill:initialCapColors["halo"],
+			id:'halo',
+			visible: false,
+			selectable:false,
+			clipPath:capClippingPath
+		});
+
 		capLogoText = new fabric.Text('L',{
 			fontFamily: 'Graduate',
 			fontsize: 60,
@@ -5800,6 +6472,7 @@
 		capLogoCanvas.add(textLogo2);
 		capLogoCanvas.add(eyeletGroup);
 		capLogoCanvas.add(scrambledEggColor);
+		capLogoCanvas.add(halo)
 
 		loadMakersMark("cap",$("#capMakersMarkSelect").find(':selected').data('top'),$("#capMakersMarkSelect").find(':selected').data('left'),$("#capMakersMarkSelect").find(':selected').data('angle'),$("#capMakersMarkSelect").find(':selected').data('height'));
         
@@ -5853,6 +6526,60 @@
 			id: 'clippingPathJerseyFront',
 			absolutePositioned: true,
 			clipPath: clippingPath
+		})
+
+		boston1871fill = new fabric.Path("M 57.072266 207 C 55.157731 207 53.479426 207.84706 52.220703 209.44727 C 49.63424 212.73543 47.56744 222.92241 48.408203 228.23633 C 48.779288 230.58173 49.480621 235.425 49.966797 239 C 50.452973 242.575 51.318665 247.01687 51.890625 248.87109 C 52.462566 250.72531 52.869971 253.83458 52.796875 255.7793 C 52.695134 258.48568 53.303922 259.86302 55.388672 261.65625 C 55.846718 262.05024 56.309893 262.40556 56.759766 262.73242 L 56.757812 262.74805 L 56.894531 262.82617 C 57.73738 263.4273 58.487584 263.86815 58.892578 263.9668 L 60 264.59961 L 60 235.5 L 60 233.80469 L 60 207 L 57.072266 207 z M 256.57617 568.99609 C 192.65821 568.99309 190.06467 569.06679 177.15039 571.24414 L 163.79883 573.49609 L 164.48438 582.99805 C 164.86109 588.22423 165.33696 594.29997 165.54102 596.5 C 166.51912 607.04632 167.30628 618.74759 167.18945 621 C 167.11815 622.37499 168.60786 644.425 170.5 670 C 172.39214 695.575 174.10854 719.19998 174.31445 722.5 C 174.52038 725.79998 177.42073 763.60002 180.75977 806.5 C 184.09881 849.40002 187.13721 889.33753 187.51172 895.25 C 188.08236 904.25911 188.45975 906.01362 189.8457 906.08203 C 190.75527 906.12693 220.075 906.96345 255 907.94141 C 289.925 908.91932 320.15113 909.78227 322.16992 909.85938 C 325.42715 909.98385 325.89941 909.69037 326.36133 907.25 C 326.96511 904.06023 327.96405 891.17096 328.5957 878.40039 C 328.8378 873.50564 329.19909 868.14999 329.40039 866.5 C 329.73059 863.79322 330.09094 859.74148 331.57422 842 C 331.82713 838.97502 332.23208 834.47499 332.47461 832 C 332.71713 829.52498 333.18247 823.45001 333.50781 818.5 C 333.83316 813.54999 334.28061 808.37503 334.50391 807 C 334.72718 805.62501 335.16387 801.35002 335.47266 797.5 C 335.78144 793.65002 339.82742 747.075 344.46484 694 C 349.10226 640.925 353.30346 592.775 353.80078 587 C 354.29809 581.225 354.4349 576.20388 354.10352 575.8418 C 353.7721 575.47953 346.55929 573.79206 338.07617 572.0918 L 322.65234 569 L 256.57617 568.99609 z",{
+			fill: initialJerseyColors['boston1871fill'],
+			id: 'boston1871fill',
+			visible: true,
+			selectable:false,
+			evented: false
+		});
+
+		boston1871stroke1 = new fabric.Path("M 60 212.27734 L 60 233.80469 L 60 235.5 L 60 262.5293 C 60.205794 262.26269 60.253625 262.19631 60.455078 261.93945 C 60.465608 261.97495 60.477501 262 60.488281 262 C 60.756367 262 62.609254 258.7375 64.607422 254.75 C 66.605586 250.7625 69.762345 245.41392 71.621094 242.86523 C 73.479846 240.31661 75 237.54716 75 236.70898 C 75 235.87081 72.187499 230.92629 68.75 225.72266 C 65.312501 220.51902 61.963752 215.41535 61.308594 214.38086 C 61.262384 214.30786 61.218774 214.25452 61.175781 214.21289 L 60 212.27734 z M 256.57617 568.99609 C 192.65822 568.99311 190.06467 569.06675 177.15039 571.24414 L 163.79883 573.49609 L 164.48438 582.99805 C 164.86108 588.22423 165.33696 594.29997 165.54102 596.5 C 166.51912 607.04632 167.30629 618.74759 167.18945 621 C 167.11817 622.37499 168.60786 644.425 170.5 670 C 172.39214 695.575 174.10854 719.19998 174.31445 722.5 C 174.52036 725.79998 177.42073 763.60002 180.75977 806.5 C 184.0988 849.40002 187.13721 889.33753 187.51172 895.25 C 188.08236 904.25911 188.45975 906.01362 189.8457 906.08203 C 190.75528 906.12701 220.075 906.96345 255 907.94141 C 289.925 908.91932 320.15113 909.78227 322.16992 909.85938 C 325.42715 909.98372 325.89941 909.6904 326.36133 907.25 C 326.96511 904.06023 327.96405 891.17096 328.5957 878.40039 C 328.83778 873.50564 329.19909 868.14999 329.40039 866.5 C 329.73061 863.79322 330.09094 859.74148 331.57422 842 C 331.82714 838.97502 332.23208 834.47499 332.47461 832 C 332.71714 829.52498 333.18247 823.45001 333.50781 818.5 C 333.83315 813.54999 334.28061 808.37503 334.50391 807 C 334.72716 805.62501 335.16387 801.35002 335.47266 797.5 C 335.78144 793.65002 339.82742 747.075 344.46484 694 C 349.10226 640.925 353.30346 592.775 353.80078 587 C 354.29809 581.22503 354.43489 576.20388 354.10352 575.8418 C 353.77209 575.47972 346.55929 573.79206 338.07617 572.0918 L 322.65234 569 L 256.57617 568.99609 z M 256.57617 583.99609 L 321.16406 584 L 335.12891 586.79883 C 336.51012 587.07587 337.41033 587.29486 338.69336 587.56445 C 338.08706 594.58353 334.07855 640.54002 329.52148 692.69531 C 324.8837 745.77462 320.89433 791.65196 320.52148 796.30078 C 320.23205 799.90944 319.62811 805.02162 319.69727 804.5957 C 319.02765 808.71905 318.88052 812.35022 318.54102 817.51562 C 318.2244 822.33305 317.73869 828.57958 317.54688 830.53711 C 317.29028 833.15553 316.88772 837.63106 316.62695 840.75 C 315.14468 858.47939 314.78288 862.46074 314.51172 864.68359 C 314.09917 868.0651 313.86509 872.56921 313.61328 877.66016 C 313.31636 883.66329 312.93318 889.63559 312.55664 894.58008 C 303.45684 894.30304 285.06493 893.77733 255.41992 892.94727 C 237.95966 892.45835 221.90097 892.00484 210.0957 891.66797 C 206.83129 891.57499 204.81879 891.51473 202.26562 891.44141 C 201.69302 882.89623 198.94772 846.87185 195.71484 805.33594 C 192.37656 762.44563 189.38927 723.23499 189.28516 721.56641 C 189.0337 717.53645 187.35203 694.47975 185.45898 668.89258 C 184.51495 656.13255 183.67115 644.24939 183.07422 635.41406 C 182.77575 630.9964 182.53795 627.33637 182.38281 624.74414 C 182.30522 623.44803 182.24938 622.41213 182.2168 621.73242 C 182.18429 621.05271 182.28463 619.56504 182.16992 621.77734 C 182.38823 617.56892 182.05653 615.52596 181.74219 610.85352 C 181.42784 606.18104 180.97855 600.5279 180.47656 595.11523 C 180.36106 593.86973 180.04387 589.66751 179.76562 586.01758 C 192.27678 583.90943 192.90103 583.99311 256.57617 583.99609 z M 322.39648 894.6582 L 322.39648 894.66016 C 323.24614 894.58192 323.3179 894.89302 322.74219 894.87109 C 322.6895 894.86909 321.78125 894.84362 321.7168 894.83984 C 321.92289 894.79562 322.24231 894.67257 322.39648 894.6582 z",{
+			fill: initialJerseyColors['boston1871stroke1'],
+			id: 'boston1871stroke1',
+			visible: true,
+			selectable:false,
+			evented: false
+		});
+
+		boston1871stroke1.set('shadow', new fabric.Shadow({
+				color: '#000000',
+				blur: 2,
+				offsetX: 0,
+				offsetY: 0
+			}))
+
+		boston1871stroke2 = new fabric.Path("M 60 203.54102 L 60 267.20508 L 63 267.20508 L 63 203.54102 L 60 203.54102 z M 256.57617 568.99609 C 192.65822 568.99311 190.06467 569.06675 177.15039 571.24414 L 163.79883 573.49609 L 164.48438 582.99805 C 164.86108 588.22423 165.33696 594.29997 165.54102 596.5 C 166.51912 607.04632 167.30629 618.74759 167.18945 621 C 167.11817 622.37499 168.60786 644.425 170.5 670 C 172.39214 695.575 174.10854 719.19998 174.31445 722.5 C 174.52036 725.79998 177.42073 763.60002 180.75977 806.5 C 184.0988 849.40002 187.13721 889.33753 187.51172 895.25 C 188.08236 904.25911 188.45975 906.01362 189.8457 906.08203 C 190.75528 906.12701 220.075 906.96345 255 907.94141 C 289.925 908.91932 320.15113 909.78227 322.16992 909.85938 C 325.42715 909.98372 325.89941 909.6904 326.36133 907.25 C 326.96511 904.06023 327.96405 891.17096 328.5957 878.40039 C 328.83778 873.50564 329.19909 868.14999 329.40039 866.5 C 329.73061 863.79322 330.09094 859.74148 331.57422 842 C 331.82714 838.97502 332.23208 834.47499 332.47461 832 C 332.71714 829.52498 333.18247 823.45001 333.50781 818.5 C 333.83315 813.54999 334.28061 808.37503 334.50391 807 C 334.72716 805.62501 335.16387 801.35002 335.47266 797.5 C 335.78144 793.65002 339.82742 747.075 344.46484 694 C 349.10226 640.925 353.30346 592.775 353.80078 587 C 354.29809 581.22503 354.43489 576.20388 354.10352 575.8418 C 353.77209 575.47972 346.55929 573.79206 338.07617 572.0918 L 322.65234 569 L 256.57617 568.99609 z M 256.57617 573.99609 L 322.15625 574 L 337.09375 576.99414 C 341.29052 577.83531 345.17817 578.67583 348.00781 579.33789 C 348.5344 579.4611 348.79487 579.5353 349.24219 579.64453 C 349.1836 581.50043 349.0469 583.91614 348.81836 586.57031 C 348.32373 592.31406 344.12175 640.48987 339.48438 693.56445 C 334.84683 746.64085 330.81842 792.98336 330.48828 797.09961 C 330.18596 800.8692 329.69415 805.42453 329.56836 806.19922 C 329.1963 808.49033 328.8496 813.15009 328.51953 818.17188 C 328.1971 823.0777 327.72365 829.20923 327.49805 831.51172 C 327.25083 834.03455 326.84732 838.52767 326.5918 841.58398 C 325.10885 859.32142 324.74802 863.34906 324.4375 865.89453 C 324.16579 868.12169 323.8469 873.19416 323.60156 878.1543 C 323.28805 884.4926 322.88221 890.87042 322.48242 896.03125 C 322.14007 900.45046 321.80801 903.30262 321.59766 904.8418 C 318.51657 904.73068 289.67039 903.9102 255.14062 902.94336 C 237.67889 902.4544 221.61846 902.00101 209.81055 901.66406 C 203.90659 901.4955 199.06476 901.35564 195.64453 901.25586 C 194.07215 901.21013 194.08099 901.2091 193.0918 901.17773 C 192.91389 899.86405 192.72133 898.39685 192.50195 894.93359 C 192.10939 888.73608 189.0836 849.01671 185.74414 806.11133 C 182.40535 763.2146 179.47668 724.94564 179.30469 722.18945 C 179.08359 718.64615 177.37877 695.20991 175.48633 669.63086 C 174.54094 656.85254 173.69665 644.95383 173.09766 636.08789 C 172.79817 631.65492 172.5602 627.9793 172.40234 625.3418 C 172.32347 624.02304 172.26446 622.96049 172.22852 622.21094 C 172.19261 621.46142 172.21602 620.63694 172.18359 621.25977 C 172.29532 619.10615 172.07142 616.09964 171.76367 611.52539 C 171.4559 606.9511 171.01289 601.35871 170.51953 596.03906 C 170.32764 593.97022 169.8457 587.84089 169.4707 582.63867 L 169.11328 577.66992 L 177.98242 576.17383 C 190.80671 574.01167 192.66213 573.99307 256.57617 573.99609 z",{
+			fill: initialJerseyColors['boston1871stroke2'],
+			id: 'boston1871stroke2',
+			visible: true,
+			selectable:false,
+			evented: false
+		});
+
+		boston1871 = new fabric.Group([boston1871fill,boston1871stroke1,boston1871stroke2],{
+			id: 'boston1871',
+			visible: false,
+			selectable: false,
+			evented: false
+		})
+
+		boston1871buttons = new fabric.Image.fromURL('./images/boston1871buttons.png', function(oImg) {
+			oImg.set({
+				id: 'boston1871buttons',
+				visible: true,
+				opacity: 0.75
+			})
+			oImg.set('shadow', new fabric.Shadow({
+				color: '#000000',
+				blur: 5,
+				offsetX: 0,
+				offsetY: 2
+			}))
+			boston1871.addWithUpdate(oImg)
+			boston1871.bringToFront(oImg)
 		})
 
 		brooklynCheckGroup = new fabric.Group([],{
@@ -5920,7 +6647,7 @@
 			id: 'jerseyBackColor',
 			fill: initialJerseyColors['jerseyBackColor'],
 			visible: false,
-			clipPath: vestSleeveClippingPath
+			clipPath: clippingPath
 		})
 
 		jerseyFrontColor = new fabric.Path("M 183.15234 503.60938 L 172.28711 506.83398 L 149.24414 508.625 L 132.05078 511.13281 L 116.43164 512 L 0 512 L 0 1024 L 512 1024 L 512 512 L 383.08398 512 L 364.51367 509.58008 L 338.72461 507.55078 L 327.85938 504.08789 L 316.39844 508.26758 L 301.47461 515.66992 L 205.59961 516.26562 L 194.01758 508.50586 L 183.15234 503.60938 z",{
@@ -6702,6 +7429,7 @@
 		jerseyBelow.add(montrealSideBack)
 		jerseyBelow.add(montrealSideFront)
 		jerseyBelow.add(collarColor)
+		jerseyBelow.add(boston1871)
 		jerseyBelow.add(cadetCollarColor)
 		jerseyBelow.add(highCollar1)
 		jerseyBelow.add(highCollar1Laces)
@@ -6711,6 +7439,7 @@
 		loadMakersMark("jersey",$("#jerseyMakersMarkSelect").find(':selected').data('top'),$("#jerseyMakersMarkSelect").find(':selected').data('left'),$("#jerseyMakersMarkSelect").find(':selected').data('angle'),$("#jerseyMakersMarkSelect").find(':selected').data('height'));
 
 		jerseyBelow.renderAll()
+		reRenderBG("jersey")
 
 		swatch1Color = new fabric.Rect({
 			id: 'swatch1Color',
@@ -7149,7 +7878,7 @@
 		    offsetY: 3
 		}))
 
-		jerseyNameFill = new fabric.Text('PLAYER',{
+		jerseyNameFill = new fabric.Text(prefs['preferredPlayerName'],{
 			fontFamily: "MLBBlock",
 			fontSize: 30,
 			originX: 'center',
@@ -7166,7 +7895,7 @@
 			strokeWidth: 0,
 		})
 
-		jerseyNameStroke1 = new fabric.Text('PLAYER',{
+		jerseyNameStroke1 = new fabric.Text(prefs['preferredPlayerName'],{
 			fontFamily: "MLBBlock",
 			fontSize: 30,
 			originX: 'center',
@@ -7181,7 +7910,7 @@
 			strokeWidth: 6
 		})
 
-		jerseyNameStroke2 = new fabric.Text('PLAYER',{
+		jerseyNameStroke2 = new fabric.Text(prefs['preferredPlayerName'],{
 			fontFamily: "MLBBlock",
 			fontSize: 30,
 			originX: 'center',
@@ -7210,7 +7939,7 @@
 			visible: false
 		})
 
-		jerseyBackNumberFill = new fabric.Text('23',{
+		jerseyBackNumberFill = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 130,
 			originX: 'center',
@@ -7227,7 +7956,7 @@
 			strokeWidth: 0
 		})
 
-		jerseyBackNumberStroke1 = new fabric.Text('23',{
+		jerseyBackNumberStroke1 = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 130,
 			originX: 'center',
@@ -7244,7 +7973,7 @@
 			strokeWidth: 5
 		})
 
-		jerseyBackNumberStroke2 = new fabric.Text('23',{
+		jerseyBackNumberStroke2 = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 130,
 			originX: 'center',
@@ -7276,7 +8005,7 @@
 			top: 312
 		})
 
-		jerseyFrontNumberFill = new fabric.Text('23',{
+		jerseyFrontNumberFill = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 75,
 			originX: 'center',
@@ -7292,7 +8021,7 @@
 			strokeWidth: 0
 		})
 
-		jerseyFrontNumberStroke1 = new fabric.Text('23',{
+		jerseyFrontNumberStroke1 = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 75,
 			originX: 'center',
@@ -7308,7 +8037,7 @@
 			strokeWidth: 5
 		})
 
-		jerseyFrontNumberStroke2 = new fabric.Text('23',{
+		jerseyFrontNumberStroke2 = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 75,
 			originX: 'center',
@@ -7339,7 +8068,7 @@
 			top: 679
 		})
 
-		jerseySleeveNumberFill = new fabric.Text('23',{
+		jerseySleeveNumberFill = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 50,
 			originX: 'center',
@@ -7356,7 +8085,7 @@
 			strokeWidth: 0
 		})
 
-		jerseySleeveNumberStroke1 = new fabric.Text('23',{
+		jerseySleeveNumberStroke1 = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 50,
 			originX: 'center',
@@ -7373,7 +8102,7 @@
 			strokeWidth: 5
 		})
 
-		jerseySleeveNumberStroke2 = new fabric.Text('23',{
+		jerseySleeveNumberStroke2 = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 50,
 			originX: 'center',
@@ -7405,7 +8134,7 @@
 			top: 528
 		})
 
-		jerseyBelow.add(seams)
+		jerseyLogoCanvas.add(seams)
 		jerseyLogoCanvas.add(placketPipingInnerColor)
 		jerseyLogoCanvas.add(placketPipingMiddleColor)
 		jerseyLogoCanvas.add(placketPipingOuterColor)
@@ -7486,6 +8215,32 @@
                 top: 0,
 				id: 'buttonsScript',
 				visible: true,
+				selectable: false,
+				evented: false,
+				opacity: 0.75
+			})
+			tmp.set('shadow', new fabric.Shadow({
+				color: '#000000',
+				blur: 5,
+				offsetX: 0,
+				offsetY: 2
+			}))
+			tmp.filters.push(new fabric.Image.filters.BlendColor({
+  				color: "#ffffff",
+				mode: 'multiply',
+  				alpha: 1.0
+			}))
+			tmp.applyFilters()
+			buttons.addWithUpdate(tmp)
+			//jerseyLogoCanvas.renderAll();
+		})
+
+		fabric.Image.fromURL("./images/buttons_henley.png", function (img) {
+			var tmp = img.set({
+				left: 0, 
+                top: 0,
+				id: 'buttonsHenley',
+				visible: false,
 				selectable: false,
 				evented: false,
 				opacity: 0.75
@@ -7799,7 +8554,7 @@
 			opacity: 0.25
 		})
 
-		pantsNumberFill = new fabric.Text('23',{
+		pantsNumberFill = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 40,
 			originX: 'center',
@@ -7816,7 +8571,7 @@
 			visible: true
 		})
 
-		pantsNumberStroke1 = new fabric.Text('23',{
+		pantsNumberStroke1 = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 40,
 			originX: 'center',
@@ -7833,7 +8588,7 @@
 			visible: true
 		})
 
-		pantsNumberStroke2 = new fabric.Text('23',{
+		pantsNumberStroke2 = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 40,
 			originX: 'center',
@@ -7874,8 +8629,8 @@
 				selectable: false,
 				evented: false
 			})
-			pantsBelow.add(buckle)
-			pantsBelow.renderAll();
+			pantsLogoCanvas.add(buckle)
+			pantsLogoCanvas.renderAll();
 		})
 
 		pantsBelow.add(chaps)
@@ -7897,15 +8652,15 @@
 		pantsBelow.add(pantsTequila2)
 		pantsBelow.add(pantsTequila3)
 		pantsBelow.add(pantsTequila4)
-        pantsBelow.add(belt)
-        pantsBelow.add(elasticMiddle)
-        pantsBelow.add(elasticTop)
-        pantsBelow.add(elasticBottom)
-		pantsBelow.add(elasticRibbing)
-		pantsBelow.add(atlBelt1)
-		pantsBelow.add(atlBelt2)
-		pantsBelow.add(atlBelt3)
-		pantsBelow.add(atlBelt4)
+        pantsLogoCanvas.add(belt)
+        pantsLogoCanvas.add(elasticMiddle)
+        pantsLogoCanvas.add(elasticTop)
+        pantsLogoCanvas.add(elasticBottom)
+		pantsLogoCanvas.add(elasticRibbing)
+		pantsLogoCanvas.add(atlBelt1)
+		pantsLogoCanvas.add(atlBelt2)
+		pantsLogoCanvas.add(atlBelt3)
+		pantsLogoCanvas.add(atlBelt4)
 		pantsLogoCanvas.add(pantsNumber)
 
 		loadMakersMark("pants",$("#pantsMakersMarkSelect").find(':selected').data('top'),$("#pantsMakersMarkSelect").find(':selected').data('left'),$("#pantsMakersMarkSelect").find(':selected').data('angle'),$("#pantsMakersMarkSelect").find(':selected').data('height'));
@@ -8031,7 +8786,6 @@
 			data: {type:type},
 			success: function(data) { 
 				if (data.image != undefined) {
-					console.log(data.filename)
 					var imgObj = new Image();
 					imgObj.src = data.image;
 					imgObj.onload = function () {
@@ -8471,7 +9225,9 @@
 		}
 		if ($(this).data("canvas") == "pants") {
 			var canvas = pantsLogoCanvas
-			var moveBelow = null
+			var imLeft = 256
+			var imTop = 256
+			var moveBelow = 'belt'
 			//var canStr = "pants"
 		}
 		/* switch (activeCanvas.id) {
@@ -8512,7 +9268,7 @@
 						imTop = image.get('top');
 					})
 					image.on('selected',function() {
-						switch (activeCanvas.id) {
+						switch (image.canvas.id) {
 							case "jerseyLogoCanvas":
 								var canStr = "jersey"
 								break;
@@ -8539,8 +9295,10 @@
 					canvas.add(image);
 					image.set({"left":imLeft,"top":imTop});
 					image.setCoords();
-					if (moveBelow != null) {
+					if (moveBelow != 'belt') {
 						canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
+					} else {
+						canvas.sendToBack(image)	
 					}
 					canvas.setActiveObject(image)
 					canvas.requestRenderAll()
@@ -8588,13 +9346,14 @@
 			type: "GET",
 			url: "http://127.0.0.1:"+port+"/customFont",
 			success: function(data) {
-				customFonts.push(data)
-				$("head").prepend("<style>@font-face {\n   font-family: '"+data.familyName+"';\n   src: url('"+data.fontData+"') format('truetype');\n}\n."+data.familyName+" { font-family: '"+data.familyName+"'; font-size: 1.1em;}\n</style>");
-				fontSources[data.familyName] = data.fontData;
-				var style = data.familyName;
-				var font_family = $("."+style).css("font-family");
-				var myfont = new FontFaceObserver(data.familyName)
-				myfont.load()
+				if (data.status != "cancelled") {
+					customFonts.push(data)
+					$("head").prepend("<style>@font-face {\n   font-family: '"+data.familyName+"';\n   src: url('"+data.fontData+"') format('truetype');\n}\n."+data.familyName+" { font-family: '"+data.familyName+"'; font-size: 1.1em;}\n</style>");
+					fontSources[data.familyName] = data.fontData;
+					var style = data.familyName;
+					var font_family = $("."+style).css("font-family");
+					var myfont = new FontFaceObserver(data.familyName)
+					myfont.load()
 					.then(function() {
 					// when font is loaded, use it.
 						switch (type) {
@@ -8752,7 +9511,9 @@
 						alert('font loading failed ' + data.familyName);
 						hideOverlay();
 					});
-					
+				} else {
+					hideOverlay();
+				}
 			}
 		})
 	})
@@ -8872,11 +9633,12 @@
 		if ($(this).val() == "-") {
 			$(this).next().val(parseInt($(this).next().val())-1);
 			$("#"+$(this).data("span")).html($(this).next().val())
+			$(this).next().trigger("change")
 		} else if ($(this).val() == "+") {
 			$(this).prev().val(parseInt($(this).prev().val())+1);
 			$("#"+$(this).data("span")).html($(this).prev().val())
+			$(this).prev().trigger("change")
 		}
-		//$(this).next().attr("id").html(val);
 		$("#"+$(this).data('span')).change();
 	})
 
@@ -8895,7 +9657,6 @@
 		$("#pantsOverlay").css("display","none");
 		eyeDropper.open().then(result => {
 			clipboard.writeText(result.sRGBHex)
-			console.log(clipboard.readText('selection'))
 			if($("#toggleJerseyGrid").is(':checked')){
 				jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 			}
@@ -9150,6 +9911,15 @@
 				$("#jerseyReplaceColorDiv").slideToggle();
 			}
 		}
+		if ($(this).data("canvas") == "pantsLogoCanvas") {
+			$("#pantsReplaceColorSubmit").data("action",$(this).attr("id"))
+			$("#pantsReplaceColorSubmit").data("x",$(this).data("x"))
+			$("#pantsReplaceColorSubmit").data("y",$(this).data("y"))
+			var color = $("#pantsColorSquare").val();
+			if ($("#pantsReplaceColorDiv").css("display") == "none") {
+				$("#pantsReplaceColorDiv").slideToggle();
+			}
+		}
 	})
 	
 	$(".replaceColorSubmit").on("click",function(e) {
@@ -9300,11 +10070,18 @@
 		capLogoCanvas.setDimensions({ width: 512, height: 512 });
     	capLogoCanvas.setZoom(1)
 
+		var textLine = teamName.split('_').join(' ')+" "+$("#uniformType").val()
+		
+		if (yearRange.length > 0) {
+			textLine += yearRange.split('_').join(' ')
+		}
+
 		$.ajax({
 		 	type: "POST",
 			url: "http://127.0.0.1:"+port+"/saveCap",
 			dataType: "json",
 			data: {
+				text: textLine,
 				capLogoCanvas: capLogoCanvas.toDataURL(),
 				capBelow: capBelow.toDataURL(),
 				name: fileName,
@@ -9378,11 +10155,18 @@
 		pantsLogoCanvas.setDimensions({ width: 512, height: 512 });
     	pantsLogoCanvas.setZoom(1)
 
+		var textLine = teamName.split('_').join(' ')+" "+$("#uniformType").val()
+		
+		if (yearRange.length > 0) {
+			textLine += yearRange.split('_').join(' ')
+		}
+
 		$.ajax({
 		 	type: "POST",
 			url: "http://127.0.0.1:"+port+"/savePants",
 			dataType: "json",
 			data: {
+				text: textLine,
 				pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
 				pantsBelow: pantsBelow.toDataURL(),
 				name: fileName,
@@ -9418,6 +10202,9 @@
 		showOverlay()
 		jerseyBelow.setOverlayImage(null,jerseyBelow.renderAll.bind(jerseyBelow));
 		var showPlanket = false
+		var buttonStyle = "blank"
+		var buttonPadStyle = "blank"
+		var seamStyle = "blank"
 		
 		const buttonGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons')
 		const seamsGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'seams')
@@ -9453,8 +10240,8 @@
 			teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
 		}
 		teamName = teamName.split(' ').join('_');
-		if ($("#uniformType").val() != "Home") {
-			var fileName = "jerseys_"+teamName+"_"+$("#uniformType").val().toLowerCase()+yearRange;
+		if ($("#uniformType").val().toLowerCase() != "home") {
+			var fileName = "jerseys_"+teamName+"_"+$("#uniformType").split(' ').join('_').val().toLowerCase()+yearRange;
 		} else {
 			var fileName = "jerseys_"+teamName+yearRange;
 		}
@@ -9467,7 +10254,7 @@
 		jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 		seamsGroup.visible = false;
 
-		if (buttonGroup.visible == true) {
+/* 		if (buttonGroup.visible == true) {
 			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons').getObjects().forEach(function(o) {
 				if (o.id != "zipper" && o.visible == true) {
 					showPlanket = true
@@ -9475,18 +10262,90 @@
 			})
 		} else {
 			showPlanket = false
+		} */
+
+		if (buttonGroup.visible == true) {
+			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons').getObjects().forEach(function(o) {
+				if (o.id != "zipper" && o.visible == true) {
+					showPlanket = true
+				}		
+			})
+			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons').getObjects().forEach(function(o) {
+				if (o.visible == true) {
+					buttonStyle = o.id
+				}		
+			})
+		} else {
+			showPlanket = false
+			buttonStyle = "blank"
 		}
+
+		switch ($("#buttonsType").val()) {
+			case "buttonsScript":
+				buttonPadStyle = "buttonpad"
+				break;
+			case "buttonsNoScript":
+				buttonPadStyle = "buttonpad"
+				break;
+			case "buttonsHenley":
+				buttonPadStyle = "henley"
+				break;
+			case "zipper":
+				buttonPadStyle = "blank"
+		}
+
+		if (showPlanket == false) { buttonPadStyle = "blank" }
+
+		var normalMap = buttonPadStyle+"_"+buttonStyle+"_"+$("#sleeveType").val()+"_n.png"
 
 		jerseyBelow.setDimensions({ width: 512, height: 1024 });
     	jerseyBelow.setZoom(1)
 		jerseyLogoCanvas.setDimensions({ width: 512, height: 1024 });
     	jerseyLogoCanvas.setZoom(1)
 
+		nameCanvas.clear()
+		var text = new fabric.Text(teamName.split('_').join(' '), {
+			fill: idealTextColor(jerseyBelow.backgroundColor),
+			fontFamily: "Rowdies",
+			fontsize: 20,
+			originX: 'center',
+			originY: 'center',
+			textAlign: 'center',
+			left: 17,
+			top: 830,
+			angle: 270
+		})
+
+		var text2 = new fabric.Text((yearRange.length > 0) ? $("#uniformType").val()+" "+yearRange.split('_').join(' ') : $("#uniformType").val(), {
+			fill: idealTextColor(jerseyBelow.backgroundColor),
+			fontFamily: "Rowdies",
+			fontsize: 20,
+			originX: 'center',
+			originY: 'center',
+			textAlign: 'center',
+			left: 495,
+			top: 830,
+			angle: 270
+		})
+
+		if (text.width > 225) {
+			text.scaleToHeight(225)
+		}
+		
+		if (text2.width > 225) {
+			text2.scaleToHeight(225)
+		}
+
+		nameCanvas.add(text)
+		nameCanvas.add(text2)
+
 		$.ajax({
 		 	type: "POST",
 			url: "http://127.0.0.1:"+port+"/saveJersey",
 			dataType: "json",
 			data: {
+				nameCanvas: nameCanvas.toDataURL(),
+				normalMap: normalMap,
 				jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
 				jerseyBelow: jerseyBelow.toDataURL(),
 				name: fileName,
@@ -9494,6 +10353,7 @@
 				jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
 				showPlanket: showPlanket,
 				buttonPadSeams: buttonPadSeams,
+				buttonType: $("#buttonsType").val(),
 				seamsVisible: seamsVisible,
 				seamsOption: $("#seamsType").val()
 			},
@@ -9517,6 +10377,19 @@
 					jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 				}
 
+				if (seamsVisible == true) {
+					seamsGroup.visible = true
+				}
+
+				if (buttonPadSeams == true) {
+					if ($("#buttonsType").val() != "buttonsHenley") {
+						jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					} else {
+						jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					}
+					//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+				}
+
 				hideOverlay()
 			}
 		})
@@ -9525,6 +10398,9 @@
 	$("#save").on("click",function(e) {
 		showOverlay();
 		var showPlanket = false
+		var buttonStyle = "blank"
+		var buttonPadStyle = "blank"
+		var seamStyle = "blank"
 
 		const buttonGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons')
 		const seamsGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'seams')
@@ -9626,9 +10502,33 @@
 					showPlanket = true
 				}		
 			})
+			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons').getObjects().forEach(function(o) {
+				if (o.visible == true) {
+					buttonStyle = o.id
+				}		
+			})
 		} else {
 			showPlanket = false
+			buttonStyle = "blank"
 		}
+
+		switch ($("#buttonsType").val()) {
+			case "buttonsScript":
+				buttonPadStyle = "buttonpad"
+				break;
+			case "buttonsNoScript":
+				buttonPadStyle = "buttonpad"
+				break;
+			case "buttonsHenley":
+				buttonPadStyle = "henley"
+				break;
+			case "zipper":
+				buttonPadStyle = "blank"
+		}
+
+		if (showPlanket == false) { buttonPadStyle = "blank" }
+
+		var normalMap = buttonPadStyle+"_"+buttonStyle+"_"+$("#sleeveType").val()+"_n.png"
 
 		exportMeta.checkboxes = checkboxes
 		exportMeta.selects = selects
@@ -9674,8 +10574,8 @@
 			teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
 		}
 		teamName = teamName.split(' ').join('_');
-		if ($("#uniformType").val() != "Home") {
-			var fileName = teamName+"_"+$("#uniformType").val().toLowerCase()+yearRange;
+		if ($("#uniformType").val().toLowerCase() != "home") {
+			var fileName = teamName+"_"+$("#uniformType").val().split(' ').join('_').toLowerCase()+yearRange;
 		} else {
 			var fileName = teamName+yearRange;
 		}
@@ -9706,12 +10606,58 @@
     	capBelow.setZoom(1)
 		capLogoCanvas.setDimensions({ width: 512, height: 512 });
     	capLogoCanvas.setZoom(1)
+
+		nameCanvas.clear()
+
+		var text = new fabric.Text(teamName.split('_').join(' '), {
+			fill: idealTextColor(jerseyBelow.backgroundColor),
+			fontFamily: "Rowdies",
+			fontsize: 20,
+			originX: 'center',
+			originY: 'center',
+			textAlign: 'center',
+			left: 17,
+			top: 830,
+			angle: 270
+		})
+
+		var text2 = new fabric.Text((yearRange.length > 0) ? $("#uniformType").val()+" "+yearRange : $("#uniformType").val(), {
+			fill: idealTextColor(jerseyBelow.backgroundColor),
+			fontFamily: "Rowdies",
+			fontsize: 20,
+			originX: 'center',
+			originY: 'center',
+			textAlign: 'center',
+			left: 495,
+			top: 830,
+			angle: 270
+		})
+
+		if (text.width > 225) {
+			text.scaleToHeight(225)
+		}
+		
+		if (text2.width > 225) {
+			text2.scaleToHeight(225)
+		}
+
+		nameCanvas.add(text)
+		nameCanvas.add(text2)
+
+		var textLine = teamName.split('_').join(' ')+" "+$("#uniformType").val()
+		
+		if (yearRange.length > 0) {
+			textLine += yearRange.split('_').join(' ')
+		}
 		
 		$.ajax({
 		 	type: "POST",
 			url: "http://127.0.0.1:"+port+"/saveUniform",
 			dataType: "json",
 			data: {
+				text: textLine,
+				normalMap: normalMap,
+				nameCanvas: nameCanvas.toDataURL(),
 				capLogoCanvas: capLogoCanvas.toDataURL(),
 				capBelow: capBelow.toDataURL(),
 				jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
@@ -9722,6 +10668,7 @@
 				showPlanket: showPlanket,
 				buttonPadSeams: buttonPadSeams,
 				seamsVisible: seamsVisible,
+				buttonType: $("#buttonsType").val(),
 				seamsOption: $("#seamsType").val(),
 				jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
 				capWatermarkColor: idealTextColor(capBelow.backgroundColor),
@@ -9763,7 +10710,12 @@
 				jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
 
 				if (buttonPadSeams == true) {
-					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					if ($("#buttonsType").val() != "buttonsHenley") {
+						jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					} else {
+						jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+					}
+					//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 				}
 
 				if ($("#toggleCapGuides").is(":checked")) {
@@ -10225,56 +11177,150 @@
 	}
 
 	function paste() {
-		if (activeCanvas != pantsLogoCanvas) {
-			const objID = _clipboard.id
-			switch (activeCanvas.id) {
-				case "jerseyLogoCanvas":
-					var canStr = "jersey"
-					break;
-				case "capLogoCanvas":
-					var canStr = "cap"
-					break;
-				case "pantsLogoCanvas":
-					var canStr = "pants"
-					break;
-			}
-			var id = (getNumberAtEnd(_clipboard) == null) ? 0 : getNumberAtEnd(_clipboard)
-			_clipboard.clone(function(clonedObj) {
-				activeCanvas.discardActiveObject();
-				clonedObj.set({
-					left: clonedObj.left + 10,
-					top: clonedObj.top + 10,
-					evented: true,
-					id: _clipboard.get("id")+"_"+(id+1)
-				});
-				clonedObj.on('selected',function() {
-					$("#"+canStr+"FileName").html(clonedObj.get('id'));
-					if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-						$("#"+canStr+"TrimImageDiv").css("display","block");
-						$("#"+canStr+"UploadImageDiv").css("display","none");
-						$("#"+canStr+"SelectedImageDiv").css("display","block");
-					}
-					$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-					$(".copypaste").each(function() {
-						$(this).css("display","inline-block")
-					})
-				})
-				if (clonedObj.type === 'activeSelection') {
-					// active selection needs a reference to the canvas.
-					clonedObj.canvas = activeCanvas;
-					clonedObj.forEachObject(function(obj) {
-						activeCanvas.add(obj);
-					});
-					// this should solve the unselectability
-					clonedObj.setCoords();
-				} else {
-					activeCanvas.add(clonedObj);
-				}
-				_clipboard.top += 10;
-				_clipboard.left += 10;
-				activeCanvas.requestRenderAll();
-			});
+		const objID = _clipboard.id
+		switch (activeCanvas.id) {
+			case "jerseyLogoCanvas":
+				var canStr = "jersey"
+				break;
+			case "capLogoCanvas":
+				var canStr = "cap"
+				break;
+			case "pantsLogoCanvas":
+				var canStr = "pants"
+				break;
 		}
+		var id = (getNumberAtEnd(_clipboard) == null) ? 0 : getNumberAtEnd(_clipboard)
+		_clipboard.clone(function(clonedObj) {
+			activeCanvas.discardActiveObject();
+			clonedObj.set({
+				left: clonedObj.left + 10,
+				top: clonedObj.top + 10,
+				evented: true,
+				id: _clipboard.get("id")+"_"+(id+1)
+			});
+			clonedObj.on('selected',function() {
+				$("#"+canStr+"FileName").html(clonedObj.get('id'));
+				if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+					$("#"+canStr+"TrimImageDiv").css("display","block");
+					$("#"+canStr+"UploadImageDiv").css("display","none");
+					$("#"+canStr+"SelectedImageDiv").css("display","block");
+				}
+				$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+				$(".copypaste").each(function() {
+					$(this).css("display","inline-block")
+				})
+			})
+			if (clonedObj.type === 'activeSelection') {
+				// active selection needs a reference to the canvas.
+				clonedObj.canvas = activeCanvas;
+				clonedObj.forEachObject(function(obj) {
+					activeCanvas.add(obj);
+				});
+				// this should solve the unselectability
+				clonedObj.setCoords();
+			} else {
+				activeCanvas.add(clonedObj);
+			}
+			_clipboard.top += 10;
+			_clipboard.left += 10;
+			activeCanvas.requestRenderAll();
+		});
+	}
+
+	function dropImage(dropCanvas, file, tab) {
+		$.ajax({
+			type: "GET",
+			url: "http://127.0.0.1:"+port+"/dropImage",
+			data: {file:file},
+			success: function(data) { 
+				if (data.image != "error not an image") {
+					var imgObj = new Image();
+					imgObj.src = data.image;
+					$("#fileName").html(data.filename);
+					imgObj.onload = function () {
+						switch (dropCanvas.id) {
+							case "jerseyLogoCanvas":
+								var canvas = jerseyLogoCanvas
+								var imLeft = 256
+								var imTop = 512
+								var moveBelow = 'buttons'
+								var header = $("#jerseyImagesHeader")
+								break;
+							case "capLogoCanvas":
+								var canvas = capLogoCanvas
+								var imLeft = 256
+								var imTop = 256
+								var moveBelow = 'eyeletGroup'
+								var header = $("#capImagesHeader")
+								break;
+							case "pantsLogoCanvas":
+								var canvas = pantsLogoCanvas
+								var imLeft = 256
+								var imTop = 256
+								var moveBelow = belt
+								var header = $("#pantsImagesHeader")
+								break;
+						} 
+						var image = new fabric.Image(imgObj);
+						image.set({
+							originX: 'center',
+							originY: 'center',
+							perPixelTargetFind: true,
+							centeredScaling: true,
+							centeredRotation: true,
+							name: data.filename,
+							id: data.filename
+						});
+						image.filters.push(new fabric.Image.filters.Resize({
+							resizeType: 'lanczos', // typo fixed
+							lanczosLobes: 2 // typo fixed
+						}));
+						image.on('object:modified',function() {
+							imLeft = image.get('left')
+							imTop = image.get('top');
+						})
+						image.on('selected',function() {
+							switch (activeCanvas.id) {
+								case "jerseyLogoCanvas":
+									var canStr = "jersey"
+									break;
+								case "capLogoCanvas":
+									var canStr = "cap"
+									break;
+								case "pantsLogoCanvas":
+									var canStr = "pants"
+									break;
+							} 
+							$("#"+canStr+"FileName").html(image.get('id'));
+							if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+								$("#"+canStr+"TrimImageDiv").css("display","block");
+								$("#"+canStr+"UploadImageDiv").css("display","none");
+								$("#"+canStr+"SelectedImageDiv").css("display","block");
+							}
+							$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+							$(".copypaste").each(function() {
+								$(this).css("display","inline-block")
+							})
+						})
+						var h = image.height;
+						var w = image.width;
+						canvas.add(image);
+						image.set({"left":imLeft,"top":imTop});
+						image.setCoords();
+						if (moveBelow != 'belt') {
+							canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
+						} else {
+							canvas.sendToBack(image)	
+						}
+						canvas.setActiveObject(image)
+						canvas.requestRenderAll()
+						canvas.renderAll();
+						$("#tabContainer").skeletabs('goTo', tab)
+						header.click()
+					}
+				}
+			}
+		})
 	}
 
 	function getNumberAtEnd(str) {
@@ -10356,6 +11402,55 @@
 		})
 	})
 
+	$("#preferredJerseyFont").on("change",function() {
+		const pref = $(this).attr("id")
+		const style = $(this).val();
+		const font_family = $("."+style).css("font-family");
+		var g = jerseyLogoCanvas.getObjects().find(o => o.id === 'wordmark');
+		g.getObjects().forEach(function(o) {
+			o.set("fontFamily", font_family)
+			wordmark.dirty = true;
+		})
+		jerseyLogoCanvas.renderAll();
+		$(this).removeClass().addClass(style);
+		$("#jerseyFontTypeCombo").val(style);
+		$("#jerseyFontTypeCombo").removeClass().addClass(style);
+		$.ajax({
+			type: "POST",
+			url: "http://127.0.0.1:"+port+"/setPreference",
+			data: {pref:pref,val:style},
+			success: function(result) {
+			}
+		})
+	})
+
+	$("#preferredCapFont").on("change",function() {
+		const pref = $(this).attr("id")
+		const style = $(this).val();
+		const font_family = $("."+style).css("font-family");
+		var g = capLogoCanvas.getObjects().find(o => o.id === 'textLogo');
+		g.getObjects().forEach(function(o) {
+			o.set("fontFamily", font_family)
+			textLogo.dirty = true;
+		})
+		var g = capLogoCanvas.getObjects().find(o => o.id === 'textLogo2');
+		g.getObjects().forEach(function(o) {
+			o.set("fontFamily", font_family)
+			textLogo2.dirty = true;
+		})
+		capLogoCanvas.renderAll();
+		$(this).removeClass().addClass(style);
+		$("#capFontTypeCombo").val(style);
+		$("#capFontTypeCombo").removeClass().addClass(style);
+		$.ajax({
+			type: "POST",
+			url: "http://127.0.0.1:"+port+"/setPreference",
+			data: {pref:pref,val:style},
+			success: function(result) {
+			}
+		})
+	})
+
 	$("#checkForUpdatesPref").on("change",function() {
 		const pref = "checkForUpdates"
 		const val = $(this).is(':checked')
@@ -10382,5 +11477,26 @@
 			}
 		})
 	})
+
+	function handleElement(obj) {
+		switch (obj.id) {
+			case "wordmark":
+				$("#tipSpan").html("If you're trying to select an image instead of the text, you have to hide the text first.");
+				break;
+			case "jerseyFrontNumber":
+				$("#jerseyNumberCtl").css("display","inline-block")
+				$(".frontButton").css("display","inline-block")
+				$(".sleeveButton").css("display","none")
+				break;
+			case "jerseySleeveNumber":
+				$("#jerseyNumberCtl").css("display","inline-block")
+				$(".frontButton").css("display","none")
+				$(".sleeveButton").css("display","inline-block")
+				break;
+			default:
+				$("#tipSpan").html("");
+				$("#jerseyNumberCtl").css("display","none")
+		}
+	}
 </script>
 </html>
