@@ -154,31 +154,30 @@
                 </div>
             </div>
             <div class="col span_2_of_5">
-                <div id="text">
-					<div> 
-					<table style="width:100%;">
+                <div id="text" style="background-color:aqua;">
+					<table style="width:100%; background-color:green;">
 						<tr>
 							<td>
 								Team Name: <input type="text" id="teamName">
 							</td>
 							<td>
-								Uniform Type: <select id="uniformType">
-									<option value="Home">Home</option>
-									<option value="Away">Away</option>
-									<option value="Alternate">Alternate</option>
-									<option value="Throwback">Throwback</option>
-									<option value="Fauxback">Fauxback</option>
-								</select>
+								Uniform Type: <input type="text" id="uniformType" list="types" value="Home">
+								<datalist id="types">
+									<option>Home</option>
+									<option>Away</option>
+									<option>Alternate</option>
+									<option>Throwback</option>
+									<option>Fauxback</option>
+								</datalist>
 							</td>
 							<td><label for="startYear">Start:</label>
-								<input type="number" class="year" id="startYear" name="startYear" onkeypress="return isNumberKey(event)" style="width:50px;">
+								<input type="number" class="year" id="startYear" name="startYear" onkeypress="return isNumberKey(event)" style="width:35px;">
 							</td>
 							<td><label for="endYear">End:</label>
-								<input type="number" class="year" id="endYear" name="endYear" onkeypress="return isNumberKey(event)" style="width:50px;">
+								<input type="number" class="year" id="endYear" name="endYear" onkeypress="return isNumberKey(event)" style="width:35px;">
 							</td>
 						</tr>	
 					<table>
-					</div> 
 					<div class="accordion">	
                         <table style="width:100%; height:760px"><tr><td>
                         <div id="tabContainer" class="skltbs-theme-light" data-skeletabs='{ "panelHeight": "adaptive", "keyboard": false, "startIndex": 0 }' style="position:absolute; top:60px;">
@@ -10241,8 +10240,8 @@
 			teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
 		}
 		teamName = teamName.split(' ').join('_');
-		if ($("#uniformType").val() != "Home") {
-			var fileName = "jerseys_"+teamName+"_"+$("#uniformType").val().toLowerCase()+yearRange;
+		if ($("#uniformType").val().toLowerCase() != "home") {
+			var fileName = "jerseys_"+teamName+"_"+$("#uniformType").split(' ').join('_').val().toLowerCase()+yearRange;
 		} else {
 			var fileName = "jerseys_"+teamName+yearRange;
 		}
@@ -10397,6 +10396,7 @@
 	})
 
 	$("#save").on("click",function(e) {
+		console.log($("#uniformType").val())
 		showOverlay();
 		var showPlanket = false
 		var buttonStyle = "blank"
@@ -10575,8 +10575,8 @@
 			teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
 		}
 		teamName = teamName.split(' ').join('_');
-		if ($("#uniformType").val() != "Home") {
-			var fileName = teamName+"_"+$("#uniformType").val().toLowerCase()+yearRange;
+		if ($("#uniformType").val().toLowerCase() != "home") {
+			var fileName = teamName+"_"+$("#uniformType").val().split(' ').join('_').toLowerCase()+yearRange;
 		} else {
 			var fileName = teamName+yearRange;
 		}
