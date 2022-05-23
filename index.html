@@ -31,7 +31,7 @@
 		const gridsVisible = (params.get('gridsVisible').toLowerCase() == "true") ? true : false
 		const checkForUpdates = (params.get('checkForUpdates').toLowerCase() == "true") ? true : false
 		const preferredPlayerName = params.get('preferredPlayerName')
-		const preferredPlayerNumber = params.get('preferredPlayerNumber')
+		const preferredPlayerNumber = params.get('preferredPlayerNumber') 
 
 		var prefs = {
 			appVersion: params.get('appVersion'),
@@ -44,7 +44,8 @@
 			preferredCapTexture: params.get('preferredCapTexture'),
 			preferredColorFormat: params.get('preferredColorFormat'),
 			preferredJerseyFont: params.get('preferredJerseyFont'),
-			preferredCapFont: params.get('preferredCapFont')
+			preferredCapFont: params.get('preferredCapFont'),
+			seamsVisibleOnDiffuse: params.get('seamsVisibleOnDiffuse')
 		}
 
 		var defaultJerseyTexture = params.get('preferredJerseyTexture')
@@ -199,11 +200,12 @@
                                     <div class="jersey-accord-content" style="display:inline;">
                                         <table style="width:100%;">
                                             <tr class="color_tr">
-                                                <td><input type="checkbox" id="toggleJerseyGrid" checked></td>
-                                                <td><label>Grid and Guides (Will Be Hidden On Export)</label></td>
+                                                <td><input type="checkbox" id="toggleJerseyGrid"></td>
+                                                <td><label>Grid and Guides (Will Be Hidden On Export)&nbsp;&nbsp;</label></td>
                                                 <td style="text-align:right;">
-                                                    
-                                                </td>
+													<input type="checkbox" id="toggleDiffuseSeams">
+                                               		<label>Show Seams on Diffuse Map</label>
+												</td>
                                             </tr>
 											<tr class="color_tr">
 												<td class="checkCell"><input type="checkbox" class="jerseyMultiToggle" data-id="swatch1,swatch2,swatch3,swatch4" id="swatchCheck" data-canvas="above" checked></td>
@@ -2150,7 +2152,10 @@
 					<input type="checkbox" id="checkForUpdatesPref" checked>&nbsp;Check for Updates on Startup
 				</center></td>
 				<td><center>
-					<input type="checkbox" id="gridsVisible" checked>&nbsp;Grids & Gudes Visible
+					<input type="checkbox" id="gridsVisible" checked>&nbsp;Grids & Guides Visible
+				</center></td>
+				<td><center>
+					<input type="checkbox" id="seamsVisibleOnDiffuse">&nbsp;Seams Visible on Diffuse Map
 				</center></td>
 				<td><center>
 					Preferred Color Format:&nbsp;
@@ -2686,6 +2691,7 @@
 		$("#jerseyNameTextBox").val(prefs['preferredPlayerName'])
 		$("#jerseyNumberTextBox").val(prefs['preferredPlayerNumber'])
 		$("#pantsNumberTextBox").val(prefs['preferredPlayerNumber'])
+		$("#toggleDiffuseSeams").prop("checked", prefs['seamsVisibleOnDiffuse'] == "true")
 
 		$("#jerseyFontTypeCombo").val(prefs['preferredJerseyFont']).trigger("change")
 		$("#capFontTypeCombo").val(prefs['preferredCapFont']).trigger('change')
@@ -10251,9 +10257,11 @@
 			jerseyLogoCanvas.setOverlayImage(null,jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 		}
 
-		jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
-		seamsGroup.visible = false;
-
+		if (!$("#toggleDiffuseSeams").is(":checked")) {
+			jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+			seamsGroup.visible = false;
+		}
+	
 /* 		if (buttonGroup.visible == true) {
 			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons').getObjects().forEach(function(o) {
 				if (o.id != "zipper" && o.visible == true) {
@@ -10355,7 +10363,8 @@
 				buttonPadSeams: buttonPadSeams,
 				buttonType: $("#buttonsType").val(),
 				seamsVisible: seamsVisible,
-				seamsOption: $("#seamsType").val()
+				seamsOption: $("#seamsType").val(),
+				seamsOnDiffuse: ($("#toggleDiffuseSeams").is(":checked")) ? true : false
 			},
 			success: function(data) {
 				if (data.result == "error") {
@@ -10670,6 +10679,7 @@
 				seamsVisible: seamsVisible,
 				buttonType: $("#buttonsType").val(),
 				seamsOption: $("#seamsType").val(),
+				seamsOnDiffuse: ($("#toggleDiffuseSeams").is(":checked")) ? true : false,
 				jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
 				capWatermarkColor: idealTextColor(capBelow.backgroundColor),
 				pantsWatermarkColor: idealTextColor(pantsBelow.backgroundColor),
@@ -11469,6 +11479,19 @@
 		$("#toggleJerseyGrid").prop( "checked", val ).triggerHandler('click');
 		$("#togglePantsGrid").prop( "checked", val ).triggerHandler('click');
 		$("#toggleCapGuides").prop( "checked", val ).triggerHandler('click');
+		$.ajax({
+			type: "POST",
+			url: "http://127.0.0.1:"+port+"/setPreference",
+			data: {pref:pref,val:val.toString()},
+			success: function(result) {
+			}
+		})
+	})
+
+	$("#seamsVisibleOnDiffuse").on("change", function() {
+		const pref = "seamsVisibleOnDiffuse"
+		const val = $(this).is(':checked')
+		$("#toggleDiffuseSeams").prop( "checked", val ).triggerHandler('click');
 		$.ajax({
 			type: "POST",
 			url: "http://127.0.0.1:"+port+"/setPreference",

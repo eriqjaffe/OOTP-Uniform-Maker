@@ -36,10 +36,11 @@ const preferredJerseyFont = store.get("preferredJerseyFont", "Leckerli_One")
 const preferredCapFont = store.get("preferredCapFont", "Graduate")
 const gridsVisible = store.get("gridsVisible", true)
 const checkForUpdates = store.get("checkForUpdates", true)
+const seamsVisibleOnDiffuse = store.get("seamsVisibleOnDiffuse", false)
 
-for (const dependency of ['chrome', 'node', 'electron']) {
+/* for (const dependency of ['chrome', 'node', 'electron']) {
     console.log(dependency+", "+process.versions[dependency])
-}
+} */
 
 const fontArray = {"Acme": "Acme-Regular.ttf", "athletic_gothicregular": "athletic_gothic-webfont.ttf", "athletic_gothic_shadowregular": "athletic_gothic_shadow-webfont.ttf", "beaverton_scriptregular": "beaverton_script-webfont.ttf", "BerkshireSwash": "BerkshireSwash-Regular.ttf", "CantoraOne": "CantoraOne-Regular.ttf", "caxton_romanregular": "caxton_roman-webfont.ttf", "ChelaOne": "ChelaOne-Regular.ttf", "russell_circusregular": "circus-webfont.ttf", "Condiment": "Condiment-Regular.ttf", "Cookie": "Cookie-Regular.ttf", "Courgette": "Courgette-Regular.ttf", "CroissantOne": "CroissantOne-Regular.ttf", "Damion": "Damion-Regular.ttf", "Engagement": "Engagement-Regular.ttf", "rawlings_fancy_blockregular": "rawlingsfancyblock-regular-webfont.ttf", "GermaniaOne": "GermaniaOne-Regular.ttf", "Graduate": "Graduate-Regular.ttf", "GrandHotel": "GrandHotel-Regular.ttf", "JockeyOne": "JockeyOne-Regular.ttf", "kansasregular": "tuscan-webfont.ttf", "KaushanScript": "KaushanScript-Regular.ttf", "LeckerliOne": "LeckerliOne-Regular.ttf", "LilyScriptOne": "LilyScriptOne-Regular.ttf", "Lobster": "Lobster-Regular.ttf", "LobsterTwo": "LobsterTwo-Regular.ttf", "MetalMania": "MetalMania-Regular.ttf", "Miniver": "Miniver-Regular.ttf", "Molle,italic": "Molle-Regular.ttf", "NewRocker": "NewRocker-Regular.ttf", "Norican": "Norican-Regular.ttf", "rawlings_old_englishmedium": "rawlingsoldenglish-webfont.ttf", "OleoScript": "OleoScript-Regular.ttf", "OleoScriptSwashCaps": "OleoScriptSwashCaps-Regular.ttf", "Pacifico": "Pacifico.ttf", "PirataOne": "PirataOne-Regular.ttf", "Playball": "Playball-Regular.ttf", "pro_full_blockregular": "pro_full_block-webfont.ttf", "richardson_fancy_blockregular": "richardson_fancy_block-webfont.ttf", "RubikOne": "RubikOne-Regular.ttf", "RumRaisin": "RumRaisin-Regular.ttf", "Satisfy": "Satisfy-Regular.ttf", "SeymourOne": "SeymourOne-Regular.ttf", "spl28scriptregular": "spl28script-webfont.ttf", "ua_tiffanyregular": "tiffany-webfont.ttf", "TradeWinds": "TradeWinds-Regular.ttf", "mlb_tuscan_newmedium": "mlb_tuscan_new-webfont.ttf", "UnifrakturCook": "UnifrakturCook-Bold.ttf", "UnifrakturMaguntia": "UnifrakturMaguntia-Book.ttf", "Vibur": "Vibur-Regular.ttf", "Viga": "Viga-Regular.ttf", "Wellfleet": "Wellfleet-Regular.ttf", "WendyOne": "WendyOne-Regular.ttf", "Yellowtail": "Yellowtail-Regular.ttf"};
 
@@ -588,7 +589,10 @@ app2.post('/saveJersey', (req, res) => {
 	const buttonType = req.body.buttonType
 	const seamsVisible = req.body.seamsVisible
 	const seamsOption = req.body.seamsOption
-	const normalMap = req.body.normalMap;
+	const normalMap = req.body.normalMap
+	const seamsOnDiffuse = req.body.seamsOnDiffuse
+
+	console.log(seamsOnDiffuse)
 
 	if (tmpJerseyTexture.startsWith("data:image")) {
 		fs.writeFileSync(tempDir+"/tempJerseyTexture.png", tmpJerseyTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
@@ -657,6 +661,33 @@ app2.post('/saveJersey', (req, res) => {
 		let jerseyTextureFile = await Jimp.read(jerseyTexture)
 		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
 		let nameImage = await Jimp.read(nameCanvas)
+		if (seamsOnDiffuse == "true") {
+			if (buttonType != "buttonsHenley") {
+				var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+			} else {
+				var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+			}
+			let diffuseSeamImg = await Jimp.read(diffuseSeamsSrc)
+			await diffuseSeamImg.opacity(.1)
+			await jerseyBase.composite(diffuseSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+			switch (seamsOption) {
+				case "seamsStandardToPiping":
+					var diffuseSeamSrc = __dirname+"/images/seams/seams_standard_to_piping.png"
+					break;
+				case "seamsStandardToCollar":
+					var diffuseSeamSrc = __dirname+"/images/seams/seams_standard_to_collar.png"
+					break;
+				case "seamsRaglanToPiping":
+					var diffuseSeamSrc = __dirname+"/images/seams/seams_raglan_to_piping.png"
+					break;
+				case "seamsRaglanToCollar":
+					var diffuseSeamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
+					break;
+			}
+			let seamsDiffuseImg = await Jimp.read(diffuseSeamSrc)
+			await seamsDiffuseImg.opacity(.1)
+			await jerseyBase.composite(seamsDiffuseImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		}
 		await jerseyBase.composite(jerseyTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await jerseyBase.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyWM = await Jimp.read(__dirname+"/images/jersey_watermark.png")
@@ -784,6 +815,7 @@ app2.post('/saveUniform', (req, res) => {
 	const seamsVisible = req.body.seamsVisible
 	const seamsOption = req.body.seamsOption
 	const normalMap = req.body.normalMap
+	const seamsOnDiffuse = req.body.seamsOnDiffuse
 	const json = Buffer.from(req.body.json, 'utf8')
 	/* if (seamsVisible == false) {
 		var nmBase = "blank"
@@ -917,6 +949,33 @@ app2.post('/saveUniform', (req, res) => {
 		let jerseyBase = await Jimp.read(jerseyBelow)
 		let jerseyTextureFile = await Jimp.read(jerseyTexture)
 		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
+		if (seamsOnDiffuse == "true") {
+			if (buttonType != "buttonsHenley") {
+				var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+			} else {
+				var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+			}
+			let diffuseSeamImg = await Jimp.read(diffuseSeamsSrc)
+			await diffuseSeamImg.opacity(.1)
+			await jerseyBase.composite(diffuseSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+			switch (seamsOption) {
+				case "seamsStandardToPiping":
+					var diffuseSeamSrc = __dirname+"/images/seams/seams_standard_to_piping.png"
+					break;
+				case "seamsStandardToCollar":
+					var diffuseSeamSrc = __dirname+"/images/seams/seams_standard_to_collar.png"
+					break;
+				case "seamsRaglanToPiping":
+					var diffuseSeamSrc = __dirname+"/images/seams/seams_raglan_to_piping.png"
+					break;
+				case "seamsRaglanToCollar":
+					var diffuseSeamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
+					break;
+			}
+			let seamsDiffuseImg = await Jimp.read(diffuseSeamSrc)
+			await seamsDiffuseImg.opacity(.1)
+			await jerseyBase.composite(seamsDiffuseImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		}
 		await jerseyBase.composite(jerseyTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})	
 		await jerseyBase.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyWM = await Jimp.read(__dirname+"/images/jersey_watermark.png")
@@ -1180,7 +1239,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredPlayerName=${preferredPlayerName}&preferredPlayerNumber=${preferredPlayerNumber}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredPlayerName=${preferredPlayerName}&preferredPlayerNumber=${preferredPlayerNumber}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}`);
     //mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}`);
 	
   
