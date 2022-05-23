@@ -258,7 +258,7 @@ app2.get("/customFont", (req, res) => {
 			store.set("uploadFontPath", path.dirname(result.filePaths[0]))
 			ttfInfo(result.filePaths[0], function(err, info) {
 			var ext = getExtension(result.filePaths[0])
-				const dataUrl = font2base64.encodeToDataUrlSync(result.filePaths[0])
+				const dataUrl = font2base64.encodeToDataUrl(result.filePaths[0])
 				var fontPath = url.pathToFileURL(tempDir + '/'+path.basename(result.filePaths[0]))
 				fs.copyFile(result.filePaths[0], tempDir + '/'+path.basename(result.filePaths[0]), (err) => {
 					if (err) {
