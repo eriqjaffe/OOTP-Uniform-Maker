@@ -1108,14 +1108,35 @@ app2.post('/saveUniform', (req, res) => {
 })
 
 app2.get("/loadUniform", (req, res) => {
-	const file = dialog.showOpenDialogSync(null, {
+	const options = {
+		defaultPath: store.get("uploadUniformPath", app.getPath('downloads')),
 		properties: ['openFile'],
 		filters: [
 			{ name: 'Uniform Files', extensions: ['uni'] }
 		]
+	}
+	dialog.showOpenDialog(null, options).then(result => {
+		if(!result.canceled) {
+			store.set("uploadUniformPath", path.dirname(result.filePaths[0]))
+			res.json({
+				"result": "success",
+				"json": JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
+			})
+			res.end()
+		} else {
+			res.json({
+				"result": "cancelled"
+			})
+			res.end()
+			console.log("cancelled")
+		}
+	}).catch(err => {
+		res.json({
+			"result": "error"
+		})
+		console.log(err)
+		res.end()
 	})
-	//res.end(JSON.stringify(JSONC.unpack(fs.readFileSync(file[0]).toString())))
-	res.end(JSON.stringify(JSON.parse(fs.readFileSync(file[0]).toString())))
 })
 
 app2.post('/setPreference', (req, res) => {
@@ -1209,8 +1230,8 @@ function createWindow () {
           { role: 'toggleDevTools' },
           { type: 'separator' },
           { role: 'resetZoom' },
-          { role: 'zoomIn' },
-          { role: 'zoomOut' },
+          { role: 'zoomin', accelerator: 'CommandOrControl+=' },
+          { role: 'zoomout', accelerator: 'CommandOrControl+-' },
           { type: 'separator' },
           { role: 'togglefullscreen' }
           ]

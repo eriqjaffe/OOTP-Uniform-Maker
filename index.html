@@ -10751,148 +10751,152 @@
 			type: "GET",
 			url: "http://127.0.0.1:"+port+"/loadUniform",
 			success: function(response) {
-				customFonts.splice(0, customFonts.length)
-				const exportMeta = JSON.parse(response)
+				if (response.result == "success") {
+					customFonts.splice(0, customFonts.length)
+					const exportMeta = JSON.parse(response.json)
 
-				if (exportMeta.version == undefined || !semver.eq(appVersion, exportMeta.version)) {
-					if (confirm("This save file appears to have been generated with a different version of Uniform Maker.  Some elements may not be load properly.\r\n\r\nContinue?")) {
-						loadJersey()
+					if (exportMeta.version == undefined || !semver.eq(appVersion, exportMeta.version)) {
+						if (confirm("This save file appears to have been generated with a different version of Uniform Maker.  Some elements may not be load properly.\r\n\r\nContinue?")) {
+							loadJersey()
+						} else {
+							hideOverlay()
+						}
 					} else {
+						loadJersey()
+					}
+
+					function loadJersey() {
+						$("#teamName").val(exportMeta.team)
+						$("#uniformType").val(exportMeta.type)
+						$("#startYear").val(exportMeta.start)
+						$("#endYear").val(exportMeta.end)
+
+						customJerseyTexture = exportMeta.customJerseyTexture
+						customPantsTexture = exportMeta.customPantsTexture
+						customCapTexture = exportMeta.customCapTexture
+
+						if (exportMeta.customFonts != undefined && exportMeta.customFonts != null) {
+							if (exportMeta.customFonts.length > 0) {
+								for (x in exportMeta.customFonts) {
+									const loadedFont = exportMeta.customFonts[x]
+									validFonts.push(loadedFont.familyName)
+									$("head").prepend("<style>@font-face {\n   font-family: '"+loadedFont.familyName+"';\n   src: url('"+loadedFont.fontData+"') format('truetype');\n}\n."+loadedFont.familyName+" { font-family: '"+loadedFont.familyName+"'; font-size: 1.1em;}\n</style>");
+									fontSources[loadedFont.familyName] = loadedFont.fontData;
+									var style = loadedFont.familyName;
+									var font_family = $("."+style).css("font-family");
+									var optgroup = $("<optgroup class='"+loadedFont.familyName+"'>");
+									optgroup.append("<option value='"+loadedFont.familyName+"'>"+loadedFont.fontName+"</option>")
+									$("#jerseyFontTypeCombo").append(optgroup)
+									var optgroup2 = $("<optgroup class='"+loadedFont.familyName+"'>");
+									optgroup2.append("<option value='"+loadedFont.familyName+"'>"+loadedFont.fontName+"</option>")
+									$("#capFontTypeCombo").append(optgroup2)
+									customFonts.push(loadedFont)
+								}	
+							}
+						}
+						
+
+						Object.keys(exportMeta.checkboxes).forEach(function(key){
+							$("#"+key).prop('checked', exportMeta.checkboxes[key].checked)
+						})	
+
+						Object.keys(exportMeta.selects).forEach(function(key){
+							$("#"+key).prop("disabled",exportMeta.selects[key].disabled)
+							$("#"+key).val(exportMeta.selects[key].val)
+						})
+
+						Object.keys(exportMeta.ranges).forEach(function(key){
+							$("#"+key).prop("disabled",exportMeta.ranges[key].disabled)
+							$("#"+key).val(exportMeta.ranges[key].val)
+						})
+
+						Object.keys(exportMeta.textBoxes).forEach(function(key){
+							$("#"+key).prop("disabled",exportMeta.textBoxes[key].disabled)
+							$("#"+key).val(exportMeta.textBoxes[key].val)
+						})
+
+						Object.keys(exportMeta.buttons).forEach(function(key){
+							$("#"+key).prop("disabled",exportMeta.buttons[key].disabled)
+							$("#"+key).val(exportMeta.buttons[key].val)
+						})
+
+						Object.keys(exportMeta.capSelectors).forEach(function(key){
+							if (exportMeta.capSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+							$("#"+key).spectrum("set",exportMeta.capSelectors[key].val)
+						})
+
+						Object.keys(exportMeta.jerseySelectors).forEach(function(key){
+							if (exportMeta.jerseySelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+							$("#"+key).spectrum("set",exportMeta.jerseySelectors[key].val)
+						})
+
+						Object.keys(exportMeta.pantsSelectors).forEach(function(key){
+							if (exportMeta.pantsSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+							$("#"+key).spectrum("set",exportMeta.pantsSelectors[key].val)
+						})
+
+
+						jerseyBelow.loadFromJSON(exportMeta.canvases.jerseyBelow, jerseyBelow.renderAll.bind(jerseyBelow), function(o, object) {
+							jerseyBelow.add(object)
+						})
+						jerseyLogoCanvas.loadFromJSON(exportMeta.canvases.jerseyLogoCanvas, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), function(o, object) {
+							if (object.id == 'wordmark' || object.id == 'warpedText') {
+								$("#wordmarkCheck").prop("checked",object.visible).triggerHandler('click');
+								if (object.id == 'warpedText') {
+									var myfont = new FontFaceObserver(exportMeta.selectedJerseyFont)
+									myfont.load()
+										.then(function() {
+											o.set("fontFamily", (validFonts.includes(exportMeta.selectedJerseyFont)) ? o.fontFamily : "Leckerli One")
+											jerseyLogoCanvas.renderAll();
+											$("#jerseyFontTypeCombo").val(exportMeta.selectedJerseyFont)
+											$("#jerseyFontTypeCombo").removeClass().addClass(o.get("fontFamily"));
+											$("#jerseyFontTypeCombo").trigger('change')
+										}).catch(function(e) {
+											console.log(e)
+										});
+								} else {
+									object.getObjects().forEach(function(o) {
+									var myfont = new FontFaceObserver(exportMeta.selectedJerseyFont)
+									myfont.load()
+										.then(function() {
+											o.set("fontFamily", (validFonts.includes(exportMeta.selectedJerseyFont)) ? o.fontFamily : "Leckerli One")
+											jerseyLogoCanvas.renderAll();
+											$("#jerseyFontTypeCombo").val(exportMeta.selectedJerseyFont)
+											$("#jerseyFontTypeCombo").removeClass().addClass(object.get("fontFamily"));
+											$("#jerseyFontTypeCombo").trigger('change')
+										}).catch(function(e) {
+											console.log(e)
+										});
+									})
+								}
+								
+							}
+							jerseyLogoCanvas.add(object)
+						})
+						jerseyBelow.renderAll()
+						reRenderBG("jersey")
+
+						capBelow.loadFromJSON(exportMeta.canvases.capBelow, capBelow.renderAll.bind(capBelow), function(o, object) {
+							capBelow.add(object)
+						})
+						capLogoCanvas.loadFromJSON(exportMeta.canvases.capLogoCanvas, capLogoCanvas.renderAll.bind(capLogoCanvas), function(o, object) {
+							capLogoCanvas.add(object)
+						})
+						capBelow.renderAll()
+						reRenderBG("cap")
+
+						pantsBelow.loadFromJSON(exportMeta.canvases.pantsBelow, pantsBelow.renderAll.bind(pantsBelow), function(o, object) {
+							pantsBelow.add(object)
+						})
+						pantsLogoCanvas.loadFromJSON(exportMeta.canvases.pantsLogoCanvas, pantsLogoCanvas.renderAll.bind(pantsLogoCanvas), function(o, object) {
+							pantsLogoCanvas.add(object)
+						})
+						pantsBelow.renderAll()
+						reRenderBG("pants")
 						hideOverlay()
 					}
 				} else {
-					loadJersey()
-				}
-
-				function loadJersey() {
-					$("#teamName").val(exportMeta.team)
-					$("#uniformType").val(exportMeta.type)
-					$("#startYear").val(exportMeta.start)
-					$("#endYear").val(exportMeta.end)
-
-					customJerseyTexture = exportMeta.customJerseyTexture
-					customPantsTexture = exportMeta.customPantsTexture
-					customCapTexture = exportMeta.customCapTexture
-
-					if (exportMeta.customFonts != undefined && exportMeta.customFonts != null) {
-						if (exportMeta.customFonts.length > 0) {
-							for (x in exportMeta.customFonts) {
-								const loadedFont = exportMeta.customFonts[x]
-								validFonts.push(loadedFont.familyName)
-								$("head").prepend("<style>@font-face {\n   font-family: '"+loadedFont.familyName+"';\n   src: url('"+loadedFont.fontData+"') format('truetype');\n}\n."+loadedFont.familyName+" { font-family: '"+loadedFont.familyName+"'; font-size: 1.1em;}\n</style>");
-								fontSources[loadedFont.familyName] = loadedFont.fontData;
-								var style = loadedFont.familyName;
-								var font_family = $("."+style).css("font-family");
-								var optgroup = $("<optgroup class='"+loadedFont.familyName+"'>");
-								optgroup.append("<option value='"+loadedFont.familyName+"'>"+loadedFont.fontName+"</option>")
-								$("#jerseyFontTypeCombo").append(optgroup)
-								var optgroup2 = $("<optgroup class='"+loadedFont.familyName+"'>");
-								optgroup2.append("<option value='"+loadedFont.familyName+"'>"+loadedFont.fontName+"</option>")
-								$("#capFontTypeCombo").append(optgroup2)
-								customFonts.push(loadedFont)
-							}	
-						}
-					}
-					
-
-					Object.keys(exportMeta.checkboxes).forEach(function(key){
-						$("#"+key).prop('checked', exportMeta.checkboxes[key].checked)
-					})	
-
-					Object.keys(exportMeta.selects).forEach(function(key){
-						$("#"+key).prop("disabled",exportMeta.selects[key].disabled)
-						$("#"+key).val(exportMeta.selects[key].val)
-					})
-
-					Object.keys(exportMeta.ranges).forEach(function(key){
-						$("#"+key).prop("disabled",exportMeta.ranges[key].disabled)
-						$("#"+key).val(exportMeta.ranges[key].val)
-					})
-
-					Object.keys(exportMeta.textBoxes).forEach(function(key){
-						$("#"+key).prop("disabled",exportMeta.textBoxes[key].disabled)
-						$("#"+key).val(exportMeta.textBoxes[key].val)
-					})
-
-					Object.keys(exportMeta.buttons).forEach(function(key){
-						$("#"+key).prop("disabled",exportMeta.buttons[key].disabled)
-						$("#"+key).val(exportMeta.buttons[key].val)
-					})
-
-					Object.keys(exportMeta.capSelectors).forEach(function(key){
-						if (exportMeta.capSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
-						$("#"+key).spectrum("set",exportMeta.capSelectors[key].val)
-					})
-
-					Object.keys(exportMeta.jerseySelectors).forEach(function(key){
-						if (exportMeta.jerseySelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
-						$("#"+key).spectrum("set",exportMeta.jerseySelectors[key].val)
-					})
-
-					Object.keys(exportMeta.pantsSelectors).forEach(function(key){
-						if (exportMeta.pantsSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
-						$("#"+key).spectrum("set",exportMeta.pantsSelectors[key].val)
-					})
-
-
-					jerseyBelow.loadFromJSON(exportMeta.canvases.jerseyBelow, jerseyBelow.renderAll.bind(jerseyBelow), function(o, object) {
-						jerseyBelow.add(object)
-					})
-					jerseyLogoCanvas.loadFromJSON(exportMeta.canvases.jerseyLogoCanvas, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), function(o, object) {
-						if (object.id == 'wordmark' || object.id == 'warpedText') {
-							$("#wordmarkCheck").prop("checked",object.visible).triggerHandler('click');
-							if (object.id == 'warpedText') {
-								var myfont = new FontFaceObserver(exportMeta.selectedJerseyFont)
-								myfont.load()
-									.then(function() {
-										o.set("fontFamily", (validFonts.includes(exportMeta.selectedJerseyFont)) ? o.fontFamily : "Leckerli One")
-										jerseyLogoCanvas.renderAll();
-										$("#jerseyFontTypeCombo").val(exportMeta.selectedJerseyFont)
-										$("#jerseyFontTypeCombo").removeClass().addClass(o.get("fontFamily"));
-										$("#jerseyFontTypeCombo").trigger('change')
-									}).catch(function(e) {
-										console.log(e)
-									});
-							} else {
-								object.getObjects().forEach(function(o) {
-								var myfont = new FontFaceObserver(exportMeta.selectedJerseyFont)
-								myfont.load()
-									.then(function() {
-										o.set("fontFamily", (validFonts.includes(exportMeta.selectedJerseyFont)) ? o.fontFamily : "Leckerli One")
-										jerseyLogoCanvas.renderAll();
-										$("#jerseyFontTypeCombo").val(exportMeta.selectedJerseyFont)
-										$("#jerseyFontTypeCombo").removeClass().addClass(object.get("fontFamily"));
-										$("#jerseyFontTypeCombo").trigger('change')
-									}).catch(function(e) {
-										console.log(e)
-									});
-								})
-							}
-							
-						}
-						jerseyLogoCanvas.add(object)
-					})
-					jerseyBelow.renderAll()
-					reRenderBG("jersey")
-
-					capBelow.loadFromJSON(exportMeta.canvases.capBelow, capBelow.renderAll.bind(capBelow), function(o, object) {
-						capBelow.add(object)
-					})
-					capLogoCanvas.loadFromJSON(exportMeta.canvases.capLogoCanvas, capLogoCanvas.renderAll.bind(capLogoCanvas), function(o, object) {
-						capLogoCanvas.add(object)
-					})
-					capBelow.renderAll()
-					reRenderBG("cap")
-
-					pantsBelow.loadFromJSON(exportMeta.canvases.pantsBelow, pantsBelow.renderAll.bind(pantsBelow), function(o, object) {
-						pantsBelow.add(object)
-					})
-					pantsLogoCanvas.loadFromJSON(exportMeta.canvases.pantsLogoCanvas, pantsLogoCanvas.renderAll.bind(pantsLogoCanvas), function(o, object) {
-						pantsLogoCanvas.add(object)
-					})
-					pantsBelow.renderAll()
-					reRenderBG("pants")
-					hideOverlay()
+					hideOverlay();
 				}
 			}
 		})
