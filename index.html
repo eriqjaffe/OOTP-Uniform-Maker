@@ -1864,7 +1864,7 @@
 														<input type="button" id="capAutoSize" class="button capPlace" data-loc="front" value="Auto-Size Logo" data-canvas="capLogoCanvas">
 														<input type="button" id="capPlaceLeft" class="button capPlace" data-loc="left" value="Place on Left" data-canvas="capLogoCanvas">
 														<input type="button" id="capPlaceRight" class="button capPlace" data-loc="right" value="Place on Right" data-canvas="capLogoCanvas">
-														<!--<input type="button" id="capPlaceBack" class="button capPlace" data-loc="back" value="Place on Back" data-canvas="capLogoCanvas">-->
+														<input type="button" id="capPlaceBack" class="button capPlace" data-loc="back" value="Place on Back" data-canvas="capLogoCanvas">
 														<input type="button" id="capLogoReset" class="button capPlace" data-loc="reset" value="Reset Image" data-canvas="capLogoCanvas">
 													</center></td>
 												</tr>
@@ -5960,6 +5960,10 @@
 					object.set({"left":327,"top":388,"angle":capMakersMarkCoords['rightA']});
 					object.setCoords()
 					break;
+				case "back":
+					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0});
+					makeCapBackImage(object)
+					break;
 				case "reset":
 					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0});	
 					object.setCoords()				
@@ -5968,6 +5972,85 @@
 		}
 		capLogoCanvas.renderAll();
 	})
+
+	function makeCapBackImage(object) {
+		var _tmpObj;
+		var dim = fitInBox(object.width, object.height, 31, 17, false)
+		object.scaleToWidth(dim.width)
+		
+		object.clone(function(cloned) {
+			_tmpObj = cloned;
+			_tmpObj.set("id", object.id)
+			_tmpObj.set("angle", 136.03)
+			_tmpObj.set("top", 297)
+			_tmpObj.set("left", 406)
+			capLogoCanvas.add(_tmpObj)
+		});
+
+		object.set({top: 401.5, left: 16, angle:151.4})
+		//_tmpObj.set({left: 100, top: 100, angle:136.03})
+		
+		capLogoCanvas.renderAll()
+		/* warpCanvas.clear()
+		object.clone(function(cloned) {
+			pantsLogoCanvas.add(cloned)
+			cloned.setCoords()
+		});
+		pantsLogoCanvas.requestRenderAll()
+		pantsLogoCanvas.getObjects().forEach(function(o) {
+			console.log(o)
+		})
+		var theImage = pantsLogoCanvas.toDataURL();
+		theImage = theImage.substr(theImage.indexOf(',') + 1).toString(); */
+		/* $.ajax({
+			type: "POST",
+			url: "http://127.0.0.1:"+port+"/makeCapBackImage",
+			data: {imgdata: theImage},
+			success: function(data) {
+				var imgObj = new Image();
+				imgObj.src = data;
+				imgObj.onload = function () {
+					var image = new fabric.Image(imgObj);
+					image.set({
+						originX: 'center',
+						originY: 'center',
+						left: wordmark.get("left"),
+						top: wordmark.get("top"),
+						perPixelTargetFind: true,
+						centeredScaling: true,
+						centeredRotation: true,
+						borderColor: 'red',
+						cornerColor: 'yellow',
+						cornerSize: 12,
+						name: 'warpedText',
+						id: 'warpedText',
+						transparentCorners: false
+					});
+					
+					image.filters.push(new fabric.Image.filters.Resize({
+						resizeType: 'lanczos', // typo fixed
+						lanczosLobes: 2 // typo fixed
+					}));
+					
+					image.on('object:modified',function() {
+						wmLeft = image.getBoundingRect()['left'];
+						wmTop = image.getBoundingRect()['top'];
+					});
+					
+					jerseyLogoCanvas.getObjects().forEach(function(o) {
+						if (o.id == "wordmark") {
+							o.set("visible", false)
+						}
+					});
+
+					jerseyLogoCanvas.add(image);
+					jerseyLogoCanvas.renderAll();
+					hideOverlay()
+				}
+			}
+		})
+		return false;	 */
+	}
 	
 	$("#toggleJerseyGrid").on("click",function() {
 		if($(this).is(':checked')){
