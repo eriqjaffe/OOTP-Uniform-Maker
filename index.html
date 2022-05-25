@@ -5941,7 +5941,7 @@
 					object.setCoords();
 					var dim = fitInBox(object.get("width"), object.get("height"), 50, 50, false)
 					object.scaleToHeight(dim.height)
-					object.set({"left":106.5,"top":284,"angle":0});
+					object.set({"left":106.5,"top":284,"angle":0,"clipPath":null});
 					object.setCoords()
 					break;
 				case "left":
@@ -5949,7 +5949,7 @@
 					object.setCoords();
 					var dim = fitInBox(object.get("width"), object.get("height"), 50, 50, false)
 					object.scaleToWidth(dim.width)
-					object.set({"left":130,"top":360,"angle":capMakersMarkCoords['leftA']});
+					object.set({"left":130,"top":360,"angle":capMakersMarkCoords['leftA'],"clipPath":null});
 					object.setCoords()
 					break;
 				case "right":
@@ -5957,100 +5957,30 @@
 					object.setCoords();
 					var dim = fitInBox(object.get("width"), object.get("height"), 50, 50, false)
 					object.scaleToWidth(dim.width)
-					object.set({"left":327,"top":388,"angle":capMakersMarkCoords['rightA']});
+					object.set({"left":327,"top":388,"angle":capMakersMarkCoords['rightA'],"clipPath":null});
 					object.setCoords()
 					break;
 				case "back":
-					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0});
-					makeCapBackImage(object)
+					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0,"clipPath":null});
+					var dim = fitInBox(object.width, object.height, 31, 17, false)
+					object.scaleToWidth(dim.width)
+					object.clone(function(cloned) {
+						_tmpObj = cloned;
+						_tmpObj.set({id: object.id, angle: 136.03, top: 297, left: 406, clipPath: capClippingPath})
+						capLogoCanvas.add(_tmpObj)
+					});
+					object.set({top: 401.5, left: 16, angle:151.4, clipPath: capClippingPath})
+					capLogoCanvas.renderAll()
+					capLogoCanvas.discardActiveObject()
 					break;
 				case "reset":
-					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0});	
+					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0,"clipPath":null});	
 					object.setCoords()				
 					break;
 			}
 		}
 		capLogoCanvas.renderAll();
 	})
-
-	function makeCapBackImage(object) {
-		var _tmpObj;
-		var dim = fitInBox(object.width, object.height, 31, 17, false)
-		object.scaleToWidth(dim.width)
-		
-		object.clone(function(cloned) {
-			_tmpObj = cloned;
-			_tmpObj.set("id", object.id)
-			_tmpObj.set("angle", 136.03)
-			_tmpObj.set("top", 297)
-			_tmpObj.set("left", 406)
-			capLogoCanvas.add(_tmpObj)
-		});
-
-		object.set({top: 401.5, left: 16, angle:151.4})
-		//_tmpObj.set({left: 100, top: 100, angle:136.03})
-		
-		capLogoCanvas.renderAll()
-		/* warpCanvas.clear()
-		object.clone(function(cloned) {
-			pantsLogoCanvas.add(cloned)
-			cloned.setCoords()
-		});
-		pantsLogoCanvas.requestRenderAll()
-		pantsLogoCanvas.getObjects().forEach(function(o) {
-			console.log(o)
-		})
-		var theImage = pantsLogoCanvas.toDataURL();
-		theImage = theImage.substr(theImage.indexOf(',') + 1).toString(); */
-		/* $.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/makeCapBackImage",
-			data: {imgdata: theImage},
-			success: function(data) {
-				var imgObj = new Image();
-				imgObj.src = data;
-				imgObj.onload = function () {
-					var image = new fabric.Image(imgObj);
-					image.set({
-						originX: 'center',
-						originY: 'center',
-						left: wordmark.get("left"),
-						top: wordmark.get("top"),
-						perPixelTargetFind: true,
-						centeredScaling: true,
-						centeredRotation: true,
-						borderColor: 'red',
-						cornerColor: 'yellow',
-						cornerSize: 12,
-						name: 'warpedText',
-						id: 'warpedText',
-						transparentCorners: false
-					});
-					
-					image.filters.push(new fabric.Image.filters.Resize({
-						resizeType: 'lanczos', // typo fixed
-						lanczosLobes: 2 // typo fixed
-					}));
-					
-					image.on('object:modified',function() {
-						wmLeft = image.getBoundingRect()['left'];
-						wmTop = image.getBoundingRect()['top'];
-					});
-					
-					jerseyLogoCanvas.getObjects().forEach(function(o) {
-						if (o.id == "wordmark") {
-							o.set("visible", false)
-						}
-					});
-
-					jerseyLogoCanvas.add(image);
-					jerseyLogoCanvas.renderAll();
-					hideOverlay()
-				}
-			}
-		})
-		return false;	 */
-	}
 	
 	$("#toggleJerseyGrid").on("click",function() {
 		if($(this).is(':checked')){
