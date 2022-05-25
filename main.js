@@ -306,17 +306,6 @@ app2.get("/customFont", (req, res) => {
 	})
 })
 
-app2.post('/makeCapBackImage', (req, res) => {
-	console.log(req.body.imgdata)
-	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	Jimp.read(buffer, (err, image) => {
-		if (err) {
-			console.log(err)
-		} else {
-			image.write(tempDir+'/temp_league_logo.png');
-		}
-	})
-})
 
 app2.post('/warpText', (req, res)=> {
 	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
