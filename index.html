@@ -5793,14 +5793,17 @@
 					pantsLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
 					pantsLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
 					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0,"clipPath":null});
+					object.setCoords()
 					var dim = fitInBox(object.width, object.height, 22, 12, false)
 					object.scaleToWidth(dim.width)
 					object.clone(function(cloned) {
 						_tmpObj = cloned;
 						_tmpObj.set({id: object.id, angle: 0, top: 40, left: 460, clipPath: pantsClippingPath})
+						_tmpObj.setCoords()
 						pantsLogoCanvas.add(_tmpObj)
 					});
 					object.set({top: 40, left: 12.5, angle:0, clipPath: pantsClippingPath})
+					object.setCoords()
 					pantsLogoCanvas.renderAll()
 					pantsLogoCanvas.discardActiveObject()
 					break;
@@ -6125,14 +6128,17 @@
 					capLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
 					capLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
 					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0,"clipPath":null});
+					object.setCoords()
 					var dim = fitInBox(object.width, object.height, 31, 17, false)
 					object.scaleToWidth(dim.width)
 					object.clone(function(cloned) {
 						_tmpObj = cloned;
 						_tmpObj.set({id: object.id, angle: 136.03, top: 297, left: 406, clipPath: capClippingPath})
+						_tmpObj.setCoords()
 						capLogoCanvas.add(_tmpObj)
 					});
 					object.set({top: 401.5, left: 16, angle:151.4, clipPath: capClippingPath})
+					object.setCoords()
 					capLogoCanvas.renderAll()
 					capLogoCanvas.discardActiveObject()
 					break;
