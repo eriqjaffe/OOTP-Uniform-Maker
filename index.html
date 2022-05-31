@@ -1517,6 +1517,14 @@
 														<input type="button" class="button replaceColor replaceColorRange" id="pantsReplaceColorRange" value="Replace Section" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
 													</td>
 												</tr>
+												<tr>
+													<td><center>
+														<input type="button" id="pantsPlaceLeft" class="button pantsPlace" data-loc="left" value="Place on Left" data-canvas="pantsLogoCanvas">
+														<input type="button" id="pantsPlaceRight" class="button pantsPlace" data-loc="right" value="Place on Right" data-canvas="pantsLogoCanvas">
+														<input type="button" id="pantsPlaceBack" class="button pantsPlace" data-loc="back" value="Place on Back" data-canvas="pantsLogoCanvas">
+														<input type="button" id="pantsLogoReset" class="button pantsPlace" data-loc="reset" value="Reset Image" data-canvas="pantsLogoCanvas">
+													</center></td>
+												</tr>
 											</table>
 										</div>
 										<div id="pantsReplaceColorDiv" class="replaceColorDiv" style="display:none;">
@@ -5756,6 +5764,54 @@
 		canvas.renderAll();
 	})
 
+	$(".pantsPlace").on("click",function(e) {
+		var object = pantsLogoCanvas.getActiveObject();
+		if (object.get('type') == "image") {
+			const imageHeight = object.height;
+			const imageWidth = object.width
+			switch ($(this).data("loc")) {
+				case "left":
+					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0});	
+					object.setCoords();
+					var dim = fitInBox(object.get("width"), object.get("height"), 15, 15, false)
+					object.scaleToWidth(dim.width)
+					object.set({"left":355,"top":72.5,"angle":0,"clipPath":null});
+					object.setCoords()
+					break;
+				case "right":
+					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0});	
+					object.setCoords();
+					var dim = fitInBox(object.get("width"), object.get("height"), 15, 15, false)
+					object.scaleToWidth(dim.width)
+					object.set({"left":120,"top":72.5,"angle":0,"clipPath":null});
+					object.setCoords()
+					break;
+				case "back":
+					$("#pantsLeagueLogoCheck").prop("checked",true)
+					pantsLogoCanvas.getObjects().find(o => o.id == 'atlBelt1').visible = true
+					reRenderBG("pants")
+					pantsLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
+					pantsLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
+					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0,"clipPath":null});
+					var dim = fitInBox(object.width, object.height, 22, 12, false)
+					object.scaleToWidth(dim.width)
+					object.clone(function(cloned) {
+						_tmpObj = cloned;
+						_tmpObj.set({id: object.id, angle: 0, top: 40, left: 460, clipPath: pantsClippingPath})
+						pantsLogoCanvas.add(_tmpObj)
+					});
+					object.set({top: 40, left: 12.5, angle:0, clipPath: pantsClippingPath})
+					pantsLogoCanvas.renderAll()
+					pantsLogoCanvas.discardActiveObject()
+					break;
+				case "reset":
+					object.set({"left":256,"top":256,"scaleX":1,"scaleY":1,"angle":0,"clipPath":null});	
+					object.setCoords()				
+					break;
+			}
+		}
+		pantsLogoCanvas.renderAll();
+	})
 // CAP SPECIFIC 
 
 	initializeCap()
