@@ -56,7 +56,7 @@
         
 		const initialPantsColors = {pantsColor:"#ffffff", belt:"#050505", pantsPinstripes:"#0c2340", pantsSingleStripe:"#ff0000", pantsDoubleStripeFront:"#ff0000", pantsDoubleStripeMiddle:"#0000ff", pantsDoubleStripeBack:"#00ff00",pantsTuxedoStripeBack:"#3c3c3c", pantsTuxedoStripeFront:"#00ff00", elasticBottom:"#0000ff", elasticMiddle:"#ffffff", elasticTop:"#ff0000", pantsTequila1:"#D50032", pantsTequila2:"#E87722", pantsTequila3:"#FF8200", pantsTequila4:"#FFCD00", atlBelt1:"#FFFFFF", atlBelt2: "#0C2340", atlBelt3: "#BA0C2F", atlBelt4: "#0C2340", pantsMakersMarkColor: "#000000", pantsSnakeskinColor:"#A41E20",pantsRacingStripeLarge:"#ff0000",pantsRacingStripeSmall:"#00FF00",brooklynPantsCheck:"#003087",brooklynPantsCheckStroke:"#E35205",montrealFront:"#E4002B",montrealBack:"#003087",chaps:"#ff6600",adidasStripeFront:"#202020",adidasStripeBack:"#FFFFFF",pantsNumberFill:"#103959",pantsNumberStroke1:"#FFFFFF",pantsNumberStroke2:"#FF0000",mlbBaseColor:"#FFFFFF",mlb1Color:"#041e42",mlb2Color:"#bf0d3e",milbBaseColor:"#FFFFFF",milb1Color:"#041e42",milb2Color:"#bf0d3e"}
 
-		const elasticObjects = ['elasticBottom', 'elasticMiddle', 'elasticTop', 'elasticRibbing']
+		const elasticObjects = ['elasticMiddle', 'elasticBottom', 'elasticTop', 'elasticRibbing']
         const beltObjects = ['belt', 'buckle']
 		const swashFills = ['swash1Fill', 'swash2Fill', 'swash3Fill', 'swash4Fill', 'swash5Fill', 'swash6Fill']
 		const swashStrokes = ['swash1Stroke', 'swash2Stroke', 'swash3Stroke', 'swash4Stroke', 'swash5Stroke', 'swash6Stroke']
@@ -78,7 +78,7 @@
 		var capMakersMarkY = capMakersMarkCoords['leftY']
 		var capMakersMarkA = capMakersMarkCoords['leftA']
 
-		const pantsMakersMarkCoords = {leftX:60,leftY:80,rightX:414,rightY:80}
+		const pantsMakersMarkCoords = {leftX:414,leftY:80,rightX:60,rightY:80}
 		var pantsMakersMarkX = pantsMakersMarkCoords['leftX']
 		var pantsMakersMarkY = pantsMakersMarkCoords['leftY']
 
@@ -1302,26 +1302,26 @@
                                                 <td><label>Manufacturer's Mark: </label></td>
                                                 <td style="text-align:right;">
                                                     <select id="pantsMakersMarkSelect">
-                                                        <option value="logo_47brand.svg" data-top="80" data-left="60" data-angle="0" data-height="24" data-original-angle="0">47 Brand</option>
-														<option value="logo_adidas_3.svg" data-top="80" data-left="60" data-angle="0" data-height="24" data-original-angle="0">Adidas</option>
-														<option value="logo_asics2.svg" data-top="80" data-left="60" data-angle="0" data-height="24" data-original-angle="0">Asics</option>
-														<option value="logo_demarini.svg" data-top="80" data-left="60" data-angle="0" data-height="24" data-original-angle="0">DeMarini</option>
-														<option value="logo_macron2.svg" data-top="80" data-left="60" data-angle="0" data-height="24" data-original-angle="0">Macron</option>
-														<option value="logo_majestic.svg" data-top="80" data-left="60" data-angle="0" data-height="24" data-original-angle="0">Majestic 1</option>
-														<option value="logo_majestic_2.svg" data-top="80" data-left="60" data-angle="0" data-height="24" data-original-angle="0">Majestic 2</option>
-														<option value="logo_mizuno.svg" data-top="80" data-left="60" data-angle="0" data-height="24" data-original-angle="0">Mizuno</option>
-														<option value="logo_new_balance.svg" data-top="80" data-left="60" data-angle="0" data-height="24" data-original-angle="0">New Balance</option>
-														<option value="logo_newera.svg" data-top="80" data-left="60" data-angle="0" data-height="24" data-original-angle="0">New Era</option>
-														<option value="logo_nike.svg" data-top="80" data-left="60" data-angle="0" data-height="15" data-original-angle="0" selected>Nike</option>
-														<option value="logo_rawlings.svg" data-top="80" data-left="60" data-angle="0" data-height="24" data-original-angle="0">Rawlings 1</option>
-														<option value="logo_oneill.svg" data-top="80" data-left="60" data-angle="0" data-height="12" data-original-angle="0">O'Neill</option>
-														<option value="logo_rawlings_2.svg" data-top="80" data-left="60" data-angle="0" data-height="24" data-original-angle="0">Rawlings</option>
-														<option value="logo_reebok.svg" data-top="80" data-left="60" data-angle="0" data-height="24" data-original-angle="0">Reebok</option>
-														<option value="logo_rbk.svg" data-top="80" data-left="60" data-angle="0" data-height="22" data-original-angle="0">Reebok</option>
-														<option value="logo_russell_2.svg" data-top="80" data-left="60" data-angle="0" data-height="24" data-original-angle="0">Russell</option>
-														<option value="logo_spalding_2.svg" data-top="80" data-left="60" data-angle="0" data-height="24" data-original-angle="0">Spalding</option>
-														<option value="logo_under_armour.svg" data-top="80" data-left="60" data-angle="0" data-height="24" data-original-angle="0">Under Armour</option>
-														<option value="logo_wilson.svg" data-top="80" data-left="60" data-angle="0" data-height="24" data-original-angle="0">Wilson</option>
+                                                        <option value="logo_47brand.svg" data-top="80" data-left="414" data-angle="0" data-height="24" data-original-angle="0">47 Brand</option>
+														<option value="logo_adidas_3.svg" data-top="80" data-left="414" data-angle="0" data-height="24" data-original-angle="0">Adidas</option>
+														<option value="logo_asics2.svg" data-top="80" data-left="414" data-angle="0" data-height="24" data-original-angle="0">Asics</option>
+														<option value="logo_demarini.svg" data-top="80" data-left="414" data-angle="0" data-height="24" data-original-angle="0">DeMarini</option>
+														<option value="logo_macron2.svg" data-top="80" data-left="414" data-angle="0" data-height="24" data-original-angle="0">Macron</option>
+														<option value="logo_majestic.svg" data-top="80" data-left="414" data-angle="0" data-height="24" data-original-angle="0">Majestic 1</option>
+														<option value="logo_majestic_2.svg" data-top="80" data-left="414" data-angle="0" data-height="24" data-original-angle="0">Majestic 2</option>
+														<option value="logo_mizuno.svg" data-top="80" data-left="414" data-angle="0" data-height="24" data-original-angle="0">Mizuno</option>
+														<option value="logo_new_balance.svg" data-top="80" data-left="414" data-angle="0" data-height="24" data-original-angle="0">New Balance</option>
+														<option value="logo_newera.svg" data-top="80" data-left="414" data-angle="0" data-height="24" data-original-angle="0">New Era</option>
+														<option value="logo_nike.svg" data-top="80" data-left="414" data-angle="0" data-height="15" data-original-angle="0" selected>Nike</option>
+														<option value="logo_rawlings.svg" data-top="80" data-left="414" data-angle="0" data-height="24" data-original-angle="0">Rawlings 1</option>
+														<option value="logo_oneill.svg" data-top="80" data-left="414" data-angle="0" data-height="12" data-original-angle="0">O'Neill</option>
+														<option value="logo_rawlings_2.svg" data-top="80" data-left="414" data-angle="0" data-height="24" data-original-angle="0">Rawlings</option>
+														<option value="logo_reebok.svg" data-top="80" data-left="414" data-angle="0" data-height="24" data-original-angle="0">Reebok</option>
+														<option value="logo_rbk.svg" data-top="80" data-left="414" data-angle="0" data-height="22" data-original-angle="0">Reebok</option>
+														<option value="logo_russell_2.svg" data-top="80" data-left="414" data-angle="0" data-height="24" data-original-angle="0">Russell</option>
+														<option value="logo_spalding_2.svg" data-top="80" data-left="414" data-angle="0" data-height="24" data-original-angle="0">Spalding</option>
+														<option value="logo_under_armour.svg" data-top="80" data-left="414" data-angle="0" data-height="24" data-original-angle="0">Under Armour</option>
+														<option value="logo_wilson.svg" data-top="80" data-left="414" data-angle="0" data-height="24" data-original-angle="0">Wilson</option>
                                                     </select>
 													<select id="pantsMakersMarkSide">
 														<option value="left" selected>Left</option>
@@ -5681,7 +5681,7 @@
 	})
 
 	$("#pantsNumberSide").on("change",function() {
-		const left = ($(this).val() == "left") ? 170 : 307
+		const left = ($(this).val() == "left") ? 307 : 170
 		const g =  pantsLogoCanvas.getObjects('group').find(o => o.id == 'pantsNumber')
 		g.set({
 			left: left,
@@ -8762,7 +8762,7 @@
 		pantsMiLBBaseColor = new fabric.Path("M 2.4199219 33.962891 A 1.8928882 1.8928882 0 0 0 1.0878906 34.503906 C 0.73307217 34.857474 0.54101563 35.331061 0.54101562 35.84375 L 0.54101562 44.228516 C 0.54101562 44.741517 0.73424517 45.214715 1.0859375 45.5625 A 1.8817903 1.8817903 0 0 0 2.4199219 46.115234 L 21.207031 46.115234 C 22.241475 46.115234 23.082031 45.269369 23.082031 44.228516 L 23.082031 35.84375 C 23.082031 35.334031 22.887553 34.860287 22.533203 34.507812 A 1.8728808 1.8728808 0 0 0 21.207031 33.962891 L 2.4199219 33.962891 z M 450.46484 33.962891 A 1.8928882 1.8928882 0 0 0 449.13477 34.503906 C 448.77995 34.857474 448.58594 35.331061 448.58594 35.84375 L 448.58594 44.228516 C 448.58594 44.741517 448.77916 45.214715 449.13086 45.5625 A 1.8817903 1.8817903 0 0 0 450.46484 46.115234 L 469.25195 46.115234 C 470.28639 46.115234 471.12695 45.269369 471.12695 44.228516 L 471.12695 35.84375 C 471.12695 35.334031 470.93247 34.860287 470.57812 34.507812 A 1.8728808 1.8728808 0 0 0 469.25195 33.962891 L 450.46484 33.962891 z",{
 			fill: initialPantsColors['milbBaseColor'],
 			id: 'milbBaseColor',
-			visible: false,
+			visible: true,
 			selectable:false,
 			evented: false
 		});
@@ -8842,7 +8842,8 @@
 			id: 'elasticMiddle',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			clipPath: pantsClippingPath
 		});
 
         elasticTop = new fabric.Path("M 6.4160156 22.785156 L 6.4160156 35.179688 L 466.17773 35.179688 L 466.17773 22.785156 L 6.4160156 22.785156 z",{
@@ -8850,7 +8851,8 @@
 			id: 'elasticTop',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			clipPath: pantsClippingPath
 		});
 
         elasticBottom = new fabric.Path("M 6.4160156 47.574219 L 6.4160156 59.96875 L 466.17773 59.96875 L 466.17773 47.574219 L 6.4160156 47.574219 z",{
@@ -8858,7 +8860,8 @@
 			id: 'elasticBottom',
 			visible: false,
 			selectable:false,
-			evented: false
+			evented: false,
+			clipPath: pantsClippingPath
 		});
 
 		elasticRibbing = new fabric.Path("M 10.740234 22.845703 L 10.740234 60.013672 L 13.810547 60.013672 L 13.810547 22.845703 L 10.740234 22.845703 z M 16.878906 22.845703 L 16.878906 60.013672 L 19.947266 60.013672 L 19.947266 22.845703 L 16.878906 22.845703 z M 23.015625 22.845703 L 23.015625 60.013672 L 26.085938 60.013672 L 26.085938 22.845703 L 23.015625 22.845703 z M 29.154297 22.845703 L 29.154297 60.013672 L 32.222656 60.013672 L 32.222656 22.845703 L 29.154297 22.845703 z M 35.291016 22.845703 L 35.291016 60.013672 L 38.361328 60.013672 L 38.361328 22.845703 L 35.291016 22.845703 z M 41.429688 22.845703 L 41.429688 60.013672 L 44.498047 60.013672 L 44.498047 22.845703 L 41.429688 22.845703 z M 47.566406 22.845703 L 47.566406 60.013672 L 50.636719 60.013672 L 50.636719 22.845703 L 47.566406 22.845703 z M 53.705078 22.845703 L 53.705078 60.013672 L 56.773438 60.013672 L 56.773438 22.845703 L 53.705078 22.845703 z M 59.84375 22.845703 L 59.84375 60.013672 L 62.912109 60.013672 L 62.912109 22.845703 L 59.84375 22.845703 z M 65.980469 22.845703 L 65.980469 60.013672 L 69.048828 60.013672 L 69.048828 22.845703 L 65.980469 22.845703 z M 72.119141 22.845703 L 72.119141 60.013672 L 75.1875 60.013672 L 75.1875 22.845703 L 72.119141 22.845703 z M 78.255859 22.845703 L 78.255859 60.013672 L 81.324219 60.013672 L 81.324219 22.845703 L 78.255859 22.845703 z M 84.394531 22.845703 L 84.394531 60.013672 L 87.462891 60.013672 L 87.462891 22.845703 L 84.394531 22.845703 z M 90.53125 22.845703 L 90.53125 60.013672 L 93.599609 60.013672 L 93.599609 22.845703 L 90.53125 22.845703 z M 96.669922 22.845703 L 96.669922 60.013672 L 99.738281 60.013672 L 99.738281 22.845703 L 96.669922 22.845703 z M 102.80664 22.845703 L 102.80664 60.013672 L 105.875 60.013672 L 105.875 22.845703 L 102.80664 22.845703 z M 108.94531 22.845703 L 108.94531 60.013672 L 112.01367 60.013672 L 112.01367 22.845703 L 108.94531 22.845703 z M 115.08203 22.845703 L 115.08203 60.013672 L 118.15039 60.013672 L 118.15039 22.845703 L 115.08203 22.845703 z M 121.2207 22.845703 L 121.2207 60.013672 L 124.28906 60.013672 L 124.28906 22.845703 L 121.2207 22.845703 z M 127.35742 22.845703 L 127.35742 60.013672 L 130.42578 60.013672 L 130.42578 22.845703 L 127.35742 22.845703 z M 133.49609 22.845703 L 133.49609 60.013672 L 136.56445 60.013672 L 136.56445 22.845703 L 133.49609 22.845703 z M 139.63281 22.845703 L 139.63281 60.013672 L 142.70117 60.013672 L 142.70117 22.845703 L 139.63281 22.845703 z M 145.77148 22.845703 L 145.77148 60.013672 L 148.83984 60.013672 L 148.83984 22.845703 L 145.77148 22.845703 z M 151.9082 22.845703 L 151.9082 60.013672 L 154.97656 60.013672 L 154.97656 22.845703 L 151.9082 22.845703 z M 158.04688 22.845703 L 158.04688 60.013672 L 161.11523 60.013672 L 161.11523 22.845703 L 158.04688 22.845703 z M 164.18359 22.845703 L 164.18359 60.013672 L 167.25195 60.013672 L 167.25195 22.845703 L 164.18359 22.845703 z M 170.32227 22.845703 L 170.32227 60.013672 L 173.39062 60.013672 L 173.39062 22.845703 L 170.32227 22.845703 z M 176.45898 22.845703 L 176.45898 60.013672 L 179.5293 60.013672 L 179.5293 22.845703 L 176.45898 22.845703 z M 182.59766 22.845703 L 182.59766 60.013672 L 185.66602 60.013672 L 185.66602 22.845703 L 182.59766 22.845703 z M 188.73438 22.845703 L 188.73438 60.013672 L 191.80469 60.013672 L 191.80469 22.845703 L 188.73438 22.845703 z M 194.87305 22.845703 L 194.87305 60.013672 L 197.94141 60.013672 L 197.94141 22.845703 L 194.87305 22.845703 z M 201.00977 22.845703 L 201.00977 60.013672 L 204.08008 60.013672 L 204.08008 22.845703 L 201.00977 22.845703 z M 207.14844 22.845703 L 207.14844 60.013672 L 210.2168 60.013672 L 210.2168 22.845703 L 207.14844 22.845703 z M 213.28516 22.845703 L 213.28516 60.013672 L 216.35547 60.013672 L 216.35547 22.845703 L 213.28516 22.845703 z M 219.42383 22.845703 L 219.42383 60.013672 L 222.49219 60.013672 L 222.49219 22.845703 L 219.42383 22.845703 z M 225.56055 22.845703 L 225.56055 60.013672 L 228.63086 60.013672 L 228.63086 22.845703 L 225.56055 22.845703 z M 231.69922 22.845703 L 231.69922 60.013672 L 234.76758 60.013672 L 234.76758 22.845703 L 231.69922 22.845703 z M 237.83594 22.845703 L 237.83594 60.013672 L 240.90625 60.013672 L 240.90625 22.845703 L 237.83594 22.845703 z M 243.97461 22.845703 L 243.97461 60.013672 L 247.04297 60.013672 L 247.04297 22.845703 L 243.97461 22.845703 z M 250.11133 22.845703 L 250.11133 60.013672 L 253.18164 60.013672 L 253.18164 22.845703 L 250.11133 22.845703 z M 256.25 22.845703 L 256.25 60.013672 L 259.31836 60.013672 L 259.31836 22.845703 L 256.25 22.845703 z M 262.38672 22.845703 L 262.38672 60.013672 L 265.45703 60.013672 L 265.45703 22.845703 L 262.38672 22.845703 z M 268.52539 22.845703 L 268.52539 60.013672 L 271.59375 60.013672 L 271.59375 22.845703 L 268.52539 22.845703 z M 274.66211 22.845703 L 274.66211 60.013672 L 277.73242 60.013672 L 277.73242 22.845703 L 274.66211 22.845703 z M 280.80078 22.845703 L 280.80078 60.013672 L 283.86914 60.013672 L 283.86914 22.845703 L 280.80078 22.845703 z M 286.93945 22.845703 L 286.93945 60.013672 L 290.00781 60.013672 L 290.00781 22.845703 L 286.93945 22.845703 z M 293.07617 22.845703 L 293.07617 60.013672 L 296.14453 60.013672 L 296.14453 22.845703 L 293.07617 22.845703 z M 299.21484 22.845703 L 299.21484 60.013672 L 302.2832 60.013672 L 302.2832 22.845703 L 299.21484 22.845703 z M 305.35156 22.845703 L 305.35156 60.013672 L 308.41992 60.013672 L 308.41992 22.845703 L 305.35156 22.845703 z M 311.49023 22.845703 L 311.49023 60.013672 L 314.55859 60.013672 L 314.55859 22.845703 L 311.49023 22.845703 z M 317.62695 22.845703 L 317.62695 60.013672 L 320.69531 60.013672 L 320.69531 22.845703 L 317.62695 22.845703 z M 323.76562 22.845703 L 323.76562 60.013672 L 326.83398 60.013672 L 326.83398 22.845703 L 323.76562 22.845703 z M 329.90234 22.845703 L 329.90234 60.013672 L 332.9707 60.013672 L 332.9707 22.845703 L 329.90234 22.845703 z M 336.04102 22.845703 L 336.04102 60.013672 L 339.10938 60.013672 L 339.10938 22.845703 L 336.04102 22.845703 z M 342.17773 22.845703 L 342.17773 60.013672 L 345.24609 60.013672 L 345.24609 22.845703 L 342.17773 22.845703 z M 348.31641 22.845703 L 348.31641 60.013672 L 351.38477 60.013672 L 351.38477 22.845703 L 348.31641 22.845703 z M 354.45312 22.845703 L 354.45312 60.013672 L 357.52148 60.013672 L 357.52148 22.845703 L 354.45312 22.845703 z M 360.5918 22.845703 L 360.5918 60.013672 L 363.66016 60.013672 L 363.66016 22.845703 L 360.5918 22.845703 z M 366.72852 22.845703 L 366.72852 60.013672 L 369.79688 60.013672 L 369.79688 22.845703 L 366.72852 22.845703 z M 372.86719 22.845703 L 372.86719 60.013672 L 375.93555 60.013672 L 375.93555 22.845703 L 372.86719 22.845703 z M 379.00391 22.845703 L 379.00391 60.013672 L 382.07227 60.013672 L 382.07227 22.845703 L 379.00391 22.845703 z M 385.14258 22.845703 L 385.14258 60.013672 L 388.21094 60.013672 L 388.21094 22.845703 L 385.14258 22.845703 z M 391.2793 22.845703 L 391.2793 60.013672 L 394.34961 60.013672 L 394.34961 22.845703 L 391.2793 22.845703 z M 397.41797 22.845703 L 397.41797 60.013672 L 400.48633 60.013672 L 400.48633 22.845703 L 397.41797 22.845703 z M 403.55469 22.845703 L 403.55469 60.013672 L 406.625 60.013672 L 406.625 22.845703 L 403.55469 22.845703 z M 409.69336 22.845703 L 409.69336 60.013672 L 412.76172 60.013672 L 412.76172 22.845703 L 409.69336 22.845703 z M 415.83008 22.845703 L 415.83008 60.013672 L 418.90039 60.013672 L 418.90039 22.845703 L 415.83008 22.845703 z M 421.96875 22.845703 L 421.96875 60.013672 L 425.03711 60.013672 L 425.03711 22.845703 L 421.96875 22.845703 z M 428.10547 22.845703 L 428.10547 60.013672 L 431.17578 60.013672 L 431.17578 22.845703 L 428.10547 22.845703 z M 434.24414 22.845703 L 434.24414 60.013672 L 437.3125 60.013672 L 437.3125 22.845703 L 434.24414 22.845703 z M 440.38086 22.845703 L 440.38086 60.013672 L 443.45117 60.013672 L 443.45117 22.845703 L 440.38086 22.845703 z M 446.51953 22.845703 L 446.51953 60.013672 L 449.58789 60.013672 L 449.58789 22.845703 L 446.51953 22.845703 z M 452.65625 22.845703 L 452.65625 60.013672 L 455.72656 60.013672 L 455.72656 22.845703 L 452.65625 22.845703 z M 458.79492 22.845703 L 458.79492 60.013672 L 461.86328 60.013672 L 461.86328 22.845703 L 458.79492 22.845703 z",{
@@ -8867,7 +8870,8 @@
 			visible: false,
 			selectable:false,
 			evented: false,
-			opacity: 0.25
+			opacity: 0.25,
+			clipPath: pantsClippingPath
 		})
 
 		pantsNumberFill = new fabric.Text(prefs['preferredPlayerNumber'],{
@@ -8875,7 +8879,7 @@
 			fontSize: 40,
 			originX: 'center',
 			originY: 'center',
-			left: 170,
+			left: 307,
 			top: 90,
 			textAlign: 'center',
 			centeredScaling: true,
@@ -8892,7 +8896,7 @@
 			fontSize: 40,
 			originX: 'center',
 			originY: 'center',
-			left: 170,
+			left: 307,
 			top: 90,
 			textAlign: 'center',
 			centeredScaling: true,
@@ -8909,7 +8913,7 @@
 			fontSize: 40,
 			originX: 'center',
 			originY: 'center',
-			left: 170,
+			left: 307,
 			top: 90,
 			textAlign: 'center',
 			centeredScaling: true,
@@ -8932,7 +8936,7 @@
 			centeredRotation: true,
 			originX: 'center',
 			originY: 'center',
-			left: 170,
+			left: 307,
 			top: 90,
 		})
 
@@ -8991,6 +8995,13 @@
 		} else {
 			pantsLogoCanvas.setOverlayImage(null, pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
 		}
+
+		elasticObjects.forEach(function(obj) {
+			pantsLogoCanvas.bringToFront(pantsLogoCanvas.getObjects().find(o => o.id === obj))
+		})
+/* 		elasticObjects.forEach(function(obj) {
+			pantsLogoCanvas.bringToFront(obj)
+		}) */
 
 		reRenderBG("pants")	
 	}
