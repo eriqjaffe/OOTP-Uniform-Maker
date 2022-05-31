@@ -1331,6 +1331,28 @@
                                                 </td>
                                             </tr>
 											<tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" id="pantsLeagueLogoCheck"></td>
+												<td>
+													<label>League Logo:&nbsp;</label>
+													<select id="pantsLeagueLogoSelect">
+														<option value="mlb" selected>Major Leagues</option>
+														<option value="milb">Minor Leagues</option>
+													</select>
+												</td>
+												<td style="text-align:right;">
+													<span id="pantsMLBLogoSelectors" style="display:inline-block;">
+														<input class="pantsSelector selector" type="text" id="mlb2Color" data-element="mlb2Color" data-canvas="above">
+														<input class="pantsSelector selector" type="text" id="mlbBaseColor" data-element="mlbBaseColor" data-canvas="above">
+														<input class="pantsSelector selector" type="text" id="mlb1Color" data-element="mlb1Color" data-canvas="above">
+													</span>
+													<span id="pantsMiLBLogoSelectors" style="display:none;">
+														<input class="pantsSelector selector" type="text" id="milb1Color" data-element="milb1Color" data-canvas="above">
+														<input class="pantsSelector selector" type="text" id="milbBaseColor" data-element="milbBaseColor" data-canvas="above">
+														<input class="pantsSelector selector" type="text" id="milb2Color" data-element="milb2Color" data-canvas="above">
+													</span>
+												</td>
+											</tr>
+											<tr class="color_tr">
                                                 <input type="file" id="uploadedLayer" accept="image/*" style="display:none;"/>
                                                 <td class="checkCell"><input id="customPantsLayerCheck" type="checkbox" class="customLayer" data-canvas="pants" data-id="customPantsLayer"></td>
                                                 <td><label>Custom Layer: </label></td>
@@ -1447,7 +1469,7 @@
 												</td>
 											</tr>
 											<tr class="color_tr">
-												<td class="checkCell"><input type="checkbox" class="pantsMultiToggle" data-id="atlBelt1,atlBelt1a,atlBelt2,atlBelt3,atlBelt4" id="atlBelt1Check" data-canvas="above"></td>
+												<td class="checkCell"><input type="checkbox" data-id="atlBelt1,atlBelt1a,atlBelt2,atlBelt3,atlBelt4" id="atlBelt1Check" data-canvas="above"></td>
 												<td><label>Atlanta Belt Loops: </label></td>
 												<td style="text-align:right;">
 													<!-- <input class="pantsSelector selector" type="text" id="atlBelt1" data-element="atlBelt1" data-canvas="below"> -->
@@ -5680,6 +5702,60 @@
 		reRenderBG("pants")
 	}) 
 
+	$("#pantsLeagueLogoCheck").on("change",function(e) {
+		if ($(this).is(":checked")) {
+			pantsLogoCanvas.getObjects().find(o => o.id == 'atlBelt1').visible = true
+			if ($("#pantsLeagueLogoSelect").val() == "mlb") {
+				pantsLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = true
+				pantsLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
+				$("#pantsMLBLogoSelectors").css("display","inline-block");
+				$("#pantsMiLBLogoSelectors").css("display","none");
+			} else {
+				pantsLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
+				pantsLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = true
+				$("#pantsMLBLogoSelectors").css("display","none");
+				$("#pantsMiLBLogoSelectors").css("display","inline-block");
+			}
+		} else {
+			pantsLogoCanvas.getObjects().find(o => o.id == 'atlBelt1').visible = $("#atlBelt1Check").is(":checked")
+			pantsLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
+			pantsLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
+		}
+		pantsLogoCanvas.renderAll()
+	})
+
+	$("#pantsLeagueLogoSelect").on("change",function(e) {
+		if ($("#pantsLeagueLogoCheck").is(":checked")) {
+			if ($(this).val() == "mlb") {
+				pantsLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = true
+				pantsLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
+				$("#pantsMLBLogoSelectors").css("display","inline-block");
+				$("#pantsMiLBLogoSelectors").css("display","none");
+			} else {
+				pantsLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
+				pantsLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = true
+				$("#pantsMLBLogoSelectors").css("display","none");
+				$("#pantsMiLBLogoSelectors").css("display","inline-block");
+			}
+		}
+		pantsLogoCanvas.renderAll()
+	})
+
+	$("#atlBelt1Check").on("change",function(e) {
+		const state = $(this).is(':checked') ? true : false
+		const canvas = $(this).data('canvas') == 'below' ? pantsBelow : pantsLogoCanvas
+		canvas.getObjects().find(o => o.id == 'atlBelt1a').visible = $(this).is(":checked")
+		canvas.getObjects().find(o => o.id == 'atlBelt2').visible = $(this).is(":checked")
+		canvas.getObjects().find(o => o.id == 'atlBelt3').visible = $(this).is(":checked")
+		canvas.getObjects().find(o => o.id == 'atlBelt4').visible = $(this).is(":checked")
+		if ($(this).is(":checked")) {
+			canvas.getObjects().find(o => o.id == 'atlBelt1').visible = true
+		} else {
+			canvas.getObjects().find(o => o.id == 'atlBelt1').visible = $("#pantsLeagueLogoCheck").is(":checked")
+		}
+		canvas.renderAll();
+	})
+
 // CAP SPECIFIC 
 
 	initializeCap()
@@ -8678,7 +8754,7 @@
 			originX: 'center',
 			originY: 'center',
 			id: 'mlbLogo',
-			visible: true,
+			visible: false,
 			selectable: false,
 			clipPath: pantsClippingPath
 		});
@@ -8711,7 +8787,7 @@
 			originX: 'center',
 			originY: 'center',
 			id: 'milbLogo',
-			visible: true,
+			visible: false,
 			selectable: false,
 			clipPath: pantsClippingPath
 		});
