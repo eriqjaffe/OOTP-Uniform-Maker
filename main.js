@@ -10,6 +10,7 @@ const imagemagickCli = require('imagemagick-cli')
 const ttfInfo = require('ttfinfo')
 const font2base64 = require("node-font2base64")
 const Store = require("electron-store")
+const { exec } = require('child_process')
 const { SVG, registerWindow } = require('@svgdotjs/svg.js')
 const { createSVGWindow } = require('svgdom')
 const versionCheck = require('github-version-checker');
@@ -49,6 +50,23 @@ const options = {
 	owner: 'eriqjaffe',
 	currentVersion: pkg.version
 };
+
+var imInstalled = false;
+
+exec("magick -version", (error, stdout, stderr) => {
+	if (error) {
+		console.log(`error: ${error.message}`);
+		imInstalled = false;
+		return;
+	}
+	if (stderr) {
+		console.log(`stderr: ${stderr}`);
+		imInstalled = false;
+		return;
+	} 
+	console.log(`stdout: ${stdout}`);
+	imInstalled = true;
+})
 
 app2.use(express.urlencoded({limit: '200mb', extended: true, parameterLimit: 500000}));
 
@@ -134,6 +152,9 @@ app2.get("/uploadImage", (req, res) => {
 })
 
 app2.post("/removeBorder", (req, res) => {
+	if (imInstalled == false) {
+		res.end("NOT INSTALLED")
+	} 
 	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	var fuzz = parseInt(req.body.fuzz);
 	Jimp.read(buffer, (err, image) => {
@@ -157,6 +178,9 @@ app2.post("/removeBorder", (req, res) => {
 })
 
 app2.post("/replaceColor", (req, res) => {
+	if (imInstalled == false) {
+		res.end("NOT INSTALLED")
+	}
 	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	var x = parseInt(req.body.x);
 	var y = parseInt(req.body.y);
@@ -191,6 +215,9 @@ app2.post("/replaceColor", (req, res) => {
 })
 
 app2.post("/removeColorRange", (req, res) => {
+	if (imInstalled == false) {
+		res.end("NOT INSTALLED")
+	}
 	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	var x = parseInt(req.body.x);
 	var y = parseInt(req.body.y);
@@ -218,6 +245,9 @@ app2.post("/removeColorRange", (req, res) => {
 })
 
 app2.post('/removeAllColor', (req, res) => {
+	if (imInstalled == false) {
+		res.end("NOT INSTALLED")
+	}
 	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	var x = parseInt(req.body.x);
 	var y = parseInt(req.body.y);
@@ -308,6 +338,9 @@ app2.get("/customFont", (req, res) => {
 
 
 app2.post('/warpText', (req, res)=> {
+	if (imInstalled == false) {
+		res.end("NOT INSTALLED")
+	}
 	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	var amount = req.body.amount;
 	var deform = req.body.deform;
