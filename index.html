@@ -2718,6 +2718,14 @@
 		enableeRetinaScaling:false
 	})
 
+	if (gridsVisible == true) {
+		jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png', pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+	} else {
+		jerseyLogoCanvas.setOverlayImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		pantsLogoCanvas.setOverlayImage(null, pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+	}
+
 // SCALING FUNCTIONS
 
     const scaleRatio = Math.min(384/512, 768/1024)
@@ -8572,12 +8580,7 @@
 		})
 
 		jerseyLogoCanvas.add(buttons)
-        
-		if (gridsVisible == true) {
-			jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
-		} else {
-			jerseyLogoCanvas.setOverlayImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
-		}
+
 		jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 		reRenderBG("jersey")
 	}
@@ -9060,12 +9063,6 @@
 		loadMakersMark("pants",$("#pantsMakersMarkSelect").find(':selected').data('top'),$("#pantsMakersMarkSelect").find(':selected').data('left'),$("#pantsMakersMarkSelect").find(':selected').data('angle'),$("#pantsMakersMarkSelect").find(':selected').data('height'));
 
 		pantsBelow.renderAll()
-
-		if (gridsVisible == true) {
-			pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png', pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
-		} else {
-			pantsLogoCanvas.setOverlayImage(null, pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
-		}
 
 		elasticObjects.forEach(function(obj) {
 			pantsLogoCanvas.bringToFront(pantsLogoCanvas.getObjects().find(o => o.id === obj))
