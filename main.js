@@ -525,6 +525,58 @@ app2.post('/jitterText', (req, res) => {
 	res.end('data:image/svg+xml;base64,'+buff2.toString('base64'))
 })
 
+app2.post('/saveSwatches', (req, res) => {
+	const options = {
+		defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')) + '/' + req.body.name+'.swatch'
+	}
+
+	dialog.showSaveDialog(null, options).then((result) => {
+		if (!result.canceled) {
+			store.set("downloadSwatchPath", path.dirname(result.filePath))
+			fs.writeFile(result.filePath, JSON.stringify(req.body, null, 2), 'utf8', function(err) {
+				console.log(err)
+			})
+			res.json({result: "success"})
+		} else {
+			res.json({result: "success"})
+		}
+	}).catch((err) => {
+		console.log(err);
+		res.json({result: "success"})
+	});
+})
+
+app2.get("/loadSwatches", (req, res) => {
+	const options = {
+		defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')),
+		properties: ['openFile'],
+		filters: [
+			{ name: 'Swatch Files', extensions: ['swatch'] }
+		]
+	}
+	dialog.showOpenDialog(null, options).then(result => {
+		if(!result.canceled) {
+			res.json({
+				"result": "success",
+				"json": JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
+			})
+			res.end()
+		} else {
+			res.json({
+				"result": "cancelled"
+			})
+			res.end()
+			console.log("cancelled")
+		}
+	}).catch(err => {
+		res.json({
+			"result": "error"
+		})
+		console.log(err)
+		res.end()
+	})
+})
+
 app2.post('/savePants', (req, res) => {
 	const pantsLogoCanvas = Buffer.from(req.body.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const pantsBelow = Buffer.from(req.body.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
@@ -1214,6 +1266,7 @@ function createWindow () {
               accelerator: isMac ? 'Cmd+L' : 'Control+L',
               label: 'Load Uniform',
           },
+		  { type: 'separator' },
           {
               click: () => mainWindow.webContents.send('save-uniform','click'),
               accelerator: isMac ? 'Cmd+S' : 'Control+S',
@@ -1234,6 +1287,18 @@ function createWindow () {
               accelerator: isMac ? 'Cmd+J' : 'Control+J',
               label: 'Save Jersey Only',
           },
+		  { type: 'separator' },
+          {
+              click: () => mainWindow.webContents.send('save-swatches','click'),
+              accelerator: isMac ? 'Cmd+Shift+S' : 'Control+Shift+S',
+              label: 'Save Swatches',
+          },
+          {
+              click: () => mainWindow.webContents.send('load-swatches','click'),
+              accelerator: isMac ? 'Cmd+Shift+L' : 'Control+Shift+L',
+              label: 'Load Swatches',
+          },
+		  { type: 'separator' },
           isMac ? { role: 'close' } : { role: 'quit' }
           ]
       },
@@ -1250,9 +1315,11 @@ function createWindow () {
 				accelerator: isMac ? 'Cmd+V' : 'Control+V',
 				label: 'Paste',
 			},
+			{ type: 'separator' },
 			{
 				click: () => mainWindow.webContents.send('prefs','click'),
-				label: 'Preferences',
+				accelerator: isMac ? 'Cmd+O' : 'Control+O',
+				label: 'Edit Preferences',
 			}
 		  ]
 	  },
@@ -1283,6 +1350,7 @@ function createWindow () {
               await shell.openExternal('https://www.ootpdevelopments.com/out-of-the-park-baseball-home/')
               }
           },
+		  { type: 'separator' },
           {
               label: 'About Node.js',
               click: async () => {    
@@ -1295,6 +1363,7 @@ function createWindow () {
               await shell.openExternal('https://electronjs.org')
               }
           },
+		  { type: 'separator' },
           {
               label: 'View project on GitHub',
               click: async () => {

@@ -2169,6 +2169,8 @@
 						<input type="button" class="button" id="savePants" value="Save Pants" style="display:none;">
 						<input type="button" class="button" id="saveCap" value="Save Cap" style="display:none;">
 						<input type="button" class="button" id="saveJersey" value="Save Jersey" style="display:none;">
+						<input type="button" class="button" id="saveSwatches" value="Save Swatches" style="display:none;">
+						<input type="button" class="button" id="loadSwatches" value="Load Swatches" style="display:none;">
                         <input type="button" class="button" id="save" value="Save Uniform">
                         <input type="button" class="button" id="load" value="Load Uniform">
 						<!--<input type="button" class="button" id="eyedropper" value="Eyedropper">-->
@@ -12020,6 +12022,99 @@
 			url: "http://127.0.0.1:"+port+"/setPreference",
 			data: {pref:pref,val:val.toString()},
 			success: function(result) {
+			}
+		})
+	})
+
+	$("#saveSwatches").on("click",function() {	
+		showOverlay()
+
+		var startYear = parseInt($("#startYear").val());
+		var endYear = parseInt($("#endYear").val())
+		var yearRange = "";
+		var teamName = "";
+		if (startYear > endYear && endYear > 0) {
+			alert("The start year has to be before the end year!");
+			return false;
+		}
+		if (startYear == endYear && startYear > 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear == 0 && endYear > 0) {
+			yearRange = $("#endYear").val();
+		} else if (startYear > 0 && endYear == 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear > 0 && endYear > 0) {
+			yearRange = $("#startYear").val()+"-"+$("#endYear").val()
+		} else {
+			yearRange = ""
+		}
+		if (yearRange.length > 0) {
+			yearRange = "_"+yearRange;
+		}
+		if ($("#teamName").val().length == 0) {
+			teamName = "Unknown_Team";
+		} else {
+			teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
+		}
+		teamName = teamName.split(' ').join('_');
+		var fileName = teamName+"_"+$("#uniformType").val()+yearRange;
+
+		$.ajax({
+			type: "POST",
+			url: "http://127.0.0.1:"+port+"/saveSwatches",
+			data: {
+				name: fileName, 
+				swatch1: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].text, 
+				swatch2: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].text, 
+				swatch3: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].text, 
+				swatch4: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].text
+			},
+			success: function(result) {
+				hideOverlay()
+			},
+			error: function(result) {
+				hideOverlay()
+			}
+		})
+	})
+
+	$("#loadSwatches").on("click",function() {
+		showOverlay()
+		$.ajax({
+			type: "GET",
+			url: "http://127.0.0.1:"+port+"/loadSwatches",
+			success: function(response) {
+				if (response.result == "success") {
+					const json = JSON.parse(response.json)
+
+					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[0].set("fill",json.swatch1)
+					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].set("text",json.swatch1)
+					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].set("fill",idealTextColor(json.swatch1))
+					$("#swatch1Color").spectrum("set", json.swatch1)
+
+					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[0].set("fill",json.swatch2)
+					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].set("text",json.swatch2)
+					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].set("fill",idealTextColor(json.swatch2))
+					$("#swatch2Color").spectrum("set", json.swatch2)
+					
+					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[0].set("fill",json.swatch3)
+					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].set("text",json.swatch3)
+					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].set("fill",idealTextColor(json.swatch3))
+					$("#swatch3Color").spectrum("set", json.swatch3)
+
+					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[0].set("fill",json.swatch4)
+					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].set("text",json.swatch4)
+					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].set("fill",idealTextColor(json.swatch4))
+					$("#swatch4Color").spectrum("set", json.swatch4)
+
+					jerseyLogoCanvas.renderAll()
+					hideOverlay()
+				} else {
+					hideOverlay()
+				}
+			},
+			error: function(response) {
+				hideOverlay()
 			}
 		})
 	})
