@@ -921,6 +921,7 @@ app2.post('/saveUniform', (req, res) => {
 	const normalMap = req.body.normalMap
 	const seamsOnDiffuse = req.body.seamsOnDiffuse
 	const json = Buffer.from(req.body.json, 'utf8')
+
 	/* if (seamsVisible == false) {
 		var nmBase = "blank"
 	} else {
@@ -930,6 +931,14 @@ app2.post('/saveUniform', (req, res) => {
 	} */
 	var nmBase = null;
 	var nmSleeve = null;
+
+	const swatchJSON = {
+		name: req.body.name,
+		swatch1: req.body.swatch1,
+		swatch2: req.body.swatch2,
+		swatch3: req.body.swatch3,
+		swatch4: req.body.swatch4
+	}
 
 	if (tmpCapTexture.startsWith("data:image")) {
 		fs.writeFileSync(tempDir+"/tempCapTexture.png", tmpCapTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
@@ -1186,6 +1195,7 @@ app2.post('/saveUniform', (req, res) => {
 		archive.append(jerseyBakedBuffer, {name: "jerseys_"+req.body.name+"_textured.png"})
 		//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'_textured.png')
 
+		archive.append(JSON.stringify(swatchJSON, null, 2), {name: req.body.name+".swatch"});
 		archive.append(json, {name: "uniform_"+req.body.name+".uni"})
 		archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });
 		archive.append(fs.createReadStream(__dirname+"/images/"+normalMap), { name: "jerseys_"+req.body.name+"_n.png" });
