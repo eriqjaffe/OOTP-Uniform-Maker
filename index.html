@@ -12119,12 +12119,8 @@
 				if (response.result == "success") {
 					const json = JSON.parse(response.json)
 
-					console.log(commonPalette)
-
 					commonPalette.splice(0, commonPalette.length)
 					commonPalette = json.commonPalette
-
-					console.log(commonPalette)
 
 					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[0].set("fill",json.swatch1)
 					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].set("text",json.swatch1)
