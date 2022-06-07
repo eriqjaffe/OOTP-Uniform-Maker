@@ -35,6 +35,7 @@ const preferredPlayerName = store.get("preferredPlayerName", "PLAYER")
 const preferredPlayerNumber = store.get("preferredPlayerNumber", "23")
 const preferredJerseyFont = store.get("preferredJerseyFont", "Leckerli_One")
 const preferredCapFont = store.get("preferredCapFont", "Graduate")
+const preferredHeightMapBrightness = store.get("preferredHeightMapBrightness", "85") 
 const gridsVisible = store.get("gridsVisible", true)
 const checkForUpdates = store.get("checkForUpdates", true)
 const seamsVisibleOnDiffuse = store.get("seamsVisibleOnDiffuse", false)
@@ -695,8 +696,7 @@ app2.post('/saveJersey', (req, res) => {
 	const seamsOption = req.body.seamsOption
 	const normalMap = req.body.normalMap
 	const seamsOnDiffuse = req.body.seamsOnDiffuse
-
-	console.log(seamsOnDiffuse)
+	const brightness = parseInt(req.body.brightness)/100
 
 	if (tmpJerseyTexture.startsWith("data:image")) {
 		fs.writeFileSync(tempDir+"/tempJerseyTexture.png", tmpJerseyTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
@@ -805,7 +805,7 @@ app2.post('/saveJersey', (req, res) => {
 		// jersey height map
 		let jerseyHeightMap = await Jimp.read(__dirname+"/images/jersey_height_map.png")
 		await jerseyOverlay.grayscale()
-		await jerseyOverlay.brightness(.5)
+		await jerseyOverlay.brightness(brightness)
 		if (buttonPadSeams == "true") {
 			if (buttonType != "buttonsHenley") {
 				var seamsSrc = __dirname+"/images/seams/seams_button_pad.png"
@@ -847,7 +847,7 @@ app2.post('/saveJersey', (req, res) => {
 		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyHMBuffer = await jerseyHeightMap.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(jerseyHMBuffer, {name: req.body.name+"_h.png"})
-		//await jerseyHeightMap.write(app.getPath('downloads') + '/uniform_Unknown_Team_Home/jerseys_' + req.body.name+'_h.png')
+		//await jerseyHeightMap.write(app.getPath('downloads') + '/test_height_map.png')
 
 		// jersey with baked texture
 		let jerseyBakedBase = await Jimp.read(jerseyBelow)
@@ -920,6 +920,7 @@ app2.post('/saveUniform', (req, res) => {
 	const seamsOption = req.body.seamsOption
 	const normalMap = req.body.normalMap
 	const seamsOnDiffuse = req.body.seamsOnDiffuse
+	const brightness = parseInt(req.body.brightness)/100
 	const json = Buffer.from(req.body.json, 'utf8')
 
 	/* if (seamsVisible == false) {
@@ -1104,7 +1105,7 @@ app2.post('/saveUniform', (req, res) => {
 		// jersey height map
 		let jerseyHeightMap = await Jimp.read(__dirname+"/images/jersey_height_map.png")
 		await jerseyOverlay.grayscale()
-		await jerseyOverlay.brightness(.5)
+		await jerseyOverlay.brightness(brightness)
 		//var nmBase = null;
 		//var nmSleeve = null;
 		if (buttonPadSeams == "true") {
@@ -1392,7 +1393,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredPlayerName=${preferredPlayerName}&preferredPlayerNumber=${preferredPlayerNumber}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredPlayerName=${preferredPlayerName}&preferredPlayerNumber=${preferredPlayerNumber}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}`);
     //mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}`);
 	
   

@@ -45,8 +45,11 @@
 			preferredColorFormat: params.get('preferredColorFormat'),
 			preferredJerseyFont: params.get('preferredJerseyFont'),
 			preferredCapFont: params.get('preferredCapFont'),
-			seamsVisibleOnDiffuse: params.get('seamsVisibleOnDiffuse')
+			seamsVisibleOnDiffuse: params.get('seamsVisibleOnDiffuse'),
+			preferredHeightMapBrightness: params.get('preferredHeightMapBrightness')
 		}
+
+		console.log(prefs)
 
 		var defaultJerseyTexture = params.get('preferredJerseyTexture')
 		var defaultPantsTexture = params.get('preferredPantsTexture')
@@ -2282,6 +2285,10 @@
 						<option value="cap_texture_none.png">None</option>
 					</select>
 				</center></td>
+				<td><center>
+					Height Map Brightness:&nbsp;
+					<input type="number" id="preferredHeightMapBrightness" class="preference" min="1" max="100">
+				</center></td>
 			</tr>
 		</table>
 		<br>
@@ -2756,6 +2763,7 @@
 		$("#jerseyNameTextBox").val(prefs['preferredPlayerName'])
 		$("#jerseyNumberTextBox").val(prefs['preferredPlayerNumber'])
 		$("#pantsNumberTextBox").val(prefs['preferredPlayerNumber'])
+		$("#preferredHeightMapBrightness").val(prefs['preferredHeightMapBrightness'])
 		$("#toggleDiffuseSeams").prop("checked", prefs['seamsVisibleOnDiffuse'] == "true")
 
 		$("#jerseyFontTypeCombo").val(prefs['preferredJerseyFont']).trigger("change")
@@ -10911,7 +10919,9 @@
 				buttonType: $("#buttonsType").val(),
 				seamsVisible: seamsVisible,
 				seamsOption: $("#seamsType").val(),
-				seamsOnDiffuse: ($("#toggleDiffuseSeams").is(":checked")) ? true : false
+				seamsOnDiffuse: ($("#toggleDiffuseSeams").is(":checked")) ? true : false,
+				brightness: $("#preferredHeightMapBrightness").val()
+				
 			},
 			success: function(data) {
 				if (data.result == "error") {
@@ -11238,7 +11248,8 @@
 				swatch2: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].text, 
 				swatch3: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].text, 
 				swatch4: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].text,
-				commonPalette: commonPalette
+				commonPalette: commonPalette,
+				brightness: $("#preferredHeightMapBrightness").val()
 			},
 			success: function(data) {
 				if (data.result == "error") {
