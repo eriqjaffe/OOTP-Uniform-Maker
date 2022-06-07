@@ -12111,47 +12111,49 @@
 	})
 
 	$("#loadSwatches").on("click",function() {
-		showOverlay()
-		$.ajax({
-			type: "GET",
-			url: "http://127.0.0.1:"+port+"/loadSwatches",
-			success: function(response) {
-				if (response.result == "success") {
-					const json = JSON.parse(response.json)
+		if (confirm("Are you sure?\r\n\r\nThis will overwrite any non-default colors in the color picker palettes.")) {
+			showOverlay()
+			$.ajax({
+				type: "GET",
+				url: "http://127.0.0.1:"+port+"/loadSwatches",
+				success: function(response) {
+					if (response.result == "success") {
+						const json = JSON.parse(response.json)
 
-					commonPalette.splice(0, commonPalette.length)
-					commonPalette = json.commonPalette
+						commonPalette.splice(0, commonPalette.length)
+						commonPalette = json.commonPalette
 
-					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[0].set("fill",json.swatch1)
-					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].set("text",json.swatch1)
-					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].set("fill",idealTextColor(json.swatch1))
-					$("#swatch1Color").spectrum("set", json.swatch1)
+						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[0].set("fill",json.swatch1)
+						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].set("text",json.swatch1)
+						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].set("fill",idealTextColor(json.swatch1))
+						$("#swatch1Color").spectrum("set", json.swatch1)
 
-					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[0].set("fill",json.swatch2)
-					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].set("text",json.swatch2)
-					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].set("fill",idealTextColor(json.swatch2))
-					$("#swatch2Color").spectrum("set", json.swatch2)
-					
-					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[0].set("fill",json.swatch3)
-					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].set("text",json.swatch3)
-					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].set("fill",idealTextColor(json.swatch3))
-					$("#swatch3Color").spectrum("set", json.swatch3)
+						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[0].set("fill",json.swatch2)
+						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].set("text",json.swatch2)
+						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].set("fill",idealTextColor(json.swatch2))
+						$("#swatch2Color").spectrum("set", json.swatch2)
+						
+						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[0].set("fill",json.swatch3)
+						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].set("text",json.swatch3)
+						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].set("fill",idealTextColor(json.swatch3))
+						$("#swatch3Color").spectrum("set", json.swatch3)
 
-					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[0].set("fill",json.swatch4)
-					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].set("text",json.swatch4)
-					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].set("fill",idealTextColor(json.swatch4))
-					$("#swatch4Color").spectrum("set", json.swatch4)
+						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[0].set("fill",json.swatch4)
+						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].set("text",json.swatch4)
+						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].set("fill",idealTextColor(json.swatch4))
+						$("#swatch4Color").spectrum("set", json.swatch4)
 
-					jerseyLogoCanvas.renderAll()
-					hideOverlay()
-				} else {
+						jerseyLogoCanvas.renderAll()
+						hideOverlay()
+					} else {
+						hideOverlay()
+					}
+				},
+				error: function(response) {
 					hideOverlay()
 				}
-			},
-			error: function(response) {
-				hideOverlay()
-			}
-		})
+			})
+		}
 	})
 
 	function handleElement(obj) {
