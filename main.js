@@ -527,7 +527,7 @@ app2.post('/jitterText', (req, res) => {
 
 app2.post('/saveSwatches', (req, res) => {
 	const options = {
-		defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')) + '/' + req.body.name+'.swatch'
+		defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')) + '/' + req.body.name+'.pal'
 	}
 
 	dialog.showSaveDialog(null, options).then((result) => {
@@ -551,7 +551,7 @@ app2.get("/loadSwatches", (req, res) => {
 		defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')),
 		properties: ['openFile'],
 		filters: [
-			{ name: 'Swatch Files', extensions: ['swatch'] }
+			{ name: 'Palette Files', extensions: ['pal'] }
 		]
 	}
 	dialog.showOpenDialog(null, options).then(result => {
@@ -1196,7 +1196,7 @@ app2.post('/saveUniform', (req, res) => {
 		archive.append(jerseyBakedBuffer, {name: "jerseys_"+req.body.name+"_textured.png"})
 		//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'_textured.png')
 
-		archive.append(JSON.stringify(swatchJSON, null, 2), {name: req.body.name+".swatch"});
+		archive.append(JSON.stringify(swatchJSON, null, 2), {name: req.body.name+".pal"});
 		archive.append(json, {name: "uniform_"+req.body.name+".uni"})
 		archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });
 		archive.append(fs.createReadStream(__dirname+"/images/"+normalMap), { name: "jerseys_"+req.body.name+"_n.png" });
@@ -1302,12 +1302,12 @@ function createWindow () {
           {
               click: () => mainWindow.webContents.send('save-swatches','click'),
               accelerator: isMac ? 'Cmd+Shift+S' : 'Control+Shift+S',
-              label: 'Save Swatches',
+              label: 'Save Palette',
           },
           {
               click: () => mainWindow.webContents.send('load-swatches','click'),
               accelerator: isMac ? 'Cmd+Shift+L' : 'Control+Shift+L',
-              label: 'Load Swatches',
+              label: 'Load Palette',
           },
 		  { type: 'separator' },
           isMac ? { role: 'close' } : { role: 'quit' }
