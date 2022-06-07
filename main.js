@@ -937,7 +937,8 @@ app2.post('/saveUniform', (req, res) => {
 		swatch1: req.body.swatch1,
 		swatch2: req.body.swatch2,
 		swatch3: req.body.swatch3,
-		swatch4: req.body.swatch4
+		swatch4: req.body.swatch4,
+		commonPalette: req.body.commonPalette
 	}
 
 	if (tmpCapTexture.startsWith("data:image")) {
