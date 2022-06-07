@@ -3139,10 +3139,12 @@
 		allowEmpty: false,
 		//showSelectionPalette: true,
 		color: initialJerseyColors["jerseyColor"],
+		beforeShow: function(color) {
+			$(this).spectrum("option", "palette", [jerseyPalette, commonPalette])
+		},
 		show: function(color) {
 			original_color = color;
 			$(this).data('changed', false);
-			$(this).spectrum("option", "palette", jerseyPalette)
 		},
 		move: function(color) {
 			$(this).data('changed', true);
@@ -3184,10 +3186,12 @@
 			showButtons: true,
 			//showSelectionPalette: true,
 			color: initialJerseyColors[$(this).attr('id')],
+			beforeShow: function(color) {
+				$(this).spectrum("option", "palette", commonPalette)
+			},
 			show: function(color) {
 				var original_color = color;
 				$(this).data('changed', false);
-				$(this).spectrum("option", "palette", commonPalette)
 			},
 			move: function(color) {
 				$(this).data('changed', true);
@@ -3339,10 +3343,12 @@
 		showButtons: true,
 		allowEmpty: false,
 		color: initialJerseyColors["jerseyColor"],
+		beforeShow: function(color) {
+			$(this).spectrum("option", "palette", [jerseyPalette, commonPalette])
+		},
 		show: function(color) {
 			original_color = color;
 			$(this).data('changed', false);
-			$(this).spectrum("option", "palette", [jerseyPalette, commonPalette])
 		},
 		move: function(color) {
 			$(this).data('changed', true);
@@ -3402,10 +3408,12 @@
 			//showSelectionPalette: true,
 			//palette: [ "#FFFFFF", "#A2AAAD", "#6CACE4" ],
 			color: initialJerseyColors["jerseyColor"],
+			beforeShow: function(color) {
+				$(this).spectrum("option", "palette", [jerseyPalette, commonPalette])
+			},
 			show: function(color) {
 				original_color = color;
 				$(this).data('changed', false);
-				$(this).spectrum("option", "palette", jerseyPalette)
 			},
 			move: function(color) {
 				$(this).data('changed', true);
@@ -3467,10 +3475,12 @@
 			//localstorageKey: "spectrum.jerseymaker",
 			//palette: [ ],
 			color: initialJerseyColors[$(this).attr('id')],
+			beforeShow: function(color) {
+				$(this).spectrum("option", "palette", commonPalette)
+			},
 			show: function(color) {
 				var original_color = color;
 				$(this).data('changed', false);
-				$(this).spectrum("option", "palette", commonPalette)
 			},
 			move: function(color) {
 				var type = $(this).attr("id");
@@ -3562,10 +3572,12 @@
 			allowEmpty: false,
 			//showSelectionPalette: true,
 			color: initialJerseyColors[$(this).attr('id')],
+			beforeShow: function(color) {
+				$(this).spectrum("option", "palette", commonPalette)
+			},
 			show: function(color) {
 				var original_color = color;
 				$(this).data('changed', false);
-				$(this).spectrum("option", "palette", commonPalette)
 			},
 			move: function(color) {
 				$(this).data('changed', true);
@@ -3614,10 +3626,12 @@
 			showButtons: true,
 			allowEmpty: false,
 			color: initialJerseyColors[$(this).attr('id')],
+			beforeShow: function(color) {
+				$(this).spectrum("option", "palette", commonPalette)
+			},
 			show: function(color) {
 				var original_color = color;
 				$(this).data('changed', false);
-				$(this).spectrum("option", "palette", commonPalette)
 			},
 			move: function(color) {
 				var type = $(this).attr("id");
@@ -3701,10 +3715,12 @@
 			showButtons: true,
 			allowEmpty: false,
 			color: initialJerseyColors[$(this).attr('id')],
+			beforeShow: function(color) {
+				$(this).spectrum("option", "palette", commonPalette)
+			},
 			show: function(color) {
 				var original_color = color;
 				$(this).data('changed', false);
-				$(this).spectrum("option", "palette", commonPalette)
 			},
 			move: function(color) {
 				var type = $(this).attr("id");
@@ -4413,9 +4429,9 @@
 		showPalette: true,
 		showButtons: true,
 		color: "#FF0000",
-		show: function(color) {
+		beforeShow: function(color) {
 			$(this).spectrum("option", "palette", commonPalette)
-		},
+		}
 	})
 
 	$(".makePatch").on("click",function(e) {
@@ -5239,10 +5255,12 @@
 		showButtons: true,
 		allowEmpty: false,
 		color: initialPantsColors["pantsColor"],
+		beforeShow: function(color) {
+			$(this).spectrum("option", "palette", [jerseyPalette, commonPalette])
+		},
 		show: function(color) {
 			original_color = color;
 			$(this).data('changed', false);
-			$(this).spectrum("option", "palette", jerseyPalette)
 		},
 		move: function(color) {
 			$(this).data('changed', true);
@@ -5291,10 +5309,12 @@
 			showPalette: true,
 			showButtons: true,
 			color: initialPantsColors[$(this).attr('id')],
+			beforeShow: function(color) {
+				$(this).spectrum("option", "palette", commonPalette)
+			},
 			show: function(color) {
 				var original_color = color;
 				$(this).data('changed', false);
-				$(this).spectrum("option", "palette", commonPalette)
 			},
 			move: function(color) {
 				$(this).data('changed', true);
@@ -5420,10 +5440,12 @@
 			showButtons: true,
 			allowEmpty: false,
 			color: initialPantsColors[$(this).attr('id')],
+			beforeShow: function(color) {
+				$(this).spectrum("option", "palette", commonPalette)
+			},
 			show: function(color) {
 				var original_color = color;
 				$(this).data('changed', false);
-				$(this).spectrum("option", "palette", commonPalette)
 			},
 			move: function(color) {
 				var type = $(this).attr("id");
@@ -5496,9 +5518,9 @@
 		showPalette: true,
 		showButtons: true,
 		color: "#FF0000",
-		show: function(color) {
-			$(this).spectrum("option", "palette", commonPalette)
-		},
+		beforeShow: function(color) {
+				$(this).spectrum("option", "palette", commonPalette)
+		}
 	})
 
 	$("#pantsTextureSelect").on("change",function(){
@@ -5842,10 +5864,12 @@
 		showButtons: true,
 		allowEmpty: false,
 		color: initialCapColors["capColor"],
+		beforeShow: function(color) {
+			$(this).spectrum("option", "palette", [capPalette, commonPalette])
+		},
 		show: function(color) {
 			original_color = color;
 			$(this).data('changed', false);
-			$(this).spectrum("option", "palette", capPalette)
 		},
 		move: function(color) {
 			$(this).data('changed', true);
@@ -5922,10 +5946,12 @@
 			showPalette: true,
 			showButtons: true,
 			color: initialCapColors[$(this).attr('id')],
+			beforeShow: function(color) {
+				$(this).spectrum("option", "palette", commonPalette)
+			},
 			show: function(color) {
 				var original_color = color;
 				$(this).data('changed', false);
-				$(this).spectrum("option", "palette", commonPalette)
 			},
 			move: function(color) {
 				$(this).data('changed', true);
@@ -6025,7 +6051,7 @@
 		showPalette: true,
 		showButtons: true,
 		color: "#FF0000",
-		show: function(color) {
+		beforeShow: function(color) {
 			$(this).spectrum("option", "palette", commonPalette)
 		},
 	})
@@ -11211,7 +11237,8 @@
 				swatch1: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].text, 
 				swatch2: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].text, 
 				swatch3: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].text, 
-				swatch4: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].text
+				swatch4: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].text,
+				commonPalette: commonPalette
 			},
 			success: function(data) {
 				if (data.result == "error") {
@@ -12071,7 +12098,8 @@
 				swatch1: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].text, 
 				swatch2: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].text, 
 				swatch3: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].text, 
-				swatch4: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].text
+				swatch4: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].text,
+				commonPalette: commonPalette
 			},
 			success: function(result) {
 				hideOverlay()
@@ -12090,6 +12118,13 @@
 			success: function(response) {
 				if (response.result == "success") {
 					const json = JSON.parse(response.json)
+
+					console.log(commonPalette)
+
+					commonPalette.splice(0, commonPalette.length)
+					commonPalette = json.commonPalette
+
+					console.log(commonPalette)
 
 					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[0].set("fill",json.swatch1)
 					jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].set("text",json.swatch1)
