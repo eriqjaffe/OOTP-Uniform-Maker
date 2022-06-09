@@ -170,6 +170,8 @@
 									<option>Alternate</option>
 									<option>Throwback</option>
 									<option>Fauxback</option>
+									<option>Home Alternate</option>
+									<option>Away Alternate</option>
 									<option>City Connect</option>
 									<option>Sunday Special</option>
 									<option>Turn Ahead The Clock</option>
@@ -753,6 +755,8 @@
 													<td><center>
 														<input type="button" class="button makePatch" data-sleeve="sleeveLeft" value="Make Left Sleeve Patch">
 														<input type="button" class="button makePatch" data-sleeve="sleeveRight" value="Make Right Sleeve Patch">
+														<!--<input type="button" class="button makePatch" data-sleeve="jerseyBackNumber" value="Back Name & Number">
+														<input type="button" class="button makePatch" data-sleeve="jerseyFrontNumber" value="Front Number">-->
 														<input type="button" class="button makePatch" data-sleeve="reset" value="Reset Image">
 													</td>
 												</tr>
@@ -4494,6 +4498,19 @@
 					var dim = fitInBox(imageWidth, imageHeight, 58, 58, false)
 					object.scaleToWidth(dim.width)
 					object.set({"left":51,"top":528,"angle":90});
+					object.setCoords();
+					break;
+				case "jerseyBackNumber":
+					object.set({"left":256,"top":512,"scaleX":1,"scaleY":1,"angle":0})
+					object.setCoords();
+					object.set({"left":256,"top":348.5})
+					object.setCoords();
+					break;
+				case "jerseyFrontNumber":
+					object.set({"left":256,"top":512,"scaleX":1,"scaleY":1,"angle":0})
+					object.setCoords();
+					object.scaleToHeight(68)
+					object.set({"left":322.5,"top":769})
 					object.setCoords();
 					break;
 				case "reset":
@@ -10643,7 +10660,7 @@
 				text: textLine,
 				capLogoCanvas: capLogoCanvas.toDataURL(),
 				capBelow: capBelow.toDataURL(),
-				name: fileName,
+				name: fileName.split(' ').join('_'),
 				capWatermarkColor: idealTextColor(capBelow.backgroundColor),
 				capTexture: ($("#capTextureSelect").val() == "custom") ? customCapTexture : $("#capTextureSelect").val(),
 			},
@@ -10728,7 +10745,7 @@
 				text: textLine,
 				pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
 				pantsBelow: pantsBelow.toDataURL(),
-				name: fileName,
+				name: fileName.split(' ').join('_'),
 				pantsWatermarkColor: idealTextColor(pantsBelow.backgroundColor),
 				pantsTexture: ($("#pantsTextureSelect").val() == "custom") ? customPantsTexture : $("#pantsTextureSelect").val(),
 			},
@@ -10909,7 +10926,7 @@
 				normalMap: normalMap,
 				jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
 				jerseyBelow: jerseyBelow.toDataURL(),
-				name: fileName,
+				name: fileName.split(' ').join('_'),
 				jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
 				jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
 				showPlanket: showPlanket,
