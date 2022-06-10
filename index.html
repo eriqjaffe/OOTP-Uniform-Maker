@@ -755,8 +755,8 @@
 													<td><center>
 														<input type="button" class="button makePatch" data-sleeve="sleeveLeft" value="Make Left Sleeve Patch">
 														<input type="button" class="button makePatch" data-sleeve="sleeveRight" value="Make Right Sleeve Patch">
-														<!--<input type="button" class="button makePatch" data-sleeve="jerseyBackNumber" value="Back Name & Number">
-														<input type="button" class="button makePatch" data-sleeve="jerseyFrontNumber" value="Front Number">-->
+														<input type="button" class="button makePatch" data-sleeve="jerseyBackNumber" value="Back Name & Number">
+														<input type="button" class="button makePatch" data-sleeve="jerseyFrontNumber" value="Front Number">
 														<input type="button" class="button makePatch" data-sleeve="reset" value="Reset Image">
 													</td>
 												</tr>
@@ -3609,6 +3609,17 @@
 				g._objects[0].set("fill", color.toHexString())
 				g._objects[1].set("text", color.toHexString())
 				g._objects[1].set("fill", idealTextColor(color.toHexString()))
+				if (color !=  null) {
+					if ($.inArray(color.toHexString(), commonPalette) < 0) {
+						commonPalette.push(color.toHexString())
+					}
+					if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+						jerseyPalette.push(color.toHexString())
+					}
+					if ($.inArray(color.toHexString(), capPalette) < 0) {
+						capPalette.push(color.toHexString())
+					}
+				}
 				jerseyLogoCanvas.renderAll()
 			},
 			hide: function(color) {
@@ -10996,6 +11007,7 @@
 		const capSelectors = {}
 		const jerseySelectors = {}
 		const pantsSelectors = {}
+		const swatchSelectors = {}
 		const textBoxes = {}
 		const buttons = {}
 
@@ -11051,11 +11063,20 @@
 				jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
 			}
 		})
+
 		$(".swashSelector").each(function(){
 			if ($(this).spectrum("get") == null) {
 				jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": 'transparent' }
 			} else {
 				jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			}
+		})
+
+		$(".swatchSelector").each(function(){
+			if ($(this).spectrum("get") == null) {
+				swatchSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": 'transparent' }
+			} else {
+				swatchSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
 			}
 		})
 
@@ -11118,9 +11139,11 @@
 		exportMeta.capSelectors = capSelectors
 		exportMeta.jerseySelectors = jerseySelectors
 		exportMeta.pantsSelectors = pantsSelectors
+		exportMeta.swatchSelectors = swatchSelectors
 		exportMeta.textBoxes = textBoxes
 		exportMeta.canvases = jsonExport
 		exportMeta.customFonts = customFonts
+		exportMeta.commonPalette = commonPalette
 		exportMeta.selectedJerseyFont = $("#jerseyFontTypeCombo").val()
 		exportMeta.capSelectedFont = $("#capFontTypeCombo").val()
 		exportMeta.customJerseyTexture = customJerseyTexture
@@ -11331,6 +11354,7 @@
 			success: function(response) {
 				if (response.result == "success") {
 					customFonts.splice(0, customFonts.length)
+					commonPalette.splice(0, commonPalette.length)
 					const exportMeta = JSON.parse(response.json)
 
 					if (exportMeta.version == undefined || !semver.eq(appVersion, exportMeta.version)) {
@@ -11352,6 +11376,14 @@
 						customJerseyTexture = exportMeta.customJerseyTexture
 						customPantsTexture = exportMeta.customPantsTexture
 						customCapTexture = exportMeta.customCapTexture
+
+						if (exportMeta.commonPalette != undefined && exportMeta.commonPalette != null) {
+							if (exportMeta.commonPalette.length > 0) {
+								for (x in exportMeta.commonPalette) {
+									commonPalette.push(exportMeta.commonPalette[x])
+								}
+							}
+						}
 
 						if (exportMeta.customFonts != undefined && exportMeta.customFonts != null) {
 							if (exportMeta.customFonts.length > 0) {
@@ -11411,6 +11443,11 @@
 						Object.keys(exportMeta.pantsSelectors).forEach(function(key){
 							if (exportMeta.pantsSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
 							$("#"+key).spectrum("set",exportMeta.pantsSelectors[key].val)
+						})
+
+						Object.keys(exportMeta.swatchSelectors).forEach(function(key){
+							if (exportMeta.swatchSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+							$("#"+key).spectrum("set",exportMeta.swatchSelectors[key].val)
 						})
 
 

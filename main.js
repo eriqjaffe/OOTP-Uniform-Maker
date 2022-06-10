@@ -921,6 +921,7 @@ app2.post('/saveUniform', (req, res) => {
 	const normalMap = req.body.normalMap
 	const seamsOnDiffuse = req.body.seamsOnDiffuse
 	const brightness = parseInt(req.body.brightness)/100
+	const commonPalette = req.body.commonPalette
 	const json = Buffer.from(req.body.json, 'utf8')
 
 	/* if (seamsVisible == false) {
@@ -939,7 +940,7 @@ app2.post('/saveUniform', (req, res) => {
 		swatch2: req.body.swatch2,
 		swatch3: req.body.swatch3,
 		swatch4: req.body.swatch4,
-		commonPalette: req.body.commonPalette
+		commonPalette: commonPalette
 	}
 
 	if (tmpCapTexture.startsWith("data:image")) {
