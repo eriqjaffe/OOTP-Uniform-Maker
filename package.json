@@ -33,6 +33,7 @@
     "promise-synchronizer": "^1.1.8",
     "semver": "^7.3.7",
     "svgdom": "^0.1.10",
+    "three": "^0.141.0",
     "ttfinfo": "^0.2.0"
   },
   "build": {
