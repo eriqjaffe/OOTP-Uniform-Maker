@@ -815,7 +815,7 @@ app2.post('/saveJersey', (req, res) => {
 		
 		// jersey height map
 		let jerseyHeightMap = await Jimp.read(__dirname+"/images/jersey_height_map.png")
-		await jerseyOverlay.grayscale()
+		//await jerseyOverlay.grayscale()
 		await jerseyOverlay.brightness(brightness)
 		if (buttonPadSeams == "true") {
 			if (buttonType != "buttonsHenley") {
@@ -858,12 +858,13 @@ app2.post('/saveJersey', (req, res) => {
 		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyHMBuffer = await jerseyHeightMap.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(jerseyHMBuffer, {name: req.body.name+"_h.png"})
-		await jerseyHeightMap.write(tempDir + '/temp_height_map.png')
+		await jerseyHeightMap.write(tempDir+"/temp_height_map.jpg")
 
 		// normal map
-		let normalBase = jerseyHeightMap.clone()
+		//let normalBase = jerseyHeightMap.clone()
+		let normalBase = await Jimp.read(__dirname+"/images/1200px-Mona_Lisa.PNG")
 		let normalMapData = generateNormalMap(normalBase);
-		let normalMapX = await Jimp.read({data: normalMapData, width: 512, height: 1024})
+		let normalMapX = await Jimp.read({data: normalMapData, width: normalBase.bitmap.width, height: normalBase.bitmap.height})
 		await normalMapX.write(tempDir+"/temp_normal_map.png")
 
 		// jersey with baked texture
