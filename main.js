@@ -858,7 +858,7 @@ app2.post('/saveJersey', (req, res) => {
 		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyHMBuffer = await jerseyHeightMap.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(jerseyHMBuffer, {name: req.body.name+"_h.png"})
-		//await jerseyHeightMap.write(tempDir + '/temp_height_map.png')
+		await jerseyHeightMap.write(tempDir + '/temp_height_map.png')
 
 		// normal map
 		let normalBase = jerseyHeightMap.clone()
