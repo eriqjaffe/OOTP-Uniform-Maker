@@ -16,6 +16,16 @@ const { createSVGWindow } = require('svgdom')
 const versionCheck = require('github-version-checker');
 const pkg = require('./package.json');
 
+const { log } = console;
+function proxiedLog(...args) {
+  const line = (((new Error('log'))
+    .stack.split('\n')[2] || '…')
+    .match(/\(([^)]+)\)/) || [, 'not found'])[1];
+  log.call(console, `${line}\n`, ...args);
+}
+console.info = proxiedLog;
+console.log = proxiedLog;
+
 const isMac = process.platform === 'darwin'
 const tempDir = os.tmpdir()
 const app2 = express();
@@ -684,19 +694,82 @@ app2.post('/saveCap', (req, res) => {
 	}
 })
 
-app2.post('/saveJersey', (req, res) => {
+app2.post("/generateHeightMap", (req, res) => {
 	const jerseyLogoCanvas = Buffer.from(req.body.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const jerseyBelow = Buffer.from(req.body.jerseyBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const nameCanvas = Buffer.from(req.body.nameCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const tmpJerseyTexture = req.body.jerseyTexture
 	const showPlanket = req.body.showPlanket
 	const buttonPadSeams = req.body.buttonPadSeams
 	const buttonType = req.body.buttonType
 	const seamsVisible = req.body.seamsVisible
 	const seamsOption = req.body.seamsOption
-	const normalMap = req.body.normalMap
-	const seamsOnDiffuse = req.body.seamsOnDiffuse
 	const brightness = parseInt(req.body.brightness)/100
+
+	prepareImages()
+
+	async function prepareImages() {
+		let jerseyHeightMap = await Jimp.read(__dirname+"/images/jersey_height_map.png")
+		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
+		await jerseyOverlay.grayscale()
+		await jerseyOverlay.brightness(brightness)
+		if (buttonPadSeams == "true") {
+			if (buttonType != "buttonsHenley") {
+				var seamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+			} else {
+				var seamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+			}
+			let bpHMSeamImg = await Jimp.read(seamsSrc)
+			await bpHMSeamImg.brightness(.33)
+			await jerseyHeightMap.composite(bpHMSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		}
+		if (seamsVisible == "true") {
+			switch (seamsOption) {
+				case "seamsStandardToPiping":
+					var seamHMSrc = __dirname+"/images/seams/seams_standard_to_piping.png"
+					break;
+				case "seamsStandardToCollar":
+					var seamHMSrc = __dirname+"/images/seams/seams_standard_to_collar.png"
+					break;
+				case "seamsRaglanToPiping":
+					var seamHMSrc = __dirname+"/images/seams/seams_raglan_to_piping.png"
+					break;
+				case "seamsRaglanToCollar":
+					var seamHMSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
+					break;
+			}
+			let seamsHMImg = await Jimp.read(seamHMSrc)
+			await seamsHMImg.brightness(.33)
+			await jerseyHeightMap.composite(seamsHMImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		}
+		if (showPlanket == "true") {
+			if (buttonType != "buttonsHenley") {
+				var planketSrc = __dirname+"/images/planket.png"
+			} else {
+				var planketSrc = __dirname+"/images/planket_henley.png"
+			}
+			let planket = await Jimp.read(planketSrc)
+			await jerseyHeightMap.composite(planket, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		}
+		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await jerseyHeightMap.write(tempDir+"/temp_height_map.jpg")
+		let base64 = await jerseyHeightMap.getBase64Async(Jimp.AUTO)
+		res.json({
+			"status": "success",
+			"image": base64
+		})
+	}
+})
+
+app2.post('/saveJersey', (req, res) => {
+	const jerseyLogoCanvas = Buffer.from(req.body.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const jerseyBelow = Buffer.from(req.body.jerseyBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const nameCanvas = Buffer.from(req.body.nameCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const heightMap = Buffer.from(req.body.heightMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const normalMap = Buffer.from(req.body.normalMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const tmpJerseyTexture = req.body.jerseyTexture
+	const buttonPadSeams = req.body.buttonPadSeams
+	const buttonType = req.body.buttonType
+	const seamsVisible = req.body.seamsVisible
+	const seamsOption = req.body.seamsOption
+	const seamsOnDiffuse = req.body.seamsOnDiffuse
 
 	if (tmpJerseyTexture.startsWith("data:image")) {
 		fs.writeFileSync(tempDir+"/tempJerseyTexture.png", tmpJerseyTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
@@ -803,52 +876,17 @@ app2.post('/saveJersey', (req, res) => {
 		//await jerseyBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'.png')
 		
 		// jersey height map
-		let jerseyHeightMap = await Jimp.read(__dirname+"/images/jersey_height_map.png")
-		await jerseyOverlay.grayscale()
-		await jerseyOverlay.brightness(brightness)
-		if (buttonPadSeams == "true") {
-			if (buttonType != "buttonsHenley") {
-				var seamsSrc = __dirname+"/images/seams/seams_button_pad.png"
-			} else {
-				var seamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
-			}
-			let bpHMSeamImg = await Jimp.read(seamsSrc)
-			await bpHMSeamImg.brightness(.33)
-			await jerseyHeightMap.composite(bpHMSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		}
-		if (seamsVisible == "true") {
-			switch (seamsOption) {
-				case "seamsStandardToPiping":
-					var seamHMSrc = __dirname+"/images/seams/seams_standard_to_piping.png"
-					break;
-				case "seamsStandardToCollar":
-					var seamHMSrc = __dirname+"/images/seams/seams_standard_to_collar.png"
-					break;
-				case "seamsRaglanToPiping":
-					var seamHMSrc = __dirname+"/images/seams/seams_raglan_to_piping.png"
-					break;
-				case "seamsRaglanToCollar":
-					var seamHMSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
-					break;
-			}
-			let seamsHMImg = await Jimp.read(seamHMSrc)
-			await seamsHMImg.brightness(.33)
-			await jerseyHeightMap.composite(seamsHMImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		}
-		if (showPlanket == "true") {
-			if (buttonType != "buttonsHenley") {
-				var planketSrc = __dirname+"/images/planket.png"
-			} else {
-				var planketSrc = __dirname+"/images/planket_henley.png"
-			}
-			let planket = await Jimp.read(planketSrc)
-			await jerseyHeightMap.composite(planket, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		}
-		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		let jerseyHeightMap = await Jimp.read(heightMap)
 		let jerseyHMBuffer = await jerseyHeightMap.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(jerseyHMBuffer, {name: req.body.name+"_h.png"})
-		//await jerseyHeightMap.write(app.getPath('downloads') + '/test_height_map.png')
+		//await jerseyHeightMap.write(tempDir+"/temp_height_map.jpg")
 
+		// jersey normal map
+		let jerseyNormalMap = await Jimp.read(normalMap)
+		let jerseyNMBUffer = await jerseyNormalMap.getBufferAsync(Jimp.MIME_PNG)
+		archive.append(jerseyNMBUffer, {name: req.body.name+"_n.png"})
+		//await jerseyNormalMap.write(tempDir+"/temp_normal_map.jpg")
+		
 		// jersey with baked texture
 		let jerseyBakedBase = await Jimp.read(jerseyBelow)
 		let jerseyBakedOverlay = await Jimp.read(jerseyLogoCanvas)
@@ -896,8 +934,7 @@ app2.post('/saveJersey', (req, res) => {
 		//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'_textured.png')
 
 		archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });
-		archive.append(fs.createReadStream(__dirname+"/images/"+normalMap), { name: req.body.name+"_n.png" });
-	    archive.finalize()
+		archive.finalize()
 	}
 })
 
@@ -909,30 +946,19 @@ app2.post('/saveUniform', (req, res) => {
 	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const nameCanvas = Buffer.from(req.body.nameCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const heightMap = Buffer.from(req.body.heightMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const normalMap = Buffer.from(req.body.normalMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const text = req.body.text;
 	const tmpCapTexture = req.body.capTexture
 	const tmpJerseyTexture = req.body.jerseyTexture
 	const tmpPantsTexture = req.body.pantsTexture
-	const showPlanket = req.body.showPlanket
 	const buttonPadSeams = req.body.buttonPadSeams
 	const buttonType = req.body.buttonType
 	const seamsVisible = req.body.seamsVisible
 	const seamsOption = req.body.seamsOption
-	const normalMap = req.body.normalMap
 	const seamsOnDiffuse = req.body.seamsOnDiffuse
-	const brightness = parseInt(req.body.brightness)/100
 	const commonPalette = req.body.commonPalette
 	const json = Buffer.from(req.body.json, 'utf8')
-
-	/* if (seamsVisible == false) {
-		var nmBase = "blank"
-	} else {
-		switch (buttonPadSeams) {
-			case 
-		}
-	} */
-	var nmBase = null;
-	var nmSleeve = null;
 
 	const swatchJSON = {
 		name: req.body.name,
@@ -1104,53 +1130,16 @@ app2.post('/saveUniform', (req, res) => {
 		//await jerseyBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'.png')
 		
 		// jersey height map
-		let jerseyHeightMap = await Jimp.read(__dirname+"/images/jersey_height_map.png")
-		await jerseyOverlay.grayscale()
-		await jerseyOverlay.brightness(brightness)
-		//var nmBase = null;
-		//var nmSleeve = null;
-		if (buttonPadSeams == "true") {
-			if (buttonType != "buttonsHenley") {
-				var seamsSrc = __dirname+"/images/seams/seams_button_pad.png"
-			} else {
-				var seamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
-			}
-			let bpHMSeamImg = await Jimp.read(seamsSrc)
-			await bpHMSeamImg.brightness(.33)
-			await jerseyHeightMap.composite(bpHMSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		}
-		if (seamsVisible == "true") {
-			switch (seamsOption) {
-				case "seamsStandardToPiping":
-					var seamHMSrc = __dirname+"/images/seams/seams_standard_to_piping.png"
-					break;
-				case "seamsStandardToCollar":
-					var seamHMSrc = __dirname+"/images/seams/seams_standard_to_collar.png"
-					break;
-				case "seamsRaglanToPiping":
-					var seamHMSrc = __dirname+"/images/seams/seams_raglan_to_piping.png"
-					break;
-				case "seamsRaglanToCollar":
-					var seamHMSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
-					break;
-			}
-			let seamsHMImg = await Jimp.read(seamHMSrc)
-			await seamsHMImg.brightness(.33)
-			await jerseyHeightMap.composite(seamsHMImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		}
-		if (showPlanket == "true") {
-			if (buttonType != "buttonsHenley") {
-				var planketSrc = __dirname+"/images/planket.png"
-			} else {
-				var planketSrc = __dirname+"/images/planket_henley.png"
-			}
-			let planket = await Jimp.read(planketSrc)
-			await jerseyHeightMap.composite(planket, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		}
-		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		let jerseyHeightMap = await Jimp.read(heightMap)
 		let jerseyHMBuffer = await jerseyHeightMap.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(jerseyHMBuffer, {name: "jerseys_"+req.body.name+"_h.png"})
-		//await jerseyHeightMap.write(app.getPath('downloads') + '/uniform_Unknown_Team_Home/jerseys_' + req.body.name+'_h.png')
+		//await jerseyHeightMap.write(tempDir+"/temp_height_map.jpg")
+
+		// jersey normal map
+		let jerseyNormalMap = await Jimp.read(normalMap)
+		let jerseyNMBUffer = await jerseyNormalMap.getBufferAsync(Jimp.MIME_PNG)
+		archive.append(jerseyNMBUffer, {name: "jerseys_"+req.body.name+"_n.png"})
+		//await jerseyNormalMap.write(tempDir+"/temp_normal_map.jpg")
 
 		// jersey with baked texture
 		let jerseyBakedBase = await Jimp.read(jerseyBelow)
@@ -1201,7 +1190,7 @@ app2.post('/saveUniform', (req, res) => {
 		archive.append(JSON.stringify(swatchJSON, null, 2), {name: req.body.name+".pal"});
 		archive.append(json, {name: "uniform_"+req.body.name+".uni"})
 		archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });
-		archive.append(fs.createReadStream(__dirname+"/images/"+normalMap), { name: "jerseys_"+req.body.name+"_n.png" });
+		//archive.append(fs.createReadStream(__dirname+"/images/"+normalMap), { name: "jerseys_"+req.body.name+"_n.png" });
 	    archive.finalize()
 	}
 })
@@ -1420,8 +1409,4 @@ function createWindow () {
     if (process.platform !== 'darwin') app.quit()
   })
 
-function getExtension(filename) {
-	var ext = path.extname(filename||'').split('.');
-	return ext[ext.length - 1];
-}
 

@@ -129,6 +129,8 @@
                     <canvas id="capTexture" width="512" height="512"></canvas>  
                     <canvas id="capBelow" width="512" height="512"></canvas> 
 					<canvas id="textWarp" width="512" height="512"></canvas>
+					<img id="heightMapSrc" width="512", height="1024">
+					<canvas id="normalMapCanvas" width="512" height="1024"></canvas>
                 </div>
                 <div id="canvasContainer" style="position:absolute; height:828px; width:768px;">
 					<div id="overlay">
@@ -2739,8 +2741,22 @@
 
 	var nameCanvas = new fabric.Canvas('nameCanvas',{
 		selection:false,
-		enableeRetinaScaling:false
+		enableRetinaScaling:false
 	})
+
+	/* var heightMapCanvas = new fabric.Canvas('heightMapCanvas',{
+		selection:false,
+		enableRetinaScaling:false,
+		backgroundColor:"#00ff00"
+	}) */
+
+	var normalMapCanvas = new fabric.Canvas('normalMapCanvas',{
+		selection:false,
+		enableRetinaScaling:false
+	})
+
+	//heightMapCanvas.renderAll()
+	//normalMapCanvas.renderAll()
 
 	if (gridsVisible == true) {
 		jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
@@ -10963,16 +10979,6 @@
 			jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 			seamsGroup.visible = false;
 		}
-	
-/* 		if (buttonGroup.visible == true) {
-			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons').getObjects().forEach(function(o) {
-				if (o.id != "zipper" && o.visible == true) {
-					showPlanket = true
-				}		
-			})
-		} else {
-			showPlanket = false
-		} */
 
 		if (buttonGroup.visible == true) {
 			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons').getObjects().forEach(function(o) {
@@ -11051,7 +11057,7 @@
 
 		$.ajax({
 		 	type: "POST",
-			url: "http://127.0.0.1:"+port+"/saveJersey",
+			url: "http://127.0.0.1:"+port+"/generateHeightMap",
 			dataType: "json",
 			data: {
 				nameCanvas: nameCanvas.toDataURL(),
@@ -11068,17 +11074,8 @@
 				seamsOption: $("#seamsType").val(),
 				seamsOnDiffuse: ($("#toggleDiffuseSeams").is(":checked")) ? true : false,
 				brightness: $("#preferredHeightMapBrightness").val()
-				
 			},
 			success: function(data) {
-				if (data.result == "error") {
-					if (data.errno == -4082) {
-						alert("An error occurred saving the file, it appears to already be open.\n\nClose the file and try again!")
-					} else {
-						alert("An error occurred saving the file.")
-					}
-				}
-
 				jerseyBelow.setDimensions({ width: jerseyBelow.getWidth() * 0.75, height: jerseyBelow.getHeight() * 0.75 });
 				jerseyBelow.setZoom(scaleRatio)
 				jerseyLogoCanvas.setDimensions({ width: jerseyLogoCanvas.getWidth() * 0.75, height: jerseyLogoCanvas.getHeight() * 0.75 });
@@ -11103,6 +11100,84 @@
 					//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 				}
 
+				var imgObj = new Image();
+				var normalMap = document.getElementById('normalMapCanvas');
+				imgObj.src = data.image;
+				imgObj.onload = function () {
+					var heightMap = document.getElementById('heightMapSrc');
+					heightMap.src = imgObj.src;
+					var normalMapCTX = normalMap.getContext('2d')
+					normalMapCTX.clearRect(0, 0, 512, 1024);
+					normalMapCTX.drawImage( heightMap, 0, 0 );
+
+					height2normal(normalMap)
+
+					$.ajax({
+						type: "POST",
+						url: "http://127.0.0.1:"+port+"/saveJersey",
+						dataType: "json",
+						data: {
+							nameCanvas: nameCanvas.toDataURL(),
+							//normalMap: normalMap,
+							jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
+							jerseyBelow: jerseyBelow.toDataURL(),
+							name: fileName.split(' ').join('_'),
+							jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
+							jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
+							showPlanket: showPlanket,
+							buttonPadSeams: buttonPadSeams,
+							buttonType: $("#buttonsType").val(),
+							seamsVisible: seamsVisible,
+							seamsOption: $("#seamsType").val(),
+							seamsOnDiffuse: ($("#toggleDiffuseSeams").is(":checked")) ? true : false,
+							brightness: $("#preferredHeightMapBrightness").val(),
+							heightMap: heightMap.src,
+							normalMap: normalMap.toDataURL()
+							
+						},
+						success: function(data) {
+							if (data.result == "error") {
+								if (data.errno == -4082) {
+									alert("An error occurred saving the file, it appears to already be open.\n\nClose the file and try again!")
+								} else {
+									alert("An error occurred saving the file.")
+								}
+							}
+
+							jerseyBelow.setDimensions({ width: jerseyBelow.getWidth() * 0.75, height: jerseyBelow.getHeight() * 0.75 });
+							jerseyBelow.setZoom(scaleRatio)
+							jerseyLogoCanvas.setDimensions({ width: jerseyLogoCanvas.getWidth() * 0.75, height: jerseyLogoCanvas.getHeight() * 0.75 });
+							jerseyLogoCanvas.setZoom(scaleRatio)
+
+							jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
+
+							if	($("#toggleJerseyGrid").is(':checked')) {
+								jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+							}
+
+							if (seamsVisible == true) {
+								seamsGroup.visible = true
+							}
+
+							if (buttonPadSeams == true) {
+								if ($("#buttonsType").val() != "buttonsHenley") {
+									jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+								} else {
+									jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+								}
+								//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+							}
+
+							hideOverlay()
+						},
+						error: function(data) {
+							hideOverlay()
+						}
+					})
+				}
+				
+			},
+			error: function(data) {
 				hideOverlay()
 			}
 		})
@@ -11377,94 +11452,138 @@
 		
 		$.ajax({
 		 	type: "POST",
-			url: "http://127.0.0.1:"+port+"/saveUniform",
+			url: "http://127.0.0.1:"+port+"/generateHeightMap",
 			dataType: "json",
 			data: {
-				text: textLine,
-				normalMap: normalMap,
 				nameCanvas: nameCanvas.toDataURL(),
-				capLogoCanvas: capLogoCanvas.toDataURL(),
-				capBelow: capBelow.toDataURL(),
+				normalMap: normalMap,
 				jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
 				jerseyBelow: jerseyBelow.toDataURL(),
-				pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
-				pantsBelow: pantsBelow.toDataURL(),
-				name: fileName,
+				name: fileName.split(' ').join('_'),
+				jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
+				jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
 				showPlanket: showPlanket,
 				buttonPadSeams: buttonPadSeams,
-				seamsVisible: seamsVisible,
 				buttonType: $("#buttonsType").val(),
+				seamsVisible: seamsVisible,
 				seamsOption: $("#seamsType").val(),
 				seamsOnDiffuse: ($("#toggleDiffuseSeams").is(":checked")) ? true : false,
-				jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
-				capWatermarkColor: idealTextColor(capBelow.backgroundColor),
-				pantsWatermarkColor: idealTextColor(pantsBelow.backgroundColor),
-				capTexture: ($("#capTextureSelect").val() == "custom") ? customCapTexture : $("#capTextureSelect").val(),
-				jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
-				pantsTexture: ($("#pantsTextureSelect").val() == "custom") ? customPantsTexture : $("#pantsTextureSelect").val(),
-				json: JSON.stringify(exportMeta,null,2),
-				swatch1: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].text, 
-				swatch2: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].text, 
-				swatch3: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].text, 
-				swatch4: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].text,
-				commonPalette: commonPalette,
 				brightness: $("#preferredHeightMapBrightness").val()
 			},
 			success: function(data) {
-				if (data.result == "error") {
-					if (data.errno == -4082) {
-						alert("An error occurred saving the file, it appears to already be open.\n\nClose the .zip and try again!")
-					} else {
-						alert("An error occurred saving the file.")
-					}
+				var imgObj = new Image();
+				var normalMap = document.getElementById('normalMapCanvas');
+				imgObj.src = data.image;
+				imgObj.onload = function () {
+					var heightMap = document.getElementById('heightMapSrc');
+					heightMap.src = imgObj.src;
+					var normalMapCTX = normalMap.getContext('2d')
+					normalMapCTX.clearRect(0, 0, 512, 1024);
+					normalMapCTX.drawImage( heightMap, 0, 0 );
+
+					height2normal(normalMap)
+					
+					$.ajax({
+						type: "POST",
+						url: "http://127.0.0.1:"+port+"/saveUniform",
+						dataType: "json",
+						data: {
+							text: textLine,
+							nameCanvas: nameCanvas.toDataURL(),
+							capLogoCanvas: capLogoCanvas.toDataURL(),
+							capBelow: capBelow.toDataURL(),
+							jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
+							jerseyBelow: jerseyBelow.toDataURL(),
+							pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
+							pantsBelow: pantsBelow.toDataURL(),
+							name: fileName,
+							showPlanket: showPlanket,
+							buttonPadSeams: buttonPadSeams,
+							seamsVisible: seamsVisible,
+							buttonType: $("#buttonsType").val(),
+							seamsOption: $("#seamsType").val(),
+							seamsOnDiffuse: ($("#toggleDiffuseSeams").is(":checked")) ? true : false,
+							jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
+							capWatermarkColor: idealTextColor(capBelow.backgroundColor),
+							pantsWatermarkColor: idealTextColor(pantsBelow.backgroundColor),
+							capTexture: ($("#capTextureSelect").val() == "custom") ? customCapTexture : $("#capTextureSelect").val(),
+							jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
+							pantsTexture: ($("#pantsTextureSelect").val() == "custom") ? customPantsTexture : $("#pantsTextureSelect").val(),
+							json: JSON.stringify(exportMeta,null,2),
+							swatch1: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].text, 
+							swatch2: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].text, 
+							swatch3: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].text, 
+							swatch4: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].text,
+							commonPalette: commonPalette,
+							brightness: $("#preferredHeightMapBrightness").val(),
+							heightMap: heightMap.src,		
+							normalMap: normalMap.toDataURL()
+						},
+						success: function(data) {
+							if (data.result == "error") {
+								if (data.errno == -4082) {
+									alert("An error occurred saving the file, it appears to already be open.\n\nClose the .zip and try again!")
+								} else {
+									alert("An error occurred saving the file.")
+								}
+							}
+
+							capBelow.setDimensions({ width: capBelow.getWidth() * 0.75, height: capBelow.getHeight() * 0.75 });
+							capBelow.setZoom(scaleRatio)
+							capLogoCanvas.setDimensions({ width: capLogoCanvas.getWidth() * 0.75, height: capLogoCanvas.getHeight() * 0.75 });
+							capLogoCanvas.setZoom(scaleRatio)
+
+							pantsBelow.setDimensions({ width: pantsBelow.getWidth() * 0.75, height: pantsBelow.getHeight() * 0.75 });
+							pantsBelow.setZoom(scaleRatio)
+							pantsLogoCanvas.setDimensions({ width: pantsLogoCanvas.getWidth() * 0.75, height: pantsLogoCanvas.getHeight() * 0.75 });
+							pantsLogoCanvas.setZoom(scaleRatio)
+
+							jerseyBelow.setDimensions({ width: jerseyBelow.getWidth() * 0.75, height: jerseyBelow.getHeight() * 0.75 });
+							jerseyBelow.setZoom(scaleRatio)
+							jerseyLogoCanvas.setDimensions({ width: jerseyLogoCanvas.getWidth() * 0.75, height: jerseyLogoCanvas.getHeight() * 0.75 });
+							jerseyLogoCanvas.setZoom(scaleRatio)
+
+							if (seamsVisible == true) {
+								seamsGroup.visible = true
+							}
+
+							pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));
+							jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
+
+							if (buttonPadSeams == true) {
+								if ($("#buttonsType").val() != "buttonsHenley") {
+									jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+								} else {
+									jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+								}
+								//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
+							}
+
+							if ($("#toggleCapGuides").is(":checked")) {
+								capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
+							}
+
+							if ($("#toggleJerseyGrid").is(':checked')) {
+								jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+							}
+
+							if	($("#togglePantsGrid").is(':checked')) {
+								pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+							}
+
+							hideOverlay()
+						},
+						error: function(data) {
+							hideOverlay()
+						}
+					})
 				}
-
-				capBelow.setDimensions({ width: capBelow.getWidth() * 0.75, height: capBelow.getHeight() * 0.75 });
-				capBelow.setZoom(scaleRatio)
-				capLogoCanvas.setDimensions({ width: capLogoCanvas.getWidth() * 0.75, height: capLogoCanvas.getHeight() * 0.75 });
-				capLogoCanvas.setZoom(scaleRatio)
-
-				pantsBelow.setDimensions({ width: pantsBelow.getWidth() * 0.75, height: pantsBelow.getHeight() * 0.75 });
-				pantsBelow.setZoom(scaleRatio)
-				pantsLogoCanvas.setDimensions({ width: pantsLogoCanvas.getWidth() * 0.75, height: pantsLogoCanvas.getHeight() * 0.75 });
-				pantsLogoCanvas.setZoom(scaleRatio)
-
-				jerseyBelow.setDimensions({ width: jerseyBelow.getWidth() * 0.75, height: jerseyBelow.getHeight() * 0.75 });
-				jerseyBelow.setZoom(scaleRatio)
-				jerseyLogoCanvas.setDimensions({ width: jerseyLogoCanvas.getWidth() * 0.75, height: jerseyLogoCanvas.getHeight() * 0.75 });
-				jerseyLogoCanvas.setZoom(scaleRatio)
-
-				if (seamsVisible == true) {
-					seamsGroup.visible = true
-				}
-
-				pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));
-				jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
-
-				if (buttonPadSeams == true) {
-					if ($("#buttonsType").val() != "buttonsHenley") {
-						jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
-					} else {
-						jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
-					}
-					//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
-				}
-
-				if ($("#toggleCapGuides").is(":checked")) {
-					capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
-				}
-
-				if ($("#toggleJerseyGrid").is(':checked')) {
-					jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
-				}
-
-				if	($("#togglePantsGrid").is(':checked')) {
-					pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
-				}
-
+			},
+			error: function(data) {
 				hideOverlay()
 			}
 		})
+		
 	})
 
 	$("#load").on("click",function(e){
@@ -12359,6 +12478,74 @@
 				$("#tipSpan").html("");
 				$("#jerseyNumberCtl").css("display","none")
 		}
+	}
+
+	function height2normal( canvas ) {
+
+		var context = canvas.getContext( '2d' );
+
+		var width = canvas.width;
+		var height = canvas.height;
+
+		var src = context.getImageData( 0, 0, width, height );
+		var dst = context.createImageData( width, height );
+
+		for ( var i = 0, l = width * height * 4; i < l; i += 4 ) {
+
+			var x1, x2, y1, y2;
+
+			if ( i % ( width * 4 ) == 0 ) {
+
+				// left edge
+
+				x1 = src.data[ i ];
+				x2 = src.data[ i + 4 ];
+
+			} else if ( i % ( width * 4 ) == ( width - 1 ) * 4 ) {
+
+				// right edge
+
+				x1 = src.data[ i - 4 ];
+				x2 = src.data[ i ];
+
+			} else {
+
+				x1 = src.data[ i - 4 ];
+				x2 = src.data[ i + 4 ];
+
+			}
+
+			if ( i < width * 4 ) {
+
+				// top edge
+
+				y1 = src.data[ i ];
+				y2 = src.data[ i - width * 4 ];
+
+			} else if ( i > width * ( height - 1 ) * 4) {
+
+				// bottom edge
+
+				y1 = src.data[ i + width * 4 ];
+				y2 = src.data[ i ];
+
+			} else {
+
+				y1 = src.data[ i + width * 4 ];
+				y2 = src.data[ i - width * 4 ];
+
+			}
+
+				dst.data[ i ] = ( x1 - x2 ) + 127;
+				dst.data[ i + 1 ] = ( y1 - y2 ) + 127;
+				dst.data[ i + 2 ] = 255;
+				dst.data[ i + 3 ] = 255;
+
+
+			}
+
+			context.putImageData( dst, 0, 0 );
+
 	}
 </script>
 </html>
