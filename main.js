@@ -1320,7 +1320,7 @@ function createWindow () {
 			{ type: 'separator' },
 			{
 				click: () => mainWindow.webContents.send('prefs','click'),
-				accelerator: isMac ? 'Cmd+O' : 'Control+O',
+				accelerator: isMac ? 'Cmd+Shift+P' : 'Control+Shift+P',
 				label: 'Edit Preferences',
 			}
 		  ]
