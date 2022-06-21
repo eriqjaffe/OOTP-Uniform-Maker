@@ -20,6 +20,14 @@ ipcRenderer.on('save-jersey', (event, data) => {
     $("#saveJersey").trigger("click")
 });
 
+ipcRenderer.on('save-swatches', (event, data) => {
+    $("#saveSwatches").trigger("click")
+})
+
+ipcRenderer.on('load-swatches', (event, data) => {
+    $("#loadSwatches").trigger("click")
+})
+
 ipcRenderer.on('about', (event, data) => {
     $("#aboutUniformMaker").trigger("click")
 });
