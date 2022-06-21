@@ -23,7 +23,6 @@
   "dependencies": {
     "@svgdotjs/svg.js": "^3.1.2",
     "archiver": "^5.3.0",
-    "blob": "^0.1.0",
     "ejs": "^3.1.7",
     "electron-store": "^8.0.1",
     "express": "^4.17.3",
