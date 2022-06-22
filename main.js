@@ -1409,4 +1409,7 @@ function createWindow () {
     if (process.platform !== 'darwin') app.quit()
   })
 
-
+function getExtension(filename) {
+	var ext = path.extname(filename||'').split('.');
+	return ext[ext.length - 1];
+}
