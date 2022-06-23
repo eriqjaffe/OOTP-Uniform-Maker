@@ -4551,6 +4551,14 @@
 		}
 	})
 
+	jerseyLogoCanvas.on("object:rotating",function(options){
+		if (options.e.shiftKey == true) {
+			options.target.set("snapAngle", 15)
+		} else {
+			options.target.set("snapAngle", 0)
+		}
+	})
+
 	$("#jerseyReplacementColor").spectrum({
 		type: "color",
 		showAlpha: false,
@@ -5826,6 +5834,14 @@
 		})
 	})
 
+	pantsLogoCanvas.on("object:rotating",function(options){
+		if (options.e.shiftKey == true) {
+			options.target.set("snapAngle", 15)
+		} else {
+			options.target.set("snapAngle", 0)
+		}
+	})
+
 	$("#togglePantsGrid").on("click",function() {
 		if($(this).is(':checked')){
 			pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
@@ -6077,6 +6093,14 @@
 		$(".copypaste").each(function() {
 			$(this).css("display","none")
 		})
+	})
+
+	capLogoCanvas.on("object:rotating",function(options){
+		if (options.e.shiftKey == true) {
+			options.target.set("snapAngle", 15)
+		} else {
+			options.target.set("snapAngle", 0)
+		}
 	})
 
 	$(".capSelector").each(function() {
