@@ -62,7 +62,7 @@
 		const swashFills = ['swash1Fill', 'swash2Fill', 'swash3Fill', 'swash4Fill', 'swash5Fill', 'swash6Fill']
 		const swashStrokes = ['swash1Stroke', 'swash2Stroke', 'swash3Stroke', 'swash4Stroke', 'swash5Stroke', 'swash6Stroke']
 		
-		const initialCapColors = {capColor:"#ba0c2f",underBrimColor:"#656765",topsideBrimColor:"#1d1654",squatcheeColor:"yellow",frontPanelColor:"#FFFFFF",smallFrontPanelColor:"yellow",capPinstripeColor:"blue",capPinstripe2Color:"cyan", horizontalPinstripeColor:"yellow",capLogoTextColor:"white",capLogoStroke1Color:"green",capLogoStroke2Color:"black",capLogo2TextColor:"white",capLogo2Stroke1Color:"green",capLogo2Stroke2Color:"black",bandBoxSingleThickColor:"orange",bandBoxDoubleThickColor:"greenyellow",jockeyColor:"gray",braidStripeInnerColor:"red",braidStripeOuterColor:"blue",soutache:"goldenrod",frontPanelBorderColor:"cyan",bostonColor:"yellowgreen",smallPanelBorderColor:"cyan",curvedBrimColor:"cyan",curvedBrimBorderColor:"blue",peakBandColor:"orange",stingyBrimColor:"red",lidPinstripesColor:"blue",stingyLidPinstripesColor:"yellow",eyeletFillColor:"black",eyelet1Color:"yellow",eyelet2Color:"yellow",eyelet3Color:"yellow",eyelet4Color:"yellow",eyelet5Color:"yellow",eyelet6Color:"yellow",snakeskinColor:"#000000",scrambledEggColor:"#FED141",capMakersMarkColor:"#FFFFFF",triColor:"#003087",halo:"#8D9093",mlbBaseColor:"#FFFFFF",mlb1Color:"#041e42",mlb2Color:"#bf0d3e",milbBaseColor:"#FFFFFF",milb1Color:"#041e42",milb2Color:"#bf0d3e"}
+		const initialCapColors = {capColor:"#ba0c2f",underBrimColor:"#656765",topsideBrimColor:"#1d1654",squatcheeColor:"yellow",frontPanelColor:"#FFFFFF",smallFrontPanelColor:"yellow",capPinstripeColor:"blue",capPinstripe2Color:"cyan", horizontalPinstripeColor:"yellow",capLogoTextColor:"white",capLogoStroke1Color:"green",capLogoStroke2Color:"black",capLogo2TextColor:"white",capLogo2Stroke1Color:"green",capLogo2Stroke2Color:"black",bandBoxSingleThickColor:"orange",bandBoxDoubleThickColor:"greenyellow",jockeyColor:"gray",braidStripeInnerColor:"red",braidStripeOuterColor:"blue",soutache:"goldenrod",frontPanelBorderColor:"cyan",bostonColor:"yellowgreen",smallPanelBorderColor:"cyan",curvedBrimColor:"cyan",curvedBrimBorderColor:"blue",peakBandColor:"orange",stingyBrimColor:"red",lidPinstripesColor:"blue",stingyLidPinstripesColor:"yellow",eyeletFillColor:"black",eyelet1Color:"yellow",eyelet2Color:"yellow",eyelet3Color:"yellow",eyelet4Color:"yellow",eyelet5Color:"yellow",eyelet6Color:"yellow",eyeletGroupFillColor:"black",eyeletGroupColor:"yellow",snakeskinColor:"#000000",scrambledEggColor:"#FED141",capMakersMarkColor:"#FFFFFF",triColor:"#003087",halo:"#8D9093",mlbBaseColor:"#FFFFFF",mlb1Color:"#041e42",mlb2Color:"#bf0d3e",milbBaseColor:"#FFFFFF",milb1Color:"#041e42",milb2Color:"#bf0d3e"}
 
         //var prefs['preferredColorFormat'] = "hex"
 		var capMakersMarkColor = initialCapColors['capMakersMarkColor']
@@ -1682,19 +1682,28 @@
 											<tr class="color_tr">
 												<td class="checkCell"><input type="checkbox" class="capTextureToggle" data-id="eyeletGroup" id="eyeletGroupCheck" data-canvas="above" checked></td>
 												<td>
-													<label>Eyelets:</label>
+													<label>Eyelets:&nbsp;</label>
+													<select id="eyeletGrouping">
+														<option value="groupedEyelets">Grouped</option>
+														<option value="individualEyelets" selected>Individual</option>
+													</select>
 												</td>
 												<td style="text-align:right;">
-													<div>
-														<input class="capSelector selector" type="text" id="eyelet1Color" data-element="eyelet1Color" data-canvas="above">
-														<input class="capSelector selector" type="text" id="eyelet2Color" data-element="eyelet2Color" data-canvas="above">
-														<input class="capSelector selector" type="text" id="eyelet3Color" data-element="eyelet3Color" data-canvas="above">
-													</div>
-													<div>
-														<input class="capSelector selector" type="text" id="eyelet6Color" data-element="eyelet6Color" data-canvas="above">
-														<input class="capSelector selector" type="text" id="eyelet5Color" data-element="eyelet5Color" data-canvas="above">
-														<input class="capSelector selector" type="text" id="eyelet4Color" data-element="eyelet4Color" data-canvas="above">
-													</div>
+													<span id="groupedEyelets" style="display:none;">
+														<input class="capSelector selector" type="text" id="eyeletGroupColor" data-element="eyeletGroupColor" data-canvas="above">
+													</span>
+													<span id="individualEyelets" style="display:inline-block;">
+														<div>
+															<input class="capSelector selector" type="text" id="eyelet1Color" data-element="eyelet1Color" data-canvas="above">
+															<input class="capSelector selector" type="text" id="eyelet2Color" data-element="eyelet2Color" data-canvas="above">
+															<input class="capSelector selector" type="text" id="eyelet3Color" data-element="eyelet3Color" data-canvas="above">
+														</div>
+														<div>
+															<input class="capSelector selector" type="text" id="eyelet6Color" data-element="eyelet6Color" data-canvas="above">
+															<input class="capSelector selector" type="text" id="eyelet5Color" data-element="eyelet5Color" data-canvas="above">
+															<input class="capSelector selector" type="text" id="eyelet4Color" data-element="eyelet4Color" data-canvas="above">
+														</div>
+													</span>
 												</td>
 											</tr>
 											<tr class="color_tr">
@@ -3191,11 +3200,27 @@
 		move: function(color) {
 			$(this).data('changed', true);
 			jerseyBelow.setBackgroundColor(color.toHexString(), jerseyBelow.renderAll.bind(jerseyBelow))
+			jerseyLogoCanvas.getObjects().find(o => o.id == 'buttons').getObjects().forEach(function(o) {
+				if (o.id != 'zipper') {
+					o.filters[0]['color'] = color.toHexString();
+					o.applyFilters()
+				}
+			})
+			$("#buttonSelector").spectrum("set",color)
+			jerseyLogoCanvas.requestRenderAll()
 			reRenderBG("jersey")
 		},
 		change: function(color) {
 			$(this).data('changed', true);
 			jerseyBelow.setBackgroundColor(color.toHexString(), jerseyBelow.renderAll.bind(jerseyBelow))
+			jerseyLogoCanvas.getObjects().find(o => o.id == 'buttons').getObjects().forEach(function(o) {
+				if (o.id != 'zipper') {
+					o.filters[0]['color'] = color.toHexString();
+					o.applyFilters()
+				}
+			})
+			$("#buttonSelector").spectrum("set",color)
+			jerseyLogoCanvas.requestRenderAll()
 			reRenderBG("jersey")
 			if (color !=  null) {
 				if ($.inArray(color.toHexString(), commonPalette) < 0) {
@@ -3212,6 +3237,14 @@
 		hide: function(color) {
 			$(this).data('changed', false);
 			jerseyBelow.setBackgroundColor(color.toHexString(), jerseyBelow.renderAll.bind(jerseyBelow))
+			jerseyLogoCanvas.getObjects().find(o => o.id == 'buttons').getObjects().forEach(function(o) {
+				if (o.id != 'zipper') {
+					o.filters[0]['color'] = color.toHexString();
+					o.applyFilters()
+				}
+			})
+			$("#buttonSelector").spectrum("set",color)
+			jerseyLogoCanvas.requestRenderAll()
 			reRenderBG("jersey")
 		}
 	})
@@ -6103,6 +6136,58 @@
 		}
 	})
 
+	capLogoCanvas.on('mouse:move', function(e) {
+		if (capLogoCanvas.hoverCursor != "move") {
+			var ctx = capLogoCanvas.contextContainer;
+			var mouse = capLogoCanvas.getPointer(e.e);
+			var mouse = capLogoCanvas.getPointer(e.originalEvent);
+			var x = Math.round((mouse.x+capLogoCanvas.viewportTransform[4])* fabric.devicePixelRatio*capLogoCanvas.getZoom())
+			var y = Math.round((mouse.y+capLogoCanvas.viewportTransform[5])* fabric.devicePixelRatio*capLogoCanvas.getZoom())
+			var px = ctx.getImageData(x, y, 1, 1).data;
+			color = 'rgb('+px[0]+', '+px[1]+', '+px[2]+')';
+			var hex = rgb2hex(px[0],px[1],px[2])
+			$("#capColorSquare").css("background",hex);
+			$("#capColorSquare").css("color",idealTextColor(hex));
+			$("#capColorSquare").val(hex);			
+		}
+	});
+	
+	capLogoCanvas.on("mouse:down",function(e) {
+		activeCanvas = capLogoCanvas;
+		jerseyLogoCanvas.discardActiveObject()
+		jerseyLogoCanvas.requestRenderAll()
+		pantsLogoCanvas.discardActiveObject()
+		pantsLogoCanvas.requestRenderAll()
+		$("#jerseyOverlay").css("display","inline-block");
+		$("#capOverlay").css("display","none");
+		$("#pantsOverlay").css("display","inline-block");
+		$("#tabContainer").skeletabs('goTo', 2)
+		if (capLogoCanvas.hoverCursor != "move") {
+			var ctx = capLogoCanvas.contextContainer;
+			$("#colorSquare").removeClass("colorSquareActive").addClass("colorSquareSelected");
+			capLogoCanvas.hoverCursor='move';
+			capLogoCanvas.off('mouse:move');
+			var object = capLogoCanvas.getActiveObject();
+			var mouse = object.getLocalPointer(e.e);
+			var imageX = parseInt(mouse.x);
+			var imageY = parseInt(mouse.y);
+			$("#chosenCoordinates").html("(X:"+imageX+", Y:"+imageY+")");
+			var mouse2 = capLogoCanvas.getPointer(e.e);
+			var x = parseInt(mouse2.x);
+			var y = parseInt(mouse2.y);
+			var px = ctx.getImageData(x, y, 1, 1).data;
+			var hex = rgb2hex(px[0],px[1],px[2]);
+			$(".removeColor").each(function(e) {
+				$(this).data("x",imageX);
+				$(this).data("y",imageY);
+			})
+			$(".replaceColor").each(function(e) {
+				$(this).data("x",imageX);
+				$(this).data("y",imageY);
+			})
+		}
+	})
+
 	$(".capSelector").each(function() {
 		var color = $(this).attr('id');
 		$(this).spectrum({
@@ -6441,56 +6526,31 @@
 		capLogoCanvas.renderAll()
 	})
 
-	capLogoCanvas.on('mouse:move', function(e) {
-		if (capLogoCanvas.hoverCursor != "move") {
-			var ctx = capLogoCanvas.contextContainer;
-			var mouse = capLogoCanvas.getPointer(e.e);
-			var mouse = capLogoCanvas.getPointer(e.originalEvent);
-			var x = Math.round((mouse.x+capLogoCanvas.viewportTransform[4])* fabric.devicePixelRatio*capLogoCanvas.getZoom())
-			var y = Math.round((mouse.y+capLogoCanvas.viewportTransform[5])* fabric.devicePixelRatio*capLogoCanvas.getZoom())
-			var px = ctx.getImageData(x, y, 1, 1).data;
-			color = 'rgb('+px[0]+', '+px[1]+', '+px[2]+')';
-			var hex = rgb2hex(px[0],px[1],px[2])
-			$("#capColorSquare").css("background",hex);
-			$("#capColorSquare").css("color",idealTextColor(hex));
-			$("#capColorSquare").val(hex);			
-		}
-	});
-	
-	capLogoCanvas.on("mouse:down",function(e) {
-		activeCanvas = capLogoCanvas;
-		jerseyLogoCanvas.discardActiveObject()
-		jerseyLogoCanvas.requestRenderAll()
-		pantsLogoCanvas.discardActiveObject()
-		pantsLogoCanvas.requestRenderAll()
-		$("#jerseyOverlay").css("display","inline-block");
-		$("#capOverlay").css("display","none");
-		$("#pantsOverlay").css("display","inline-block");
-		$("#tabContainer").skeletabs('goTo', 2)
-		if (capLogoCanvas.hoverCursor != "move") {
-			var ctx = capLogoCanvas.contextContainer;
-			$("#colorSquare").removeClass("colorSquareActive").addClass("colorSquareSelected");
-			capLogoCanvas.hoverCursor='move';
-			capLogoCanvas.off('mouse:move');
-			var object = capLogoCanvas.getActiveObject();
-			var mouse = object.getLocalPointer(e.e);
-			var imageX = parseInt(mouse.x);
-			var imageY = parseInt(mouse.y);
-			$("#chosenCoordinates").html("(X:"+imageX+", Y:"+imageY+")");
-			var mouse2 = capLogoCanvas.getPointer(e.e);
-			var x = parseInt(mouse2.x);
-			var y = parseInt(mouse2.y);
-			var px = ctx.getImageData(x, y, 1, 1).data;
-			var hex = rgb2hex(px[0],px[1],px[2]);
-			$(".removeColor").each(function(e) {
-				$(this).data("x",imageX);
-				$(this).data("y",imageY);
+	$("#eyeletGrouping").on("change",function(e) {
+		if ($(this).val() == "groupedEyelets") {
+			$("#groupedEyelets").css("display","inline-block")
+			$("#individualEyelets").css("display","none")
+			capLogoCanvas.getObjects('group').forEach(function(o){
+				if (o.id == "groupedEyelets") {
+					o.set("visible", true)
+				}
+				if (o.id == "individualEyelets") {
+					o.set("visible", false)
+				}
 			})
-			$(".replaceColor").each(function(e) {
-				$(this).data("x",imageX);
-				$(this).data("y",imageY);
+		} else {
+			$("#groupedEyelets").css("display","none")
+			$("#individualEyelets").css("display","inline-block")
+			capLogoCanvas.getObjects('group').forEach(function(o){
+				if (o.id == "groupedEyelets") {
+					o.set("visible", false)
+				}
+				if (o.id == "individualEyelets") {
+					o.set("visible", true)
+				}
 			})
 		}
+		capLogoCanvas.renderAll();
 	})
 
 // CANVAS INITIALIZE FUNCTIONS
@@ -6710,11 +6770,28 @@
 			shadow:{ color:"rgb(0,0,0)",blur:4,offsetX:-.25,offsetY:-1 }
 		});
 
-		var eyeletGroup = new fabric.Group ([eyeletFillColor, eyelet1Color, eyelet2Color, eyelet3Color, eyelet4Color, eyelet5Color, eyelet6Color])
-		eyeletGroup.set({
+		eyeletGroupFillColor = new fabric.Path("M 65.724609 248.41992 C 63.719748 248.41992 62.09375 250.04593 62.09375 252.05078 C 62.09375 254.05563 63.719748 255.67969 65.724609 255.67969 C 67.729471 255.67969 69.355469 254.05563 69.355469 252.05078 C 69.355469 250.04593 67.729471 248.41992 65.724609 248.41992 z M 145.88672 248.54102 C 143.92516 248.59071 142.35156 250.1964 142.35156 252.16992 C 142.35156 254.17477 143.97561 255.80078 145.98047 255.80078 C 147.98533 255.80078 149.61133 254.17477 149.61133 252.16992 C 149.61133 250.16507 147.98533 248.54102 145.98047 248.54102 C 145.94914 248.54102 145.91785 248.54023 145.88672 248.54102 z M 387.07617 368.04688 C 385.81939 368.05734 384.60312 368.72124 383.94141 369.89453 C 382.95654 371.64082 383.57406 373.85497 385.32031 374.83984 C 387.06661 375.82471 389.28076 375.20723 390.26562 373.46094 C 391.25049 371.71464 390.63297 369.50049 388.88672 368.51562 C 388.31372 368.19246 387.68995 368.04176 387.07617 368.04688 z M 191.57812 382.85938 C 191.36626 382.8608 191.15115 382.87991 190.93555 382.91992 C 188.96434 383.2857 187.66348 385.18117 188.0293 387.15234 C 188.3951 389.12356 190.28856 390.42445 192.25977 390.05859 C 194.23097 389.69277 195.53379 387.79934 195.16797 385.82812 C 194.84217 384.07255 193.30332 382.84774 191.57812 382.85938 z M 88.777344 405.22656 C 88.565478 405.22799 88.352319 405.24905 88.136719 405.28906 C 86.165506 405.65488 84.862695 407.54836 85.228516 409.51953 C 85.594325 411.49074 87.489729 412.79164 89.460938 412.42578 C 91.432143 412.06 92.733008 410.16649 92.367188 408.19531 C 92.041389 406.4397 90.502537 405.21493 88.777344 405.22656 z M 339.70312 453.57812 C 338.44635 453.5886 337.23007 454.25249 336.56836 455.42578 C 335.58349 457.17204 336.20097 459.38427 337.94727 460.36914 C 339.69352 461.35401 341.90771 460.73848 342.89258 458.99219 C 343.87745 457.24589 343.25993 455.03174 341.51367 454.04688 C 340.94067 453.72373 340.3169 453.57301 339.70312 453.57812 z",{
+			fill:initialCapColors["eyeletGroupFillColor"],
+			id:'eyeletGroupFillColor'
+		});
+
+		eyeletGroupColor = new fabric.Path("M 65.597656 247.90234 C 63.088975 247.90234 61.054688 249.93666 61.054688 252.44531 C 61.054688 254.95397 63.088975 256.98633 65.597656 256.98633 C 68.106327 256.98633 70.140625 254.95397 70.140625 252.44531 C 70.140625 249.93666 68.106327 247.90234 65.597656 247.90234 z M 145.89844 247.90234 C 143.38975 247.90234 141.35547 249.93666 141.35547 252.44531 C 141.35547 254.95397 143.38975 256.98633 145.89844 256.98633 C 148.4071 256.98633 150.44336 254.95397 150.44336 252.44531 C 150.44336 249.93666 148.4071 247.90234 145.89844 247.90234 z M 65.53125 249.83984 C 65.553549 249.83928 65.575244 249.83984 65.597656 249.83984 C 67.036537 249.83984 68.203125 251.00641 68.203125 252.44531 C 68.203125 253.88422 67.036537 255.04883 65.597656 255.04883 C 64.158769 255.04883 62.992188 253.88422 62.992188 252.44531 C 62.992188 251.02886 64.123426 249.87552 65.53125 249.83984 z M 145.83203 249.83984 C 145.85433 249.83928 145.87602 249.83984 145.89844 249.83984 C 147.33731 249.83984 148.50586 251.00641 148.50586 252.44531 C 148.50586 253.88422 147.33731 255.04883 145.89844 255.04883 C 144.45955 255.04883 143.29297 253.88422 143.29297 252.44531 C 143.29297 251.02886 144.42421 249.87552 145.83203 249.83984 z M 386.99023 367.11133 C 384.5357 367.17354 382.56445 369.1848 382.56445 371.6543 C 382.56445 374.16291 384.59872 376.19531 387.10742 376.19531 C 389.61608 376.19531 391.65039 374.16291 391.65039 371.6543 C 391.65039 369.1456 389.61608 367.11133 387.10742 367.11133 C 387.06822 367.11133 387.0292 367.11034 386.99023 367.11133 z M 387.04102 369.04688 C 387.06369 369.04627 387.08512 369.04688 387.10742 369.04688 C 388.54629 369.04688 389.71289 370.21539 389.71289 371.6543 C 389.71289 373.0932 388.54629 374.25781 387.10742 374.25781 C 385.66852 374.25781 384.5 373.0932 384.5 371.6543 C 384.5 370.23784 385.63318 369.08251 387.04102 369.04688 z M 191.80664 382.17969 C 189.29796 382.17969 187.26367 384.21396 187.26367 386.72266 C 187.26367 389.23131 189.29796 391.26367 191.80664 391.26367 C 194.31531 391.26367 196.34961 389.23131 196.34961 386.72266 C 196.34961 384.21396 194.31531 382.17969 191.80664 382.17969 z M 191.74023 384.11719 C 191.76253 384.11662 191.78423 384.11719 191.80664 384.11719 C 193.24552 384.11719 194.41211 385.28375 194.41211 386.72266 C 194.41211 388.16155 193.24552 389.32813 191.80664 389.32812 C 190.36775 389.32812 189.19922 388.16155 189.19922 386.72266 C 189.19922 385.3062 190.33242 384.15287 191.74023 384.11719 z M 88.851562 404.48242 C 86.342885 404.48242 84.308594 406.51865 84.308594 409.02734 C 84.308594 411.53597 86.342885 413.56641 88.851562 413.56641 C 91.360237 413.56641 93.394531 411.53597 93.394531 409.02734 C 93.394531 406.51865 91.360237 404.48242 88.851562 404.48242 z M 88.785156 406.41992 C 88.807455 406.41935 88.829151 406.41992 88.851562 406.41992 C 90.290443 406.41992 91.457031 407.58845 91.457031 409.02734 C 91.457031 410.46625 90.290443 411.63086 88.851562 411.63086 C 87.412676 411.63086 86.244141 410.46625 86.244141 409.02734 C 86.244141 407.6109 87.377333 406.4556 88.785156 406.41992 z M 339.49023 452.94727 C 337.0357 453.00948 335.06445 455.02074 335.06445 457.49023 C 335.06445 459.99886 337.09872 462.03125 339.60742 462.03125 C 342.11608 462.03125 344.15039 459.99886 344.15039 457.49023 C 344.15039 454.98155 342.11608 452.94727 339.60742 452.94727 C 339.56822 452.94727 339.5292 452.94628 339.49023 452.94727 z M 339.54102 454.88281 C 339.56369 454.88221 339.58512 454.88281 339.60742 454.88281 C 341.04629 454.88281 342.21484 456.0513 342.21484 457.49023 C 342.21484 458.92914 341.04629 460.09375 339.60742 460.09375 C 338.16852 460.09375 337.00195 458.92914 337.00195 457.49023 C 337.00195 456.07379 338.13318 454.91845 339.54102 454.88281 z",{
+			fill:initialCapColors["eyeletGroupColor"],
+			id:'eyeletGroupColor'
+		});
+
+		var individualEyelets = new fabric.Group ([eyeletFillColor, eyelet1Color, eyelet2Color, eyelet3Color, eyelet4Color, eyelet5Color, eyelet6Color])
+		individualEyelets.set({
 			visible:true,
 			selectable:false,
-			id:'eyeletGroup'
+			id:'individualEyelets'
+		});
+
+		var groupedEyelets = new fabric.Group ([eyeletGroupFillColor, eyeletGroupColor])
+		groupedEyelets.set({
+			visible:false,
+			selectable:false,
+			id:'groupedEyelets'
 		});
 
 		scrambledEggColor = new fabric.Path("M 235.14453 160.99805 C 234.9848 161.02233 234.81844 161.07948 234.64648 161.17188 C 234.32157 161.34647 233.59186 162.41677 233.02539 163.54883 C 232.45891 164.68089 231.65023 166.08107 231.22852 166.66211 C 230.16176 168.13193 229.94029 168.83353 229.82422 171.11914 C 229.75212 172.53898 229.48773 173.42891 228.90234 174.2207 C 227.7425 175.78931 227.74482 179.03353 228.90625 181.39258 C 229.6556 182.91464 229.69193 183.18814 229.25781 184.00586 C 228.93062 184.62221 228.79952 185.90515 228.85742 187.95117 L 228.94336 190.98438 L 227.8457 191.39844 C 226.90744 191.75259 226.77446 191.95164 226.92969 192.76367 C 227.06068 193.44889 226.8257 194.10649 226.08789 195.125 C 224.88427 196.78655 224.97975 197.45524 226.67773 199.23633 C 227.71428 200.32359 227.83236 200.63437 227.66602 201.87695 C 227.55881 202.67786 227.68855 203.89891 227.96875 204.70703 C 228.37238 205.87116 228.38222 206.31693 228.01758 207.17188 C 227.40809 208.60081 227.42952 211.38325 228.06055 212.60352 C 228.3472 213.15784 228.98068 213.92663 229.46875 214.31055 C 230.22706 214.90703 230.35742 215.29399 230.35742 216.9668 C 230.35742 219.50642 230.8952 220.61756 232.52539 221.44922 C 234.39097 222.40096 234.86612 222.31271 236.375 220.72656 L 237.70703 219.32617 L 238.9707 219.85352 C 240.13078 220.33824 240.1989 220.44563 239.80664 221.16602 C 239.57178 221.59735 239.37795 222.97935 239.37695 224.23828 C 239.37359 226.9878 240.44518 229.58008 242.58203 231.98633 C 243.6682 233.20946 243.92652 233.73178 243.71289 234.27539 C 242.8581 236.45048 243.8629 239.25544 245.89648 240.36914 C 247.74762 241.38293 248.31299 241.98239 248.44727 243.07812 C 248.7348 245.42448 250.31451 247.48047 251.83008 247.48047 C 252.4821 247.48047 253.11973 247.92833 254.04492 249.03516 C 255.73473 251.05671 257.32521 251.62402 259.03125 250.81445 C 260.43082 250.15032 260.78766 249.36769 260.68164 247.19336 C 260.59244 245.36401 260.23486 244.37674 259.3125 243.40625 C 258.71102 242.77337 258.68443 242.59267 259.10352 242.01953 C 259.36878 241.65677 259.58594 240.8312 259.58594 240.18555 C 259.58594 239.22911 259.76427 238.9443 260.55273 238.64453 C 261.085 238.44217 261.80905 238.01503 262.16016 237.69727 C 262.71313 237.19687 262.84132 237.18937 263.12305 237.63477 C 263.30194 237.91759 263.45013 238.82667 263.45312 239.65625 C 263.45911 241.33014 264.59183 243.8582 266.52148 246.50586 C 268.45954 249.16505 269.36943 249.64871 272.41406 249.63281 L 275.02344 249.61914 L 276.35547 251.36523 C 278.8663 254.65763 281.93106 256.53024 284.13281 256.11719 C 285.23047 255.91126 285.4513 256.03257 286.90234 257.64648 C 287.89198 258.74719 289.03294 259.59706 289.9668 259.92773 C 291.73532 260.55395 293.36089 260.63893 294.59961 260.16797 C 295.18718 259.94423 296.14306 259.94565 297.33594 260.17188 C 299.95871 260.66928 302.67244 259.85916 303.45508 258.3457 C 303.97447 257.34126 303.97202 257.13177 303.43164 255.7168 C 302.77229 253.99033 301.65334 253.04951 299.49609 252.4043 C 298.24107 252.02893 297.99861 251.79738 297.81055 250.79492 C 297.53393 249.32042 295.6459 247.71121 293.48242 247.10547 C 291.68596 246.6025 289.16397 244.43402 289.16797 243.39648 C 289.1713 242.39391 291.06435 241.42966 292.18945 241.85742 C 293.40616 242.32 296.78353 242.28797 297.72852 241.80469 C 298.87459 241.21859 299.71366 240.02921 299.72266 238.97656 C 299.72838 238.29456 300.04955 237.85383 300.91406 237.34375 C 302.08131 236.65506 303.65981 234.82161 304.05273 233.69922 C 304.40828 232.68357 302.55514 231.34255 299.89062 230.6875 C 298.32246 230.30197 297.22568 229.81257 296.8418 229.32812 C 296.34199 228.6974 295.74021 228.53622 293.23438 228.35938 C 291.51639 228.23814 289.7912 228.29899 289.20898 228.50195 C 288.33063 228.80815 288.05654 228.73346 287.21875 227.95703 C 286.68416 227.46159 286.03177 227.05664 285.76953 227.05664 C 285.45771 227.05664 285.29297 226.62197 285.29297 225.80078 C 285.29297 223.99081 284.7431 223.21092 282.88867 222.39062 C 281.09842 221.5987 279.74677 221.54677 277.00586 222.16016 C 275.4155 222.51607 275.05712 222.47914 273.82617 221.84375 C 273.06324 221.44994 271.57445 220.38498 270.51758 219.47656 C 268.76495 217.97006 268.47053 217.8406 267.17188 218 C 266.38876 218.09611 265.51122 218.27143 265.2207 218.39062 C 264.87971 218.53053 264.4484 218.24436 264.00586 217.58203 C 263.32823 216.56785 261.45358 215.43555 260.45312 215.43555 C 260.05103 215.43555 259.9375 214.91537 259.9375 213.08203 C 259.9375 210.04885 259.04595 208.10736 257.16602 207.05078 C 256.06341 206.43108 255.76208 206.03162 255.58984 204.96094 C 255.29354 203.11911 254.47828 202.10383 252.67773 201.33203 C 251.32341 200.7515 251.13477 200.5348 251.13477 199.56641 C 251.13477 198.7862 250.81458 198.16415 250.04297 197.44336 C 249.05046 196.51622 248.9852 196.32579 249.32617 195.34766 C 249.90914 193.67536 249.47082 192.50756 247.42969 190.29688 C 245.62702 188.34443 245.47738 188.25977 244.0332 188.375 C 242.5269 188.49518 242.52214 188.49288 242.22656 187.08789 C 242.06357 186.31317 241.84643 185.04426 241.74219 184.26953 C 241.63796 183.49481 241.24605 182.52744 240.87109 182.11914 C 240.19384 181.38168 240.1951 181.37196 241.09961 180.7793 C 242.60826 179.79079 242.78628 178.7387 241.92773 175.91211 C 241.43287 174.2829 240.75184 172.95355 239.96094 172.07812 C 239.29528 171.34132 238.83784 170.59846 238.94336 170.42773 C 239.2678 169.90278 238.49215 167.68531 237.75 167.01367 C 237.23424 166.54691 237.04883 165.92828 237.04883 164.6875 C 237.04883 162.27928 236.26266 160.82808 235.14453 160.99805 z M 399.12305 160.99805 C 398.00492 160.82808 397.21875 162.27928 397.21875 164.6875 C 397.21875 165.92828 397.03139 166.54691 396.51562 167.01367 C 395.77348 167.68531 394.99978 169.90278 395.32422 170.42773 C 395.42974 170.59846 394.97035 171.34132 394.30469 172.07812 C 393.51379 172.95355 392.83275 174.2829 392.33789 175.91211 C 391.47934 178.7387 391.65932 179.79079 393.16797 180.7793 C 394.07248 181.37196 394.07373 181.38168 393.39648 182.11914 C 393.02152 182.52744 392.62962 183.49481 392.52539 184.26953 C 392.42116 185.04426 392.20205 186.31317 392.03906 187.08789 C 391.74348 188.49288 391.73872 188.49518 390.23242 188.375 C 388.78824 188.25977 388.64056 188.34443 386.83789 190.29688 C 384.79676 192.50756 384.35844 193.67536 384.94141 195.34766 C 385.28238 196.32579 385.21712 196.51622 384.22461 197.44336 C 383.453 198.16415 383.13281 198.7862 383.13281 199.56641 C 383.13281 200.5348 382.94416 200.7515 381.58984 201.33203 C 379.78929 202.10383 378.97208 203.11911 378.67578 204.96094 C 378.50353 206.03162 378.20222 206.43108 377.09961 207.05078 C 375.21968 208.10736 374.32812 210.04885 374.32812 213.08203 C 374.32812 214.91537 374.2146 215.43555 373.8125 215.43555 C 372.81204 215.43555 370.9374 216.56785 370.25977 217.58203 C 369.81723 218.24436 369.38786 218.53053 369.04688 218.39062 C 368.75635 218.27143 367.87686 218.09611 367.09375 218 C 365.7951 217.8406 365.50263 217.97006 363.75 219.47656 C 362.69313 220.38498 361.20434 221.44994 360.44141 221.84375 C 359.21046 222.47914 358.85208 222.51607 357.26172 222.16016 C 354.52081 221.54677 353.1672 221.5987 351.37695 222.39062 C 349.52252 223.21092 348.97461 223.99081 348.97461 225.80078 C 348.97461 226.62197 348.80987 227.05664 348.49805 227.05664 C 348.23581 227.05664 347.58342 227.46159 347.04883 227.95703 C 346.21105 228.73346 345.935 228.80815 345.05664 228.50195 C 344.47442 228.29899 342.74923 228.23814 341.03125 228.35938 C 338.52541 228.53622 337.92559 228.6974 337.42578 229.32812 C 337.0419 229.81257 335.94317 230.30197 334.375 230.6875 C 331.71048 231.34255 329.85734 232.68357 330.21289 233.69922 C 330.60582 234.82161 332.18627 236.65506 333.35352 237.34375 C 334.21803 237.85383 334.5392 238.29456 334.54492 238.97656 C 334.55392 240.02921 335.39104 241.21859 336.53711 241.80469 C 337.4821 242.28797 340.85945 242.32 342.07617 241.85742 C 343.20126 241.42966 345.09433 242.39391 345.09766 243.39648 C 345.10166 244.43402 342.57966 246.6025 340.7832 247.10547 C 338.61972 247.71121 336.7317 249.32042 336.45508 250.79492 C 336.26702 251.79738 336.02455 252.02893 334.76953 252.4043 C 332.61228 253.04951 331.49333 253.99033 330.83398 255.7168 C 330.2936 257.13177 330.29311 257.34126 330.8125 258.3457 C 331.59514 259.85916 334.30887 260.66928 336.93164 260.17188 C 338.12452 259.94565 339.07845 259.94423 339.66602 260.16797 C 340.90474 260.63893 342.53031 260.55395 344.29883 259.92773 C 345.23269 259.59706 346.37364 258.74719 347.36328 257.64648 C 348.81433 256.03257 349.03515 255.91126 350.13281 256.11719 C 352.33456 256.53024 355.40128 254.65763 357.91211 251.36523 L 359.24219 249.61914 L 361.85352 249.63281 C 364.89815 249.64871 365.80608 249.16505 367.74414 246.50586 C 369.67379 243.8582 370.80652 241.33014 370.8125 239.65625 C 370.8155 238.82667 370.96564 237.91759 371.14453 237.63477 C 371.42626 237.18937 371.55445 237.19687 372.10742 237.69727 C 372.45853 238.01503 373.18062 238.44217 373.71289 238.64453 C 374.50135 238.9443 374.68164 239.22911 374.68164 240.18555 C 374.68164 240.8312 374.8988 241.65677 375.16406 242.01953 C 375.58315 242.59267 375.55461 242.77337 374.95312 243.40625 C 374.03078 244.37674 373.67514 245.36401 373.58594 247.19336 C 373.47992 249.36769 373.83676 250.15032 375.23633 250.81445 C 376.94237 251.62402 378.53089 251.05671 380.2207 249.03516 C 381.14589 247.92833 381.78549 247.48047 382.4375 247.48047 C 383.95307 247.48047 385.53278 245.42448 385.82031 243.07812 C 385.95459 241.98239 386.518 241.38293 388.36914 240.36914 C 390.40272 239.25544 391.40752 236.45048 390.55273 234.27539 C 390.3391 233.73178 390.59742 233.20946 391.68359 231.98633 C 393.82044 229.58008 394.89398 226.9878 394.89062 224.23828 C 394.88963 222.97935 394.6958 221.59735 394.46094 221.16602 C 394.06869 220.44563 394.13679 220.33824 395.29688 219.85352 L 396.55859 219.32617 L 397.89062 220.72656 C 399.3995 222.31271 399.87465 222.40096 401.74023 221.44922 C 403.37041 220.61756 403.91016 219.50642 403.91016 216.9668 C 403.91016 215.29399 404.03857 214.90703 404.79688 214.31055 C 405.28494 213.92663 405.91842 213.15784 406.20508 212.60352 C 406.8361 211.38325 406.85949 208.60081 406.25 207.17188 C 405.88536 206.31693 405.89325 205.87116 406.29688 204.70703 C 406.57707 203.89891 406.70877 202.67786 406.60156 201.87695 C 406.43522 200.63437 406.55134 200.32359 407.58789 199.23633 C 409.28587 197.45524 409.38135 196.78655 408.17773 195.125 C 407.43992 194.10649 407.20495 193.44889 407.33594 192.76367 C 407.49117 191.95164 407.35817 191.75259 406.41992 191.39844 L 405.32227 190.98438 L 405.4082 187.95117 C 405.4661 185.90515 405.33696 184.62221 405.00977 184.00586 C 404.57565 183.18814 404.61198 182.91464 405.36133 181.39258 C 406.52276 179.03353 406.52312 175.78931 405.36328 174.2207 C 404.77789 173.42891 404.51352 172.53898 404.44141 171.11914 C 404.32534 168.83353 404.10582 168.13193 403.03906 166.66211 C 402.61735 166.08107 401.80866 164.68089 401.24219 163.54883 C 400.67571 162.41677 399.946 161.34647 399.62109 161.17188 C 399.44914 161.07948 399.28278 161.02233 399.12305 160.99805 z",{
@@ -6968,7 +7045,8 @@
 		capLogoCanvas.add(smallPanelBorderColor);
 		capLogoCanvas.add(textLogo);
 		capLogoCanvas.add(textLogo2);
-		capLogoCanvas.add(eyeletGroup);
+		capLogoCanvas.add(individualEyelets);
+		capLogoCanvas.add(groupedEyelets)
 		capLogoCanvas.add(scrambledEggColor);
 		capLogoCanvas.add(halo)
 		capLogoCanvas.add(capMLBLogo)
