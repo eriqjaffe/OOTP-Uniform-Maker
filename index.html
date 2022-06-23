@@ -2708,6 +2708,9 @@
 		backgroundColor: initialPantsColors['pantsColor'],
 	});
 
+	jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
+	pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));	
+
     var capBelow = new fabric.StaticCanvas('capBelow',{
 		enableRetinaScaling: false,
 		preserveObjectStacking: true,
@@ -9276,8 +9279,6 @@
 // GENERAL PURPOSE RENDERING FUNCTIONS
 
     function reRenderBG(target) {
-		jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
-		pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));	
         switch (target) {
             case "jersey":
 				var canvas = jerseyBelow
