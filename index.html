@@ -4019,7 +4019,6 @@
 	})
 
 	$("#sleeveType").on("change",function() {	
-		console.log($(this).val())
 		switch($(this).val()) {
 			case 'standard':
 				jerseyBelow.getObjects().find(o => o.id == 'leftSleeveColor').visible = true
@@ -4083,6 +4082,8 @@
 				$("#seamsType").val("seamsSixties").trigger("change")
 				break;
 		}
+		$("#buttonsCheck").trigger("change")
+		$("#buttonsCheck").trigger("change")
 		jerseyBelow.renderAll()
 		reRenderBG('jersey')
 	})
