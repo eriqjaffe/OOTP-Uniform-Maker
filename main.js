@@ -15,6 +15,7 @@ const { SVG, registerWindow } = require('@svgdotjs/svg.js')
 const { createSVGWindow } = require('svgdom')
 const versionCheck = require('github-version-checker');
 const pkg = require('./package.json');
+const e = require('express');
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -712,9 +713,17 @@ app2.post("/generateHeightMap", (req, res) => {
 		await jerseyOverlay.brightness(brightness)
 		if (buttonPadSeams == "true") {
 			if (buttonType != "buttonsHenley") {
-				var seamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				if (seamsOption == "seamsSixties") {
+					var seamsSrc = __dirname+"/images/seams/seams_button_pad_sixties.png"
+				} else {
+					var seamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				}
 			} else {
-				var seamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				if (seamsOption == "seamsSixties") {
+					var seamsSrc = __dirname+"/images/seams/seams_button_pad_henley_sixties.png"
+				} else {
+					var seamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				}
 			}
 			let bpHMSeamImg = await Jimp.read(seamsSrc)
 			await bpHMSeamImg.brightness(.33)
@@ -733,6 +742,9 @@ app2.post("/generateHeightMap", (req, res) => {
 					break;
 				case "seamsRaglanToCollar":
 					var seamHMSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
+					break;
+				case "seamsSixties":
+					var seamHMSrc = __dirname+"/images/seams/seams_sixties.png"
 					break;
 			}
 			let seamsHMImg = await Jimp.read(seamHMSrc)
@@ -840,9 +852,17 @@ app2.post('/saveJersey', (req, res) => {
 		let nameImage = await Jimp.read(nameCanvas)
 		if (seamsOnDiffuse == "true") {
 			if (buttonType != "buttonsHenley") {
-				var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				if (seamsOption == "seamsSixties") {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_sixties.png"
+				} else {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				}
 			} else {
-				var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				if (seamsOption == "seamsSixties") {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley_sixties.png"
+				} else {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				}
 			}
 			let diffuseSeamImg = await Jimp.read(diffuseSeamsSrc)
 			await diffuseSeamImg.opacity(.1)
@@ -859,6 +879,9 @@ app2.post('/saveJersey', (req, res) => {
 					break;
 				case "seamsRaglanToCollar":
 					var diffuseSeamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
+					break;
+				case "seamsSixties":
+					var diffuseSeamSrc = __dirname+"/images/seams/seams_sixties.png"
 					break;
 			}
 			let seamsDiffuseImg = await Jimp.read(diffuseSeamSrc)
@@ -895,9 +918,17 @@ app2.post('/saveJersey', (req, res) => {
 		let bakedNameImage = await Jimp.read(nameCanvas)
 		if (buttonPadSeams == "true") {
 			if (buttonType != "buttonsHenley") {
-				var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				if (seamsOption == "seamsSixties") {
+					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_sixties.png"
+				} else {
+					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				}
 			} else {
-				var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				if (seamsOption == "seamsSixties") {
+					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley_sixties.png"
+				} else {
+					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				}
 			}
 			let bpBakedSeamImg = await Jimp.read(bakedSeamsSrc)
 			await bpBakedSeamImg.opacity(.1)
@@ -916,6 +947,9 @@ app2.post('/saveJersey', (req, res) => {
 					break;
 				case "seamsRaglanToCollar":
 					var seamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
+					break;
+				case "seamsSixties":
+					var seamSrc = __dirname+"/images/seams/seams_sixties.png"
 					break;
 			}
 			let seamsBakedImg = await Jimp.read(seamSrc)
@@ -1093,9 +1127,17 @@ app2.post('/saveUniform', (req, res) => {
 		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
 		if (seamsOnDiffuse == "true") {
 			if (buttonType != "buttonsHenley") {
-				var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				if (seamsOption == "seamsSixties") {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_sixties.png"
+				} else {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				}	
 			} else {
-				var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				if (seamsOption == "seamsSixties") {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley_sixties.png"
+				} else {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				}
 			}
 			let diffuseSeamImg = await Jimp.read(diffuseSeamsSrc)
 			await diffuseSeamImg.opacity(.1)
@@ -1112,6 +1154,9 @@ app2.post('/saveUniform', (req, res) => {
 					break;
 				case "seamsRaglanToCollar":
 					var diffuseSeamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
+					break;
+				case "seamsSixties":
+					var diffuseSeamSrc = __dirname+"/images/seams/seams_sixties.png"
 					break;
 			}
 			let seamsDiffuseImg = await Jimp.read(diffuseSeamSrc)
@@ -1148,9 +1193,17 @@ app2.post('/saveUniform', (req, res) => {
 		let jerseyBakedTexture2 = await Jimp.read(__dirname+"/images/texture_jersey_default.png")
 		if (buttonPadSeams == "true") {
 			if (buttonType != "buttonsHenley") {
-				var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				if (seamsOption == "seamsSixties") {
+					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_sixties.png"
+				} else {
+					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				}
 			} else {
-				var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				if (seamsOption == "seamsSixties") {
+					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley_sixties.png"
+				} else {
+					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				}
 			}
 			let bpBakedSeamImg = await Jimp.read(bakedSeamsSrc)
 			await bpBakedSeamImg.opacity(.1)
@@ -1169,6 +1222,9 @@ app2.post('/saveUniform', (req, res) => {
 					break;
 				case "seamsRaglanToCollar":
 					var seamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
+					break;
+				case "seamsSixties":
+					var seamSrc = __dirname+"/images/seams/seams_sixties.png"
 					break;
 			}
 			let seamsBakedImg = await Jimp.read(seamSrc)
