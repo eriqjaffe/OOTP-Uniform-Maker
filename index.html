@@ -11271,7 +11271,7 @@
 				brightness: $("#preferredHeightMapBrightness").val()
 			},
 			success: function(data) {
-				jerseyBelow.setDimensions({ width: jerseyBelow.getWidth() * 0.75, height: jerseyBelow.getHeight() * 0.75 });
+				/* jerseyBelow.setDimensions({ width: jerseyBelow.getWidth() * 0.75, height: jerseyBelow.getHeight() * 0.75 });
 				jerseyBelow.setZoom(scaleRatio)
 				jerseyLogoCanvas.setDimensions({ width: jerseyLogoCanvas.getWidth() * 0.75, height: jerseyLogoCanvas.getHeight() * 0.75 });
 				jerseyLogoCanvas.setZoom(scaleRatio)
@@ -11292,9 +11292,8 @@
 					} else {
 						jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 					}
-					//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
 				}
-
+ */
 				var imgObj = new Image();
 				var normalMap = document.getElementById('normalMapCanvas');
 				imgObj.src = data.image;
