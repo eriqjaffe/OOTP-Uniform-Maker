@@ -47,6 +47,7 @@ const preferredPlayerNumber = store.get("preferredPlayerNumber", "23")
 const preferredJerseyFont = store.get("preferredJerseyFont", "Leckerli_One")
 const preferredCapFont = store.get("preferredCapFont", "Graduate")
 const preferredHeightMapBrightness = store.get("preferredHeightMapBrightness", "85") 
+const preferredSeamOpacity = store.get("preferredSeamOpacity", "10")
 const gridsVisible = store.get("gridsVisible", true)
 const checkForUpdates = store.get("checkForUpdates", true)
 const seamsVisibleOnDiffuse = store.get("seamsVisibleOnDiffuse", false)
@@ -703,6 +704,7 @@ app2.post("/generateHeightMap", (req, res) => {
 	const seamsVisible = req.body.seamsVisible
 	const seamsOption = req.body.seamsOption
 	const brightness = parseInt(req.body.brightness)/100
+	const seamOpacity = parseInt(req.body.seamOpacity)/100
 
 	prepareImages()
 
@@ -726,7 +728,7 @@ app2.post("/generateHeightMap", (req, res) => {
 				}
 			}
 			let bpHMSeamImg = await Jimp.read(seamsSrc)
-			await bpHMSeamImg.brightness(.33)
+			await bpHMSeamImg.brightness(seamOpacity)
 			await jerseyHeightMap.composite(bpHMSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
 		if (seamsVisible == "true") {
@@ -748,7 +750,7 @@ app2.post("/generateHeightMap", (req, res) => {
 					break;
 			}
 			let seamsHMImg = await Jimp.read(seamHMSrc)
-			await seamsHMImg.brightness(.33)
+			await seamsHMImg.brightness(seamOpacity)
 			await jerseyHeightMap.composite(seamsHMImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
 		if (showPlanket == "true") {
@@ -1439,7 +1441,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredPlayerName=${preferredPlayerName}&preferredPlayerNumber=${preferredPlayerNumber}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredPlayerName=${preferredPlayerName}&preferredPlayerNumber=${preferredPlayerNumber}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}`);
     //mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}`);
 	
   
