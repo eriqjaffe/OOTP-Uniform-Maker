@@ -875,7 +875,7 @@
 														<input type="range" class="range" class="jerseyTextOption" id="warpAmount" value="0" min="1" max="100" style="width:100%; float:left;">
 													</div>
 													<div style="width:15%; text-align:right; float:right;" class="standardWarp">
-														<input type="number" class="jerseyTextOption" style="width:50px; text-align:center;" id="warpAmountDisplay" val="0">
+														<input type="number" class="jerseyTextOption" style="width:50px; text-align:center;" id="warpAmountDisplay" val="0" min="1" max="100">
 													</div>
 													<div style="width:49%; float:left; text-align:center; display:none;" class="diagonalWarp">
 														Horizontal Spacing: <input type="number" id="hSpacing" value="22" class="jerseyTextOption spacing" style="width:40px;">
@@ -2957,6 +2957,8 @@
 
 		$("#jerseyFontTypeCombo").prop("disabled",true)
 
+		$("#warpAmount").prop("disabled",true)
+
 		$("#jerseyNameTypeCombo").prop("disabled",true)
 
 		$("#jerseyNumberTypeCombo").prop("disabled",true)
@@ -2966,6 +2968,8 @@
 		$("#jerseyNumberTextBox").prop("disabled",true)
 		
 		$("#jerseyNumberFakeFontButton").prop("disabled",true)
+		
+		$("#jerseyNameWarpAmount").prop("disabled",true)
 		
 		$(".msDropDown").msDropDown();
 
@@ -4849,6 +4853,7 @@
 		$(".jerseyTextOption").each(function() {
 			$(this).prop("disabled",$("#wordmarkCheck").is(":checked") ? false : true);
 		})
+		$("#warpAmount").prop("disabled",$("#wordmarkCheck").is(":checked") ? false : true);
 	    $("#warpEffect").msDropDown().data("dd").set("disabled", $("#wordmarkCheck").is(":checked") ? false : true)
 		$("#jerseyFontTypeCombo").prop("disabled", $("#wordmarkCheck").is(":checked") ? false : true)
 		$(".jerseyTextColorSelector").each(function() {
@@ -4878,6 +4883,7 @@
 			$(this).prop("disabled",$("#jerseyNameCheck").is(":checked") ? false : true);
 		})
 	    $("#jerseyNameWarpEffect").msDropDown().data("dd").set("disabled", $("#jerseyNameCheck").is(":checked") ? false : true)
+		$("#jerseyNameWarpAmount").prop("disabled", $("#jerseyNameCheck").is(":checked") ? false : true)
 		$("#jerseyNameTypeCombo").prop("disabled", $("#jerseyNameCheck").is(":checked") ? false : true)
 		$(".jerseyNameColorSelector").each(function() {
 			$(this).spectrum($("#jerseyNameCheck").is(":checked") ? 'enable' : 'disable')
@@ -5231,7 +5237,7 @@
 		
 	})
 	
-	$("#warpAmount").on("change",function() {		
+	$("#warpAmount").on("change",function() {
 		var selected = $("#warpEffect").find('option:selected');
 		selected.data('value',$(this).val());
 		$("#warpAmountDisplay").val($(this).val());
@@ -5306,6 +5312,12 @@
 	})
 
 	$("#warpAmountDisplay").on("change",function() {
+		if (parseInt($(this).val()) < parseInt($(this).attr("min"))) {
+			$(this).val(parseInt($(this).attr("min")))
+		}
+		if (parseInt($(this).val()) > parseInt($(this).attr("max"))) {
+			$(this).val(parseInt($(this).attr("max")))
+		}
 		var selected = $("#warpEffect").find('option:selected');
 		selected.data('value',$(this).val());
 		$("#warpAmount").val($(this).val());
@@ -10067,6 +10079,16 @@
 	})
 
 	$(".numberTextBox").on("change",function() {
+		if (parseInt($(this).val()) < parseInt($(this).attr("min"))) {
+			$(this).val(parseInt($(this).attr("min")))
+		}
+		if (parseInt($(this).val()) > parseInt($(this).attr("max"))) {
+			$(this).val(parseInt($(this).attr("max")))
+		}
+		if ($(this).val().length > 2) {
+			var tmp = $(this).val().slice(-2)
+			$(this).val(tmp)
+		}
 		const number = $(this).val()
 		jerseyLogoCanvas.getObjects().find(o => o.id === "jerseyBackNumber").getObjects().forEach(function(o) {
 			o.set("text",number)
@@ -12284,6 +12306,13 @@
 	})
 
 	$(".strokeWidth").on("change",function(e) {
+		if (parseInt($(this).val()) < parseInt($(this).attr("min"))) {
+			$(this).val(parseInt($(this).attr("min")))
+		}
+		if (parseInt($(this).val()) > parseInt($(this).attr("max"))) {
+			$(this).val(parseInt($(this).attr("max")))
+		}
+		console.log($(this).attr("max"))
 		var group = $(this).data("group")
 		var object = $(this).data("id")
 		switch ($(this).data("canvas")) {
