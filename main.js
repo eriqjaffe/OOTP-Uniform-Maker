@@ -64,9 +64,9 @@ const options = {
 	currentVersion: pkg.version
 };
 
-var imInstalled = false;
+var imInstalled = true;
 
-exec("magick -version", (error, stdout, stderr) => {
+/* exec("magick -version", (error, stdout, stderr) => {
 	if (error) {
 		console.log(`error: ${error.message}`);
 		imInstalled = false;
@@ -79,7 +79,7 @@ exec("magick -version", (error, stdout, stderr) => {
 	} 
 	console.log(`stdout: ${stdout}`);
 	imInstalled = true;
-})
+}) */
 
 app2.use(express.urlencoded({limit: '200mb', extended: true, parameterLimit: 500000}));
 
@@ -165,35 +165,39 @@ app2.get("/uploadImage", (req, res) => {
 })
 
 app2.post("/removeBorder", (req, res) => {
-	if (imInstalled == false) {
+/* 	if (imInstalled == false) {
 		res.end("NOT INSTALLED")
-	} 
+	}  */
 	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	var fuzz = parseInt(req.body.fuzz);
 	Jimp.read(buffer, (err, image) => {
 		if (err) {
 			console.log(err);
 		} else {
-			image.write(tempDir+"/temp.png");
-			imagemagickCli.exec('magick convert -trim -fuzz '+fuzz+'% '+tempDir+'/temp.png '+tempDir+'/temp.png').then(({ stdout, stderr }) => {
-				Jimp.read(tempDir+"/temp.png", (err, image) => {
-					if (err) {
-						console.log(err);
-					} else {
-						image.getBase64(Jimp.AUTO, (err, ret) => {
-							res.end(ret);
-						})
-					}
+			try {
+				image.write(tempDir+"/temp.png");
+				imagemagickCli.exec('magick convert -trim -fuzz '+fuzz+'% '+tempDir+'/temp.png '+tempDir+'/temp.png').then(({ stdout, stderr }) => {
+					Jimp.read(tempDir+"/temp.png", (err, image) => {
+						if (err) {
+							console.log(err);
+						} else {
+							image.getBase64(Jimp.AUTO, (err, ret) => {
+								res.end(ret);
+							})
+						}
+					})
 				})
-			})
+			} catch (error) {
+				res.end("NOT INSTALLED")
+			}
 		}
 	})
 })
 
 app2.post("/replaceColor", (req, res) => {
-	if (imInstalled == false) {
+/* 	if (imInstalled == false) {
 		res.end("NOT INSTALLED")
-	}
+	} */
 	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	var x = parseInt(req.body.x);
 	var y = parseInt(req.body.y);
@@ -228,9 +232,9 @@ app2.post("/replaceColor", (req, res) => {
 })
 
 app2.post("/removeColorRange", (req, res) => {
-	if (imInstalled == false) {
+/* 	if (imInstalled == false) {
 		res.end("NOT INSTALLED")
-	}
+	} */
 	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	var x = parseInt(req.body.x);
 	var y = parseInt(req.body.y);
@@ -258,9 +262,9 @@ app2.post("/removeColorRange", (req, res) => {
 })
 
 app2.post('/removeAllColor', (req, res) => {
-	if (imInstalled == false) {
+/* 	if (imInstalled == false) {
 		res.end("NOT INSTALLED")
-	}
+	} */
 	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	var x = parseInt(req.body.x);
 	var y = parseInt(req.body.y);
@@ -351,9 +355,9 @@ app2.get("/customFont", (req, res) => {
 
 
 app2.post('/warpText', (req, res)=> {
-	if (imInstalled == false) {
+/* 	if (imInstalled == false) {
 		res.end("NOT INSTALLED")
-	}
+	} */
 	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	var amount = req.body.amount;
 	var deform = req.body.deform;
