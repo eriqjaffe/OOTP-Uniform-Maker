@@ -15,6 +15,7 @@ const { SVG, registerWindow } = require('@svgdotjs/svg.js')
 const { createSVGWindow } = require('svgdom')
 const versionCheck = require('github-version-checker');
 const pkg = require('./package.json');
+const e = require('express');
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -46,6 +47,7 @@ const preferredPlayerNumber = store.get("preferredPlayerNumber", "23")
 const preferredJerseyFont = store.get("preferredJerseyFont", "Leckerli_One")
 const preferredCapFont = store.get("preferredCapFont", "Graduate")
 const preferredHeightMapBrightness = store.get("preferredHeightMapBrightness", "85") 
+const preferredSeamOpacity = store.get("preferredSeamOpacity", "33")
 const gridsVisible = store.get("gridsVisible", true)
 const checkForUpdates = store.get("checkForUpdates", true)
 const seamsVisibleOnDiffuse = store.get("seamsVisibleOnDiffuse", false)
@@ -62,9 +64,9 @@ const options = {
 	currentVersion: pkg.version
 };
 
-var imInstalled = false;
+var imInstalled = true;
 
-exec("magick -version", (error, stdout, stderr) => {
+/* exec("magick -version", (error, stdout, stderr) => {
 	if (error) {
 		console.log(`error: ${error.message}`);
 		imInstalled = false;
@@ -77,7 +79,7 @@ exec("magick -version", (error, stdout, stderr) => {
 	} 
 	console.log(`stdout: ${stdout}`);
 	imInstalled = true;
-})
+}) */
 
 app2.use(express.urlencoded({limit: '200mb', extended: true, parameterLimit: 500000}));
 
@@ -163,35 +165,39 @@ app2.get("/uploadImage", (req, res) => {
 })
 
 app2.post("/removeBorder", (req, res) => {
-	if (imInstalled == false) {
+/* 	if (imInstalled == false) {
 		res.end("NOT INSTALLED")
-	} 
+	}  */
 	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	var fuzz = parseInt(req.body.fuzz);
 	Jimp.read(buffer, (err, image) => {
 		if (err) {
 			console.log(err);
 		} else {
-			image.write(tempDir+"/temp.png");
-			imagemagickCli.exec('magick convert -trim -fuzz '+fuzz+'% '+tempDir+'/temp.png '+tempDir+'/temp.png').then(({ stdout, stderr }) => {
-				Jimp.read(tempDir+"/temp.png", (err, image) => {
-					if (err) {
-						console.log(err);
-					} else {
-						image.getBase64(Jimp.AUTO, (err, ret) => {
-							res.end(ret);
-						})
-					}
+			try {
+				image.write(tempDir+"/temp.png");
+				imagemagickCli.exec('magick convert -trim -fuzz '+fuzz+'% '+tempDir+'/temp.png '+tempDir+'/temp.png').then(({ stdout, stderr }) => {
+					Jimp.read(tempDir+"/temp.png", (err, image) => {
+						if (err) {
+							console.log(err);
+						} else {
+							image.getBase64(Jimp.AUTO, (err, ret) => {
+								res.end(ret);
+							})
+						}
+					})
 				})
-			})
+			} catch (error) {
+				res.end("NOT INSTALLED")
+			}
 		}
 	})
 })
 
 app2.post("/replaceColor", (req, res) => {
-	if (imInstalled == false) {
+/* 	if (imInstalled == false) {
 		res.end("NOT INSTALLED")
-	}
+	} */
 	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	var x = parseInt(req.body.x);
 	var y = parseInt(req.body.y);
@@ -226,9 +232,9 @@ app2.post("/replaceColor", (req, res) => {
 })
 
 app2.post("/removeColorRange", (req, res) => {
-	if (imInstalled == false) {
+/* 	if (imInstalled == false) {
 		res.end("NOT INSTALLED")
-	}
+	} */
 	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	var x = parseInt(req.body.x);
 	var y = parseInt(req.body.y);
@@ -256,9 +262,9 @@ app2.post("/removeColorRange", (req, res) => {
 })
 
 app2.post('/removeAllColor', (req, res) => {
-	if (imInstalled == false) {
+/* 	if (imInstalled == false) {
 		res.end("NOT INSTALLED")
-	}
+	} */
 	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	var x = parseInt(req.body.x);
 	var y = parseInt(req.body.y);
@@ -349,9 +355,9 @@ app2.get("/customFont", (req, res) => {
 
 
 app2.post('/warpText', (req, res)=> {
-	if (imInstalled == false) {
+/* 	if (imInstalled == false) {
 		res.end("NOT INSTALLED")
-	}
+	} */
 	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	var amount = req.body.amount;
 	var deform = req.body.deform;
@@ -702,6 +708,7 @@ app2.post("/generateHeightMap", (req, res) => {
 	const seamsVisible = req.body.seamsVisible
 	const seamsOption = req.body.seamsOption
 	const brightness = parseInt(req.body.brightness)/100
+	const seamOpacity = parseInt(req.body.seamOpacity)/100
 
 	prepareImages()
 
@@ -712,12 +719,20 @@ app2.post("/generateHeightMap", (req, res) => {
 		await jerseyOverlay.brightness(brightness)
 		if (buttonPadSeams == "true") {
 			if (buttonType != "buttonsHenley") {
-				var seamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				if (seamsOption == "seamsSixties") {
+					var seamsSrc = __dirname+"/images/seams/seams_button_pad_sixties.png"
+				} else {
+					var seamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				}
 			} else {
-				var seamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				if (seamsOption == "seamsSixties") {
+					var seamsSrc = __dirname+"/images/seams/seams_button_pad_henley_sixties.png"
+				} else {
+					var seamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				}
 			}
 			let bpHMSeamImg = await Jimp.read(seamsSrc)
-			await bpHMSeamImg.brightness(.33)
+			await bpHMSeamImg.brightness(seamOpacity)
 			await jerseyHeightMap.composite(bpHMSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
 		if (seamsVisible == "true") {
@@ -734,9 +749,12 @@ app2.post("/generateHeightMap", (req, res) => {
 				case "seamsRaglanToCollar":
 					var seamHMSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
 					break;
+				case "seamsSixties":
+					var seamHMSrc = __dirname+"/images/seams/seams_sixties.png"
+					break;
 			}
 			let seamsHMImg = await Jimp.read(seamHMSrc)
-			await seamsHMImg.brightness(.33)
+			await seamsHMImg.brightness(seamOpacity)
 			await jerseyHeightMap.composite(seamsHMImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		}
 		if (showPlanket == "true") {
@@ -840,9 +858,17 @@ app2.post('/saveJersey', (req, res) => {
 		let nameImage = await Jimp.read(nameCanvas)
 		if (seamsOnDiffuse == "true") {
 			if (buttonType != "buttonsHenley") {
-				var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				if (seamsOption == "seamsSixties") {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_sixties.png"
+				} else {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				}
 			} else {
-				var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				if (seamsOption == "seamsSixties") {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley_sixties.png"
+				} else {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				}
 			}
 			let diffuseSeamImg = await Jimp.read(diffuseSeamsSrc)
 			await diffuseSeamImg.opacity(.1)
@@ -859,6 +885,9 @@ app2.post('/saveJersey', (req, res) => {
 					break;
 				case "seamsRaglanToCollar":
 					var diffuseSeamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
+					break;
+				case "seamsSixties":
+					var diffuseSeamSrc = __dirname+"/images/seams/seams_sixties.png"
 					break;
 			}
 			let seamsDiffuseImg = await Jimp.read(diffuseSeamSrc)
@@ -895,9 +924,17 @@ app2.post('/saveJersey', (req, res) => {
 		let bakedNameImage = await Jimp.read(nameCanvas)
 		if (buttonPadSeams == "true") {
 			if (buttonType != "buttonsHenley") {
-				var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				if (seamsOption == "seamsSixties") {
+					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_sixties.png"
+				} else {
+					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				}
 			} else {
-				var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				if (seamsOption == "seamsSixties") {
+					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley_sixties.png"
+				} else {
+					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				}
 			}
 			let bpBakedSeamImg = await Jimp.read(bakedSeamsSrc)
 			await bpBakedSeamImg.opacity(.1)
@@ -916,6 +953,9 @@ app2.post('/saveJersey', (req, res) => {
 					break;
 				case "seamsRaglanToCollar":
 					var seamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
+					break;
+				case "seamsSixties":
+					var seamSrc = __dirname+"/images/seams/seams_sixties.png"
 					break;
 			}
 			let seamsBakedImg = await Jimp.read(seamSrc)
@@ -1093,9 +1133,17 @@ app2.post('/saveUniform', (req, res) => {
 		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
 		if (seamsOnDiffuse == "true") {
 			if (buttonType != "buttonsHenley") {
-				var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				if (seamsOption == "seamsSixties") {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_sixties.png"
+				} else {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				}	
 			} else {
-				var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				if (seamsOption == "seamsSixties") {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley_sixties.png"
+				} else {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				}
 			}
 			let diffuseSeamImg = await Jimp.read(diffuseSeamsSrc)
 			await diffuseSeamImg.opacity(.1)
@@ -1112,6 +1160,9 @@ app2.post('/saveUniform', (req, res) => {
 					break;
 				case "seamsRaglanToCollar":
 					var diffuseSeamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
+					break;
+				case "seamsSixties":
+					var diffuseSeamSrc = __dirname+"/images/seams/seams_sixties.png"
 					break;
 			}
 			let seamsDiffuseImg = await Jimp.read(diffuseSeamSrc)
@@ -1148,9 +1199,17 @@ app2.post('/saveUniform', (req, res) => {
 		let jerseyBakedTexture2 = await Jimp.read(__dirname+"/images/texture_jersey_default.png")
 		if (buttonPadSeams == "true") {
 			if (buttonType != "buttonsHenley") {
-				var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				if (seamsOption == "seamsSixties") {
+					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_sixties.png"
+				} else {
+					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				}
 			} else {
-				var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				if (seamsOption == "seamsSixties") {
+					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley_sixties.png"
+				} else {
+					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				}
 			}
 			let bpBakedSeamImg = await Jimp.read(bakedSeamsSrc)
 			await bpBakedSeamImg.opacity(.1)
@@ -1169,6 +1228,9 @@ app2.post('/saveUniform', (req, res) => {
 					break;
 				case "seamsRaglanToCollar":
 					var seamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
+					break;
+				case "seamsSixties":
+					var seamSrc = __dirname+"/images/seams/seams_sixties.png"
 					break;
 			}
 			let seamsBakedImg = await Jimp.read(seamSrc)
@@ -1383,7 +1445,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredPlayerName=${preferredPlayerName}&preferredPlayerNumber=${preferredPlayerNumber}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredPlayerName=${preferredPlayerName}&preferredPlayerNumber=${preferredPlayerNumber}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}`);
     //mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}`);
 	
   
