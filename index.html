@@ -1697,7 +1697,7 @@
                                                 <td style="text-align:right;">
                                                     <input class="baseSelector" type="text" id="capColor" data-element="capColor">
                                                 </td>
-                                            </tr>
+                                            </tr>letGroup
                                             <tr class="color_tr">
                                                 <td class="checkCell"><input type="checkbox" class="capTextureToggle" data-id="underBrimColor" id="underBrimColorCheck" data-canvas="below" checked></td>
                                                 <td><label>Brim Underside: </label></td>
@@ -6709,6 +6709,23 @@
 		capLogoCanvas.renderAll();
 	})
 
+	$("#eyeletGroupCheck").on("change",function() {
+		var ind = capLogoCanvas.getObjects().find(o => o.id === "individualEyelets")
+		var grp = capLogoCanvas.getObjects().find(o => o.id === "groupedEyelets")
+		if ($(this).is(":checked")) {
+			if ($("#eyeletGrouping").val() == "individualEyelets") {
+				ind.set("visible",true);
+				grp.set("visible",false);
+			} else {
+				ind.set("visible",false);
+				grp.set("visible",true);
+			}
+		} else {
+			ind.set("visible",false);
+			grp.set("visible",false);
+		}
+		capLogoCanvas.renderAll()
+	})
 // CANVAS INITIALIZE FUNCTIONS
 
 	function initializeCap() {
