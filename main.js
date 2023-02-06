@@ -1427,6 +1427,12 @@ function createWindow () {
               await shell.openExternal('https://electronjs.org')
               }
           },
+		  {
+			  label: 'About fabric.js',
+			  click: async () => {
+			  await shell.openExternal('http://fabricjs.com/')
+			  }
+		  },
 		  { type: 'separator' },
           {
               label: 'View project on GitHub',
