@@ -782,6 +782,7 @@
 														<input type="button" class="button makePatch" data-sleeve="jerseyLeft" value="Make Left Front Logo">
 														<input type="button" class="button makePatch" data-sleeve="jerseyRight" value="Make Right Front Logo">
 														<input type="button" class="button makePatch" data-sleeve="jerseyFull" value="Make Full Front Logo">
+														<input type="button" class="button makePatch" data-sleeve="jerseyCrest" value="Make Soccer Crest">
 														<input type="button" class="button makePatch" data-sleeve="jerseyLeague" value="Make League Logo">
 													</td>
 												</tr>
@@ -4777,6 +4778,14 @@
 					var dim = fitInBox(imageWidth, imageHeight, 70, 70, false)
 					object.scaleToWidth(dim.width)
 					object.set({"left":192,"top":679,"angle":0})
+					object.setCoords();
+					break;
+				case "jerseyCrest":
+					object.set({"left":256,"top":512,"scaleX":1,"scaleY":1,"angle":0})
+					object.setCoords();
+					//var dim = fitInBox(imageWidth, imageHeight, 48, 48, false)
+					object.scaleToHeight(36)
+					object.set({"left":320,"top":606,"angle":0})
 					object.setCoords();
 					break;
 				case "jerseyLeague":
