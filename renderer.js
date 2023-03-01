@@ -20,6 +20,10 @@ ipcRenderer.on('save-jersey', (event, data) => {
     $("#saveJersey").trigger("click")
 });
 
+ipcRenderer.on('save-font', (event, data) => {
+    $("#saveFont").trigger("click")
+});
+
 ipcRenderer.on('save-swatches', (event, data) => {
     $("#saveSwatches").trigger("click")
 })

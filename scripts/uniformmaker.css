@@ -281,6 +281,27 @@ td {
 	display:inline-block;
 }
 
+.dd-selected-text {
+	float: right;
+    padding-right: 20px;
+}
+
+.dd-option-text {
+	float:right;
+}
+
+a.dd-selected {
+    padding: 5px;
+}
+
+img.dd-option-image, img.dd-selected-image {
+    max-width: 96px;
+}
+
+a.dd-option:hover{ 
+    background:#c3dff4; 
+}
+
 #canvasContainer {
 	-moz-background-clip: padding;
 	-webkit-background-clip: padding;
@@ -304,6 +325,20 @@ td {
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px; 
+}
+
+#fontContainer {
+	width: 768px;
+	height: 768px;
+	top: 0px;
+	left: 0px;
+	position:absolute;
+	z-index:3;
+	display:none; 
+	/* background: rgba(0,0,0,0.5);
+	background-position: center;
+	background-repeat: no-repeat;
+	display:none; */
 }
 
 #overlay {

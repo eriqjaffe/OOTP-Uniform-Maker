@@ -700,6 +700,34 @@ app2.post('/saveCap', (req, res) => {
 	}
 })
 
+app2.post("/saveFont", (req, res) => {
+    const fontCanvas = Buffer.from(req.body.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+
+    const options = {
+        defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png'
+	}
+            
+	prepareImages()
+
+	async function prepareImages() {
+		let finalImage = Buffer.from(fontCanvas).toString('base64');
+		dialog.showSaveDialog(null, options).then((result) => {
+			if (!result.canceled) {
+				store.set("downloadPath", path.dirname(result.filePath))
+				fs.writeFile(result.filePath, finalImage, 'base64', function(err) {
+					console.log(err)
+				})
+				res.json({result: "success"})
+			} else {
+				res.json({result: "success"})
+			}
+		}).catch((err) => {
+			console.log(err);
+			res.json({result: "success"})
+		});
+	}
+})
+
 app2.post("/generateHeightMap", (req, res) => {
 	const jerseyLogoCanvas = Buffer.from(req.body.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const showPlanket = req.body.showPlanket
@@ -988,6 +1016,7 @@ app2.post('/saveUniform', (req, res) => {
 	const nameCanvas = Buffer.from(req.body.nameCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const heightMap = Buffer.from(req.body.heightMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const normalMap = Buffer.from(req.body.normalMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const fontCanvas = Buffer.from(req.body.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const text = req.body.text;
 	const tmpCapTexture = req.body.capTexture
 	const tmpJerseyTexture = req.body.jerseyTexture
@@ -1126,6 +1155,11 @@ app2.post('/saveUniform', (req, res) => {
 		let pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(pantsBuffer, {name: "pants_"+req.body.name+".png"})
 		//await pantsBase.write(app.getPath('downloads') + '/pants_' + req.body.name+'.png')
+
+		// font
+		let fontBase = await Jimp.read(fontCanvas)
+		let fontBuffer = await fontBase.getBufferAsync(Jimp.MIME_PNG)
+		archive.append(fontBuffer, {name: "font_"+req.body.name+".png"})
 
 		// jersey diffuse map
 		let jerseyBase = await Jimp.read(jerseyBelow)
@@ -1350,6 +1384,11 @@ function createWindow () {
               click: () => mainWindow.webContents.send('save-jersey','click'),
               accelerator: isMac ? 'Cmd+J' : 'Control+J',
               label: 'Save Jersey Only',
+          },
+          {
+              click: () => mainWindow.webContents.send('save-font','click'),
+              accelerator: isMac ? 'Cmd+F' : 'Control+F',
+              label: 'Save Font Only',
           },
 		  { type: 'separator' },
           {

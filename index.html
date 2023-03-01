@@ -17,6 +17,8 @@
 	<script type="text/javascript" src="./scripts/fontfaceobserver.js"></script>
     <script type="text/javascript" src="./scripts/skeletabs.js"></script>
 	<script type="text/javascript" src="./scripts/tinycolor-min.js"></script>
+	<script type="text/javascript" src="./scripts/opentype.js"></script>
+	<script type="text/javascript" src="./scripts/jquery.ddslick.min.js"></script>
 	<link href='./scripts/uniformmaker.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/spectrum.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/menu.css' rel='stylesheet' type='text/css'>
@@ -65,6 +67,11 @@
 		
 		const initialCapColors = {capColor:"#ba0c2f",underBrimColor:"#656765",topsideBrimColor:"#1d1654",squatcheeColor:"yellow",frontPanelColor:"#FFFFFF",smallFrontPanelColor:"yellow",capPinstripeColor:"blue",capPinstripe2Color:"cyan", horizontalPinstripeColor:"yellow",capLogoTextColor:"white",capLogoStroke1Color:"green",capLogoStroke2Color:"black",capLogo2TextColor:"white",capLogo2Stroke1Color:"green",capLogo2Stroke2Color:"black",bandBoxSingleThickColor:"orange",bandBoxDoubleThickColor:"greenyellow",jockeyColor:"gray",braidStripeInnerColor:"red",braidStripeOuterColor:"blue",soutache:"goldenrod",frontPanelBorderColor:"cyan",bostonColor:"yellowgreen",smallPanelBorderColor:"cyan",curvedBrimColor:"cyan",curvedBrimBorderColor:"blue",peakBandColor:"orange",stingyBrimColor:"red",lidPinstripesColor:"blue",stingyLidPinstripesColor:"yellow",eyeletFillColor:"black",eyelet1Color:"yellow",eyelet2Color:"yellow",eyelet3Color:"yellow",eyelet4Color:"yellow",eyelet5Color:"yellow",eyelet6Color:"yellow",eyeletGroupFillColor:"black",eyeletGroupColor:"yellow",snakeskinColor:"#000000",scrambledEggColor:"#FED141",capMakersMarkColor:"#FFFFFF",triColor:"#003087",halo:"#8D9093",mlbBaseColor:"#FFFFFF",mlb1Color:"#041e42",mlb2Color:"#bf0d3e",milbBaseColor:"#FFFFFF",milb1Color:"#041e42",milb2Color:"#bf0d3e"}
 
+		const initialTextColors = {fillColor: "#0C2340", stroke1Color: "#ffffff", stroke2Color: "#BA0C2F"}
+		const chars = [{"bottom":63,"char":"A","left":7,"size":60,"stroke":4},{"bottom":63,"char":"B","left":47,"size":60,"stroke":4},{"bottom":63,"char":"C","left":86,"size":60,"stroke":4},{"bottom":63,"char":"D","left":125,"size":60,"stroke":4},{"bottom":63,"char":"E","left":164,"size":60,"stroke":4},{"bottom":63,"char":"F","left":203,"size":60,"stroke":4},{"bottom":63,"char":"G","left":243,"size":60,"stroke":4},{"bottom":63,"char":"H","left":282,"size":60,"stroke":4},{"bottom":63,"char":"I","left":322,"size":60,"stroke":4},{"bottom":63,"char":"J","left":360,"size":60,"stroke":4},{"bottom":63,"char":"K","left":400,"size":60,"stroke":4},{"bottom":63,"char":"L","left":439,"size":60,"stroke":4},{"bottom":63,"char":"M","left":478,"size":60,"stroke":4},{"bottom":131,"char":"N","left":7,"size":60,"stroke":4},{"bottom":131,"char":"O","left":47,"size":60,"stroke":4},{"bottom":131,"char":"P","left":86,"size":60,"stroke":4},{"bottom":131,"char":"Q","left":125,"size":60,"stroke":4},{"bottom":131,"char":"R","left":164,"size":60,"stroke":4},{"bottom":131,"char":"S","left":203,"size":60,"stroke":4},{"bottom":131,"char":"T","left":243,"size":60,"stroke":4},{"bottom":131,"char":"U","left":282,"size":60,"stroke":4},{"bottom":131,"char":"V","left":322,"size":60,"stroke":4},{"bottom":131,"char":"W","left":360,"size":60,"stroke":4},{"bottom":131,"char":"X","left":400,"size":60,"stroke":4},{"bottom":131,"char":"Y","left":439,"size":60,"stroke":4},{"bottom":131,"char":"Z","left":478,"size":60,"stroke":4},{"bottom":350,"char":"0","left":10,"size":168,"stroke":6},{"bottom":350,"char":"1","left":112,"size":168,"stroke":6},{"bottom":350,"char":"2","left":215,"size":168,"stroke":6},{"bottom":350,"char":"3","left":317,"size":168,"stroke":6},{"bottom":350,"char":"4","left":419,"size":168,"stroke":6},{"bottom":502,"char":"5","left":10,"size":168,"stroke":6},{"bottom":502,"char":"6","left":112,"size":168,"stroke":6},{"bottom":502,"char":"7","left":215,"size":168,"stroke":6},{"bottom":502,"char":"8","left":317,"size":168,"stroke":6},{"bottom":502,"char":"9","left":419,"size":168,"stroke":6},{"bottom":215,"char":"smallA","left":164,"size":60,"stroke":4,"type":"small"},{"bottom":215,"char":"smallC","left":203,"size":60,"stroke":4,"type":"small"},{"bottom":215,"char":"smallE","left":243,"size":60,"stroke":4,"type":"small"}]
+		const letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","smallA","smallC","smallE"]
+		const numbers = ["0","1","2","3","4","5","6","7","8","9"]
+
         //var prefs['preferredColorFormat'] = "hex"
 		var capMakersMarkColor = initialCapColors['capMakersMarkColor']
 		var jerseyMakersMarkColor = initialJerseyColors['jerseyMakersMarkColor']
@@ -84,6 +91,11 @@
 		var pantsMakersMarkX = pantsMakersMarkCoords['leftX']
 		var pantsMakersMarkY = pantsMakersMarkCoords['leftY']
 
+		var ddData = [{"value":"./fonts/Acme-Regular.ttf","text":"Acme","selected":false,"imageSrc":"./images/Acme.png"},{"value":"./fonts/all_state-webfont.ttf","text":"All State","selected":false,"imageSrc":"./images/All State.png"},{"value":"./fonts/athletic_gothic-webfont.ttf","text":"Athletic Gothic","selected":false,"imageSrc":"./images/Athletic Gothic.png"},{"value":"./fonts/athletic_gothic_shadow-webfont.ttf","text":"Athletic Gothic Shadow","selected":false,"imageSrc":"./images/Athletic Gothic Shadow.png"},{"value":"./fonts/beaverton_script-webfont.ttf","text":"Beaverton Script","selected":false,"imageSrc":"./images/Beaverton Script.png"},{"value":"./fonts/BerkshireSwash-Regular.ttf","text":"Berkshire Swash","selected":false,"imageSrc":"./images/Berkshire Swash.png"},{"value":"./fonts/CantoraOne-Regular.ttf","text":"CantoraOne","selected":false,"imageSrc":"./images/CantoraOne.png"},{"value":"./fonts/caxton_roman-webfont.ttf","text":"Caxton Roman","selected":false,"imageSrc":"./images/Caxton Roman.png"},{"value":"./fonts/ChelaOne-Regular.ttf","text":"Chela","selected":false,"imageSrc":"./images/Chela One.png"},{"value":"./fonts/circus-webfont.ttf","text":"Russell Circus","selected":false,"imageSrc":"./images/Russell Circus.png"},{"value":"./fonts/Condiment-Regular.ttf","text":"Condiment","selected":false,"imageSrc":"./images/Condiment.png"},{"value":"./fonts/Cookie-Regular.ttf","text":"Cookie","selected":false,"imageSrc":"./images/Cookie.png"},{"value":"./fonts/Courgette-Regular.ttf","text":"Courgette","selected":false,"imageSrc":"./images/Courgette.png"},{"value":"./fonts/CroissantOne-Regular.ttf","text":"Croissant","selected":false,"imageSrc":"./images/Croissant One.png"},{"value":"./fonts/Damion-Regular.ttf","text":"Damion","selected":false,"imageSrc":"./images/Damion.png"},{"value":"./fonts/Engagement-Regular.ttf","text":"Engagement","selected":false,"imageSrc":"./images/Engagement.png"},{"value":"./fonts/GermaniaOne-Regular.ttf","text":"Germania","selected":false,"imageSrc":"./images/Germania One.png"},{"value":"./fonts/Graduate-Regular.ttf","text":"Graduate","selected":false,"imageSrc":"./images/Graduate.png"},{"value":"./fonts/GrandHotel-Regular.ttf","text":"Grand Hotel","selected":false,"imageSrc":"./images/Grand Hotel.png"},{"value":"./fonts/JockeyOne-Regular.ttf","text":"Jockey","selected":false,"imageSrc":"./images/Jockey One.png"},{"value":"./fonts/KaushanScript-Regular.ttf","text":"Kaushan Script","selected":false,"imageSrc":"./images/Kaushan Script.png"},{"value":"./fonts/LeckerliOne-Regular.ttf","text":"Leckerli","selected":false,"imageSrc":"./images/Leckerli One.png"},{"value":"./fonts/LilyScriptOne-Regular.ttf","text":"Lily Script","selected":false,"imageSrc":"./images/Lily Script One.png"},{"value":"./fonts/Lobster-Regular.ttf","text":"Lobster","selected":false,"imageSrc":"./images/Lobster.png"},{"value":"./fonts/LobsterTwo-Regular.ttf","text":"Lobster Two","selected":false,"imageSrc":"./images/Lobster Two.png"},{"value":"./fonts/MetalMania-Regular.ttf","text":"Metal Mania","selected":false,"imageSrc":"./images/Metal Mania.png"},{"value":"./fonts/Miniver-Regular.ttf","text":"Miniver","selected":false,"imageSrc":"./images/Miniver.png"},{"value":"./fonts/MLBBlock.ttf","text":"MLB Block","selected":true,"imageSrc":"./images/MLB Block.png"},{"value":"./fonts/MLBCubs.ttf","text":"MLB Chicago N","selected":false,"imageSrc":"./images/MLB Cubs.png"},{"value":"./fonts/MLBRedSox.ttf","text":"McAuliffe","selected":false,"imageSrc":"./images/MLB Red Sox.png"},{"value":"./fonts/Molle-Regular.ttf","text":"Molle","selected":false,"imageSrc":"./images/Molle.png"},{"value":"./fonts/NewRocker-Regular.ttf","text":"New Rocker","selected":false,"imageSrc":"./images/New Rocker.png"},{"value":"./fonts/Norican-Regular.ttf","text":"Norican","selected":false,"imageSrc":"./images/Norican.png"},{"value":"./fonts/OleoScript-Regular.ttf","text":"Oleo Script","selected":false,"imageSrc":"./images/Oleo Script.png"},{"value":"./fonts/Pacifico.ttf","text":"Pacifico","selected":false,"imageSrc":"./images/Pacifico.png"},{"value":"./fonts/PirataOne-Regular.ttf","text":"Pirata","selected":false,"imageSrc":"./images/Pirata One.png"},{"value":"./fonts/Playball-Regular.ttf","text":"Playball","selected":false,"imageSrc":"./images/Playball.png"},{"value":"./fonts/pro_full_block-webfont.ttf","text":"Pro Full Block","selected":false,"imageSrc":"./images/Pro Full Block.png"},{"value":"./fonts/Quicksand-Regular.ttf","text":"Quicksand","selected":false,"imageSrc":"./images/Quicksand.png"},{"value":"./fonts/RubikMonoOne-Regular.ttf","text":"Rubik Mono","selected":false,"imageSrc":"./images/Rubik Mono One.png"},{"value":"./fonts/RubikOne-Regular.ttf","text":"Rubik","selected":false,"imageSrc":"./images/Rubik One.png"},{"value":"./fonts/RumRaisin-Regular.ttf","text":"Rum Raisin","selected":false,"imageSrc":"./images/Rum Raisin.png"},{"value":"./fonts/Satisfy-Regular.ttf","text":"Satisfy","selected":false,"imageSrc":"./images/Satisfy.png"},{"value":"./fonts/SeymourOne-Regular.ttf","text":"Seymour","selected":false,"imageSrc":"./images/Seymour One.png"},{"value":"./fonts/tiffany-webfont.ttf","text":"Tiffany","selected":false,"imageSrc":"./images/UA Tiffany.png"},{"value":"./fonts/TradeWinds-Regular.ttf","text":"Trade Winds","selected":false,"imageSrc":"./images/Trade Winds.png"},{"value":"./fonts/tuscan-webfont.ttf","text":"Kansas","selected":false,"imageSrc":"./images/Kansas.png"},{"value":"./fonts/UnifrakturCook-Bold.ttf","text":"Unifraktur Cook","selected":false,"imageSrc":"./images/UnifrakturCook.png"},{"value":"./fonts/UnifrakturMaguntia-Book.ttf","text":"Unifraktur Maguntia","selected":false,"imageSrc":"./images/UnifrakturMaguntia.png"},{"value":"./fonts/VarsityBlockC.ttf","text":"Varsity Block C","selected":false,"imageSrc":"./images/Varsity Block C.png"},{"value":"./fonts/VarsityClassicSerifA.ttf","text":"Varsity Classic Serif A","selected":false,"imageSrc":"./images/Varsity Classic Serif A.png"},{"value":"./fonts/VarsityClassicSerifB.ttf","text":"Varsity Classic Serif B","selected":false,"imageSrc":"./images/Varsity Classic Serif B.png"},{"value":"./fonts/Vibur-Regular.ttf","text":"Vibur","selected":false,"imageSrc":"./images/Vibur.png"},{"value":"./fonts/Viga-Regular.ttf","text":"Viga","selected":false,"imageSrc":"./images/Viga.png"},{"value":"./fonts/Wellfleet-Regular.ttf","text":"Wellfleet","selected":false,"imageSrc":"./images/Wellfleet.png"},{"value":"./fonts/WendyOne-Regular.ttf","text":"Wendy","selected":false,"imageSrc":"./images/Wendy One.png"},{"value":"./fonts/Yellowtail-Regular.ttf","text":"Yellowtail","selected":false,"imageSrc":"./images/Yellowtail.png"},{"value":"./fonts/rawlingsfancyblock-regular-webfont.ttf","text":"Fancy Block","selected":false,"imageSrc":"./images/Rawlings Fancy Block.png"},{"value":"./fonts/rawlingsoldenglish-webfont.ttf","text":"Old English","selected":false,"imageSrc":"./images/Rawlings Old English.png"},{"value":"./fonts/richardson_fancy_block-webfont.ttf","text":"Fancy Block 2","selected":false,"imageSrc":"./images/Richardson Fancy Block.png"},{"value":"./fonts/spl28script-webfont.ttf","text":"SPL Script","selected":false,"imageSrc":"./images/SPL28Script.png"}]
+		ddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
+		var strokeWidth = {letters1: 8, letters2: 16, numbers1: 12, numbers2: 24}
+		var overlayImage = null;
+
 		var imNeeded = false;
 		var diagNeeded = false;
 		var vertNeeded = false;
@@ -92,6 +104,7 @@
 		var jerseyOverlayActive = true;
 		var pantsOverlayActive = false;
 		var capOverlayActive = false;
+		var fontActive = false;
 
 		var fontSources = {Acme: "Acme-Regular.ttf", athletic_gothicregular: "athletic_gothic-webfont.ttf", athletic_gothic_shadowregular: "athletic_gothic_shadow-webfont.ttf", beaverton_scriptregular: "beaverton_script-webfont.ttf", '"Berkshire Swash"': "BerkshireSwash-Regular.ttf", '"Cantora One"': "CantoraOne-Regular.ttf", caxton_romanregular: "caxton_roman-webfont.ttf", '"Chela One"': "ChelaOne-Regular.ttf", russell_circusregular: "circus-webfont.ttf", Condiment: "Condiment-Regular.ttf", Cookie: "Cookie-Regular.ttf", Courgette: "Courgette-Regular.ttf", '"Croissant One"': "CroissantOne-Regular.ttf", Damion: "Damion-Regular.ttf", Engagement: "Engagement-Regular.ttf", rawlings_fancy_blockregular: "rawlingsfancyblock-regular-webfont.ttf", '"Germania One"': "GermaniaOne-Regular.ttf", Graduate: "Graduate-Regular.ttf", '"Grand Hotel"': "GrandHotel-Regular.ttf", '"Jockey One"': "JockeyOne-Regular.ttf", kansasregular: "tuscan-webfont.ttf", '"Kaushan Script"': "KaushanScript-Regular.ttf", '"Leckerli One"': "LeckerliOne-Regular.ttf", '"Lily Script One"': "LilyScriptOne-Regular.ttf", Lobster: "Lobster-Regular.ttf", '"Lobster Two"': "LobsterTwo-Regular.ttf", '"Metal Mania"': "MetalMania-Regular.ttf", Miniver: "Miniver-Regular.ttf", 'Molle, italic': "Molle-Regular.ttf", '"New Rocker"': "NewRocker-Regular.ttf", Norican: "Norican-Regular.ttf", rawlings_old_englishmedium: "rawlingsoldenglish-webfont.ttf", '"Oleo Script"': "OleoScript-Regular.ttf", '"Oleo Script Swash Caps"': "OleoScriptSwashCaps-Regular.ttf", Pacifico: "Pacifico.ttf", '"Pirata One"': "PirataOne-Regular.ttf", Playball: "Playball-Regular.ttf", pro_full_blockregular: "pro_full_block-webfont.ttf", richardson_fancy_blockregular: "richardson_fancy_block-webfont.ttf", '"Rubik One"': "RubikOne-Regular.ttf", '"Rum Raisin"': "RumRaisin-Regular.ttf", Satisfy: "Satisfy-Regular.ttf", '"Seymour One"': "SeymourOne-Regular.ttf", spl28scriptregular: "spl28script-webfont.ttf", ua_tiffanyregular: "tiffany-webfont.ttf", '"Trade Winds"': "TradeWinds-Regular.ttf", mlb_tuscan_newmedium: "mlb_tuscan_new-webfont.ttf", UnifrakturCook: "UnifrakturCook-Bold.ttf", UnifrakturMaguntia: "UnifrakturMaguntia-Book.ttf", Vibur: "Vibur-Regular.ttf", Viga: "Viga-Regular.ttf", Wellfleet: "Wellfleet-Regular.ttf", '"Wendy One"': "WendyOne-Regular.ttf", Yellowtail: "Yellowtail-Regular.ttf", VarsityBlock: "VarsityBlockC.ttf", MLBBlock: "MLBBlock.ttf", ChicagoNL: "MLBCubs.ttf", McAuliffe: "MLBRedSox.ttf", VarsityBlock2: 'VarsityClassicSerifB', VarsityBlock3: 'VarsityClassicSerifA'};
 		
@@ -109,6 +122,12 @@
 		var customJerseyTexture = null;
 		var customCapTexture = null;
 		var customPantsTexture = null;
+
+		var ddCount = 0;
+		var dsCount = 0;
+		var letterStyle = "center"
+		var numberStyle = "center"
+		var prevDirection = null;
     </script>
 </head>
 <body>
@@ -134,7 +153,10 @@
 					<canvas id="normalMapCanvas" width="512" height="1024"></canvas>
                 </div>
                 <div id="canvasContainer" style="position:absolute; height:828px; width:768px;">
-					<div id="overlay">
+					<div id="fontContainer">
+						<canvas id="fontCanvas" width="1024" height="1024" style="position:absolute; top:0; float:left; z-index:1;"></canvas>
+					</div>
+					<div id="overlay">	
 						<div id="jerseyOverlay" class="jerseyOverlay"></div>
 						<div id="pantsOverlay"></div>
 						<div id="capOverlay"></div>
@@ -201,6 +223,9 @@
                                 <li class="skltbs-tab-item">
                                 <button class="skltbs-tab">Cap</button>
                                 </li>
+								<li class="skltbs-tab-item">
+								<button class="skltbs-tab">Font</button>
+								</li>
                             </ul>
                             <div class="skltbs-panel-group">
                                 <div class="skltbs-panel" id="jerseyPanel">
@@ -902,176 +927,67 @@
 										</table>	
 										<table style="width:100%;">
 											<tr>
-												<td colspan="3">
-													<select id="jerseyFontTypeCombo" class='Leckerli_One' style="width:100%;">
-														<optgroup class='Acme'>
-														<option value='Acme'>Acme</option>
-														</optgroup>
-														<optgroup class='AthleticGothic'>
-														<option value='AthleticGothic'>Athletic Gothic</option>
-														</optgroup>
-														<optgroup class='AthleticGothicShadow'>
-														<option value='AthleticGothicShadow'>Athletic Gothic Shadow</option>
-														</optgroup>
-														<optgroup class='BeavertonScript'>
-														<option value='BeavertonScript'>Fancy Block</option>
-														</optgroup>
-														<optgroup class='Berkshire_Swash'>
-														<option value='Berkshire_Swash'>Berkshire Swash</option>
-														</optgroup>
-														<optgroup class='Cantora_One'>
-														<option value='Cantora_One'>Cantora</option>
-														</optgroup>
-														<optgroup class='CaxtonRoman'>
-														<option value='CaxtonRoman'>Caxton Roman</option>
-														</optgroup>
-														<optgroup class='Chela_One'>
-														<option value='Chela_One'>Chela</option>
-														</optgroup>
-														<optgroup class='Circus'>
-														<option value='Circus'>Circus</option>
-														</optgroup>
-														<optgroup class='Condiment'>
-														<option value='Condiment'>Condiment</option>
-														</optgroup>
-														<optgroup class='Cookie'>
-														<option value='Cookie'>Cookie</option>
-														</optgroup>
-														<optgroup class='Courgette'>
-														<option value='Courgette'>Courgette</option>
-														</optgroup>
-														<optgroup class='Croissant_One'>
-														<option value='Croissant_One'>Croissant</option>
-														</optgroup>
-														<optgroup class='Damion'>
-														<option value='Damion'>Damion</option>
-														</optgroup>
-														<optgroup class='Engagement'>
-														<option value='Engagement'>Engagement</option>
-														</optgroup>
-														<optgroup class='RawlingsFancyBlock'>
-														<option value='RawlingsFancyBlock'>Fancy Block</option>
-														</optgroup>
-														<optgroup class='Germania_One'>
-														<option value='Germania_One'>Germania</option>
-														</optgroup>
-														<optgroup class='Graduate'>
-														<option value='Graduate'>Graduate</option>
-														</optgroup>
-														<optgroup class='Grand_Hotel'>
-														<option value='Grand_Hotel'>Grand Hotel</option>
-														</optgroup>
-														<optgroup class='Jockey_One'>
-														<option value='Jockey_One'>Jockey</option>
-														</optgroup>
-														<optgroup class='Kansas'>
-														<option value='Kansas'>Kansas Tuscan</option>
-														</optgroup>
-														<optgroup class='Kaushan_Script'>
-														<option value='Kaushan_Script'>Kaushan Script</option>
-														</optgroup>
-														<optgroup class='Leckerli_One'>
-														<option value='Leckerli_One' selected>Leckerli</option>
-														</optgroup>
-														<optgroup class='Lily_Script_One'>
-														<option value='Lily_Script_One'>Lily Script</option>
-														</optgroup>
-														<optgroup class='Lobster'>
-														<option value='Lobster'>Lobster</option>
-														</optgroup>
-														<optgroup class='Lobster_Two'>
-														<option value='Lobster_Two'>Lobster Two</option>
-														</optgroup>
-														<optgroup class='Metal_Mania'>
-														<option value='Metal_Mania'>Metal Mania</option>
-														</optgroup>
-														<optgroup class='Miniver'>
-														<option value='Miniver'>Miniver</option>
-														</optgroup>
-														<optgroup class='Molle'>
-														<option value='Molle'>Molle</option>
-														</optgroup>
-														<optgroup class='New_Rocker'>
-														<option value='New_Rocker'>New Rocker</option>
-														</optgroup>
-														<optgroup class='Norican'>
-														<option value='Norican'>Norican</option>
-														</optgroup>
-														<optgroup class='OldEnglish'>
-														<option value='OldEnglish'>Old English</option>
-														</optgroup>
-														<optgroup class='Oleo_Script'>
-														<option value='Oleo_Script'>Oleo Script</option>
-														</optgroup>
-														<optgroup class='Oleo_Script_Swash_Caps'>
-														<option value='Oleo_Script_Swash_Caps'>Oleo Script Swash Caps</option>
-														</optgroup>
-														<optgroup class='Pacifico'>
-														<option value='Pacifico'>Pacifico</option>
-														</optgroup>
-														<optgroup class='Pirata_One'>
-														<option value='Pirata_One'>Pirata</option>
-														</optgroup>
-														<optgroup class='Playball'>
-														<option value='Playball'>Playball</option>
-														</optgroup>
-														<optgroup class='ProFullBlock'>
-														<option value='ProFullBlock'>Pro Full Block</option>
-														</optgroup>
-														<!--<optgroup class='Quicksand'>
-														<option value='Quicksand'>Quicksand</option>
-														</optgroup>-->
-														<optgroup class='RichardsonFancyBlock'>
-														<option value='RichardsonFancyBlock'>Richardson Block</option>
-														</optgroup>
-														<optgroup class='Rubik_One'>
-														<option value='Rubik_One'>Rubik</option>
-														</optgroup>
-														<optgroup class='Rum_Raisin'>
-														<option value='Rum_Raisin'>Rum Raisin</option>
-														</optgroup>
-														<optgroup class='Satisfy'>
-														<option value='Satisfy'>Satisfy</option>
-														</optgroup>
-														<optgroup class='Seymour_One'>
-														<option value='Seymour_One'>Seymour</option>
-														</optgroup>
-														<optgroup class='spl28'>
-														<option value='spl28'>SPL28 Script</option>
-														</optgroup>
-														<optgroup class='TiffanyRegular'>
-														<option value='TiffanyRegular'>Tiffany Regular</option>
-														</optgroup>
-														<optgroup class='Trade_Winds'>
-														<option value='Trade_Winds'>Trade Winds</option>
-														</optgroup>
-														<optgroup class='Tuscan'>
-														<option value='Tuscan'>Tuscan</option>
-														</optgroup>
-														<optgroup class='UnifrakturCook'>
-														<option value='UnifrakturCook'>Unifraktur Cook</option>
-														</optgroup>
-														<optgroup class='UnifrakturMaguntia'>
-														<option value='UnifrakturMaguntia'>Unifraktur Maguntia</option>
-														</optgroup>
-														<optgroup class='Vibur'>
-														<option value='Vibur'>Vibur</option>
-														</optgroup>
-														<optgroup class='Viga'>
-														<option value='Viga'>Viga</option>
-														</optgroup>
-														<optgroup class='Wellfleet'>
-														<option value='Wellfleet'>Wellfleet</option>
-														</optgroup>
-														<optgroup class='Wendy_One'>
-														<option value='Wendy_One'>Wendy</option>
-														</optgroup>
-														<optgroup class='Yellowtail'>
-														<option value='Yellowtail'>Yellowtail</option>
-														</optgroup>
-													</select>
-													
+												<td style="width:20%;">&nbsp</td>
+												<td>
+													<!-- <select id="jerseyFontTypeCombo" class="msDropDown" style="width:100%;">
+														<option value='./fonts/Acme-Regular.ttf' data-image="./images/Acme.png">Acme</option>
+														<option value='./fonts/athletic_gothic-webfont.ttf' data-image="./images/Athletic Gothic.png">Athletic Gothic</option>
+														<option value='./fonts/athletic_gothic_shadow-webfont.ttf' data-image="./images/Athletic Gothic Shadow.png">Athletic Gothic Shadow</option>
+														<option value='./fonts/beaverton_script-webfont.ttf' data-image="./images/Beaverton Script.png">Beaverton Script</option>
+														<option value='./fonts/BerkshireSwash-Regular.ttf' data-image="./images/Berkshire Swash.png">Berkshire Swash</option>
+														<option value='./fonts/CantoraOne-Regular.ttf' data-image="./images/CantoraOne.png">Cantora</option>
+														<option value='./fonts/caxton_roman-webfont.ttf' data-image="./images/Caxton Roman.png">Caxton Roman</option>
+														<option value='./fonts/ChelaOne-Regular.ttf' data-image="./images/Chela One.png">Chela</option>
+														<option value='./fonts/circus-webfont.ttf' data-image="./images/Russell Circus.png">Circus</option>
+														<option value='./fonts/Condiment-Regular.ttf' data-image="./images/Condiment.png">Condiment</option>
+														<option value='./fonts/Cookie-Regular.ttf' data-image="./images/Cookie.png">Cookie</option>
+														<option value='./fonts/Courgette-Regular.ttf' data-image="./images/Courgette.png">Courgette</option>
+														<option value='./fonts/CroissantOne-Regular.ttf' data-image="./images/Croissant One.png">Croissant</option>
+														<option value='./fonts/Damion-Regular.ttf' data-image="./images/Damion.png">Damion</option>
+														<option value='./fonts/Engagement-Regular.ttf' data-image="./images/Engagement.png">Engagement</option>
+														<option value='./fonts/GermaniaOne-Regular.ttf' data-image="./images/Germania One.png">Germania</option>
+														<option value='./fonts/Graduate-Regular.ttf' data-image="./images/Graduate.png">Graduate</option>
+														<option value='./fonts/GrandHotel-Regular.ttf' data-image="./images/Grand Hotel.png">Grand Hotel</option>
+														<option value='./fonts/JockeyOne-Regular.ttf' data-image="./images/Jockey One.png">Jockey</option>
+														<option value='./fonts/tuscan-webfont.ttf' data-image="./images/Kansas.png">Kansas Tuscan</option>
+														<option value='./fonts/KaushanScript-Regular.ttf' data-image="./images/Kaushan Script.png">Kaushan Script</option>
+														<option value='./fonts/LeckerliOne-Regular.ttf' data-image="./images/Leckerli One.png" selected>Leckerli</option>
+														<option value='./fonts/LilyScriptOne-Regular.ttf' data-image="./images/Lily Script One.png">Lily Script</option>
+														<option value='./fonts/Lobster-Regular.ttf' data-image="./images/Lobster.png">Lobster</option>
+														<option value='./fonts/LobsterTwo-Regular.ttf' data-image="./images/Lobster Two.png">Lobster Two</option>
+														<option value='./fonts/MetalMania-Regular.ttf' data-image="./images/Metal Mania.png">Metal Mania</option>
+														<option value='./fonts/Miniver-Regular.ttf' data-image="./images/Miniver.png">Miniver</option>
+														<option value='./fonts/Molle-Regular.ttf' data-image="./images/Molle.png">Molle</option>
+														<option value='./fonts/NewRocker-Regular.ttf' data-image="./images/New Rocker.png">New Rocker</option>
+														<option value='./fonts/Norican-Regular.ttf' data-image="./images/Norican.png">Norican</option>
+														<option value='./fonts/rawlingsoldenglish-webfont.ttf' data-image="./images/Rawlings Old English.png">Old English</option>
+														<option value='./fonts/OleoScript-Regular.ttf' data-image="./images/Oleo Script.png">Oleo Script</option>
+														<option value='./fonts/OleoScriptSwashCaps-Regular.ttf' data-image="./images/OleoScriptSwashCaps.png">Oleo Script Swash Caps</option>
+														<option value='./fonts/Pacifico.ttf' data-image="./images/Pacifico.png">Pacifico</option>												
+														<option value='./fonts/PirataOne-Regular.ttf' data-image="./images/Pirata One.png">Pirata</option>
+														<option value='./fonts/Playball-Regular.ttf' data-image="./images/Playball.png">Playball</option>
+														<option value='./fonts/pro_full_block-webfont.ttf' data-image="./images/Pro Full Block.png">Pro Full Block</option>
+														<option value='./fonts/rawlingsfancyblock-regular-webfont.ttf' data-image="./images/Rawlings Fancy Block.png">Fancy Block</option>
+														<option value='./fonts/richardson_fancy_block-webfont.ttf' data-image="./images/Richardson Fancy Block.png">Richardson Block</option>
+														<option value='./fonts/RubikOne-Regular.ttf' data-image="./images/Rubik One.png">Rubik</option>
+														<option value='./fonts/RumRaisin-Regular.ttf' data-image="./images/Rum Raisin.png">Rum Raisin</option>
+														<option value='./fonts/Satisfy-Regular.ttf' data-image="./images/Satisfy.png">Satisfy</option>
+														<option value='./fonts/SeymourOne-Regular.ttf' data-image="./images/Seymour One.png">Seymour</option>
+														<option value='./fonts/spl28script-webfont.ttf' data-image="./images/SPL28Script.png">SPL28 Script</option>
+														<option value='./fonts/tiffany-webfont.ttf' data-image="./images/UA Tiffany.png">Tiffany Regular</option>
+														<option value='./fonts/TradeWinds-Regular.ttf' data-image="./images/Trade Winds.png">Trade Winds</option>
+														<option value='./fonts/tuscan-webfont.ttf' data-image="./images/MLB_Tuscan_New.png">Tuscan</option>
+														<option value='./fonts/UnifrakturCook-Bold.ttf' data-image="./images/UnifrakturCook.png">Unifraktur Cook</option>
+														<option value='./fonts/UnifrakturMaguntia-Book.ttf' data-image="./images/UnifrakturMaguntia.png">Unifraktur Maguntia</option>
+														<option value='./fonts/Vibur-Regular.ttf' data-image="./images/Vibur.png">Vibur</option>
+														<option value='./fonts/Viga-Regular.ttf' data-image="./images/Viga.png">Viga</option>
+														<option value='./fonts/Wellfleet-Regular.ttf' data-image="./images/Wellfleet.png">Wellfleet</option>
+														<option value='./fonts/WendyOne-Regular.ttf' data-image="./images/Wendy One.png">Wendy</option>
+														<option value='./fonts/Yellowtail-Regular.ttf' data-image="./images/Yellowtail.png">Yellowtail</option>
+													</select> -->
+													<div id="jerseyWordmarkSelect" style="display:none;"></div>
 												</td>
+												<td style="width:20%;">&nbsp</td>
 											</tr>
 											<tr><td colspan="3" align="center">
 												<input id="jerseyCustomFont" type="file" name="customFont" accept=".ttf, .otf" style="display:none;" />
@@ -1095,200 +1011,6 @@
 												<td style="text-align:right;">
 													<input class="swashSelector" type="text" id="swashFillColor" data-element="">
 													<input class="swashSelector" type="text" id="swashStrokeColor" data-element="">
-												</td>
-											</tr>
-										</table>
-									</div>
-									<div class="jersey-accord-header jersey-inactive-header">Name & Number</div>
-									<div class="jersey-accord-content">
-										<table style="width:100%">
-											<tr>
-												<td class="checkCell"><input type="checkbox" id="jerseyNameCheck" data-id="playerName"></td>
-												<td colspan="2"><label>Text: </label><input class="jerseyNameOption" type="text" id="jerseyNameTextBox" style="width:79%; text-align:center;"/></td>
-											</tr>
-										</table>
-										<table style="width:100%;">
-											<tr>
-												<td style="text-align:center;">
-													<input type="checkbox" id="jerseyNameColorCheck" class="jerseyNameOption jerseyNameToggle" data-id="jerseyNameFill" checked>
-													<input class="selector jerseyNameColorSelector" type="text" id="jerseyNameFill" data-element="jerseyName">
-												</td>
-												<td style="text-align:center;">
-													<input type="checkbox" id="jesreyNameStroke1ColorCheck" class="jerseyNameOption jerseyNameToggle" data-id="jerseyNameStroke1" checked>
-													<label>Width:&nbsp;</label>
-													<input type="number" id="jesreyNameStroke1StrokeWidth" class="jerseyNameOption strokeWidth" data-group="playerName" data-id="jerseyNameStroke1" data-canvas="jerseyLogoCanvas" value="6" min="0" max="20">
-													<input class="selector jerseyNameColorSelector" type="text" id="jerseyNameStroke1" data-element="jerseyNameStroke1">
-												</td>
-												<td style="text-align:center;">
-													<input type="checkbox" id="jesreyNameStroke2ColorCheck" class="jerseyNameOption jerseyNameToggle" data-id="jerseyNameStroke2" checked>
-													<label>Width:&nbsp;</label>
-													<input type="number" id="jesreyNameStroke2StrokeWidth" class="jerseyNameOption strokeWidth" data-group="playerName" data-id="jerseyNameStroke2" data-canvas="jerseyLogoCanvas" value="6" min="0" max="20">
-													<input class="selector jerseyNameColorSelector" type="text" id="jerseyNameStroke2" data-element="jerseyNameStroke2">
-												</td>
-											<tr>
-										</table>
-										<table style="width:100%;">
-											<tr>
-												<td style="width:20%;">
-													<select id="jerseyNameWarpEffect" class="jerseyNameOption msDropDown" style="width:100%;">
-														<option value="none" data-image="./images/none.png"></option>
-														<option value="arch" data-value="15" data-image="./images/arched.png"></option>
-														<option value="arc" data-value="70" data-image="./images/arced.png"></option>
-													</select>
-												</td>
-												<td style="width:80%;" colspan="2">
-													<div style="width:80%; text-align:center;" class="standardWarp">
-														<input type="range" class="range" class="jerseyNameOption" id="jerseyNameWarpAmount" value="0" min="1" max="100" style="width:100%; float:left;">
-													</div>
-													<!-- <div style="width:15%; text-align:right; float:right;" class="standardWarp">
-														<input type="number" class="jerseyNameOption" style="width:50px; text-align:center;" id="jerseyNameWarpAmountDisplay" val="0">
-													</div> -->
-													<div style="width:49%; float:left; text-align:center; display:none;" class="diagonalWarp">
-														Horizontal Spacing: <input type="number" id="jerseyNameHSpacing" value="22" class="jerseyNameOption spacing" style="width:40px;">
-													</div>		
-												</td>
-											</tr>
-											<tr><td colspan="3" style="text-align:center; font-size:.8em;">Text effects may take a moment or two to process - be patient!</td></tr>
-										</table>	
-										<table style="width:100%;">
-											<tr>
-												<td>
-													<select id="jerseyNameTypeCombo" class='MLBBlock' style="width:100%;">
-														<optgroup class='MLBBlock'>
-														<option value='MLBBlock'>Baseball Block</option>
-														</optgroup>
-														<optgroup class='VarsityBlock'>
-														<option value='VarsityBlock'>Varsity Block</option>
-														</optgroup>
-														<optgroup class='VarsityBlock2'>
-														<option value='VarsityBlock2'>Varsity Block 2</option>
-														</optgroup>
-														<optgroup class='VarsityBlock3'>
-														<option value='VarsityBlock3'>Varsity Block 3</option>
-														</optgroup>
-													</select>
-												</td>
-												<td style="text-align:right;">
-													<input id="jerseyCustomFont" type="file" name="customFont" accept=".ttf, .otf" style="display:none;" />
-													<input type="button" class="button jerseyNameOption localFontButton" id="jerseyNameFakeFontButton" data-canvas="jerseyName" value="Choose a Local Font..." />
-													<input type="button" class="button jerseyNameOption" id="jerseyNameUploadTheFont" value="Upload Font" style="display:none;" />
-												</td>
-											</tr>
-										</table>
-
-										<table style="width:100%">
-											<tr style="text-align:center;">
-												<td colspan="2"><label>Jersey Number: </label>
-													<input type="number" class="year numberTextBox" id="jerseyNumberTextBox" name="jerseyNumberTextBox" onkeypress="return isNumberKey(event)" style="width:50px; text-align:center;" min="0" max="99" >
-												</td>
-											</tr>
-										</table>
-										<table style="width:100%;">
-											<tr>
-												<td class="checkCell" style="text-align:left;">
-													<input type="checkbox" id="jerseyBackNumberCheck" class="jerseyNumberCheck" data-id="jerseyBackNumber">
-													<label>&nbsp;Back</label>
-												</td>
-												<td style="text-align:center;">
-													<input type="checkbox" id="jerseyBackNumberColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="jerseyBackNumberFill" data-group="jerseyBackNumber" checked>
-													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jerseyBackNumberFill" data-element="jerseyName">
-												</td>
-												<td style="text-align:center;">
-													<input type="checkbox" id="jerseyBackNumberStroke1ColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="jerseyBackNumberStroke1" data-group="jerseyBackNumber"  checked>
-													<label>Width:&nbsp;</label>
-													<input type="number" id="jerseyBackNumberStroke1StrokeWidth" class="strokeWidth" data-group="jerseyBackNumber" data-id="jerseyBackNumberStroke1" data-canvas="jerseyLogoCanvas" value="5" min="0" max="20">
-													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jerseyBackNumberStroke1" data-element="jerseyNameStroke1">
-												</td>
-												<td style="text-align:center;">
-													<input type="checkbox" id="jerseyBackNumberStroke2ColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="jerseyBackNumberStroke2" data-group="jerseyBackNumber"  checked>
-													<label>Width:&nbsp;</label>
-													<input type="number" id="jerseyBackNumberStroke2StrokeWidth" class="strokeWidth" data-group="jerseyBackNumber" data-id="jerseyBackNumberStroke2" data-canvas="jerseyLogoCanvas" value="10" min="0" max="20">
-													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jerseyBackNumberStroke2" data-element="jesreyNameStroke2">
-												</td>
-											<tr>
-											<tr>
-												<td class="checkCell" style="text-align:left;">
-													<input type="checkbox" id="jerseyFrontNumberCheck" class="jerseyNumberCheck" data-id="jerseyFrontNumber">
-													<label>&nbsp;Front</label>
-												</td>
-												<td style="text-align:center;">
-													<input type="checkbox" id="jerseyFrontNumberColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="jerseyFrontNumberFill" data-group="jerseyFrontNumber" checked>
-													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jerseyFrontNumberFill" data-element="jerseyName">
-												</td>
-												<td style="text-align:center;">
-													<input type="checkbox" id="jerseyFrontNumberStroke1ColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="jerseyFrontNumberStroke1" data-group="jerseyFrontNumber" checked>
-													<label>Width:&nbsp;</label>
-													<input type="number" id="jerseyFrontNumberStroke1StrokeWidth" class="strokeWidth" data-group="jerseyFrontNumber" data-id="jerseyFrontNumberStroke1" data-canvas="jerseyLogoCanvas" value="5" min="0" max="20">
-													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jerseyFrontNumberStroke1" data-element="jerseyNameStroke1">
-												</td>
-												<td style="text-align:center;">
-													<input type="checkbox" id="jerseyFrontNumberStroke2ColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="jerseyFrontNumberStroke2" data-group="jerseyFrontNumber" checked>
-													<label>Width:&nbsp;</label>
-													<input type="number" id="jerseyFrontNumbertroke2StrokeWidth" class="strokeWidth" data-group="jerseyFrontNumber" data-id="jerseyFrontNumberStroke2" data-canvas="jerseyLogoCanvas" value="10" min="0" max="20">
-													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jerseyFrontNumberStroke2" data-element="jesreyNameStroke2">
-												</td>
-											<tr>
-											<tr>
-												<td class="checkCell" style="text-align:left;">
-													<input type="checkbox" id="jerseySleeveNumberCheck" class="jerseyNumberCheck" data-id="jerseySleeveNumber">
-													<label>&nbsp;Sleeve</label>
-												</td>
-												<td style="text-align:center;">
-													<input type="checkbox" id="jerseyNameColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="jerseySleeveNumberFill" data-group="jerseySleeveNumber" checked>
-													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jerseySleeveNumberFill" data-element="jerseyName">
-												</td>
-												<td style="text-align:center;">
-													<input type="checkbox" id="jerseySleeveNumberStroke1ColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="jerseySleeveNumberStroke1" data-group="jerseySleeveNumber" checked>
-													<label>Width:&nbsp;</label>
-													<input type="number" id="jerseySleeveNumberStroke1StrokeWidth" class="strokeWidth" data-group="jerseySleeveNumber" data-id="jerseySleeveNumberStroke1" data-canvas="jerseyLogoCanvas" value="5" min="0" max="20">
-													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jerseySleeveNumberStroke1" data-element="jerseyNameStroke1">
-												</td>
-												<td style="text-align:center;">
-													<input type="checkbox" id="jerseySleeveNumberStroke2ColorCheck" class="jerseyNumberOption jerseyNumberToggle" data-id="jerseySleeveNumberStroke2" data-group="jerseySleeveNumber" checked>
-													<label>Width:&nbsp;</label>
-													<input type="number" id="jerseySleeveNumber1StrokeWidth" class="strokeWidth" data-group="jerseySleeveNumber" data-id="jerseySleeveNumberStroke2" data-canvas="jerseyLogoCanvas" value="10" min="0" max="20">
-													<input class="jerseySelector selector jerseyNumberColorSelector" type="text" id="jerseySleeveNumberStroke2" data-element="jesreyNameStroke2">
-												</td>
-											<tr>
-										</table>	
-										<table style="width:100%;">
-											<tr>
-												<td colspan="3">
-													<select id="jerseyNumberTypeCombo" class='MLBBlock' style="width:100%;">
-														<optgroup class='MLBBlock'>
-														<option value='MLBBlock'>Baseball Block 1234567890</option>
-														</optgroup>
-														<optgroup class='VarsityBlock'>
-														<option value='VarsityBlock'>Varsity Block 1234567890</option>
-														</optgroup>
-														<optgroup class='VarsityBlock2'>
-														<option value='VarsityBlock2'>Varsity Block 2 1234567890</option>
-														</optgroup>
-														<optgroup class='VarsityBlock3'>
-														<option value='VarsityBlock3'>Varsity Block 3 1234567890</option>
-														</optgroup>
-														<optgroup class='McAuliffe'>
-														<option value='McAuliffe'>McAuliffe 1234567890</option>
-														</optgroup>
-														<optgroup class='ChicagoNL'>
-														<option value='ChicagoNL'>Chicago NL 1234567890</option>
-														</optgroup>
-														
-													</select>
-												</td>
-												<td style="text-align:right;">
-													<input id="jerseyCustomFont" type="file" name="customFont" accept=".ttf, .otf" style="display:none;" />
-													<input type="button" class="button jerseyNumberOption localFontButton" id="jerseyNumberFakeFontButton" data-canvas="jerseyNumber" value="Choose a Local Font..." />
-													<input type="button" class="button jerseyNumberOption" id="jerseyNumberUploadTheFont" value="Upload Font" style="display:none;" />
-												</td>
-											</tr>
-											<tr id="jerseyNumberCtl" style="display:none;text-align:center;">
-												<td colspan="4" style="text-align:center;">
-													<input type="button" class="button frontButton" value="Place on Chest Right">
-													<input type="button" class="button frontButton" value="Place on Chest Left">
-													<input type="button" class="button frontButton" value="Place Under Wordmark">
-													<input type="button" class="button sleeveButton" value="Place on Right Sleeve">
-													<input type="button" class="button sleeveButton" value="Place on Left Sleeve">
 												</td>
 											</tr>
 										</table>
@@ -2240,6 +1962,134 @@
 										</table>
 									</div>
                                 </div>
+								<div class="skltbs-panel" id="fontPanel">
+									<div class="cap-accord-header cap-active-header">Main Font Elements</div>
+                                    <div class="cap-accord-content" style="display:inline;">  
+                                        <table style="width:475px;">
+											<tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" class="toggle" data-toggle="letters" checked></td>
+												<td>Letters:</td>
+												<td style="text-align:right;">
+													<input class="selector letSelector" type="text" id="lettersFill" data-element="lettersFill">
+													<input class="selector letSelector" type="text" id="lettersStroke1" data-element="lettersStroke1">
+													<input class="selector letSelector" type="text" id="lettersStroke2" data-element="lettersStroke2">
+												</td>
+											</tr>
+											<tr class="color_tr">
+												<td>&nbsp;</td>
+												<td>Font:</td>
+												<td align="right">
+													<div id="letterDropdown"></div>
+												</td>
+											</tr>
+											<tr class="color_tr">
+												<td>&nbsp;</td>
+												<td>Style:</td>
+												<td align="right">
+													<select id="letterStyle" class="charStyle">
+														<option value="center" data-imagesrc="./images/shadow_centered.png" selected>Centered</option>
+														<option value="top,left" data-imagesrc="./images/shadow_bottomright.png">Bottom Right</option>
+														<option value="center,top" data-imagesrc="./images/shadow_bottom.png">Bottom Center</option>
+														<option value="top,right" data-imagesrc="./images/shadow_bottomleft.png">Bottom Left</option>
+														<option value="center,right" data-imagesrc="./images/shadow_left.png">Left Center</option>
+														<option value="bottom,right" data-imagesrc="./images/shadow_topleft.png">Top Left</option>
+														<option value="center,bottom" data-imagesrc="./images/shadow_top.png">Top Center</option>
+														<option value="bottom,left" data-imagesrc="./images/shadow_topright.png">Top Right</option>
+														<option value="center,left" data-imagesrc="./images/shadow_right.png">Right Center</option>
+													</select>
+												</td>
+											</tr>
+											<tr class="color_tr">
+												<td>&nbsp;</td>
+												<td>Inner Stroke:</td>
+												<td style="text-align:right;">
+													<input type="button" id="letter1StrokeDown" class="button rangeButton" value="-" data-number="letter1StrokeInput">
+													<input type="range" class="range" id="letter1StrokeRange" data-id="letter1StrokeInput" data-control="letter1Stroke" value=8 min="0" max="20">
+													<input type="button" id="letter1StrokeUp" class="button rangeButton" value="+" data-number="letter1StrokeInput">
+													<input type="number" id="letter1StrokeInput" class="strokeWidth" data-range="letter1StrokeRange" value=8 min="0" max="20">
+												</td>
+											</tr>
+											<tr class="color_tr">
+												<td>&nbsp;</td>
+												<td>Outer Stroke:</td>
+												<td style="text-align:right;">
+													<input type="button" id="letter2StrokeDown" class="button rangeButton" value="-" data-number="letter2StrokeInput">
+													<input type="range" class="range" id="letter2StrokeRange" data-id="letter2StrokeInput" data-control="letter2Stroke" value=16 min="0" max="40">
+													<input type="button" id="letter2StrokeUp" class="button rangeButton" value="+" data-number="letter2StrokeInput">
+													<input type="number" id="letter2StrokeInput" class="strokeWidth" data-range="letter2StrokeRange" value=16 min="0" max="40">
+												</td>
+											</tr>
+										</table>
+										<hr>
+										<table style="width:100%;">
+											<tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" class="toggle" data-toggle="numbers" checked></td>
+												<td><label>Numbers: </label></td>
+												<td style="text-align:right;">
+													<input class="selector numSelector" type="text" id="numbersFill" data-element="numbersFill">
+													<input class="selector numSelector" type="text" id="numbersStroke1" data-element="numbersStroke1">
+													<input class="selector numSelector" type="text" id="numbersStroke2" data-element="numbersStroke2">
+												</td>
+											</tr>
+											<tr class="color_tr">
+												<td>&nbsp;</td>
+												<td>Font:</td>
+												<td align="right">
+													<div id="numberDropdown"></div>
+												</td>
+											</tr>
+											<tr class="color_tr">
+												<td>&nbsp;</td>
+												<td>Style:</td>
+												<td align="right">
+													<select id="numberStyle" class="charStyle">
+														<option value="center" data-imagesrc="./images/shadow_centered.png" selected>Centered</option>
+														<option value="top,left" data-imagesrc="./images/shadow_bottomright.png">Bottom Right</option>
+														<option value="center,top" data-imagesrc="./images/shadow_bottom.png">Bottom Center</option>
+														<option value="top,right" data-imagesrc="./images/shadow_bottomleft.png">Bottom Left</option>
+														<option value="center,right" data-imagesrc="./images/shadow_left.png">Left Center</option>
+														<option value="bottom,right" data-imagesrc="./images/shadow_topleft.png">Top Left</option>
+														<option value="center,bottom" data-imagesrc="./images/shadow_top.png">Top Center</option>
+														<option value="bottom,left" data-imagesrc="./images/shadow_topright.png">Top Right</option>
+														<option value="center,left" data-imagesrc="./images/shadow_right.png">Right Center</option>
+													</select>
+												</td>
+											</tr>
+											<tr class="color_tr">
+												<td>&nbsp;</td>
+												<td>Inner Stroke:</td>
+												<td style="text-align:right;">
+													<input type="button" id="number1StrokeDown" class="button rangeButton" value="-" data-number="number1StrokeInput">
+													<input type="range" class="range" id="number1StrokeRange" data-id="number1StrokeInput" data-control="number1Stroke" value=12 min="0" max="20">
+													<input type="button" id="number1StrokeUp" class="button rangeButton" value="+" data-number="number1StrokeInput">
+													<input type="number" id="number1StrokeInput" class="strokeWidth" data-range="number1StrokeRange" value=12 min="0" max="20">
+												</td>
+											</tr>
+											<tr class="color_tr">
+												<td>&nbsp;</td>
+												<td>Outer Stroke:</td>
+												<td style="text-align:right;">
+													<input type="button" id="number2StrokeDown" class="button rangeButton" value="-" data-number="number2StrokeInput">
+													<input type="range" class="range" id="number2StrokeRange" data-id="number2StrokeInput" data-control="number2Stroke" value=24 min="0" max="40">
+													<input type="button" id="number2StrokeUp" class="button rangeButton" value="+" data-number="number2StrokeInput">
+													<input type="number" id="number2StrokeInput" class="strokeWidth" data-range="number2StrokeRange" value=24 min="0" max="40">
+												</td>
+											</tr>
+										</table>
+										<hr>
+							<table style="width:100%;">
+								<tr>
+									<td style="text-align: center;">
+										<input type="button" class="button" id="customFontFace" value="Choose a Local Font...">
+										<input type="button" class="button" id="customFontLayer" value="Load Overlay Image">
+										<input id="customFontLayerUploader" type="file" accept="image/*" style="display:none;"/>
+										<!--<input type="button" class="button" id="uploadTheFont" value="Upload Font" style="display:none;" />-->
+										<!--<input type="button" class="button" id="fitFont" value="temp button">-->
+									</td>
+								</tr>
+							</table>
+									</div>
+								</div>
                             </div>
                             </div>
                         </div>
@@ -2250,6 +2100,7 @@
 						<input type="button" class="button" id="savePants" value="Save Pants" style="display:none;">
 						<input type="button" class="button" id="saveCap" value="Save Cap" style="display:none;">
 						<input type="button" class="button" id="saveJersey" value="Save Jersey" style="display:none;">
+						<input type="button" class="button" id="saveFont" value="Save Font" style="display:none;">
 						<input type="button" class="button" id="saveSwatches" value="Save Swatches" style="display:none;">
 						<input type="button" class="button" id="loadSwatches" value="Load Swatches" style="display:none;">
                         <input type="button" class="button" id="save" value="Save Uniform">
@@ -2823,6 +2674,12 @@
 		enableRetinaScaling:false
 	})
 
+	var fontCanvas = new fabric.Canvas('fontCanvas', {
+		enableRetinaScaling:false,
+		controlsAboveOverlay:true,
+		id: 'fontCanvasCanvas'
+	})
+
 	//heightMapCanvas.renderAll()
 	//normalMapCanvas.renderAll()
 
@@ -2849,6 +2706,8 @@
     capBelow.setZoom(scaleRatio)
 	capLogoCanvas.setDimensions({ width: capLogoCanvas.getWidth() * 0.75, height: capLogoCanvas.getHeight() * 0.75 });
     capLogoCanvas.setZoom(scaleRatio)
+	fontCanvas.setDimensions({ width: fontCanvas.getWidth() * 0.75, height: fontCanvas.getHeight() * 0.75 });
+    fontCanvas.setZoom(scaleRatio)
 
 // DOCUMENT FUNCTIONS
 
@@ -2866,7 +2725,7 @@
 		$("#preferredSeamOpacity").val(prefs['preferredSeamOpacity'])
 		$("#toggleDiffuseSeams").prop("checked", prefs['seamsVisibleOnDiffuse'] == "true")
 
-		$("#jerseyFontTypeCombo").val(prefs['preferredJerseyFont']).trigger("change")
+		//$("#jerseyFontTypeCombo").val(prefs['preferredJerseyFont']).trigger("change")
 		$("#capFontTypeCombo").val(prefs['preferredCapFont']).trigger('change')
 
 		$(".preference").each(function() {
@@ -2966,6 +2825,8 @@
 		$("#capFontTypeCombo").prop("disabled",true)
 
 		$("#jerseyFontTypeCombo").prop("disabled",true)
+
+		$("#jerseyWordmarkSelect").css("display","none")
 
 		$("#warpAmount").prop("disabled",true)
 
@@ -3080,29 +2941,61 @@
 		}
 	})
 
+	$("#jerseyWordmarkSelect").ddslick({
+		data:ddData,
+		width: 300,
+		imagePosition:"left",
+		height: 250,
+		onSelected: function(selectedData){
+			if (ddCount > 1) {
+				var ddData = $('#jerseyWordmarkSelect').data('ddslick')
+				console.log(ddData)
+				jerseyWordmarkChange(selectedData.selectedData.value)
+				//changeFont(numbers, selectedData.selectedData.value)
+			}
+			ddCount++
+		}   
+	});
+
+	$('#jerseyWordmarkSelect').ddslick('select', {index: 23 })
+	
 	$("#tabContainer").on("skeletabs:move", function(event, info){
 		switch (info.nextIndex) {
 			case 0:
+				activeCanvas = jerseyLogoCanvas;
 				$("#jerseyOverlay").css("display","none");
 				$("#capOverlay").css("display","inline-block");
 				$("#pantsOverlay").css("display","inline-block");
 				$("#pantsAndCapContainer").css("display","inline-block")
 				$("#eyedropper").css("display","inline-block")
+				$("#fontContainer").css("display","none")
 				break;
 			case 1:
+				activeCanvas = pantsLogoCanvas;
 				$("#jerseyOverlay").css("display","inline-block");
 				$("#capOverlay").css("display","inline-block");
 				$("#pantsOverlay").css("display","none");
 				$("#pantsAndCapContainer").css("display","inline-block")
 				$("#eyedropper").css("display","inline-block")
+				$("#fontContainer").css("display","none")
 				break;
 			case 2:
+				activeCanvas = capLogoCanvas;
 				$("#jerseyOverlay").css("display","inline-block");
 				$("#capOverlay").css("display","none");
 				$("#pantsOverlay").css("display","inline-block");
 				$("#pantsAndCapContainer").css("display","inline-block")
 				$("#eyedropper").css("display","inline-block")
+				$("#fontContainer").css("display","none")
 				break;
+			case 3:
+				activeCanvas = fontCanvas;
+				$("#jerseyOverlay").css("display","none");
+				$("#capOverlay").css("display","none");
+				$("#pantsOverlay").css("display","none");
+				$("#pantsAndCapContainer").css("display","none")
+				$("#eyedropper").css("display","none")
+				$("#fontContainer").css("display","inline-block")
 		}
 	})
 
@@ -4873,7 +4766,8 @@
 		})
 		$("#warpAmount").prop("disabled",$("#wordmarkCheck").is(":checked") ? false : true);
 	    $("#warpEffect").msDropDown().data("dd").set("disabled", $("#wordmarkCheck").is(":checked") ? false : true)
-		$("#jerseyFontTypeCombo").prop("disabled", $("#wordmarkCheck").is(":checked") ? false : true)
+		//$("#jerseyFontTypeCombo").set("disabled", $(this).is(":checked") ? false : true);
+		$("#jerseyWordmarkSelect").css("display", $(this).is(":checked") ? "inline-block" : "none");
 		$(".jerseyTextColorSelector").each(function() {
 			$(this).spectrum($("#wordmarkCheck").is(":checked") ? 'enable' : 'disable')
 		})
@@ -5102,20 +4996,70 @@
 		jerseyLogoCanvas.renderAll();
 	})
 
-	$("#jerseyFontTypeCombo").on("change",function() {
-		const style = $(this).val();
-		const font_family = $("."+style).css("font-family");
-		var g = jerseyLogoCanvas.getObjects().find(o => o.id === 'wordmark');
-		g.getObjects().forEach(function(o) {
-			o.set("fontFamily", font_family)
-			wordmark.dirty = true;
+	function jerseyWordmarkChange(font) {
+		opentype.load(font, (err,font) => {
+			if (err || !font) {
+				console.log(err)
+				return;
+			}
+
+			const path = font.getPath("Bulldogs",256,681,50)
+			const svgPath = path.toPathData(5)
+
+			var grp = jerseyLogoCanvas.getObjects("group").find(o => o.id === "wordmark")
+
+			grp.getObjects('path').forEach(function(o) {
+				grp.removeWithUpdate(o)
+			})
+
+			wordmarkText = new fabric.Path(svgPath, {
+				left: 256,
+				originX: 'center',
+				originY: 'center',
+				centeredScaling: true,
+				centeredRotation: true,
+				id: 'wordmarkText',
+				fill: initialJerseyColors["wordmarkTextColor"],
+				stroke: initialJerseyColors["wordmarkTextColor"],
+				strokeWidth: 0
+			})
+		
+			wordmarkTextStroke1 = new fabric.Path(svgPath, {
+				left: 256,
+				originX: 'center',
+				originY: 'center',
+				centeredScaling: true,
+				centeredRotation: true,
+				stroke: initialJerseyColors["wordmarkTextStroke1Color"],
+				strokeWidth: 6,
+				strokeLineCap: "round",
+				id: 'wordmarkTextStroke1',
+				fill: initialJerseyColors["wordmarkTextStroke1Color"]
+			})
+		
+			wordmarkTextStroke2 = new fabric.Path(svgPath, {
+				left: 256,
+				originX: 'center',
+				originY: 'center',
+				centeredScaling: true,
+				centeredRotation: true,
+				stroke: initialJerseyColors["wordmarkTextStroke2Color"],
+				strokeWidth: 10,
+				strokeLineCap: "round",
+				id: 'wordmarkTextStroke2',
+				fill: initialJerseyColors["wordmarkTextStroke2Color"]
+			})
+
+			grp.addWithUpdate(wordmarkTextStroke2)
+			grp.addWithUpdate(wordmarkTextStroke1)
+			grp.addWithUpdate(wordmarkText)
+
+			jerseyLogoCanvas.renderAll()
 		})
-		jerseyLogoCanvas.renderAll();
-		$(this).removeClass().addClass(style);
 		if (imNeeded) {
 			warpText()
 		}
-	})
+	}
 
 	$("#warpEffect").on("change",function(e) {
 		if ($(this).val() == "none") {
@@ -6727,7 +6671,792 @@
 		capLogoCanvas.renderAll();
 	})
 
-// CANVAS INITIALIZE FUNCTIONS
+// FONT SPECIFIC
+
+	initializeFont()
+
+	$("#lettersFill").spectrum({
+		type: "color",
+		showAlpha: false,
+		showInput: true,
+		preferredFormat: 'hex',
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		allowEmpty: false,
+		color: initialTextColors['fillColor'],
+		beforeShow: function(color) {
+			$(this).spectrum("option", "palette", jerseyPalette)
+		},
+		show: function(color) {
+			var original_color = color;
+			$(this).data('changed', false);
+		},
+		move: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(!isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Fill")  > -1) {
+							p.set("fill", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		},
+		change: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(!isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Fill")  > -1) {
+							p.set("fill", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		},
+		hide: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(!isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Fill")  > -1) {
+							p.set("fill", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		}
+	})
+
+	$("#lettersStroke1").spectrum({
+		type: "color",
+		showAlpha: false,
+		showInput: true,
+		preferredFormat: 'hex',
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		allowEmpty: true,
+		color: initialTextColors['stroke1Color'],
+		beforeShow: function(color) {
+			$(this).spectrum("option", "palette", jerseyPalette)
+		},
+		show: function(color) {
+			var original_color = color;
+			$(this).data('changed', false);
+		},
+		move: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(!isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Fill")  > -1) {
+							p.set("stroke", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		},
+		change: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(!isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Fill")  > -1) {
+							p.set("stroke", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		},
+		hide: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(!isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Fill")  > -1) {
+							p.set("stroke", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		}
+	})
+
+	$("#lettersStroke2").spectrum({
+		type: "color",
+		showAlpha: false,
+		showInput: true,
+		preferredFormat: 'hex',
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		allowEmpty: true,
+		color: initialTextColors['stroke2Color'],
+		beforeShow: function(color) {
+			$(this).spectrum("option", "palette", jerseyPalette)
+		},
+		show: function(color) {
+			var original_color = color;
+			$(this).data('changed', false);
+		},
+		move: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(!isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Stroke")  > -1) {
+							p.set("fill", c);
+							p.set("stroke", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		},
+		change: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(!isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Stroke")  > -1) {
+							p.set("fill", c);
+							p.set("stroke", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		},
+		hide: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(!isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Stroke")  > -1) {
+							p.set("fill", c);
+							p.set("stroke", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		}
+	})
+
+	$("#numbersFill").spectrum({
+		type: "color",
+		showAlpha: false,
+		showInput: true,
+		preferredFormat: 'hex',
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		allowEmpty: false,
+		color: initialTextColors['fillColor'],
+		beforeShow: function(color) {
+			$(this).spectrum("option", "palette", jerseyPalette)
+		},
+		show: function(color) {
+			var original_color = color;
+			$(this).data('changed', false);
+		},
+		move: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Fill")  > -1) {
+							p.set("fill", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		},
+		change: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Fill")  > -1) {
+							p.set("fill", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		},
+		hide: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Fill")  > -1) {
+							p.set("fill", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		}
+	})
+
+	$("#numbersStroke1").spectrum({
+		type: "color",
+		showAlpha: false,
+		showInput: true,
+		preferredFormat: 'hex',
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		allowEmpty: true,
+		color: initialTextColors['stroke1Color'],
+		beforeShow: function(color) {
+			$(this).spectrum("option", "palette", jerseyPalette)
+		},
+		show: function(color) {
+			var original_color = color;
+			$(this).data('changed', false);
+		},
+		move: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Fill")  > -1) {
+							p.set("stroke", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		},
+		change: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Fill")  > -1) {
+							p.set("stroke", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		},
+		hide: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Fill")  > -1) {
+							p.set("stroke", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		}
+	})
+
+	$("#numbersStroke2").spectrum({
+		type: "color",
+		showAlpha: false,
+		showInput: true,
+		preferredFormat: 'hex',
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		allowEmpty: true,
+		color: initialTextColors['stroke2Color'],
+		beforeShow: function(color) {
+			$(this).spectrum("option", "palette", jerseyPalette)
+		},
+		show: function(color) {
+			var original_color = color;
+			$(this).data('changed', false);
+		},
+		move: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Stroke")  > -1) {
+							p.set("fill", c);
+							p.set("stroke", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		},
+		change: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Stroke")  > -1) {
+							p.set("fill", c);
+							p.set("stroke", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		},
+		hide: function(color) {
+			$(this).data('changed', true);
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			fontCanvas.getObjects().forEach(function(o){
+				if(isNumeric(o.id)) {
+					o.getObjects().forEach(function(p) {
+						if (p.id.indexOf("Stroke")  > -1) {
+							p.set("fill", c);
+							p.set("stroke", c);
+						}
+					}) 
+				}
+			})
+			fontCanvas.renderAll()
+		}
+	})
+
+	$('#numberDropdown').ddslick({
+		data:ddData,
+		width: 300,
+		imagePosition:"left",
+		height: 250,
+		onSelected: function(selectedData){
+			if (ddCount > 1) {
+				changeFont(numbers, selectedData.selectedData.value)
+			}
+			ddCount++
+		}   
+	});
+
+	$('#letterDropdown').ddslick({
+		data:ddData,
+		width: 300,
+		imagePosition:"left",
+		height: 250,
+		onSelected: function(selectedData){
+			if (ddCount > 1) {
+				changeFont(letters, selectedData.selectedData.value)
+			}
+			ddCount++
+		}   
+	});
+
+	$('#letterStyle').ddslick({
+		//data:ddData,
+		width: 300,
+		imagePosition:"left",
+		height: 200,
+		onSelected: function(selectedData){
+			if (dsCount > 1) {
+				letterStyle = selectedData.selectedData.value
+				for (x of letters) {
+					group = fontCanvas.getObjects().find(o => o.id == x)
+					for (y of (letterStyle.split(","))) {
+						groupAlign(group,y)
+					}
+					fontCanvas.renderAll()
+				}
+				//changeFont(letters, selectedData.selectedData.value)
+			}
+			dsCount++
+		}   
+	});
+
+	$('#numberStyle').ddslick({
+		//data:ddData,
+		width: 300,
+		imagePosition:"left",
+		height: 200,
+		onSelected: function(selectedData){
+			if (dsCount > 1) {
+				numberStyle = selectedData.selectedData.value
+				for (x of numbers) {
+					group = fontCanvas.getObjects().find(o => o.id == x)
+					for (y of (numberStyle.split(","))) {
+						groupAlign(group,y)
+					}
+					fontCanvas.renderAll()
+				}
+				//changeFont(numbers, selectedData.selectedData.value)
+			}
+			dsCount++
+		}   
+	});
+
+	function changeFont(arr, font) {
+		opentype.load(font, (err,font) => {
+			if (err || !font) {
+				console.log(err)
+				return;
+			}
+
+			const maxNumWidth = 168
+			const maxLetWidth = 54
+
+			var nArr = []
+			var lArr = []
+
+			//const arr = (type == "letters") ? letters : numbers;
+
+			arr.forEach((chr) => {
+				var char = chars.find(o => o.char === chr)
+				var scaleY = (char.char.startsWith("small")) ? 0.7 : 1
+				var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+				const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+				const svgPath = paths.toPathData(5)
+				var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
+				grp.getObjects('path').forEach(function(o) {
+					grp.removeWithUpdate(o)
+				})
+				fontCanvas.renderAll()
+
+				var tmp = new fabric.Path(svgPath, {
+					fill: initialTextColors['fillColor'], 
+				});
+
+				if (isNumeric(chr)) {
+					var scaleX = (tmp.width > maxNumWidth) ? maxNumWidth / tmp.width : 1	
+					var strokeWidth1 = strokeWidth["numbers1"]
+					var strokeWidth2 = strokeWidth["numbers2"]
+					var fillColor = (overlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:overlayImage})
+					var stroke1Color = $("#numbersStroke1").spectrum("get")
+					var stroke2Color = $("#numbersStroke2").spectrum("get")
+				} else {
+					var scaleX = (tmp.width > maxLetWidth) ? maxLetWidth / tmp.width : 1
+					var strokeWidth1 = strokeWidth["letters1"]
+					var strokeWidth2 = strokeWidth["letters2"]
+					var fillColor = (overlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:overlayImage})
+					var stroke1Color = $("#lettersStroke1").spectrum("get")
+					var stroke2Color = $("#lettersStroke2").spectrum("get")
+				}
+
+				var strokePath = new fabric.Path(svgPath, {
+					id: char.char.toLowerCase()+"Stroke",
+					fill: stroke2Color, 
+					stroke: stroke2Color, 
+					strokeWidth: strokeWidth2,
+					strokeLineCap: "round",
+					paintFirst: "stroke",
+					visible: true,
+					originX: "center",
+    				originY: "center",
+					scaleX: scaleX,
+					scaleY: scaleY
+				})
+
+				var newTextPath = new fabric.Path(svgPath, {
+					id: char.char.toLowerCase()+"Fill",
+					fill: fillColor, 
+					stroke: stroke1Color, 
+					strokeWidth: strokeWidth1, 
+					strokeLineCap: "round",
+					paintFirst: "stroke",
+					visible: true,
+					originX: "center",
+    				originY: "center",
+					scaleX: scaleX,
+					scaleY: scaleY
+				});
+				
+				grp.addWithUpdate(strokePath)
+				grp.addWithUpdate(newTextPath)
+
+				if (isNumeric(chr)) {
+					for (y of numberStyle.split(",")) {
+						groupAlign(grp,y)
+					}
+				} else {
+					for (y of letterStyle.split(",")) {
+						groupAlign(grp,y)
+					}
+				}
+
+			})
+
+			fontCanvas.renderAll()
+		})
+	}
+
+	function groupAlign(group, direction) {
+		var groupWidth = group.getBoundingRect(true).width,
+			groupHeight = group.getBoundingRect(true).height,
+			scaleFactor = group.get('scaleX')
+
+		group.forEachObject(function(item) {
+
+			var itemWidth = item.getBoundingRect().width * scaleFactor,
+				itemHeight = item.getBoundingRect().height * scaleFactor;
+
+			switch (direction) {
+				case "left":
+					item.set({left: -groupWidth / 2 + itemWidth / 2});
+					break;
+				case "top":
+					item.set({top: -groupHeight / 2 + itemHeight / 2});
+					break;
+				case "right":
+					item.set({left: groupWidth / 2 - itemWidth / 2});
+					break;
+				case "bottom":
+					item.set({top: groupHeight / 2 - itemHeight / 2});
+					break;
+				case "center":
+					item.set({left: 0, top: 0});
+					break;
+			}
+			//prevDirection = direction;
+		});
+
+		group.forEachObject(function(item) {
+			group.removeWithUpdate(item).addWithUpdate(item);
+		});
+
+		group.setCoords();
+
+    	fontCanvas.renderAll();
+	}
+
+	$("#customFontFace").on("click",function(e) {
+		console.log("hello")
+		$.ajax({
+			type: "GET",
+			url: "http://127.0.0.1:"+port+"/customFont",
+			success: function(data) {
+				if (data.status != "cancelled") {
+					if (data.status == "error") {
+						alert("An error occurred:\r\n\r\n"+data.message)
+					} else {
+						opentype.load(data.fontBase64, (err,font) => {
+							if (err || !font) {
+								console.log(err)
+								return;
+							}
+
+							const maxNumWidth = 168
+							const maxLetWidth = 54
+
+							var nArr = []
+							var lArr = []
+
+							const arr = letters.concat(numbers)
+
+							arr.forEach((chr) => {
+								var char = chars.find(o => o.char === chr)
+								var scaleY = (char.char.startsWith("small")) ? 0.7 : 1
+								var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+								const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+								const svgPath = paths.toPathData(5)
+								var grp = fontCanvas.getObjects('group').find(o => o.id === chr)
+								grp.getObjects('path').forEach(function(o) {
+									grp.removeWithUpdate(o)
+								})
+								fontCanvas.renderAll()
+
+								var tmp = new fabric.Path(svgPath, {
+									fill: initialTextColors['fillColor'], 
+								});
+
+								if (isNumeric(chr)) {
+									var scaleX = (tmp.width > maxNumWidth) ? maxNumWidth / tmp.width : 1	
+									var strokeWidth1 = strokeWidth["numbers1"]
+									var strokeWidth2 = strokeWidth["numbers2"]
+									var fillColor = (overlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:overlayImage})
+									var stroke1Color = $("#numbersStroke1").spectrum("get")
+									var stroke2Color = $("#numbersStroke2").spectrum("get")
+								} else {
+									var scaleX = (tmp.width > maxLetWidth) ? maxLetWidth / tmp.width : 1
+									var strokeWidth1 = strokeWidth["letters1"]
+									var strokeWidth2 = strokeWidth["letters2"]
+									var fillColor = (overlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:overlayImage})
+									var stroke1Color = $("#lettersStroke1").spectrum("get")
+									var stroke2Color = $("#lettersStroke2").spectrum("get")
+								}
+
+
+								var strokePath = new fabric.Path(svgPath, {
+									id: char.char.toLowerCase()+"Stroke",
+									fill: stroke2Color, 
+									stroke: stroke2Color, 
+									strokeWidth: strokeWidth2, 
+									strokeLineCap: "round",
+									paintFirst: "stroke",
+									visible: true,
+									originX: "center",
+    								originY: "center",
+									scaleX: scaleX,
+									scaleY: scaleY
+								})
+
+								var newTextPath = new fabric.Path(svgPath, {
+									id: char.char.toLowerCase()+"Fill",
+									fill: fillColor, 
+									stroke: stroke1Color, 
+									strokeWidth: strokeWidth1, 
+									strokeLineCap: "round",
+									paintFirst: "stroke",
+									visible: true,
+									originX: "center",
+    								originY: "center",
+									scaleX: scaleX,
+									scaleY: scaleY
+								});
+								
+								grp.addWithUpdate(strokePath)
+								grp.addWithUpdate(newTextPath)
+
+								if (isNumeric(chr)) {
+									for (y of numberStyle.split(",")) {
+										groupAlign(grp,y)
+									}
+								} else {
+									for (y of letterStyle.split(",")) {
+										groupAlign(grp,y)
+									}
+								}
+							})
+
+							var thumbText = font.getPath("ABC 123", 0, 0, 96)
+							var outPath = thumbText.toPathData(5)
+
+							var foo = new fabric.Path(outPath, {
+								fill: 'black',
+								top: 0,
+								left: 0
+							})
+
+							fontCanvas.renderAll()
+
+							var addData = {
+								"value": data.fontBase64,
+								"text": data.fontName,
+								"selected": true,
+								"imageSrc": foo.toDataURL()
+							}
+
+							$("#numberDropdown").ddslick("destroy")
+							$("#letterDropdown").ddslick("destroy")
+
+							const elementToUpdate = ddData.find(entry => entry.selected === true);
+							
+							if (elementToUpdate) {
+								elementToUpdate.selected = false;
+							}
+							
+							push(ddData, addData)
+							ddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
+
+							$('#numberDropdown').ddslick({
+								data:ddData,
+								width: 300,
+								height: 250,
+								imagePosition:"left",
+								onSelected: function(selectedData){
+									changeFont(numbers, selectedData.selectedData.value)
+								}   
+							});
+
+							$('#letterDropdown').ddslick({
+								data:ddData,
+								width: 300,
+								height: 250,
+								imagePosition:"left",
+								onSelected: function(selectedData){
+									changeFont(letters, selectedData.selectedData.value)
+								}   
+							});
+						})
+					}
+				}
+			}
+		})
+	})
+
+	$("#customFontLayer").on("click",function(e) {
+		if ($(this).val() == "Load Overlay Image") {
+			$("#customFontLayerUploader").click()
+		} else {
+			overlayImage = null
+			const arr = letters.concat(numbers)
+			for (x of arr) {
+				var fill = (isNumeric(x)) ? $("#numbersFill").spectrum("get") : $("#lettersFill").spectrum("get")
+				for (x of arr) {
+					var group = fontCanvas.getObjects().find(o => o.id == x)
+					group._objects[1].set({
+						'fill': fill
+					})
+				}
+				fontCanvas.renderAll()
+			}
+			$("#customFontLayer").val("Load Overlay Image")
+		}	
+	})
+
+	$("#customFontLayerUploader").on("change",function(e) {
+		var reader = new FileReader();
+		const arr = letters.concat(numbers)
+		reader.onload = function(e) {
+			var image = new Image();
+			image.src = e.target.result;
+			image.onload = function() {
+				for (x of arr) {
+					var group = fontCanvas.getObjects().find(o => o.id == x)
+					group._objects[1].set({
+						'fill': new fabric.Pattern({
+							source:image
+						})
+					})
+				}
+				overlayImage = image
+				$("#customFontLayer").val("Clear Overlay Image")
+				fontCanvas.renderAll()
+			}
+		}
+		reader.readAsDataURL(e.target.files[0]);
+	}) 
+
+	fontCanvas.on('selection:created', function(e) {
+		const g = fontCanvas.getActiveObject()
+		g.bringToFront()
+		$("#tipSpan").html("Use Arrow keys to move selection 1 pixel.<br>Use Shift + Arrow keys to move selection 10 pixels.");
+	})
+
+	fontCanvas.on('selection:cleared', function(e) {
+		$("#tipSpan").html("");
+	})
+
+	// CANVAS INITIALIZE FUNCTIONS
 
 	function initializeCap() {
 
@@ -8501,70 +9230,6 @@
 			fill: initialJerseyColors["swashStrokeColor"]
 		});
 
-		wordmarkText = new fabric.Text('Bulldogs',{
-			fontFamily: "Leckerli One",
-			fontSize: 50,
-			originX: 'center',
-			originY: 'center',
-			left: 256,
-			top: 681,
-			textAlign: 'center',
-			centeredScaling: true,
-			centeredRotation: true,
-			id: 'wordmarkText',
-			fill: initialJerseyColors["wordmarkTextColor"],
-			stroke: initialJerseyColors["wordmarkTextColor"],
-			strokeWidth: 0
-		})
-		
-		wordmarkTextStroke1 = new fabric.Text('Bulldogs',{
-			fontFamily: "Leckerli One",
-			fontSize: 50,
-			originX: 'center',
-			originY: 'center',
-			left: 256,
-			top: 681,
-			textAlign: 'center',
-			centeredScaling: true,
-			centeredRotation: true,
-			stroke: initialJerseyColors["wordmarkTextStroke1Color"],
-			strokeWidth: 6,
-			strokeLineCap: "round",
-			id: 'wordmarkTextStroke1',
-			fill: initialJerseyColors["wordmarkTextStroke1Color"]
-		})
-		
-		wordmarkTextStroke2 = new fabric.Text('Bulldogs',{
-			fontFamily: "Leckerli One",
-			fontSize: 50,
-			originX: 'center',
-			originY: 'center',
-			left: 256,
-			top: 681,
-			textAlign: 'center',
-			centeredScaling: true,
-			centeredRotation: true,
-			stroke: initialJerseyColors["wordmarkTextStroke2Color"],
-			strokeWidth: 10,
-			strokeLineCap: "round",
-			id: 'wordmarkTextStroke2',
-			fill: initialJerseyColors["wordmarkTextStroke2Color"]
-		})
-		
-		wordmark = new fabric.Group ([wordmarkTextStroke2, wordmarkTextStroke1, wordmarkText],{
-			visible: false,
-			id:'wordmark',
-			borderColor: 'red',
-			cornerColor: 'yellow',
-			cornerSize: 12,
-			transparentCorners: false,
-			originX: 'center',
-			originY: 'center',
-			left: 256,
-			top: 681,
-			visible: false
-		})
-
 		swash1Group = new fabric.Group([swash1Stroke,swash1], {
 			originX: 'center',
 			originY: 'center',
@@ -9031,7 +9696,73 @@
 		jerseyLogoCanvas.add(swash4Group)
 		jerseyLogoCanvas.add(swash5Group)
 		jerseyLogoCanvas.add(swash6Group)
-		jerseyLogoCanvas.add(wordmark)
+
+		opentype.load("./fonts/LeckerliOne-Regular.ttf", (err,font) => {
+			if (err || !font) {
+				console.log(err)
+				return;
+			}
+
+			const path = font.getPath("Bulldogs",256,681,50)
+			const svgPath = path.toPathData(5)
+
+			wordmarkText = new fabric.Path(svgPath, {
+				left: 256,
+				originX: 'center',
+				originY: 'center',
+				centeredScaling: true,
+				centeredRotation: true,
+				id: 'wordmarkText',
+				fill: initialJerseyColors["wordmarkTextColor"],
+				stroke: initialJerseyColors["wordmarkTextColor"],
+				strokeWidth: 0
+			})
+		
+			wordmarkTextStroke1 = new fabric.Path(svgPath, {
+				left: 256,
+				originX: 'center',
+				originY: 'center',
+				centeredScaling: true,
+				centeredRotation: true,
+				stroke: initialJerseyColors["wordmarkTextStroke1Color"],
+				strokeWidth: 6,
+				strokeLineCap: "round",
+				id: 'wordmarkTextStroke1',
+				fill: initialJerseyColors["wordmarkTextStroke1Color"]
+			})
+		
+			wordmarkTextStroke2 = new fabric.Path(svgPath, {
+				left: 256,
+				originX: 'center',
+				originY: 'center',
+				centeredScaling: true,
+				centeredRotation: true,
+				stroke: initialJerseyColors["wordmarkTextStroke2Color"],
+				strokeWidth: 10,
+				strokeLineCap: "round",
+				id: 'wordmarkTextStroke2',
+				fill: initialJerseyColors["wordmarkTextStroke2Color"]
+			})
+			
+			wordmark = new fabric.Group ([],{
+				visible: false,
+				id:'wordmark',
+				borderColor: 'red',
+				cornerColor: 'yellow',
+				cornerSize: 12,
+				transparentCorners: false,
+				originX: 'center',
+				originY: 'center',
+				visible: false,
+			})
+
+			wordmark.addWithUpdate(wordmarkTextStroke2)
+			wordmark.addWithUpdate(wordmarkTextStroke1)
+			wordmark.addWithUpdate(wordmarkText)
+
+			jerseyLogoCanvas.add(wordmark)
+		})
+
 		jerseyLogoCanvas.add(playerName)
 		jerseyLogoCanvas.add(jerseyBackNumber)
 		jerseyLogoCanvas.add(jerseyFrontNumber)
@@ -9640,7 +10371,75 @@
 		reRenderBG("pants")	
 	}
 
-// GENERAL PURPOSE RENDERING FUNCTIONS
+	function initializeFont() {
+		fontCanvas.set({
+			backgroundColor: "#D8D8D8"
+		})
+
+		fontCanvas.setBackgroundImage('./images/symbol_grid.png', fontCanvas.renderAll.bind(fontCanvas), {});
+
+		opentype.load("./fonts/MLBBlock.ttf", (err,font) => {
+			if (err || !font) {
+				console.log(err)
+				return;
+			}
+
+			for (var i = 0; i < chars.length; i++) {
+				const scaleY = (chars[i].type == "small") ? 0.7 : 1
+				//const idVal = (chars[i].type == "small") ? "small"+chars[i].char : chars[i].char
+				const chVal = (chars[i].type == "small") ? chars[i].char.slice(-1) : chars[i].char
+
+				const paths = font.getPath(chVal, chars[i].left*2, chars[i].bottom*2, chars[i].size*2)
+				const svgPath = paths.toPathData(5)
+
+				if (isNumeric(chVal)) {
+					var strokeWidth1 = strokeWidth["numbers1"]
+					var strokeWidth2 = strokeWidth["numbers2"]
+				} else {
+					var strokeWidth1 = strokeWidth["letters1"]
+					var strokeWidth2 = strokeWidth["letters2"]
+				}
+
+				const strokePath = new fabric.Path(svgPath, {
+					id: chars[i].char.toLowerCase()+"Stroke",
+					fill: initialTextColors['stroke2Color'], 
+					stroke: initialTextColors['stroke2Color'], 
+					strokeWidth: strokeWidth2, 
+					strokeLineCap: "round",
+					paintFirst: "stroke",
+					originX: "center",
+    				originY: "center",
+					scaleY: scaleY
+				})
+
+				const newTextPath = new fabric.Path(svgPath, {
+					id: chars[i].char.toLowerCase()+"Fill",
+					fill: initialTextColors['fillColor'], 
+					stroke: initialTextColors['stroke1Color'], 
+					strokeWidth: strokeWidth1, 
+					strokeLineCap: "round",
+					paintFirst: "stroke",
+					originX: "center",
+    				originY: "center",
+					scaleY: scaleY
+				});
+
+				const group = new fabric.Group([], {
+					id: chars[i].char,
+					preserveObjectStacking: true
+				})
+
+				group.addWithUpdate(strokePath)
+				group.addWithUpdate(newTextPath)
+
+				fontCanvas.add(group)
+			}
+		})
+
+		fontCanvas.renderAll()
+	}
+
+	// GENERAL PURPOSE RENDERING FUNCTIONS
 
     function reRenderBG(target) {
         switch (target) {
@@ -11565,6 +12364,70 @@
 		})
 	})
 
+	$("#saveFont").on("click", function(e) {
+		var startYear = parseInt($("#startYear").val());
+		var endYear = parseInt($("#endYear").val())
+		var yearRange = "";
+		var teamName = "";
+		if (startYear > endYear && endYear > 0) {
+			alert("The start year has to be before the end year!");
+			return false;
+		}
+		if (startYear == endYear && startYear > 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear == 0 && endYear > 0) {
+			yearRange = $("#endYear").val();
+		} else if (startYear > 0 && endYear == 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear > 0 && endYear > 0) {
+			yearRange = $("#startYear").val()+"-"+$("#endYear").val()
+		} else {
+			yearRange = ""
+		}
+		if (yearRange.length > 0) {
+			yearRange = "_"+yearRange;
+		}
+		if ($("#teamName").val().length == 0) {
+			teamName = "Unknown_Team";
+		} else {
+			teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
+		}
+	
+		var fileName = "font_"+teamName+"_"+$("#fontType").val()+yearRange;
+
+		fileName = fileName.split(' ').join('_').toLowerCase();
+
+		fontCanvas.set({
+			backgroundColor: null,
+			backgroundImage: null,
+		})
+
+		fontCanvas.setDimensions({ width: 1024, height: 1024 });
+    	fontCanvas.setZoom(1)
+
+		$.ajax({
+			type: "POST",
+			url: "http://127.0.0.1:"+port+"/saveFont",
+			dataType: "json",
+			data: {
+				name: fileName,
+				fontCanvas: fontCanvas.toDataURL()
+			},
+			success: function(data) {
+				if (data.result == "error") {
+					console.log("ERROR")
+				}
+				fontCanvas.set({
+					backgroundColor: "#D8D8D8"
+				})
+				
+				fontCanvas.setDimensions({ width: fontCanvas.getWidth() * 0.75, height: fontCanvas.getHeight() * 0.75 });
+				fontCanvas.setZoom(scaleRatio)
+				fontCanvas.setBackgroundImage('./images/symbol_grid.png', fontCanvas.renderAll.bind(fontCanvas));
+			}
+		})
+	})
+
 	$("#save").on("click",function(e) {
 		showOverlay();
 		var showPlanket = false
@@ -11673,7 +12536,8 @@
 			'pantsBelow': pantsBelow.toDatalessJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
 			'pantsLogoCanvas': pantsLogoCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
 			'capBelow': capBelow.toDatalessJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
-			'capLogoCanvas': capLogoCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners'])
+			'capLogoCanvas': capLogoCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
+			'fontCanvas': fontCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners'])
 		}
 
 		if (buttonGroup.visible == true) {
@@ -11789,6 +12653,11 @@
 		capLogoCanvas.setDimensions({ width: 512, height: 512 });
     	capLogoCanvas.setZoom(1)
 
+		fontCanvas.set({backgroundColor: null});
+		fontCanvas.setBackgroundImage(null, fontCanvas.renderAll.bind(fontCanvas));
+		fontCanvas.setDimensions({ width: 1024, height: 1024 });
+    	fontCanvas.setZoom(1)
+
 		nameCanvas.clear()
 
 		var text = new fabric.Text(teamName.split('_').join(' '), {
@@ -11878,6 +12747,7 @@
 							jerseyBelow: jerseyBelow.toDataURL(),
 							pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
 							pantsBelow: pantsBelow.toDataURL(),
+							fontCanvas: fontCanvas.toDataURL(),
 							name: fileName,
 							showPlanket: showPlanket,
 							buttonPadSeams: buttonPadSeams,
@@ -11924,6 +12794,11 @@
 							jerseyBelow.setZoom(scaleRatio)
 							jerseyLogoCanvas.setDimensions({ width: jerseyLogoCanvas.getWidth() * 0.75, height: jerseyLogoCanvas.getHeight() * 0.75 });
 							jerseyLogoCanvas.setZoom(scaleRatio)
+
+							fontCanvas.set({backgroundColor:"#D8D8D8"})
+							fontCanvas.setBackgroundImage('./images/symbol_grid.png', fontCanvas.renderAll.bind(fontCanvas), {});
+							fontCanvas.setDimensions({ width: fontCanvas.getWidth() * 0.75, height: fontCanvas.getHeight() * 0.75 });
+							fontCanvas.setZoom(scaleRatio)
 
 							if (seamsVisible == true) {
 								seamsGroup.visible = true
@@ -12392,19 +13267,32 @@
 		jerseyOverlayActive = $("#jerseyOverlay").is(":visible")
 		pantsOverlayActive = $("#pantsOverlay").is(":visible")
 		capOverlayActive = $("#capOverlay").is(":visible")
+		fontActive = $("#fontContainer").is(":visible")
 		$("#jerseyOverlay").css("display","none")
 		$("#capOverlay").css("display","none")
 		$("#pantsOverlay").css("display","none")
 		$("#overlay").css("background","rgba(0,0,0,0.5)")
+		$("#jerseyContainer").css("display","none")
+		$("#capContainer").css("display","none")
+		$("#pantsContainer").css("display","none")
+		$("#fontContainer").css("display","none")
 		spinner.spin(target)
 	}
 
 	function hideOverlay() {
 		spinner.stop(target)
+		const currentTab = $('#tabContainer').skeletabs('getCurrentInfo');
+		const tab = currentTab.currentIndex
 		$("#overlay").css("background","none")
+		$("#jerseyContainer").css("display","inline-block")
+		$("#capContainer").css("display","inline-block")
+		$("#pantsContainer").css("display","inline-block")
+		$("#fontContainer").css("display","inline-block")
 		if (jerseyOverlayActive) { $("#jerseyOverlay").css("display","inline-block") } else { $("#jerseyOverlay").css("display","none") }
 		if (pantsOverlayActive) { $("#pantsOverlay").css("display","inline-block") } else { $("#pantsOverlay").css("display","none") }
 		if (capOverlayActive) { $("#capOverlay").css("display","inline-block") } else { $("#capOverlay").css("display","none") }
+		$("#tabContainer").skeletabs('goTo',-1)
+		$("#tabContainer").skeletabs('goTo',tab)
 	}
 
 	function isNumberKey(evt) {
@@ -12633,6 +13521,12 @@
 	
 	function endsWithNumber(str) {
 		return /[0-9]+$/.test(str);
+	}
+
+	function push(array, item) {
+		if (!array.find(({text}) => text === item.text)) {
+			array.push(item);
+		}
 	}
 	
 	$("#checkForUpdates").on("click", function() {
@@ -12978,6 +13872,10 @@
 
 			context.putImageData( dst, 0, 0 );
 
+	}
+
+	function isNumeric(n) {
+		return !isNaN(parseFloat(n)) && isFinite(n);
 	}
 </script>
 </html>

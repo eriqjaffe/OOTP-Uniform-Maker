@@ -24,7 +24,10 @@ color:#999999;
 .borderRadiusBtm .shadow{-moz-box-shadow:-5px -5px 5px -5px #888888;-webkit-box-shadow:-5px -5px 5px -5px #888888;box-shadow: -5px -5px 5px -5px #888888}
 .borderRadiusTp .border, .borderRadius .border{-moz-border-radius:0 0 5px 5px ; border-radius:0 0 5px 5px;}
 .borderRadiusBtm .border{-moz-border-radius:5px 5px 0 0; border-radius:5px 5px 0 0;}
-img.fnone{float:none !important}
+img.fnone{
+    float:none !important;
+    max-height: 20px;
+}
 .ddcommon .divider{width:0; height:100%; position:absolute;}
 .ddcommon .ddArrow{display:inline-block; position:absolute; top:50%; right:4px;}
 .ddcommon .ddArrow:hover{background-position:0 100%;}
@@ -50,12 +53,12 @@ img.fnone{float:none !important}
 .dd .ddTitle{color:#000;background:#e2e2e4 url(../images/msdropdown/skin1/title-bg.gif) repeat-x left top;}
 .dd .ddTitle .ddTitleText{padding:5px 20px 5px 5px;}
 .dd .ddTitle .ddTitleText .ddTitleText{padding:0;}
-.dd .ddTitle .description{font-size:12px; color:#666}
+.dd .ddTitle .description{font-size:12px; color:#666;}
 .dd .ddTitle .ddTitleText img{padding-right:5px;}
 .dd .ddChild{border:1px solid #c3c3c3; background-color:#fff; left:-1px;}
 .dd .ddChild li{padding:5px; background-color:#fff; border-bottom:1px solid #c3c3c3;}
 .dd .ddChild li .description{color:#666;}
-.dd .ddChild li .ddlabel{color:#333;}
+.dd .ddChild li .ddlabel{color:#333; float:right; padding-right:0px;}
 .dd .ddChild li.hover{background-color:#f2f2f2}
 .dd .ddChild li img{padding:0 6px 0 0;}
 .dd .ddChild li.optgroup{padding:0;}
@@ -63,3 +66,4 @@ img.fnone{float:none !important}
 .dd .ddChild li.optgroup ul li{padding:5px 5px 5px 15px}
 .dd .ddChild li.selected{background-color:#d5d5d5; color:#000;}
 .ddChild, .ddChild ul {height:auto !important; max-height: 150px !important;}
+.ddlabel {float:right; padding-right:15px;}
