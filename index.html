@@ -4719,6 +4719,10 @@
 			const path = font.getPath($("#wordmarkTextBox").val(),256,681,50)
 			const svgPath = path.toPathData(5)
 
+			jerseyLogoCanvas.getObjects().forEach(function (o) {
+				console.log(o.id)
+			})
+
 			var grp = jerseyLogoCanvas.getObjects("group").find(o => o.id === "wordmark")
 
 			grp.getObjects('path').forEach(function(o) {
@@ -6429,10 +6433,6 @@
 				console.log(err)
 				return;
 			}
-
-			capLogoCanvas.getObjects().forEach(function(o) {
-				console.log(o)
-			})
 
 			var grp = capLogoCanvas.getObjects("group").find(o => o.id === "textLogo")
 			var grp2 = capLogoCanvas.getObjects("group").find(o => o.id === "textLogo2")
