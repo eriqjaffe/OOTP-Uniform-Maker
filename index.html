@@ -1733,6 +1733,10 @@
 													<input type="number" id="letter2StrokeInput" class="strokeWidth" data-range="letter2StrokeRange" value=16 min="0" max="40">
 												</td>
 											</tr>
+											<tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" class="toggle aspectToggle" id="letterScaling" checked></td>
+												<td colspan="2">Preserve Aspect Ratio</td>
+											</tr>
 										</table>
 										<hr>
 										<table style="width:100%;">
@@ -1788,6 +1792,10 @@
 													<input type="button" id="number2StrokeUp" class="button rangeButton" value="+" data-number="number2StrokeInput">
 													<input type="number" id="number2StrokeInput" class="strokeWidth" data-range="number2StrokeRange" value=24 min="0" max="40">
 												</td>
+											</tr>
+											<tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" class="toggle aspectToggle" id="numberScaling" checked></td>
+												<td colspan="2">Preserve Aspect Ratio</td>
 											</tr>
 										</table>
 										<hr>
@@ -6219,12 +6227,6 @@
 	$(".capText").on("keyup",function() {
 		var ddData = $('#capTextSelect').data('ddslick');
 		capWordmarkChange(ddData.selectedData.value,false)
-		/* const txt = $(this).val()
-		const g = ($(this).attr("id") == "capText") ? capLogoCanvas.getObjects().find(o => o.id === 'textLogo') : capLogoCanvas.getObjects().find(o => o.id === 'textLogo2')
-		g.getObjects().forEach(function(o) {
-			o.set("text", txt)
-		})
-		capLogoCanvas.renderAll() */
 	})
 
 	$(".capTextToggle").on("click",function() {
@@ -7007,24 +7009,51 @@
 		}   
 	});
 
+	$(".aspectToggle").on("change", function(e) {
+		var arr = ($(this).attr("id") == "numberScaling") ? numbers : letters
+		var ddData = ($(this).attr("id") == "numberScaling") ? $('#numberDropdown').data('ddslick') : $('#letterDropdown').data('ddslick')
+		changeFont(arr,ddData.selectedData.value)
+	})
+
 	function changeFont(arr, font) {
+		var nArr = []
+		var lArr = []
+
 		opentype.load(font, (err,font) => {
 			if (err || !font) {
 				console.log(err)
 				return;
 			}
 
-			const maxNumWidth = 168
-			const maxLetWidth = 54
-
-			var nArr = []
-			var lArr = []
-
-			//const arr = (type == "letters") ? letters : numbers;
+			const maxNumWidth = 170
+			const maxLetWidth = 56
 
 			arr.forEach((chr) => {
 				var char = chars.find(o => o.char === chr)
-				var scaleY = (char.char.startsWith("small")) ? 0.7 : 1
+				var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+				const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+				const svgPath = paths.toPathData(5)
+				var tmp = new fabric.Path(svgPath, {
+					fill: initialTextColors['fillColor'], 
+				});
+				if (isNumeric(chr)) {
+					nArr.push(tmp.width)
+				} else {
+					lArr.push(tmp.width)
+				}
+			})
+
+			if (arr == numbers) {
+				var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
+				var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
+			} else {
+				var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
+				var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
+			}
+
+			arr.forEach((chr) => {
+				var char = chars.find(o => o.char === chr)
+				var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
 				var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
 				const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
 				const svgPath = paths.toPathData(5)
@@ -7039,14 +7068,16 @@
 				});
 
 				if (isNumeric(chr)) {
-					var scaleX = (tmp.width > maxNumWidth) ? maxNumWidth / tmp.width : 1	
+					var scaleX = 1.0 * scaleMod
+					scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
 					var strokeWidth1 = strokeWidth["numbers1"]
 					var strokeWidth2 = strokeWidth["numbers2"]
 					var fillColor = (overlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:overlayImage})
 					var stroke1Color = $("#numbersStroke1").spectrum("get")
 					var stroke2Color = $("#numbersStroke2").spectrum("get")
 				} else {
-					var scaleX = (tmp.width > maxLetWidth) ? maxLetWidth / tmp.width : 1
+					var scaleX = 1.0 * scaleMod
+					scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
 					var strokeWidth1 = strokeWidth["letters1"]
 					var strokeWidth2 = strokeWidth["letters2"]
 					var fillColor = (overlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:overlayImage})
@@ -7155,8 +7186,8 @@
 								return;
 							}
 
-							const maxNumWidth = 168
-							const maxLetWidth = 54
+							const maxNumWidth = 170
+							const maxLetWidth = 56
 
 							var nArr = []
 							var lArr = []
@@ -7165,11 +7196,34 @@
 
 							arr.forEach((chr) => {
 								var char = chars.find(o => o.char === chr)
-								var scaleY = (char.char.startsWith("small")) ? 0.7 : 1
 								var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
 								const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
 								const svgPath = paths.toPathData(5)
-								var grp = fontCanvas.getObjects('group').find(o => o.id === chr)
+								var tmp = new fabric.Path(svgPath, {
+									fill: initialTextColors['fillColor'], 
+								});
+								if (isNumeric(chr)) {
+									nArr.push(tmp.width)
+								} else {
+									lArr.push(tmp.width)
+								}
+							})
+
+							if (arr == numbers) {
+								var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
+								var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
+							} else {
+								var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
+								var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
+							}
+
+							arr.forEach((chr) => {
+								var char = chars.find(o => o.char === chr)
+								var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
+								var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+								const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+								const svgPath = paths.toPathData(5)
+								var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
 								grp.getObjects('path').forEach(function(o) {
 									grp.removeWithUpdate(o)
 								})
@@ -7179,22 +7233,24 @@
 									fill: initialTextColors['fillColor'], 
 								});
 
+								
 								if (isNumeric(chr)) {
-									var scaleX = (tmp.width > maxNumWidth) ? maxNumWidth / tmp.width : 1	
+									var scaleX = 1.0 * scaleMod
+									scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
 									var strokeWidth1 = strokeWidth["numbers1"]
 									var strokeWidth2 = strokeWidth["numbers2"]
 									var fillColor = (overlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:overlayImage})
 									var stroke1Color = $("#numbersStroke1").spectrum("get")
 									var stroke2Color = $("#numbersStroke2").spectrum("get")
 								} else {
-									var scaleX = (tmp.width > maxLetWidth) ? maxLetWidth / tmp.width : 1
+									var scaleX = 1.0 * scaleMod
+									scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
 									var strokeWidth1 = strokeWidth["letters1"]
 									var strokeWidth2 = strokeWidth["letters2"]
 									var fillColor = (overlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:overlayImage})
 									var stroke1Color = $("#lettersStroke1").spectrum("get")
 									var stroke2Color = $("#lettersStroke2").spectrum("get")
 								}
-
 
 								var strokePath = new fabric.Path(svgPath, {
 									id: char.char.toLowerCase()+"Stroke",
