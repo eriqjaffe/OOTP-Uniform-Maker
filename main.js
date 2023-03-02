@@ -1048,7 +1048,9 @@ app2.post('/saveUniform', (req, res) => {
 		var pantsTexture = __dirname+"/images/"+tmpPantsTexture
 	}
 
-	//fs.writeFileSync(app.getPath('downloads') + '/uniform_Unknown_Team_Home/uniform_' + req.body.name+'.uni', json)
+	console.log(json)
+
+	fs.writeFileSync(app.getPath('downloads') + '/uniform_' + req.body.name+'.uni', json)
 
 	const output = fs.createWriteStream(tempDir + '/uniform_'+req.body.name+'.zip');
 

@@ -12323,6 +12323,7 @@
 		const swatchSelectors = {}
 		const textBoxes = {}
 		const buttons = {}
+		const fontSelectors = {}
 
 		exportMeta.version = appVersion
 		exportMeta.team = $("#teamName").val()
@@ -12334,6 +12335,12 @@
 		jerseySelectors.buttonSelector = { "disabled": $("#buttonSelector").prop("disabled"), "val": $("#buttonSelector").spectrum("get").toHexString() }
 		capSelectors.jerseyColor = { "disabled": $("#capColor").prop("disabled"), "val": $("#capColor").spectrum("get").toHexString() }
 		pantsSelectors.jerseyColor = { "disabled": $("#pantsColor").prop("disabled"), "val": $("#pantsColor").spectrum("get").toHexString() }
+
+		fontSelectors.jersey = $('#jerseyWordmarkSelect').data('ddslick');
+		fontSelectors.cap = $("#capTextSelect").data('ddslick');
+		fontSelectors.name = $("#letterDropdown").data('ddslick');
+		fontSelectors.number = $("#numberDropdown").data('ddslick');
+		
 
 		$("input[type=checkbox]").each(function() {
 			checkboxes[$(this).attr("id")] = { "checked": $(this).is(":checked"), "val": $(this).val() }
@@ -12457,9 +12464,10 @@
 		exportMeta.textBoxes = textBoxes
 		exportMeta.canvases = jsonExport
 		//exportMeta.customFonts = customFonts
-		exportMeta.jerseyddData = jerseyddData
-		exportMeta.capddData = capddData
-		exportMeta.fontddData = fontddData
+		//exportMeta.jerseyddData = jerseyddData
+		//exportMeta.capddData = capddData
+		//exportMeta.fontddData = fontddData
+		exportMeta.fontSelectors = fontSelectors
 		exportMeta.commonPalette = commonPalette
 		exportMeta.selectedJerseyFont = $("#jerseyFontTypeCombo").val()
 		exportMeta.capSelectedFont = $("#capFontTypeCombo").val()
@@ -12727,6 +12735,7 @@
 	})
 
 	$("#load").on("click",function(e){
+		
 		showOverlay()
 		$.ajax({
 			type: "GET",
@@ -12736,6 +12745,7 @@
 					customFonts.splice(0, customFonts.length)
 					commonPalette.splice(0, commonPalette.length)
 					const exportMeta = JSON.parse(response.json)
+					console.log(jerseyddData)
 
 					if (exportMeta.version == undefined || !semver.eq(appVersion, exportMeta.version)) {
 						if (confirm("This save file appears to have been generated with a different version of Uniform Maker.  Some elements may not be load properly.\r\n\r\nContinue?")) {
@@ -12748,6 +12758,7 @@
 					}
 
 					function loadJersey() {
+						console.log(jerseyddData)
 						$("#teamName").val(exportMeta.team)
 						$("#uniformType").val(exportMeta.type)
 						$("#startYear").val(exportMeta.start)
@@ -12757,6 +12768,10 @@
 						customPantsTexture = exportMeta.customPantsTexture
 						customCapTexture = exportMeta.customCapTexture
 
+						fontddData = exportMeta.fontddData
+						jerseyddData = exportMeta.jerseyddData
+						capddData = exportMeta.capddData
+
 						if (exportMeta.commonPalette != undefined && exportMeta.commonPalette != null) {
 							if (exportMeta.commonPalette.length > 0) {
 								for (x in exportMeta.commonPalette) {
@@ -12765,7 +12780,7 @@
 							}
 						}
 
-						if (exportMeta.customFonts != undefined && exportMeta.customFonts != null) {
+						/* if (exportMeta.customFonts != undefined && exportMeta.customFonts != null) {
 							if (exportMeta.customFonts.length > 0) {
 								for (x in exportMeta.customFonts) {
 									const loadedFont = exportMeta.customFonts[x]
@@ -12783,8 +12798,63 @@
 									customFonts.push(loadedFont)
 								}	
 							}
-						}
-						
+						} */
+
+						console.log(exportMeta.fontSelectors.jersey.settings.data)
+
+						jerseyddData = exportMeta.fontSelectors.jersey.settings.data
+						fontddData = exportMeta.fontSelectors.name.settings.data
+						capddData = exportMeta.fontSelectors.cap.settings.data
+
+						$("#numberDropdown").ddslick("destroy")
+						$("#letterDropdown").ddslick("destroy")
+						$("#jerseyWordmarkSelect").ddslick("destroy")
+						$("#capTextSelect").ddslick("destroy")
+
+						$('#numberDropdown').ddslick({
+							data:fontddData,
+							width: 300,
+							height: 250,
+							imagePosition:"left",
+							onSelected: function(selectedData){
+								changeFont(numbers, selectedData.selectedData.value)
+							}   
+						});
+
+						$('#letterDropdown').ddslick({
+							data:fontddData,
+							width: 300,
+							height: 250,
+							imagePosition:"left",
+							onSelected: function(selectedData){
+								changeFont(letters, selectedData.selectedData.value)
+							}   
+						});
+
+						$("#jerseyWordmarkSelect").ddslick({
+							data:jerseyddData,
+							width: 300,
+							imagePosition:"left",
+							height: 250,
+							onSelected: function(selectedData){
+								if (ddCount > 1) {
+									jerseyWordmarkChange(selectedData.selectedData.value,false)
+								}
+							}   
+						}); 
+
+						$("#capTextSelect").ddslick({
+							data:capddData,
+							width: 300,
+							imagePosition:"left",
+							height: 250,
+							onSelected: function(selectedData){
+								if (ddCount > 1) {
+									capWordmarkChange(selectedData.selectedData.value,false)
+								}
+								ddCount++
+							}   
+						});
 
 						Object.keys(exportMeta.checkboxes).forEach(function(key){
 							$("#"+key).prop('checked', exportMeta.checkboxes[key].checked)
@@ -12835,7 +12905,7 @@
 							jerseyBelow.add(object)
 						})
 						jerseyLogoCanvas.loadFromJSON(exportMeta.canvases.jerseyLogoCanvas, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), function(o, object) {
-							if (object.id == 'wordmark' || object.id == 'warpedText') {
+							/* if (object.id == 'wordmark' || object.id == 'warpedText') {
 								$("#wordmarkCheck").prop("checked",object.visible).triggerHandler('click');
 								if (object.id == 'warpedText') {
 									var myfont = new FontFaceObserver(exportMeta.selectedJerseyFont)
@@ -12865,7 +12935,7 @@
 									})
 								}
 								
-							}
+							} */
 							jerseyLogoCanvas.add(object)
 						})
 						jerseyBelow.renderAll()
