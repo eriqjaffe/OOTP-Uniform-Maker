@@ -6430,6 +6430,10 @@
 				return;
 			}
 
+			capLogoCanvas.getObjects().forEach(function(o) {
+				console.log(o)
+			})
+
 			var grp = capLogoCanvas.getObjects("group").find(o => o.id === "textLogo")
 			var grp2 = capLogoCanvas.getObjects("group").find(o => o.id === "textLogo2")
 
@@ -12745,7 +12749,6 @@
 					customFonts.splice(0, customFonts.length)
 					commonPalette.splice(0, commonPalette.length)
 					const exportMeta = JSON.parse(response.json)
-					console.log(jerseyddData)
 
 					if (exportMeta.version == undefined || !semver.eq(appVersion, exportMeta.version)) {
 						if (confirm("This save file appears to have been generated with a different version of Uniform Maker.  Some elements may not be load properly.\r\n\r\nContinue?")) {
@@ -12758,7 +12761,6 @@
 					}
 
 					function loadJersey() {
-						console.log(jerseyddData)
 						$("#teamName").val(exportMeta.team)
 						$("#uniformType").val(exportMeta.type)
 						$("#startYear").val(exportMeta.start)
@@ -12799,62 +12801,6 @@
 								}	
 							}
 						} */
-
-						console.log(exportMeta.fontSelectors.jersey.settings.data)
-
-						jerseyddData = exportMeta.fontSelectors.jersey.settings.data
-						fontddData = exportMeta.fontSelectors.name.settings.data
-						capddData = exportMeta.fontSelectors.cap.settings.data
-
-						$("#numberDropdown").ddslick("destroy")
-						$("#letterDropdown").ddslick("destroy")
-						$("#jerseyWordmarkSelect").ddslick("destroy")
-						$("#capTextSelect").ddslick("destroy")
-
-						$('#numberDropdown').ddslick({
-							data:fontddData,
-							width: 300,
-							height: 250,
-							imagePosition:"left",
-							onSelected: function(selectedData){
-								changeFont(numbers, selectedData.selectedData.value)
-							}   
-						});
-
-						$('#letterDropdown').ddslick({
-							data:fontddData,
-							width: 300,
-							height: 250,
-							imagePosition:"left",
-							onSelected: function(selectedData){
-								changeFont(letters, selectedData.selectedData.value)
-							}   
-						});
-
-						$("#jerseyWordmarkSelect").ddslick({
-							data:jerseyddData,
-							width: 300,
-							imagePosition:"left",
-							height: 250,
-							onSelected: function(selectedData){
-								if (ddCount > 1) {
-									jerseyWordmarkChange(selectedData.selectedData.value,false)
-								}
-							}   
-						}); 
-
-						$("#capTextSelect").ddslick({
-							data:capddData,
-							width: 300,
-							imagePosition:"left",
-							height: 250,
-							onSelected: function(selectedData){
-								if (ddCount > 1) {
-									capWordmarkChange(selectedData.selectedData.value,false)
-								}
-								ddCount++
-							}   
-						});
 
 						Object.keys(exportMeta.checkboxes).forEach(function(key){
 							$("#"+key).prop('checked', exportMeta.checkboxes[key].checked)
@@ -12957,6 +12903,61 @@
 							pantsLogoCanvas.add(object)
 						})
 						pantsBelow.renderAll()
+
+						jerseyddData = exportMeta.fontSelectors.jersey.settings.data
+						fontddData = exportMeta.fontSelectors.name.settings.data
+						capddData = exportMeta.fontSelectors.cap.settings.data
+
+						$("#numberDropdown").ddslick("destroy")
+						$("#letterDropdown").ddslick("destroy")
+						$("#jerseyWordmarkSelect").ddslick("destroy")
+						$("#capTextSelect").ddslick("destroy")
+
+						$('#numberDropdown').ddslick({
+							data:fontddData,
+							width: 300,
+							height: 250,
+							imagePosition:"left",
+							onSelected: function(selectedData){
+								changeFont(numbers, selectedData.selectedData.value)
+							}   
+						});
+
+						$('#letterDropdown').ddslick({
+							data:fontddData,
+							width: 300,
+							height: 250,
+							imagePosition:"left",
+							onSelected: function(selectedData){
+								changeFont(letters, selectedData.selectedData.value)
+							}   
+						});
+
+						$("#jerseyWordmarkSelect").ddslick({
+							data:jerseyddData,
+							width: 300,
+							imagePosition:"left",
+							height: 250,
+							onSelected: function(selectedData){
+								if (ddCount > 1) {
+									jerseyWordmarkChange(selectedData.selectedData.value,false)
+								}
+							}   
+						}); 
+
+						$("#capTextSelect").ddslick({
+							data:capddData,
+							width: 300,
+							imagePosition:"left",
+							height: 250,
+							onSelected: function(selectedData){
+								if (ddCount > 1) {
+									capWordmarkChange(selectedData.selectedData.value,false)
+								}
+								ddCount++
+							}   
+						});
+						
 						reRenderBG("pants")
 						hideOverlay()
 					}
