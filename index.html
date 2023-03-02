@@ -127,7 +127,7 @@
 
 		var _clipboard = null;
 		var customJerseyTexture = null;
-		var customCapTexture = null;
+		var customCapTexture = null;Width:
 		var customPantsTexture = null;
 
 		var ddCount = 0;
@@ -933,17 +933,18 @@
 											<tr><td colspan="3" style="text-align:center; font-size:.8em;">Text effects may take a moment or two to process - be patient!</td></tr>
 										</table>	
 										<table style="width:100%;">
-											<tr>
-												<td style="width:20%;">&nbsp</td>
-												<td>
-													<div id="jerseyWordmarkSelect" style="display:none;"></div>
+											<tr style="width:100%;">
+												<td style="width:20%;">&nbsp;</td>
+												<td style="width: 60%;" align="center">
+													<div id="jerseyWordmarkSelect"></div>
+													<input id="jerseyCustomFont" type="file" name="customFont" accept=".ttf, .otf" style="display:none;" />
+													<input type="button" class="button jerseyTextOption localFontButton" id="jerseyFakeFontButton" data-canvas="jersey" value="Choose a Local Font..." />
+													<input type="button" class="button jerseyTextOption" id="jerseyUploadTheFont" value="Upload Font" style="display:none;" />
 												</td>
-												<td style="width:20%;">&nbsp</td>
+												<td style="width:20%;">&nbsp;</td>
 											</tr>
 											<tr><td colspan="3" align="center">
-												<input id="jerseyCustomFont" type="file" name="customFont" accept=".ttf, .otf" style="display:none;" />
-												<input type="button" class="button jerseyTextOption localFontButton" id="jerseyFakeFontButton" data-canvas="jersey" value="Choose a Local Font..." />
-												<input type="button" class="button jerseyTextOption" id="jerseyUploadTheFont" value="Upload Font" style="display:none;" />
+												
 											</td></tr>
 										</table>
 										<table style="width:100%;">
@@ -2539,7 +2540,7 @@
 
 		$("#jerseyFontTypeCombo").prop("disabled",true)
 
-		$("#jerseyWordmarkSelect").css("display","none")
+		$("#jerseyWordmarkSelect").closest('tr').css("display","none")
 
 		$("#warpAmount").prop("disabled",true)
 
@@ -2836,7 +2837,7 @@
 		onSelected: function(selectedData){
 			if (ddCount > 1) {
 				var ddData = $('#jerseyWordmarkSelect').data('ddslick')
-				jerseyWordmarkChange(selectedData.selectedData.value)
+				jerseyWordmarkChange(selectedData.selectedData.value,false)
 				//changeFont(numbers, selectedData.selectedData.value)
 			}
 			ddCount++
@@ -4443,15 +4444,8 @@
 	})
 
 	$("#wordmarkTextBox").on("change",function() {
-		const txt = $(this).val()
-		g = jerseyLogoCanvas.getObjects().find(o => o.id === 'wordmark')
-		g.getObjects().forEach(function(o) {
-			o.set("text", txt)
-		})
-		jerseyLogoCanvas.renderAll();
-		if (imNeeded) {
-			warpText();
-		}
+		var ddData = $('#jerseyWordmarkSelect').data('ddslick');
+		jerseyWordmarkChange(ddData.selectedData.value,false)
 	})
 
 	$("#wordmarkCheck").on("click",function() {
@@ -4477,7 +4471,7 @@
 		$("#warpAmount").prop("disabled",$("#wordmarkCheck").is(":checked") ? false : true);
 	    $("#warpEffect").msDropDown().data("dd").set("disabled", $("#wordmarkCheck").is(":checked") ? false : true)
 		//$("#jerseyFontTypeCombo").set("disabled", $(this).is(":checked") ? false : true);
-		$("#jerseyWordmarkSelect").css("display", $(this).is(":checked") ? "inline-block" : "none");
+		$("#jerseyWordmarkSelect").closest("tr").css("display", $(this).is(":checked") ? "inline-block" : "none");
 		$(".jerseyTextColorSelector").each(function() {
 			$(this).spectrum($("#wordmarkCheck").is(":checked") ? 'enable' : 'disable')
 		})
@@ -4706,14 +4700,15 @@
 		jerseyLogoCanvas.renderAll();
 	})
 
-	function jerseyWordmarkChange(font) {
-		opentype.load(font, (err,font) => {
+	function jerseyWordmarkChange(data,newFont) {
+		var tmp = (data.fontBase64 == undefined) ? data : data.fontBase64;
+		opentype.load(tmp, (err,font) => {
 			if (err || !font) {
 				console.log(err)
 				return;
 			}
 
-			const path = font.getPath("Bulldogs",256,681,50)
+			const path = font.getPath($("#wordmarkTextBox").val(),256,681,50)
 			const svgPath = path.toPathData(5)
 
 			var grp = jerseyLogoCanvas.getObjects("group").find(o => o.id === "wordmark")
@@ -4765,10 +4760,38 @@
 			grp.addWithUpdate(wordmarkText)
 
 			jerseyLogoCanvas.renderAll()
+
+			if (newFont) {
+				var thumbText = font.getPath("ABC 123", 0, 0, 96)
+				var outPath = thumbText.toPathData(5)
+
+				var foo = new fabric.Path(outPath, {
+					fill: 'black',
+					top: 0,
+					left: 0
+				})
+
+				var addData = {
+					"value": data.fontBase64,
+					"text": data.fontName,
+					"selected": true,
+					"imageSrc": foo.toDataURL()
+				}
+
+				var addData2 = {
+					"value": data.fontBase64,
+					"text": data.fontName,
+					"selected": false,
+					"imageSrc": foo.toDataURL()
+				}
+
+				updateDDSlick("jersey",addData,addData2)
+			}
+			if (imNeeded) {
+				warpText()
+			}
 		})
-		if (imNeeded) {
-			warpText()
-		}
+		
 	}
 
 	$("#warpEffect").on("change",function(e) {
@@ -5882,7 +5905,7 @@
 		height: 250,
 		onSelected: function(selectedData){
 			if (ddCount > 1) {
-				capWordmarkChange(selectedData.selectedData.value)
+				capWordmarkChange(selectedData.selectedData.value,false)
 				//changeFont(numbers, selectedData.selectedData.value)
 			}
 			ddCount++
@@ -6194,12 +6217,14 @@
 	})
 
 	$(".capText").on("keyup",function() {
-		const txt = $(this).val()
+		var ddData = $('#capTextSelect').data('ddslick');
+		capWordmarkChange(ddData.selectedData.value,false)
+		/* const txt = $(this).val()
 		const g = ($(this).attr("id") == "capText") ? capLogoCanvas.getObjects().find(o => o.id === 'textLogo') : capLogoCanvas.getObjects().find(o => o.id === 'textLogo2')
 		g.getObjects().forEach(function(o) {
 			o.set("text", txt)
 		})
-		capLogoCanvas.renderAll()
+		capLogoCanvas.renderAll() */
 	})
 
 	$(".capTextToggle").on("click",function() {
@@ -6394,6 +6419,151 @@
 		}
 		capLogoCanvas.renderAll();
 	})
+
+	function capWordmarkChange(data,newFont) {
+		var tmp = (data.fontBase64 == undefined) ? data : data.fontBase64;
+		opentype.load(tmp, (err,font) => {
+			if (err || !font) {
+				console.log(err)
+				return;
+			}
+
+			var grp = capLogoCanvas.getObjects("group").find(o => o.id === "textLogo")
+			var grp2 = capLogoCanvas.getObjects("group").find(o => o.id === "textLogo2")
+
+			grp.getObjects('path').forEach(function(o) {
+				grp.removeWithUpdate(o)
+			})
+
+			grp2.getObjects('path').forEach(function(o) {
+				grp2.removeWithUpdate(o)
+			})
+
+			const path = font.getPath($("#capText").val(),95,275,60)
+			const svgPath = path.toPathData(5)
+
+			capLogoText = new fabric.Path(svgPath,{
+				left: 95,
+				top: 275,
+				originX: 'center',
+				originY: 'center',
+				centeredScaling: true,
+				centeredRotation: true,
+				id: 'capLogoText',
+				fill: initialCapColors["capLogoTextColor"]
+			})
+			
+			capLogoTextStroke1 = new fabric.Path(svgPath,{
+				originX: 'center',
+				originY: 'center',
+				left: 95,
+				top: 275,
+				centeredScaling: true,
+				centeredRotation: true,
+				stroke: initialCapColors["capLogoStroke1Color"],
+				strokeWidth: 4,
+				strokeLineCap: "round",
+				id: 'capLogoTextStroke1',
+				fill: initialCapColors["capLogoStroke1Color"]
+			})
+			
+			capLogoTextStroke2 = new fabric.Path(svgPath,{
+				originX: 'center',
+				originY: 'center',
+				left: 95,
+				top: 275,
+				centeredScaling: true,
+				centeredRotation: true,
+				stroke: initialCapColors["capLogoStroke2Color"],
+				strokeWidth: 6,
+				strokeLineCap: "round",
+				id: 'capLogoTextStroke2',
+				fill: initialCapColors["capLogoStroke2Color"]
+			})
+
+			textLogo.addWithUpdate(capLogoTextStroke2)
+			textLogo.addWithUpdate(capLogoTextStroke1)
+			textLogo.addWithUpdate(capLogoText)
+
+			const path2 = font.getPath($("#capText2").val(),115,295,60)
+			const svgPath2 = path2.toPathData(5)
+
+			capLogo2Text = new fabric.Path(svgPath2,{
+				left: 115,
+				top: 295,
+				originX: 'center',
+				originY: 'center',
+				centeredScaling: true,
+				centeredRotation: true,
+				id: 'capLogo2Text',
+				fill: initialCapColors["capLogoTextColor"]
+			})
+			
+			capLogo2TextStroke1 = new fabric.Path(svgPath2,{
+				originX: 'center',
+				originY: 'center',
+				left: 115,
+				top: 295,
+				centeredScaling: true,
+				centeredRotation: true,
+				stroke: initialCapColors["capLogoStroke1Color"],
+				strokeWidth: 4,
+				strokeLineCap: "round",
+				id: 'capLogo2TextStroke1',
+				fill: initialCapColors["capLogoStroke1Color"]
+			})
+			
+			capLogo2TextStroke2 = new fabric.Path(svgPath2,{
+				originX: 'center',
+				originY: 'center',
+				left: 115,
+				top: 295,
+				centeredScaling: true,
+				centeredRotation: true,
+				stroke: initialCapColors["capLogoStroke2Color"],
+				strokeWidth: 6,
+				strokeLineCap: "round",
+				id: 'capLogo2TextStroke2',
+				fill: initialCapColors["capLogoStroke2Color"]
+			})
+
+			textLogo2.addWithUpdate(capLogo2TextStroke2)
+			textLogo2.addWithUpdate(capLogo2TextStroke1)
+			textLogo2.addWithUpdate(capLogo2Text)
+
+			capLogoCanvas.renderAll()
+
+			if (newFont) {
+				var thumbText = font.getPath("ABC 123", 0, 0, 96)
+				var outPath = thumbText.toPathData(5)
+
+				var foo = new fabric.Path(outPath, {
+					fill: 'black',
+					top: 0,
+					left: 0
+				})
+
+				var addData = {
+					"value": data.fontBase64,
+					"text": data.fontName,
+					"selected": true,
+					"imageSrc": foo.toDataURL()
+				}
+
+				var addData2 = {
+					"value": data.fontBase64,
+					"text": data.fontName,
+					"selected": false,
+					"imageSrc": foo.toDataURL()
+				}
+
+				updateDDSlick("cap",addData,addData2)
+			}
+		})
+		if (imNeeded) {
+			warpText()
+		}
+	}
 
 // FONT SPECIFIC
 
@@ -7086,40 +7256,6 @@
 								"imageSrc": foo.toDataURL()
 							}
 
-							$("#numberDropdown").ddslick("destroy")
-							$("#letterDropdown").ddslick("destroy")
-							$("#jerseyWordmarkSelect").ddslick("destroy")
-							
-							const elementToUpdate = fontddData.find(entry => entry.selected === true);
-							
-							if (elementToUpdate) {
-								elementToUpdate.selected = false;
-							}
-
-							push(fontddData, addData)
-							fontddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
-
-							$('#numberDropdown').ddslick({
-								data:fontddData,
-								width: 300,
-								height: 250,
-								imagePosition:"left",
-								onSelected: function(selectedData){
-									changeFont(numbers, selectedData.selectedData.value)
-								}   
-							});
-
-							$('#letterDropdown').ddslick({
-								data:fontddData,
-								width: 300,
-								height: 250,
-								imagePosition:"left",
-								onSelected: function(selectedData){
-									changeFont(letters, selectedData.selectedData.value)
-								}   
-							});
-
-							
 							var addData2 = {
 								"value": data.fontBase64,
 								"text": data.fontName,
@@ -7127,22 +7263,7 @@
 								"imageSrc": foo.toDataURL()
 							}
 
-							push(jerseyddData, addData)
-							jerseyddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
-
-							$("#jerseyWordmarkSelect").ddslick({
-								data:jerseyddData,
-								width: 300,
-								imagePosition:"left",
-								height: 250,
-								onSelected: function(selectedData){
-									if (ddCount > 1) {
-										var ddData = $('#jerseyWordmarkSelect').data('ddslick')
-										jerseyWordmarkChange(selectedData.selectedData.value)
-										//changeFont(numbers, selectedData.selectedData.value)
-									}
-								}   
-							});
+							updateDDSlick("font",addData,addData2)
 						})
 					}
 				}
@@ -10820,10 +10941,7 @@
 			$(".textOption").each(function() {
 				$(this).prop( "disabled", false );
 			})
-			console.log($("#capTextSelect").css("display"))
 			$("#capTextSelect").css("display","inline-block")
-			console.log($("#capTextSelect").css("display"))
-			//$("#capFontTypeCombo").prop("disabled",false);
 		} else {
 			$("#capTextSelect").css("display","none")
 			$(".textOption").each(function() {
@@ -10960,33 +11078,21 @@
 		switch ($(this).data("canvas")) {
 			case "cap":
 				var type = "cap"
-				var combo = $("#capFontTypeCombo")
-				var canvas = capLogoCanvas
 				break;
 			case "jersey":
 				var type = "jersey"
-				var combo = $("#jerseyFontTypeCombo")
-				var canvas = jerseyLogoCanvas
 				break;
 			case "pants":
 				var type = "pants"
-				var combo = $("#pantsFontTypeCombo")
-				var canvas = pantsLogoCanvas
 				break;
 			case "jerseyNumber":
 				var type = "jerseyNumber"		
-				var combo = $("#jerseyNumberTypeCombo")
-				var canvas = jerseyLogoCanvas
 				break;
 			case "jerseyName":
 				var type = "jerseyName"		
-				var combo = $("#jerseyNameTypeCombo")
-				var canvas = jerseyLogoCanvas
 				break;
 			case "pantsNumber":
 				var type = "pantsNumber"		
-				var combo = $("#pantsNumberTypeCombo")
-				var canvas = pantsBelow
 				break;
 			} 
 		$.ajax({
@@ -10997,172 +11103,12 @@
 					customFonts.push(data)
 					switch (type) {
 						case "jersey":
-							jerseyWordmarkChange(data.fontBase64)
+							jerseyWordmarkChange(data,true)
+							break;
+						case "cap":
+							capWordmarkChange(data,true)
 							break;
 					}
-/* 					$("head").prepend("<style>@font-face {\n   font-family: '"+data.familyName+"';\n   src: url('"+data.fontData+"') format('truetype');\n}\n."+data.familyName+" { font-family: '"+data.familyName+"'; font-size: 1.1em;}\n</style>");
-					fontSources[data.familyName] = data.fontData;
-					var style = data.familyName;
-					var font_family = $("."+style).css("font-family");
-					var myfont = new FontFaceObserver(data.familyName)
-					myfont.load()
-					.then(function() {
-					// when font is loaded, use it.
-						switch (type) {
-							case "jersey":
-								var g = canvas.getObjects().find(o => o.id == 'wordmark')
-								g.getObjects().forEach(function(o) {
-									o.set("fontFamily", data.familyName)
-									wordmark.dirty = true;
-								})
-								canvas.renderAll()
-								var optgroup = $("<optgroup class='"+data.familyName+"'>");
-								optgroup.append("<option value='"+data.familyName+"'>"+data.fontName+"</option>")
-								$("#jerseyFontTypeCombo").append(optgroup)
-								$("#jerseyFontTypeCombo").val(data.familyName)
-								$("#jerseyFontTypeCombo").removeClass().addClass(data.familyName);
-								$("#jerseyFontTypeCombo").change()
-								var optgroup2 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup2.append("<option value='"+data.familyName+"'>"+data.fontName+"</option>")
-								$("#capFontTypeCombo").append(optgroup2)
-								var optgroup3 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup3.append("<option value='"+data.familyName+"'>"+data.fontName+" 1234567890</option>")
-								$("#jerseyNumberTypeCombo").append(optgroup3)
-								var optgroup4 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup4.append("<option value='"+data.familyName+"'>"+data.fontName+"</option>")
-								$("#jerseyNameTypeCombo").append(optgroup4)
-								var optgroup5 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup5.append("<option value='"+data.familyName+"'>"+data.fontName+" 1234567890</option>")
-								$("#pantsNumberTypeCombo").append(optgroup5)
-								break;
-							case "cap":
-								var g = canvas.getObjects().find(o => o.id == 'textLogo')
-								g.getObjects().forEach(function(o) {
-									o.set("fontFamily", data.familyName)
-									textLogo.dirty = true;
-								})
-								g = canvas.getObjects().find(o => o.id == 'textLogo2')
-								g.getObjects().forEach(function(o) {
-									o.set("fontFamily", data.familyName)
-									textLogo2.dirty = true;
-								})
-								canvas.renderAll()
-								var optgroup = $("<optgroup class='"+data.familyName+"'>");
-								optgroup.append("<option value='"+data.familyName+"'>"+data.fontName+"</option>")
-								$("#capFontTypeCombo").append(optgroup)
-								$("#capFontTypeCombo").val(data.familyName)
-								$("#capFontTypeCombo").removeClass().addClass(data.familyName);
-								$("#capFontTypeCombo").change()
-								var optgroup2 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup2.append("<option value='"+data.familyName+"'>"+data.fontName+"</option>")
-								$("#jerseyFontTypeCombo").append(optgroup2)
-								var optgroup3 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup3.append("<option value='"+data.familyName+"'>"+data.fontName+" 1234567890</option>")
-								$("#jerseyNumberTypeCombo").append(optgroup3)
-								var optgroup4 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup4.append("<option value='"+data.familyName+"'>"+data.fontName+"</option>")
-								$("#jerseyNameTypeCombo").append(optgroup4)
-								var optgroup5 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup5.append("<option value='"+data.familyName+"'>"+data.fontName+" 1234567890</option>")
-								$("#pantsNumberTypeCombo").append(optgroup5)
-								break;
-							case "jerseyName":
-								var g = canvas.getObjects().find(o => o.id == 'playerName')
-								g.getObjects().forEach(function(o) {
-									o.set("fontFamily", data.familyName)
-									textLogo.dirty = true;
-								})
-								canvas.renderAll()
-								var optgroup = $("<optgroup class='"+data.familyName+"'>");
-								optgroup.append("<option value='"+data.familyName+"'>"+data.fontName+"</option>")
-								$("#jerseyNameTypeCombo").append(optgroup)
-								$("#jerseyNameTypeCombo").val(data.familyName)
-								$("#jerseyNameTypeCombo").removeClass().addClass(data.familyName);
-								$("#jerseyNameTypeCombo").change()
-								var optgroup2 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup2.append("<option value='"+data.familyName+"'>"+data.fontName+"</option>")
-								$("#jerseyFontTypeCombo").append(optgroup2)
-								var optgroup3 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup3.append("<option value='"+data.familyName+"'>"+data.fontName+" 1234567890</option>")
-								$("#jerseyNumberTypeCombo").append(optgroup3)
-								var optgroup4 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup4.append("<option value='"+data.familyName+"'>"+data.fontName+"</option>")
-								$("#capFontTypeCombo").append(optgroup4)
-								var optgroup5 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup5.append("<option value='"+data.familyName+"'>"+data.fontName+" 1234567890</option>")
-								$("#pantsNumberTypeCombo").append(optgroup5)
-								break;
-							case "jerseyNumber":
-								var g = canvas.getObjects().find(o => o.id == 'jerseyFrontNumber')
-								g.getObjects().forEach(function(o) {
-									o.set("fontFamily", data.familyName)
-									textLogo.dirty = true;
-								})
-								var g = canvas.getObjects().find(o => o.id == 'jerseyBackNumber')
-								g.getObjects().forEach(function(o) {
-									o.set("fontFamily", data.familyName)
-									textLogo.dirty = true;
-								})
-								var g = canvas.getObjects().find(o => o.id == 'jerseySleeveNumber')
-								g.getObjects().forEach(function(o) {
-									o.set("fontFamily", data.familyName)
-									textLogo.dirty = true;
-								})
-								canvas.renderAll()
-								var optgroup = $("<optgroup class='"+data.familyName+"'>");
-								optgroup.append("<option value='"+data.familyName+"'>"+data.fontName+" 1234567890</option>")
-								$("#jerseyNumberTypeCombo").append(optgroup)
-								$("#jerseyNumberTypeCombo").val(data.familyName)
-								$("#jerseyNumberTypeCombo").removeClass().addClass(data.familyName);
-								$("#jerseyNumberTypeCombo").change()
-								var optgroup2 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup2.append("<option value='"+data.familyName+"'>"+data.fontName+"</option>")
-								$("#jerseyFontTypeCombo").append(optgroup2)
-								var optgroup3 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup3.append("<option value='"+data.familyName+"'>"+data.fontName+"</option>")
-								$("#jerseyNameTypeCombo").append(optgroup3)
-								var optgroup4 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup4.append("<option value='"+data.familyName+"'>"+data.fontName+"</option>")
-								$("#capFontTypeCombo").append(optgroup4)
-								var optgroup5 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup5.append("<option value='"+data.familyName+"'>"+data.fontName+" 1234567890</option>")
-								$("#pantsNumberTypeCombo").append(optgroup5)
-								break;
-							case "pantsNumber":
-								var g = canvas.getObjects().find(o => o.id == 'pantsNumber')
-								g.getObjects().forEach(function(o) {
-									o.set("fontFamily", data.familyName)
-									textLogo.dirty = true;
-								})
-								canvas.renderAll()
-								reRenderBG("pants")
-								var optgroup = $("<optgroup class='"+data.familyName+"'>");
-								optgroup.append("<option value='"+data.familyName+"'>"+data.fontName+" 1234567890</option>")
-								$("#pantsNumberTypeCombo").append(optgroup)
-								$("#pantsNumberTypeCombo").val(data.familyName)
-								$("#pantsNumberTypeCombo").removeClass().addClass(data.familyName);
-								$("#pantsNumberTypeCombo").change()
-								var optgroup2 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup2.append("<option value='"+data.familyName+"'>"+data.fontName+"</option>")
-								$("#jerseyFontTypeCombo").append(optgroup2)
-								var optgroup3 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup3.append("<option value='"+data.familyName+"'>"+data.fontName+" 1234567890</option>")
-								$("#jerseyNumberTypeCombo").append(optgroup3)
-								var optgroup4 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup4.append("<option value='"+data.familyName+"'>"+data.fontName+"</option>")
-								$("#capFontTypeCombo").append(optgroup4)
-								var optgroup5 = $("<optgroup class='"+data.familyName+"'>");
-								optgroup5.append("<option value='"+data.familyName+"'>"+data.fontName+"</option>")
-								$("#jerseyNameTypeCombo").append(optgroup5)
-								break;
-						}
-					
-						hideOverlay();
-					}).catch(function(e) {
-						console.log(e)
-						alert('font loading failed ' + data.familyName);
-						hideOverlay();
-					});  */
 				} else {
 					hideOverlay();
 				}
@@ -13096,7 +13042,6 @@
 		if (parseInt($(this).val()) > parseInt($(this).attr("max"))) {
 			$(this).val(parseInt($(this).attr("max")))
 		}
-		console.log($(this).attr("max"))
 		var group = $(this).data("group")
 		var object = $(this).data("id")
 		switch ($(this).data("canvas")) {
@@ -13132,6 +13077,119 @@
 	})
 
 // UTILITY FUNCTIONS
+
+	function updateDDSlick(source, addData, addData2) {
+
+		console.log(addData)
+		console.log(addData2)
+
+		$("#numberDropdown").ddslick("destroy")
+		$("#letterDropdown").ddslick("destroy")
+		$("#jerseyWordmarkSelect").ddslick("destroy")
+		$("#capTextSelect").ddslick("destroy")
+
+		switch (source) {
+			case "font":
+				console.log(source)
+				var elementToUpdate = fontddData.find(entry => entry.selected === true);
+							
+				if (elementToUpdate) {
+					elementToUpdate.selected = false;
+				}
+
+				push(fontddData, addData)
+				fontddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
+
+				push(jerseyddData, addData2)
+				jerseyddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
+
+				push(capddData, addData2)
+				capddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
+
+				break;
+			case "jersey":
+				console.log(source)
+				var elementToUpdate = jerseyddData.find(entry => entry.selected === true);
+							
+				if (elementToUpdate) {
+					elementToUpdate.selected = false;
+				}
+
+				push(jerseyddData, addData)
+				jerseyddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
+
+				push(fontddData, addData2)
+				fontddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
+
+				push(capddData, addData2)
+				capddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
+
+				break;
+			case "cap":
+				console.log(source)
+				var elementToUpdate = capddData.find(entry => entry.selected === true);
+							
+				if (elementToUpdate) {
+					elementToUpdate.selected = false;
+				}
+
+				push(capddData, addData)
+				capddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
+
+				push(fontddData, addData2)
+				fontddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
+
+				push(jerseyddData, addData2)
+				jerseyddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
+
+				break;
+		}
+
+		$('#numberDropdown').ddslick({
+			data:fontddData,
+			width: 300,
+			height: 250,
+			imagePosition:"left",
+			onSelected: function(selectedData){
+				changeFont(numbers, selectedData.selectedData.value)
+			}   
+		});
+
+		$('#letterDropdown').ddslick({
+			data:fontddData,
+			width: 300,
+			height: 250,
+			imagePosition:"left",
+			onSelected: function(selectedData){
+				changeFont(letters, selectedData.selectedData.value)
+			}   
+		});
+
+		$("#jerseyWordmarkSelect").ddslick({
+			data:jerseyddData,
+			width: 300,
+			imagePosition:"left",
+			height: 250,
+			onSelected: function(selectedData){
+				if (ddCount > 1) {
+					jerseyWordmarkChange(selectedData.selectedData.value,false)
+				}
+			}   
+		}); 
+
+		$("#capTextSelect").ddslick({
+			data:capddData,
+			width: 300,
+			imagePosition:"left",
+			height: 250,
+			onSelected: function(selectedData){
+				if (ddCount > 1) {
+					capWordmarkChange(selectedData.selectedData.value,false)
+				}
+				ddCount++
+			}   
+		});
+	}
 
 	function showOverlay() {
 		jerseyOverlayActive = $("#jerseyOverlay").is(":visible")
@@ -13746,6 +13804,15 @@
 
 	function isNumeric(n) {
 		return !isNaN(parseFloat(n)) && isFinite(n);
+	}
+
+	function isJson(str) {
+		try {
+			JSON.parse(str);
+		} catch (e){
+		 	return false;
+		}
+		return true;
 	}
 </script>
 </html>
