@@ -307,29 +307,18 @@ app2.get("/customFont", (req, res) => {
 				ttfInfo(result.filePaths[0], function(err, info) {
 				var ext = getExtension(result.filePaths[0])
 					const dataUrl = font2base64.encodeToDataUrlSync(result.filePaths[0])
-					var fontPath = url.pathToFileURL(tempDir + '/'+path.basename(result.filePaths[0]))
-					fs.copyFile(result.filePaths[0], tempDir + '/'+path.basename(result.filePaths[0]), (err) => {
-						if (err) {
-							console.log(err)
-							res.json({
-								"status":"error",
-								"message": err
-							})
-							res.end()
-						} else {
-							res.json({
-								"status": "ok",
-								"fontName": info.tables.name[1],
-								"fontStyle": info.tables.name[2],
-								"familyName": info.tables.name[6],
-								"fontFormat": ext,
-								"fontMimetype": 'font/' + ext,
-								"fontData": fontPath.href,
-								'fontBase64': dataUrl
-							});
-							res.end()
-						}
-					})
+					var fontPath = url.pathToFileURL(result.filePaths[0])
+					res.json({
+						"status": "ok",
+						"fontName": info.tables.name[1],
+						"fontStyle": info.tables.name[2],
+						"familyName": info.tables.name[6],
+						"fontFormat": ext,
+						"fontMimetype": 'font/' + ext,
+						"fontData": fontPath.href,
+						'fontBase64': dataUrl
+					});
+					res.end()
 				});
 			} catch (err) {
 				res.json({
