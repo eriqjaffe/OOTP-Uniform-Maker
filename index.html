@@ -2843,7 +2843,7 @@
 		imagePosition:"left",
 		height: 250,
 		onSelected: function(selectedData){
-			if (ddCount > 1) {
+			if (ddCount >= 4) {
 				var ddData = $('#jerseyWordmarkSelect').data('ddslick')
 				jerseyWordmarkChange(selectedData.selectedData.value,false)
 				//changeFont(numbers, selectedData.selectedData.value)
@@ -4719,10 +4719,6 @@
 			const path = font.getPath($("#wordmarkTextBox").val(),256,681,50)
 			const svgPath = path.toPathData(5)
 
-			jerseyLogoCanvas.getObjects().forEach(function (o) {
-				console.log(o.id)
-			})
-
 			var grp = jerseyLogoCanvas.getObjects("group").find(o => o.id === "wordmark")
 
 			grp.getObjects('path').forEach(function(o) {
@@ -5916,7 +5912,7 @@
 		imagePosition:"left",
 		height: 250,
 		onSelected: function(selectedData){
-			if (ddCount > 1) {
+			if (ddCount >= 4) {
 				capWordmarkChange(selectedData.selectedData.value,false)
 				//changeFont(numbers, selectedData.selectedData.value)
 			}
@@ -6427,6 +6423,7 @@
 	})
 
 	function capWordmarkChange(data,newFont) {
+		console.log("hello")
 		var tmp = (data.fontBase64 == undefined) ? data : data.fontBase64;
 		opentype.load(tmp, (err,font) => {
 			if (err || !font) {
@@ -6438,6 +6435,7 @@
 			var grp2 = capLogoCanvas.getObjects("group").find(o => o.id === "textLogo2")
 
 			grp.getObjects('path').forEach(function(o) {
+				console.log(o.id)
 				grp.removeWithUpdate(o)
 			})
 
@@ -6953,7 +6951,7 @@
 		imagePosition:"left",
 		height: 250,
 		onSelected: function(selectedData){
-			if (ddCount > 1) {
+			if (ddCount >= 4) {
 				changeFont(numbers, selectedData.selectedData.value)
 			}
 			ddCount++
@@ -6966,7 +6964,7 @@
 		imagePosition:"left",
 		height: 250,
 		onSelected: function(selectedData){
-			if (ddCount > 1) {
+			if (ddCount >= 4) {
 				changeFont(letters, selectedData.selectedData.value)
 			}
 			ddCount++
@@ -12851,37 +12849,6 @@
 							jerseyBelow.add(object)
 						})
 						jerseyLogoCanvas.loadFromJSON(exportMeta.canvases.jerseyLogoCanvas, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), function(o, object) {
-							/* if (object.id == 'wordmark' || object.id == 'warpedText') {
-								$("#wordmarkCheck").prop("checked",object.visible).triggerHandler('click');
-								if (object.id == 'warpedText') {
-									var myfont = new FontFaceObserver(exportMeta.selectedJerseyFont)
-									myfont.load()
-										.then(function() {
-											o.set("fontFamily", (validFonts.includes(exportMeta.selectedJerseyFont)) ? o.fontFamily : "Leckerli One")
-											jerseyLogoCanvas.renderAll();
-											$("#jerseyFontTypeCombo").val(exportMeta.selectedJerseyFont)
-											$("#jerseyFontTypeCombo").removeClass().addClass(o.get("fontFamily"));
-											$("#jerseyFontTypeCombo").trigger('change')
-										}).catch(function(e) {
-											console.log(e)
-										});
-								} else {
-									object.getObjects().forEach(function(o) {
-									var myfont = new FontFaceObserver(exportMeta.selectedJerseyFont)
-									myfont.load()
-										.then(function() {
-											o.set("fontFamily", (validFonts.includes(exportMeta.selectedJerseyFont)) ? o.fontFamily : "Leckerli One")
-											jerseyLogoCanvas.renderAll();
-											$("#jerseyFontTypeCombo").val(exportMeta.selectedJerseyFont)
-											$("#jerseyFontTypeCombo").removeClass().addClass(object.get("fontFamily"));
-											$("#jerseyFontTypeCombo").trigger('change')
-										}).catch(function(e) {
-											console.log(e)
-										});
-									})
-								}
-								
-							} */
 							jerseyLogoCanvas.add(object)
 						})
 						jerseyBelow.renderAll()
@@ -12892,6 +12859,11 @@
 						})
 						capLogoCanvas.loadFromJSON(exportMeta.canvases.capLogoCanvas, capLogoCanvas.renderAll.bind(capLogoCanvas), function(o, object) {
 							capLogoCanvas.add(object)
+						})
+						capLogoCanvas.renderAll()
+
+						capLogoCanvas.getObjects().forEach(function(o) {
+							console.log(o)
 						})
 						capBelow.renderAll()
 						reRenderBG("cap")
@@ -12913,13 +12885,18 @@
 						$("#jerseyWordmarkSelect").ddslick("destroy")
 						$("#capTextSelect").ddslick("destroy")
 
+						ddCount = 0 
+
 						$('#numberDropdown').ddslick({
 							data:fontddData,
 							width: 300,
 							height: 250,
 							imagePosition:"left",
 							onSelected: function(selectedData){
-								changeFont(numbers, selectedData.selectedData.value)
+								if (ddCount >= 4) {
+									changeFont(numbers, selectedData.selectedData.value)
+								}
+								ddCount++
 							}   
 						});
 
@@ -12929,7 +12906,10 @@
 							height: 250,
 							imagePosition:"left",
 							onSelected: function(selectedData){
-								changeFont(letters, selectedData.selectedData.value)
+								if (ddCount >= 4) {
+									changeFont(letters, selectedData.selectedData.value)
+								}
+								ddCount++
 							}   
 						});
 
@@ -12939,9 +12919,11 @@
 							imagePosition:"left",
 							height: 250,
 							onSelected: function(selectedData){
-								if (ddCount > 1) {
+								if (ddCount >= 4) {
 									jerseyWordmarkChange(selectedData.selectedData.value,false)
 								}
+								ddCount++
+								
 							}   
 						}); 
 
@@ -12951,7 +12933,7 @@
 							imagePosition:"left",
 							height: 250,
 							onSelected: function(selectedData){
-								if (ddCount > 1) {
+								if (ddCount >= 4) {
 									capWordmarkChange(selectedData.selectedData.value,false)
 								}
 								ddCount++
@@ -13281,7 +13263,10 @@
 			height: 250,
 			imagePosition:"left",
 			onSelected: function(selectedData){
-				changeFont(numbers, selectedData.selectedData.value)
+				if (ddCount >= 4) {
+					changeFont(numbers, selectedData.selectedData.value)
+				}
+				ddCount++
 			}   
 		});
 
@@ -13291,8 +13276,12 @@
 			height: 250,
 			imagePosition:"left",
 			onSelected: function(selectedData){
-				changeFont(letters, selectedData.selectedData.value)
-			}   
+				if (ddCount >= 4) {
+					changeFont(letters, selectedData.selectedData.value)
+				}
+				ddCount++
+			}
+			
 		});
 
 		$("#jerseyWordmarkSelect").ddslick({
@@ -13301,9 +13290,10 @@
 			imagePosition:"left",
 			height: 250,
 			onSelected: function(selectedData){
-				if (ddCount > 1) {
+				if (ddCount >= 4) {
 					jerseyWordmarkChange(selectedData.selectedData.value,false)
 				}
+				ddCount++
 			}   
 		}); 
 
@@ -13313,7 +13303,7 @@
 			imagePosition:"left",
 			height: 250,
 			onSelected: function(selectedData){
-				if (ddCount > 1) {
+				if (ddCount >= 4) {
 					capWordmarkChange(selectedData.selectedData.value,false)
 				}
 				ddCount++
