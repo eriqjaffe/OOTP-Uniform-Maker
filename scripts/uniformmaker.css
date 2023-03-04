@@ -462,7 +462,7 @@ legend {
 }
 
 
-@font-face {
+/* @font-face {
     font-family: 'rawlings_old_englishmedium';
     src: url('../fonts/rawlingsoldenglish-webfont.eot');
     src: url('../fonts/rawlingsoldenglish-webfont.eot?#iefix') format('embedded-opentype'),
@@ -779,7 +779,7 @@ legend {
 .VarsityBlock3 { font-family: 'VarsityBlock3'; font-size: 1.1em }
 .MLBBlock { font-family: 'MLBBlock'; font-size: 1.1em }
 .ChicagoNL { font-family: 'ChicagoNL'; font-size: 1.1em }
-.McAuliffe { font-family: 'McAuliffe'; font-size: 1.1em }
+.McAuliffe { font-family: 'McAuliffe'; font-size: 1.1em } */
 
 /*  SECTIONS  */
 /* .section {
