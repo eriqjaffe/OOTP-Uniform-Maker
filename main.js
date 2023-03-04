@@ -44,8 +44,10 @@ const preferredPantsTexture = store.get("preferredPantsTexture", "pants_texture_
 const preferredCapTexture = store.get("preferredCapTexture", "cap_texture_wool.png")
 const preferredPlayerName = store.get("preferredPlayerName", "PLAYER")
 const preferredPlayerNumber = store.get("preferredPlayerNumber", "23")
-const preferredJerseyFont = store.get("preferredJerseyFont", "Leckerli_One")
-const preferredCapFont = store.get("preferredCapFont", "Graduate")
+const preferredJerseyFont = store.get("preferredJerseyFont", "./fonts/LeckerliOne-Regular.ttf")
+const preferredCapFont = store.get("preferredCapFont", "./fonts/Graduate-Regular.ttf")
+const preferredNameFont = store.get("preferredNameFont", "./fonts/MLBBlock.ttf")
+const preferredNumberFont = store.get("preferredNumberFont", "./fonts/MLBBlock.ttf")
 const preferredHeightMapBrightness = store.get("preferredHeightMapBrightness", "85") 
 const preferredSeamOpacity = store.get("preferredSeamOpacity", "33")
 const gridsVisible = store.get("gridsVisible", true)
@@ -1481,7 +1483,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredPlayerName=${preferredPlayerName}&preferredPlayerNumber=${preferredPlayerNumber}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}`);
     //mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}`);
 	
   

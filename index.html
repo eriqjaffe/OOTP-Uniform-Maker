@@ -54,36 +54,6 @@
 			preferredSeamOpacity: params.get('preferredSeamOpacity')
 		}
 
-		if (prefs.preferredJerseyFont == null) {
-			$("#preferredJerseyFont").val(prefs.preferredJerseyFont)
-		} else {
-			if (prefs.preferredJerseyFont.startsWith("./fonts")) {
-				$("#preferredJerseyFont").val(prefs.preferredJerseyFont)
-			} else {
-				$("#preferredJerseyFont").trigger("change")
-			}
-		}
-		
-		if (prefs.preferredNameFont == null) {
-			$("#preferredNameFont").val(prefs.preferredNameFont)
-		} else {
-			if (prefs.preferredNameFont.startsWith("./fonts")) {
-				$("#preferredNameFont").val(prefs.preferredNameFont)
-			} else {
-				$("#preferredNameFont").trigger("change")
-			}
-		}	
-
-		if (prefs.preferredNumberFont == null) {
-			$("#preferredNumberFont").val(prefs.preferredNumberFont)
-		} else {
-			if (prefs.preferredNumberFont.startsWith("./fonts")) {
-				$("#preferredNumberFont").val(prefs.preferredNumberFont)
-			} else {
-				$("#preferredNumberFont").trigger("change")
-			}
-		}	
-
 		var defaultJerseyTexture = params.get('preferredJerseyTexture')
 		var defaultPantsTexture = params.get('preferredPantsTexture')
 		var defaultCapTexture = params.get('preferredCapTexture')
@@ -1985,7 +1955,7 @@
 			<tr>
 				<td><center>
 					<label>Preferred Jersey Font:&nbsp;</label>
-					<select id="preferredJerseyFont">
+					<select id="preferredJerseyFont" class="preference">
 						<option value="./fonts/Acme-Regular.ttf">Acme</option>
 						<option value="./fonts/all_state-webfont.ttf">All State</option>
 						<option value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
@@ -2058,7 +2028,7 @@
 				</center></td>
 				<td><center>
 					<label>Preferred Cap Font:&nbsp;</label>
-					<select id="preferredCapFont">
+					<select id="preferredCapFont" class="preference">
 						<option value="./fonts/Acme-Regular.ttf">Acme</option>
 						<option value="./fonts/all_state-webfont.ttf">All State</option>
 						<option value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
@@ -2131,7 +2101,7 @@
 				</center></td>
 				<td><center>
 					<label>Preferred Name Font:&nbsp;</label>
-					<select id="preferredNameFont">
+					<select id="preferredNameFont" class="preference">
 						<option value="./fonts/Acme-Regular.ttf">Acme</option>
 						<option value="./fonts/all_state-webfont.ttf">All State</option>
 						<option value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
@@ -2204,7 +2174,7 @@
 				</center></td>
 				<td><center>
 					<label>Preferred Number Font:&nbsp;</label>
-					<select id="preferredNumberFont">
+					<select id="preferredNumberFont" class="preference">
 						<option value="./fonts/Acme-Regular.ttf">Acme</option>
 						<option value="./fonts/all_state-webfont.ttf">All State</option>
 						<option value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
@@ -2439,6 +2409,55 @@
 		$(".preference").each(function() {
 			$(this).val(prefs[$(this).attr("id")])
 		})
+
+		/* if (prefs.preferredJerseyFont == null) {
+			$("#preferredJerseyFont").val("./fonts/LeckerliOne-Regular.ttf")
+			$("#preferredJerseyFont").trigger("change")
+		} else {
+			if (prefs.preferredJerseyFont.startsWith("./fonts")) {
+				$("#preferredJerseyFont").val(prefs.preferredJerseyFont)
+			} else {
+				$("#preferredJerseyFont").val("./fonts/LeckerliOne-Regular.ttf")
+			}
+			console.log($("#preferredJerseyFont").val())
+			$("#preferredJerseyFont").trigger("change")
+		}
+
+		if (prefs.preferredCapFont == null) {
+			$("#preferredCapFont").val("./fonts/Graduate-Regular.ttf")
+			$("#preferredCapFont").trigger("change")
+		} else {
+			if (prefs.preferredCapFont.startsWith("./fonts")) {
+				$("#preferredCapFont").val(prefs.preferredCapFont)
+			} else {
+				$("#preferredCapFont").val("./fonts/Graduate-Regular.ttf")
+			}
+			$("#preferredCapFont").trigger("change")
+		}	
+		
+		if (prefs.preferredNameFont == null) {
+			$("#preferredNameFont").val("./fonts/MLBBlock.ttf")
+			$("#preferredNameFont").trigger("change")
+		} else {
+			if (prefs.preferredNameFont.startsWith("./fonts")) {
+				$("#preferredNameFont").val(prefs.preferredNameFont)
+			} else {
+				$("#preferredNameFont").val("./fonts/MLBBlock.ttf")
+			}
+			$("#preferredNameFont").trigger("change")
+		}	
+
+		if (prefs.preferredNumberFont == null) {
+			$("#preferredNumberFont").val("./fonts/MLBBlock.ttf")
+			$("#preferredNumberFont").trigger("change")
+		} else {
+			if (prefs.preferredNumberFont.startsWith("./fonts")) {
+				$("#preferredNumberFont").val(prefs.preferredNumberFont)
+			} else {
+				$("#preferredNumberFont").val("./fonts/MLBBlock.ttf")
+			}
+			$("#preferredNumberFont").trigger("change")
+		} */	
 
 		$(".jersey-accord-header").click(function() {
 			if($(this).next("div").is(":visible")){
@@ -9434,7 +9453,7 @@
 		    offsetY: 3
 		}))
 
-		jerseyNameFill = new fabric.Text(prefs['preferredPlayerName'],{
+/* 		jerseyNameFill = new fabric.Text(prefs['preferredPlayerName'],{
 			fontFamily: "MLBBlock",
 			fontSize: 30,
 			originX: 'center',
@@ -9688,7 +9707,7 @@
 			centeredRotation: true,
 			left: 461,
 			top: 528
-		})
+		}) */
 
 		jerseyLogoCanvas.add(seams)
 		jerseyLogoCanvas.add(placketPipingInnerColor)
@@ -9790,10 +9809,10 @@
 			jerseyLogoCanvas.add(wordmark)
 		})
 
-		jerseyLogoCanvas.add(playerName)
+/* 		jerseyLogoCanvas.add(playerName)
 		jerseyLogoCanvas.add(jerseyBackNumber)
 		jerseyLogoCanvas.add(jerseyFrontNumber)
-		jerseyLogoCanvas.add(jerseySleeveNumber)
+		jerseyLogoCanvas.add(jerseySleeveNumber) */
 		jerseyLogoCanvas.add(mlbLogo)
 		jerseyLogoCanvas.add(milbLogo)
 
@@ -10266,7 +10285,7 @@
 			clipPath: pantsClippingPath
 		})
 
-		pantsNumberFill = new fabric.Text(prefs['preferredPlayerNumber'],{
+		/* pantsNumberFill = new fabric.Text(prefs['preferredPlayerNumber'],{
 			fontFamily: "MLBBlock",
 			fontSize: 40,
 			originX: 'center',
@@ -10330,7 +10349,7 @@
 			originY: 'center',
 			left: 307,
 			top: 90,
-		})
+		}) */
 
         fabric.Image.fromURL("./images/buckle2.png", function (img) {
 			var buckle = img.set({
@@ -10380,7 +10399,7 @@
 		pantsLogoCanvas.add(atlBelt2)
 		pantsLogoCanvas.add(atlBelt3)
 		pantsLogoCanvas.add(atlBelt4)
-		pantsLogoCanvas.add(pantsNumber)
+/* 		pantsLogoCanvas.add(pantsNumber) */
 		pantsLogoCanvas.add(pantsMLBLogo)
 		pantsLogoCanvas.add(pantsMiLBLogo)
 
