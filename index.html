@@ -10,7 +10,7 @@
 	<script type="text/javascript" src="./scripts/context_blender.js"></script>
 	<!--<script type="text/javascript" src="./scripts/modernizr.custom.68502.js"></script>-->
     <script type="text/javascript" src="./scripts/jquery.magnific-popup.min.js"></script>
-	<script type="text/javascript" src="./scripts/jquery.dd.min.js"></script>
+	<script type="text/javascript" src="./scripts/dd.min.js"></script>
 	<script type="text/javascript" src="./scripts/jquery.range-min.js"></script>
 	<script type="text/javascript" src="./scripts/jquery.mousewheel.min.js"></script>
 	<script type="text/javascript" src="./scripts/spin.min.js"></script>
@@ -18,7 +18,6 @@
     <script type="text/javascript" src="./scripts/skeletabs.js"></script>
 	<script type="text/javascript" src="./scripts/tinycolor-min.js"></script>
 	<script type="text/javascript" src="./scripts/opentype.js"></script>
-	<script type="text/javascript" src="./scripts/jquery.ddslick.min.js"></script>
 	<link href='./scripts/uniformmaker.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/spectrum.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/menu.css' rel='stylesheet' type='text/css'>
@@ -95,15 +94,6 @@
 		var pantsMakersMarkX = pantsMakersMarkCoords['leftX']
 		var pantsMakersMarkY = pantsMakersMarkCoords['leftY']
 
-		var fontddData = [{"value":"./fonts/Acme-Regular.ttf","text":"Acme","selected":false,"imageSrc":"./images/Acme.png"},{"value":"./fonts/all_state-webfont.ttf","text":"All State","selected":false,"imageSrc":"./images/All State.png"},{"value":"./fonts/athletic_gothic-webfont.ttf","text":"Athletic Gothic","selected":false,"imageSrc":"./images/Athletic Gothic.png"},{"value":"./fonts/athletic_gothic_shadow-webfont.ttf","text":"Athletic Gothic Shadow","selected":false,"imageSrc":"./images/Athletic Gothic Shadow.png"},{"value":"./fonts/beaverton_script-webfont.ttf","text":"Beaverton Script","selected":false,"imageSrc":"./images/Beaverton Script.png"},{"value":"./fonts/BerkshireSwash-Regular.ttf","text":"Berkshire Swash","selected":false,"imageSrc":"./images/Berkshire Swash.png"},{"value":"./fonts/CantoraOne-Regular.ttf","text":"CantoraOne","selected":false,"imageSrc":"./images/CantoraOne.png"},{"value":"./fonts/caxton_roman-webfont.ttf","text":"Caxton Roman","selected":false,"imageSrc":"./images/Caxton Roman.png"},{"value":"./fonts/ChelaOne-Regular.ttf","text":"Chela","selected":false,"imageSrc":"./images/Chela One.png"},{"value":"./fonts/circus-webfont.ttf","text":"Russell Circus","selected":false,"imageSrc":"./images/Russell Circus.png"},{"value":"./fonts/Condiment-Regular.ttf","text":"Condiment","selected":false,"imageSrc":"./images/Condiment.png"},{"value":"./fonts/Cookie-Regular.ttf","text":"Cookie","selected":false,"imageSrc":"./images/Cookie.png"},{"value":"./fonts/Courgette-Regular.ttf","text":"Courgette","selected":false,"imageSrc":"./images/Courgette.png"},{"value":"./fonts/CroissantOne-Regular.ttf","text":"Croissant","selected":false,"imageSrc":"./images/Croissant One.png"},{"value":"./fonts/Damion-Regular.ttf","text":"Damion","selected":false,"imageSrc":"./images/Damion.png"},{"value":"./fonts/Engagement-Regular.ttf","text":"Engagement","selected":false,"imageSrc":"./images/Engagement.png"},{"value":"./fonts/GermaniaOne-Regular.ttf","text":"Germania","selected":false,"imageSrc":"./images/Germania One.png"},{"value":"./fonts/Graduate-Regular.ttf","text":"Graduate","selected":false,"imageSrc":"./images/Graduate.png"},{"value":"./fonts/GrandHotel-Regular.ttf","text":"Grand Hotel","selected":false,"imageSrc":"./images/Grand Hotel.png"},{"value":"./fonts/JockeyOne-Regular.ttf","text":"Jockey","selected":false,"imageSrc":"./images/Jockey One.png"},{"value":"./fonts/KaushanScript-Regular.ttf","text":"Kaushan Script","selected":false,"imageSrc":"./images/Kaushan Script.png"},{"value":"./fonts/LeckerliOne-Regular.ttf","text":"Leckerli","selected":false,"imageSrc":"./images/Leckerli One.png"},{"value":"./fonts/LilyScriptOne-Regular.ttf","text":"Lily Script","selected":false,"imageSrc":"./images/Lily Script One.png"},{"value":"./fonts/Lobster-Regular.ttf","text":"Lobster","selected":false,"imageSrc":"./images/Lobster.png"},{"value":"./fonts/LobsterTwo-Regular.ttf","text":"Lobster Two","selected":false,"imageSrc":"./images/Lobster Two.png"},{"value":"./fonts/MetalMania-Regular.ttf","text":"Metal Mania","selected":false,"imageSrc":"./images/Metal Mania.png"},{"value":"./fonts/Miniver-Regular.ttf","text":"Miniver","selected":false,"imageSrc":"./images/Miniver.png"},{"value":"./fonts/MLBBlock.ttf","text":"MLB Block","selected":true,"imageSrc":"./images/MLB Block.png"},{"value":"./fonts/MLBCubs.ttf","text":"MLB Chicago N","selected":false,"imageSrc":"./images/MLB Cubs.png"},{"value":"./fonts/MLBRedSox.ttf","text":"McAuliffe","selected":false,"imageSrc":"./images/MLB Red Sox.png"},{"value":"./fonts/Molle-Regular.ttf","text":"Molle","selected":false,"imageSrc":"./images/Molle.png"},{"value":"./fonts/NewRocker-Regular.ttf","text":"New Rocker","selected":false,"imageSrc":"./images/New Rocker.png"},{"value":"./fonts/Norican-Regular.ttf","text":"Norican","selected":false,"imageSrc":"./images/Norican.png"},{"value":"./fonts/OleoScript-Regular.ttf","text":"Oleo Script","selected":false,"imageSrc":"./images/Oleo Script.png"},{"value":"./fonts/Pacifico.ttf","text":"Pacifico","selected":false,"imageSrc":"./images/Pacifico.png"},{"value":"./fonts/PirataOne-Regular.ttf","text":"Pirata","selected":false,"imageSrc":"./images/Pirata One.png"},{"value":"./fonts/Playball-Regular.ttf","text":"Playball","selected":false,"imageSrc":"./images/Playball.png"},{"value":"./fonts/pro_full_block-webfont.ttf","text":"Pro Full Block","selected":false,"imageSrc":"./images/Pro Full Block.png"},{"value":"./fonts/Quicksand-Regular.ttf","text":"Quicksand","selected":false,"imageSrc":"./images/Quicksand.png"},{"value":"./fonts/RubikMonoOne-Regular.ttf","text":"Rubik Mono","selected":false,"imageSrc":"./images/Rubik Mono One.png"},{"value":"./fonts/RubikOne-Regular.ttf","text":"Rubik","selected":false,"imageSrc":"./images/Rubik One.png"},{"value":"./fonts/RumRaisin-Regular.ttf","text":"Rum Raisin","selected":false,"imageSrc":"./images/Rum Raisin.png"},{"value":"./fonts/Satisfy-Regular.ttf","text":"Satisfy","selected":false,"imageSrc":"./images/Satisfy.png"},{"value":"./fonts/SeymourOne-Regular.ttf","text":"Seymour","selected":false,"imageSrc":"./images/Seymour One.png"},{"value":"./fonts/tiffany-webfont.ttf","text":"Tiffany","selected":false,"imageSrc":"./images/UA Tiffany.png"},{"value":"./fonts/TradeWinds-Regular.ttf","text":"Trade Winds","selected":false,"imageSrc":"./images/Trade Winds.png"},{"value":"./fonts/tuscan-webfont.ttf","text":"Kansas","selected":false,"imageSrc":"./images/Kansas.png"},{"value":"./fonts/UnifrakturCook-Bold.ttf","text":"Unifraktur Cook","selected":false,"imageSrc":"./images/UnifrakturCook.png"},{"value":"./fonts/UnifrakturMaguntia-Book.ttf","text":"Unifraktur Maguntia","selected":false,"imageSrc":"./images/UnifrakturMaguntia.png"},{"value":"./fonts/VarsityBlockC.ttf","text":"Varsity Block C","selected":false,"imageSrc":"./images/Varsity Block C.png"},{"value":"./fonts/VarsityClassicSerifA.ttf","text":"Varsity Classic Serif A","selected":false,"imageSrc":"./images/Varsity Classic Serif A.png"},{"value":"./fonts/VarsityClassicSerifB.ttf","text":"Varsity Classic Serif B","selected":false,"imageSrc":"./images/Varsity Classic Serif B.png"},{"value":"./fonts/Vibur-Regular.ttf","text":"Vibur","selected":false,"imageSrc":"./images/Vibur.png"},{"value":"./fonts/Viga-Regular.ttf","text":"Viga","selected":false,"imageSrc":"./images/Viga.png"},{"value":"./fonts/Wellfleet-Regular.ttf","text":"Wellfleet","selected":false,"imageSrc":"./images/Wellfleet.png"},{"value":"./fonts/WendyOne-Regular.ttf","text":"Wendy","selected":false,"imageSrc":"./images/Wendy One.png"},{"value":"./fonts/Yellowtail-Regular.ttf","text":"Yellowtail","selected":false,"imageSrc":"./images/Yellowtail.png"},{"value":"./fonts/rawlingsfancyblock-regular-webfont.ttf","text":"Fancy Block","selected":false,"imageSrc":"./images/Rawlings Fancy Block.png"},{"value":"./fonts/rawlingsoldenglish-webfont.ttf","text":"Old English","selected":false,"imageSrc":"./images/Rawlings Old English.png"},{"value":"./fonts/richardson_fancy_block-webfont.ttf","text":"Fancy Block 2","selected":false,"imageSrc":"./images/Richardson Fancy Block.png"},{"value":"./fonts/spl28script-webfont.ttf","text":"SPL Script","selected":false,"imageSrc":"./images/SPL28Script.png"},{"value":"./fonts/VarsityClassicD.ttf","text":"Varsity Classic D","selected":false,"imageSrc":"./images/VarsityClassicD.png"},{"value":"./fonts/VarsityBlockA.ttf","text":"Varsity Block A","selected":false,"imageSrc":"./images/VarsityBlockA.png"},{"value":"./fonts/VarsityBlockB.ttf","text":"Varsity Block B","selected":false,"imageSrc":"./images/VarsityBlockB.png"},{"value":"./fonts/VarsityBlockD.ttf","text":"Varsity Block D","selected":false,"imageSrc":"./images/VarsityBlockD.png"},{"value":"./fonts/VarsityClassicA.ttf","text":"Varsity Classic A","selected":false,"imageSrc":"./images/VarsityClassicA.png"},{"value":"./fonts/VarsityClassicB.ttf","text":"Varsity Classic B","selected":false,"imageSrc":"./images/VarsityClassicB.png"},{"value":"./fonts/VarsityClassicC.ttf","text":"Varsity Classic C","selected":false,"imageSrc":"./images/VarsityClassicC.png"}]
-		fontddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
-
-		var jerseyddData = [{"value":"./fonts/Acme-Regular.ttf","text":"Acme","selected":false,"imageSrc":"./images/Acme.png"},{"value":"./fonts/all_state-webfont.ttf","text":"All State","selected":false,"imageSrc":"./images/All State.png"},{"value":"./fonts/athletic_gothic-webfont.ttf","text":"Athletic Gothic","selected":false,"imageSrc":"./images/Athletic Gothic.png"},{"value":"./fonts/athletic_gothic_shadow-webfont.ttf","text":"Athletic Gothic Shadow","selected":false,"imageSrc":"./images/Athletic Gothic Shadow.png"},{"value":"./fonts/beaverton_script-webfont.ttf","text":"Beaverton Script","selected":false,"imageSrc":"./images/Beaverton Script.png"},{"value":"./fonts/BerkshireSwash-Regular.ttf","text":"Berkshire Swash","selected":false,"imageSrc":"./images/Berkshire Swash.png"},{"value":"./fonts/CantoraOne-Regular.ttf","text":"CantoraOne","selected":false,"imageSrc":"./images/CantoraOne.png"},{"value":"./fonts/caxton_roman-webfont.ttf","text":"Caxton Roman","selected":false,"imageSrc":"./images/Caxton Roman.png"},{"value":"./fonts/ChelaOne-Regular.ttf","text":"Chela","selected":false,"imageSrc":"./images/Chela One.png"},{"value":"./fonts/circus-webfont.ttf","text":"Russell Circus","selected":false,"imageSrc":"./images/Russell Circus.png"},{"value":"./fonts/Condiment-Regular.ttf","text":"Condiment","selected":false,"imageSrc":"./images/Condiment.png"},{"value":"./fonts/Cookie-Regular.ttf","text":"Cookie","selected":false,"imageSrc":"./images/Cookie.png"},{"value":"./fonts/Courgette-Regular.ttf","text":"Courgette","selected":false,"imageSrc":"./images/Courgette.png"},{"value":"./fonts/CroissantOne-Regular.ttf","text":"Croissant","selected":false,"imageSrc":"./images/Croissant One.png"},{"value":"./fonts/Damion-Regular.ttf","text":"Damion","selected":false,"imageSrc":"./images/Damion.png"},{"value":"./fonts/Engagement-Regular.ttf","text":"Engagement","selected":false,"imageSrc":"./images/Engagement.png"},{"value":"./fonts/GermaniaOne-Regular.ttf","text":"Germania","selected":false,"imageSrc":"./images/Germania One.png"},{"value":"./fonts/Graduate-Regular.ttf","text":"Graduate","selected":false,"imageSrc":"./images/Graduate.png"},{"value":"./fonts/GrandHotel-Regular.ttf","text":"Grand Hotel","selected":false,"imageSrc":"./images/Grand Hotel.png"},{"value":"./fonts/JockeyOne-Regular.ttf","text":"Jockey","selected":false,"imageSrc":"./images/Jockey One.png"},{"value":"./fonts/KaushanScript-Regular.ttf","text":"Kaushan Script","selected":false,"imageSrc":"./images/Kaushan Script.png"},{"value":"./fonts/LeckerliOne-Regular.ttf","text":"Leckerli","selected":true,"imageSrc":"./images/Leckerli One.png"},{"value":"./fonts/LilyScriptOne-Regular.ttf","text":"Lily Script","selected":false,"imageSrc":"./images/Lily Script One.png"},{"value":"./fonts/Lobster-Regular.ttf","text":"Lobster","selected":false,"imageSrc":"./images/Lobster.png"},{"value":"./fonts/LobsterTwo-Regular.ttf","text":"Lobster Two","selected":false,"imageSrc":"./images/Lobster Two.png"},{"value":"./fonts/MetalMania-Regular.ttf","text":"Metal Mania","selected":false,"imageSrc":"./images/Metal Mania.png"},{"value":"./fonts/Miniver-Regular.ttf","text":"Miniver","selected":false,"imageSrc":"./images/Miniver.png"},{"value":"./fonts/MLBBlock.ttf","text":"MLB Block","selected":false,"imageSrc":"./images/MLB Block.png"},{"value":"./fonts/MLBCubs.ttf","text":"MLB Chicago N","selected":false,"imageSrc":"./images/MLB Cubs.png"},{"value":"./fonts/MLBRedSox.ttf","text":"McAuliffe","selected":false,"imageSrc":"./images/MLB Red Sox.png"},{"value":"./fonts/Molle-Regular.ttf","text":"Molle","selected":false,"imageSrc":"./images/Molle.png"},{"value":"./fonts/NewRocker-Regular.ttf","text":"New Rocker","selected":false,"imageSrc":"./images/New Rocker.png"},{"value":"./fonts/Norican-Regular.ttf","text":"Norican","selected":false,"imageSrc":"./images/Norican.png"},{"value":"./fonts/OleoScript-Regular.ttf","text":"Oleo Script","selected":false,"imageSrc":"./images/Oleo Script.png"},{"value":"./fonts/Pacifico.ttf","text":"Pacifico","selected":false,"imageSrc":"./images/Pacifico.png"},{"value":"./fonts/PirataOne-Regular.ttf","text":"Pirata","selected":false,"imageSrc":"./images/Pirata One.png"},{"value":"./fonts/Playball-Regular.ttf","text":"Playball","selected":false,"imageSrc":"./images/Playball.png"},{"value":"./fonts/pro_full_block-webfont.ttf","text":"Pro Full Block","selected":false,"imageSrc":"./images/Pro Full Block.png"},{"value":"./fonts/Quicksand-Regular.ttf","text":"Quicksand","selected":false,"imageSrc":"./images/Quicksand.png"},{"value":"./fonts/RubikMonoOne-Regular.ttf","text":"Rubik Mono","selected":false,"imageSrc":"./images/Rubik Mono One.png"},{"value":"./fonts/RubikOne-Regular.ttf","text":"Rubik","selected":false,"imageSrc":"./images/Rubik One.png"},{"value":"./fonts/RumRaisin-Regular.ttf","text":"Rum Raisin","selected":false,"imageSrc":"./images/Rum Raisin.png"},{"value":"./fonts/Satisfy-Regular.ttf","text":"Satisfy","selected":false,"imageSrc":"./images/Satisfy.png"},{"value":"./fonts/SeymourOne-Regular.ttf","text":"Seymour","selected":false,"imageSrc":"./images/Seymour One.png"},{"value":"./fonts/tiffany-webfont.ttf","text":"Tiffany","selected":false,"imageSrc":"./images/UA Tiffany.png"},{"value":"./fonts/TradeWinds-Regular.ttf","text":"Trade Winds","selected":false,"imageSrc":"./images/Trade Winds.png"},{"value":"./fonts/tuscan-webfont.ttf","text":"Kansas","selected":false,"imageSrc":"./images/Kansas.png"},{"value":"./fonts/UnifrakturCook-Bold.ttf","text":"Unifraktur Cook","selected":false,"imageSrc":"./images/UnifrakturCook.png"},{"value":"./fonts/UnifrakturMaguntia-Book.ttf","text":"Unifraktur Maguntia","selected":false,"imageSrc":"./images/UnifrakturMaguntia.png"},{"value":"./fonts/VarsityBlockC.ttf","text":"Varsity Block C","selected":false,"imageSrc":"./images/Varsity Block C.png"},{"value":"./fonts/VarsityClassicSerifA.ttf","text":"Varsity Classic Serif A","selected":false,"imageSrc":"./images/Varsity Classic Serif A.png"},{"value":"./fonts/VarsityClassicSerifB.ttf","text":"Varsity Classic Serif B","selected":false,"imageSrc":"./images/Varsity Classic Serif B.png"},{"value":"./fonts/Vibur-Regular.ttf","text":"Vibur","selected":false,"imageSrc":"./images/Vibur.png"},{"value":"./fonts/Viga-Regular.ttf","text":"Viga","selected":false,"imageSrc":"./images/Viga.png"},{"value":"./fonts/Wellfleet-Regular.ttf","text":"Wellfleet","selected":false,"imageSrc":"./images/Wellfleet.png"},{"value":"./fonts/WendyOne-Regular.ttf","text":"Wendy","selected":false,"imageSrc":"./images/Wendy One.png"},{"value":"./fonts/Yellowtail-Regular.ttf","text":"Yellowtail","selected":false,"imageSrc":"./images/Yellowtail.png"},{"value":"./fonts/rawlingsfancyblock-regular-webfont.ttf","text":"Fancy Block","selected":false,"imageSrc":"./images/Rawlings Fancy Block.png"},{"value":"./fonts/rawlingsoldenglish-webfont.ttf","text":"Old English","selected":false,"imageSrc":"./images/Rawlings Old English.png"},{"value":"./fonts/richardson_fancy_block-webfont.ttf","text":"Fancy Block 2","selected":false,"imageSrc":"./images/Richardson Fancy Block.png"},{"value":"./fonts/spl28script-webfont.ttf","text":"SPL Script","selected":false,"imageSrc":"./images/SPL28Script.png"},{"value":"./fonts/VarsityClassicD.ttf","text":"Varsity Classic D","selected":false,"imageSrc":"./images/VarsityClassicD.png"},{"value":"./fonts/VarsityBlockA.ttf","text":"Varsity Block A","selected":false,"imageSrc":"./images/VarsityBlockA.png"},{"value":"./fonts/VarsityBlockB.ttf","text":"Varsity Block B","selected":false,"imageSrc":"./images/VarsityBlockB.png"},{"value":"./fonts/VarsityBlockD.ttf","text":"Varsity Block D","selected":false,"imageSrc":"./images/VarsityBlockD.png"},{"value":"./fonts/VarsityClassicA.ttf","text":"Varsity Classic A","selected":false,"imageSrc":"./images/VarsityClassicA.png"},{"value":"./fonts/VarsityClassicB.ttf","text":"Varsity Classic B","selected":false,"imageSrc":"./images/VarsityClassicB.png"},{"value":"./fonts/VarsityClassicC.ttf","text":"Varsity Classic C","selected":false,"imageSrc":"./images/VarsityClassicC.png"}]
-		jerseyddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
-		
-		var capddData = [{"value":"./fonts/Acme-Regular.ttf","text":"Acme","selected":false,"imageSrc":"./images/Acme.png"},{"value":"./fonts/all_state-webfont.ttf","text":"All State","selected":false,"imageSrc":"./images/All State.png"},{"value":"./fonts/athletic_gothic-webfont.ttf","text":"Athletic Gothic","selected":false,"imageSrc":"./images/Athletic Gothic.png"},{"value":"./fonts/athletic_gothic_shadow-webfont.ttf","text":"Athletic Gothic Shadow","selected":false,"imageSrc":"./images/Athletic Gothic Shadow.png"},{"value":"./fonts/beaverton_script-webfont.ttf","text":"Beaverton Script","selected":false,"imageSrc":"./images/Beaverton Script.png"},{"value":"./fonts/BerkshireSwash-Regular.ttf","text":"Berkshire Swash","selected":false,"imageSrc":"./images/Berkshire Swash.png"},{"value":"./fonts/CantoraOne-Regular.ttf","text":"CantoraOne","selected":false,"imageSrc":"./images/CantoraOne.png"},{"value":"./fonts/caxton_roman-webfont.ttf","text":"Caxton Roman","selected":false,"imageSrc":"./images/Caxton Roman.png"},{"value":"./fonts/ChelaOne-Regular.ttf","text":"Chela","selected":false,"imageSrc":"./images/Chela One.png"},{"value":"./fonts/circus-webfont.ttf","text":"Russell Circus","selected":false,"imageSrc":"./images/Russell Circus.png"},{"value":"./fonts/Condiment-Regular.ttf","text":"Condiment","selected":false,"imageSrc":"./images/Condiment.png"},{"value":"./fonts/Cookie-Regular.ttf","text":"Cookie","selected":false,"imageSrc":"./images/Cookie.png"},{"value":"./fonts/Courgette-Regular.ttf","text":"Courgette","selected":false,"imageSrc":"./images/Courgette.png"},{"value":"./fonts/CroissantOne-Regular.ttf","text":"Croissant","selected":false,"imageSrc":"./images/Croissant One.png"},{"value":"./fonts/Damion-Regular.ttf","text":"Damion","selected":false,"imageSrc":"./images/Damion.png"},{"value":"./fonts/Engagement-Regular.ttf","text":"Engagement","selected":false,"imageSrc":"./images/Engagement.png"},{"value":"./fonts/GermaniaOne-Regular.ttf","text":"Germania","selected":false,"imageSrc":"./images/Germania One.png"},{"value":"./fonts/Graduate-Regular.ttf","text":"Graduate","selected":true,"imageSrc":"./images/Graduate.png"},{"value":"./fonts/GrandHotel-Regular.ttf","text":"Grand Hotel","selected":false,"imageSrc":"./images/Grand Hotel.png"},{"value":"./fonts/JockeyOne-Regular.ttf","text":"Jockey","selected":false,"imageSrc":"./images/Jockey One.png"},{"value":"./fonts/KaushanScript-Regular.ttf","text":"Kaushan Script","selected":false,"imageSrc":"./images/Kaushan Script.png"},{"value":"./fonts/LeckerliOne-Regular.ttf","text":"Leckerli","selected":false,"imageSrc":"./images/Leckerli One.png"},{"value":"./fonts/LilyScriptOne-Regular.ttf","text":"Lily Script","selected":false,"imageSrc":"./images/Lily Script One.png"},{"value":"./fonts/Lobster-Regular.ttf","text":"Lobster","selected":false,"imageSrc":"./images/Lobster.png"},{"value":"./fonts/LobsterTwo-Regular.ttf","text":"Lobster Two","selected":false,"imageSrc":"./images/Lobster Two.png"},{"value":"./fonts/MetalMania-Regular.ttf","text":"Metal Mania","selected":false,"imageSrc":"./images/Metal Mania.png"},{"value":"./fonts/Miniver-Regular.ttf","text":"Miniver","selected":false,"imageSrc":"./images/Miniver.png"},{"value":"./fonts/MLBBlock.ttf","text":"MLB Block","selected":false,"imageSrc":"./images/MLB Block.png"},{"value":"./fonts/MLBCubs.ttf","text":"MLB Chicago N","selected":false,"imageSrc":"./images/MLB Cubs.png"},{"value":"./fonts/MLBRedSox.ttf","text":"McAuliffe","selected":false,"imageSrc":"./images/MLB Red Sox.png"},{"value":"./fonts/Molle-Regular.ttf","text":"Molle","selected":false,"imageSrc":"./images/Molle.png"},{"value":"./fonts/NewRocker-Regular.ttf","text":"New Rocker","selected":false,"imageSrc":"./images/New Rocker.png"},{"value":"./fonts/Norican-Regular.ttf","text":"Norican","selected":false,"imageSrc":"./images/Norican.png"},{"value":"./fonts/OleoScript-Regular.ttf","text":"Oleo Script","selected":false,"imageSrc":"./images/Oleo Script.png"},{"value":"./fonts/Pacifico.ttf","text":"Pacifico","selected":false,"imageSrc":"./images/Pacifico.png"},{"value":"./fonts/PirataOne-Regular.ttf","text":"Pirata","selected":false,"imageSrc":"./images/Pirata One.png"},{"value":"./fonts/Playball-Regular.ttf","text":"Playball","selected":false,"imageSrc":"./images/Playball.png"},{"value":"./fonts/pro_full_block-webfont.ttf","text":"Pro Full Block","selected":false,"imageSrc":"./images/Pro Full Block.png"},{"value":"./fonts/Quicksand-Regular.ttf","text":"Quicksand","selected":false,"imageSrc":"./images/Quicksand.png"},{"value":"./fonts/RubikMonoOne-Regular.ttf","text":"Rubik Mono","selected":false,"imageSrc":"./images/Rubik Mono One.png"},{"value":"./fonts/RubikOne-Regular.ttf","text":"Rubik","selected":false,"imageSrc":"./images/Rubik One.png"},{"value":"./fonts/RumRaisin-Regular.ttf","text":"Rum Raisin","selected":false,"imageSrc":"./images/Rum Raisin.png"},{"value":"./fonts/Satisfy-Regular.ttf","text":"Satisfy","selected":false,"imageSrc":"./images/Satisfy.png"},{"value":"./fonts/SeymourOne-Regular.ttf","text":"Seymour","selected":false,"imageSrc":"./images/Seymour One.png"},{"value":"./fonts/tiffany-webfont.ttf","text":"Tiffany","selected":false,"imageSrc":"./images/UA Tiffany.png"},{"value":"./fonts/TradeWinds-Regular.ttf","text":"Trade Winds","selected":false,"imageSrc":"./images/Trade Winds.png"},{"value":"./fonts/tuscan-webfont.ttf","text":"Kansas","selected":false,"imageSrc":"./images/Kansas.png"},{"value":"./fonts/UnifrakturCook-Bold.ttf","text":"Unifraktur Cook","selected":false,"imageSrc":"./images/UnifrakturCook.png"},{"value":"./fonts/UnifrakturMaguntia-Book.ttf","text":"Unifraktur Maguntia","selected":false,"imageSrc":"./images/UnifrakturMaguntia.png"},{"value":"./fonts/VarsityBlockC.ttf","text":"Varsity Block C","selected":false,"imageSrc":"./images/Varsity Block C.png"},{"value":"./fonts/VarsityClassicSerifA.ttf","text":"Varsity Classic Serif A","selected":false,"imageSrc":"./images/Varsity Classic Serif A.png"},{"value":"./fonts/VarsityClassicSerifB.ttf","text":"Varsity Classic Serif B","selected":false,"imageSrc":"./images/Varsity Classic Serif B.png"},{"value":"./fonts/Vibur-Regular.ttf","text":"Vibur","selected":false,"imageSrc":"./images/Vibur.png"},{"value":"./fonts/Viga-Regular.ttf","text":"Viga","selected":false,"imageSrc":"./images/Viga.png"},{"value":"./fonts/Wellfleet-Regular.ttf","text":"Wellfleet","selected":false,"imageSrc":"./images/Wellfleet.png"},{"value":"./fonts/WendyOne-Regular.ttf","text":"Wendy","selected":false,"imageSrc":"./images/Wendy One.png"},{"value":"./fonts/Yellowtail-Regular.ttf","text":"Yellowtail","selected":false,"imageSrc":"./images/Yellowtail.png"},{"value":"./fonts/rawlingsfancyblock-regular-webfont.ttf","text":"Fancy Block","selected":false,"imageSrc":"./images/Rawlings Fancy Block.png"},{"value":"./fonts/rawlingsoldenglish-webfont.ttf","text":"Old English","selected":false,"imageSrc":"./images/Rawlings Old English.png"},{"value":"./fonts/richardson_fancy_block-webfont.ttf","text":"Fancy Block 2","selected":false,"imageSrc":"./images/Richardson Fancy Block.png"},{"value":"./fonts/spl28script-webfont.ttf","text":"SPL Script","selected":false,"imageSrc":"./images/SPL28Script.png"},{"value":"./fonts/VarsityClassicD.ttf","text":"Varsity Classic D","selected":false,"imageSrc":"./images/VarsityClassicD.png"},{"value":"./fonts/VarsityBlockA.ttf","text":"Varsity Block A","selected":false,"imageSrc":"./images/VarsityBlockA.png"},{"value":"./fonts/VarsityBlockB.ttf","text":"Varsity Block B","selected":false,"imageSrc":"./images/VarsityBlockB.png"},{"value":"./fonts/VarsityBlockD.ttf","text":"Varsity Block D","selected":false,"imageSrc":"./images/VarsityBlockD.png"},{"value":"./fonts/VarsityClassicA.ttf","text":"Varsity Classic A","selected":false,"imageSrc":"./images/VarsityClassicA.png"},{"value":"./fonts/VarsityClassicB.ttf","text":"Varsity Classic B","selected":false,"imageSrc":"./images/VarsityClassicB.png"},{"value":"./fonts/VarsityClassicC.ttf","text":"Varsity Classic C","selected":false,"imageSrc":"./images/VarsityClassicC.png"}]
-		capddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
-		
 		var strokeWidth = {letters1: 8, letters2: 16, numbers1: 12, numbers2: 24}
 		var overlayImage = null;
 
@@ -134,8 +124,6 @@
 		var customCapTexture = null;
 		var customPantsTexture = null;
 
-		var ddCount = 0;
-		var dsCount = 0;
 		var letterStyle = "center"
 		var numberStyle = "center"
 		var prevDirection = null;
@@ -889,10 +877,10 @@
 												</td>
 											<tr>
 										</table>
-										<table style="width:100%;">
+										<table style="width:100%;" class="ms-jersey-container">
 											<tr>
 												<td style="width:20%;">
-													<select id="warpEffect" class="jerseyTextOption msDropDown" style="width:100%;">
+													<select id="warpEffect" class="msDropDown jerseyTextOption" style="width:100%;" is="ms-dropdown">
 														<option value="none" data-image="./images/none.png"></option>
 														<option value="arch" data-value="15" data-image="./images/arched.png"></option>
 														<option value="arc" data-value="70" data-image="./images/arced.png"></option>
@@ -936,26 +924,92 @@
 											</tr>
 											<tr><td colspan="3" style="text-align:center; font-size:.8em;">Text effects may take a moment or two to process - be patient!</td></tr>
 										</table>	
-										<table style="width:100%;">
-											<tr style="width:100%;">
-												<td style="width:20%;">&nbsp;</td>
-												<td style="width: 60%;" align="center">
-													<div id="jerseyWordmarkSelect"></div>
-													<input id="jerseyCustomFont" type="file" name="customFont" accept=".ttf, .otf" style="display:none;" />
-													<input type="button" class="button jerseyTextOption localFontButton" id="jerseyFakeFontButton" data-canvas="jersey" value="Choose a Local Font..." />
-													<input type="button" class="button jerseyTextOption" id="jerseyUploadTheFont" value="Upload Font" style="display:none;" />
+										<table style="width:100%;" class="ms-jersey-container">
+											<tr>
+												<td colspan="3">
+													<select id="jerseyWordmarkSelect" class="jerseyTextOption" style="width:100%;" is="ms-dropdown" data-visible-rows="6">
+														<option data-image="./images/Acme.png" value="./fonts/Acme-Regular.ttf">Acme</option>
+														<option data-image="./images/All State.png" value="./fonts/all_state-webfont.ttf">All State</option>
+														<option data-image="./images/Athletic Gothic.png" value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
+														<option data-image="./images/Athletic Gothic Shadow.png" value="./fonts/athletic_gothic_shadow-webfont.ttf">Athletic Gothic Shadow</option>
+														<option data-image="./images/Beaverton Script.png" value="./fonts/beaverton_script-webfont.ttf">Beaverton Script</option>
+														<option data-image="./images/Berkshire Swash.png" value="./fonts/BerkshireSwash-Regular.ttf">Berkshire Swash</option>
+														<option data-image="./images/CantoraOne.png" value="./fonts/CantoraOne-Regular.ttf">CantoraOne</option>
+														<option data-image="./images/Caxton Roman.png" value="./fonts/caxton_roman-webfont.ttf">Caxton Roman</option>
+														<option data-image="./images/Chela One.png" value="./fonts/ChelaOne-Regular.ttf">Chela</option>
+														<option data-image="./images/Russell Circus.png" value="./fonts/circus-webfont.ttf">Russell Circus</option>
+														<option data-image="./images/Condiment.png" value="./fonts/Condiment-Regular.ttf">Condiment</option>
+														<option data-image="./images/Cookie.png" value="./fonts/Cookie-Regular.ttf">Cookie</option>
+														<option data-image="./images/Courgette.png" value="./fonts/Courgette-Regular.ttf">Courgette</option>
+														<option data-image="./images/Croissant One.png" value="./fonts/CroissantOne-Regular.ttf">Croissant</option>
+														<option data-image="./images/Damion.png" value="./fonts/Damion-Regular.ttf">Damion</option>
+														<option data-image="./images/Engagement.png" value="./fonts/Engagement-Regular.ttf">Engagement</option>
+														<option data-image="./images/Germania One.png" value="./fonts/GermaniaOne-Regular.ttf">Germania</option>
+														<option data-image="./images/Graduate.png" value="./fonts/Graduate-Regular.ttf">Graduate</option>
+														<option data-image="./images/Grand Hotel.png" value="./fonts/GrandHotel-Regular.ttf">Grand Hotel</option>
+														<option data-image="./images/Jockey One.png" value="./fonts/JockeyOne-Regular.ttf">Jockey</option>
+														<option data-image="./images/Kaushan Script.png" value="./fonts/KaushanScript-Regular.ttf">Kaushan Script</option>
+														<option data-image="./images/Leckerli One.png" value="./fonts/LeckerliOne-Regular.ttf" selected>Leckerli</option>
+														<option data-image="./images/Lily Script One.png" value="./fonts/LilyScriptOne-Regular.ttf">Lily Script</option>
+														<option data-image="./images/Lobster.png" value="./fonts/Lobster-Regular.ttf">Lobster</option>
+														<option data-image="./images/Lobster Two.png" value="./fonts/LobsterTwo-Regular.ttf">Lobster Two</option>
+														<option data-image="./images/Metal Mania.png" value="./fonts/MetalMania-Regular.ttf">Metal Mania</option>
+														<option data-image="./images/Miniver.png" value="./fonts/Miniver-Regular.ttf">Miniver</option>
+														<option data-image="./images/MLB Block.png" value="./fonts/MLBBlock.ttf">MLB Block</option>
+														<option data-image="./images/MLB Cubs.png" value="./fonts/MLBCubs.ttf">MLB Chicago N</option>
+														<option data-image="./images/MLB Red Sox.png" value="./fonts/MLBRedSox.ttf">McAuliffe</option>
+														<option data-image="./images/Molle.png" value="./fonts/Molle-Regular.ttf">Molle</option>
+														<option data-image="./images/New Rocker.png" value="./fonts/NewRocker-Regular.ttf">New Rocker</option>
+														<option data-image="./images/Norican.png" value="./fonts/Norican-Regular.ttf">Norican</option>
+														<option data-image="./images/Oleo Script.png" value="./fonts/OleoScript-Regular.ttf">Oleo Script</option>
+														<option data-image="./images/Pacifico.png" value="./fonts/Pacifico.ttf">Pacifico</option>
+														<option data-image="./images/Pirata One.png" value="./fonts/PirataOne-Regular.ttf">Pirata</option>
+														<option data-image="./images/Playball.png" value="./fonts/Playball-Regular.ttf">Playball</option>
+														<option data-image="./images/Pro Full Block.png" value="./fonts/pro_full_block-webfont.ttf">Pro Full Block</option>
+														<option data-image="./images/Quicksand.png" value="./fonts/Quicksand-Regular.ttf">Quicksand</option>
+														<option data-image="./images/Rubik Mono One.png" value="./fonts/RubikMonoOne-Regular.ttf">Rubik Mono</option>
+														<option data-image="./images/Rubik One.png" value="./fonts/RubikOne-Regular.ttf">Rubik</option>
+														<option data-image="./images/Rum Raisin.png" value="./fonts/RumRaisin-Regular.ttf">Rum Raisin</option>
+														<option data-image="./images/Satisfy.png" value="./fonts/Satisfy-Regular.ttf">Satisfy</option>
+														<option data-image="./images/Seymour One.png" value="./fonts/SeymourOne-Regular.ttf">Seymour</option>
+														<option data-image="./images/UA Tiffany.png" value="./fonts/tiffany-webfont.ttf">Tiffany</option>
+														<option data-image="./images/Trade Winds.png" value="./fonts/TradeWinds-Regular.ttf">Trade Winds</option>
+														<option data-image="./images/Kansas.png" value="./fonts/tuscan-webfont.ttf">Kansas</option>
+														<option data-image="./images/UnifrakturCook.png" value="./fonts/UnifrakturCook-Bold.ttf">Unifraktur Cook</option>
+														<option data-image="./images/UnifrakturMaguntia.png" value="./fonts/UnifrakturMaguntia-Book.ttf">Unifraktur Maguntia</option>
+														<option data-image="./images/Varsity Block C.png" value="./fonts/VarsityBlockC.ttf">Varsity Block C</option>
+														<option data-image="./images/Varsity Classic Serif A.png" value="./fonts/VarsityClassicSerifA.ttf">Varsity Classic Serif A</option>
+														<option data-image="./images/Varsity Classic Serif B.png" value="./fonts/VarsityClassicSerifB.ttf">Varsity Classic Serif B</option>
+														<option data-image="./images/Vibur.png" value="./fonts/Vibur-Regular.ttf">Vibur</option>
+														<option data-image="./images/Viga.png" value="./fonts/Viga-Regular.ttf">Viga</option>
+														<option data-image="./images/Wellfleet.png" value="./fonts/Wellfleet-Regular.ttf">Wellfleet</option>
+														<option data-image="./images/Wendy One.png" value="./fonts/WendyOne-Regular.ttf">Wendy</option>
+														<option data-image="./images/Yellowtail.png" value="./fonts/Yellowtail-Regular.ttf">Yellowtail</option>
+														<option data-image="./images/Rawlings Fancy Block.png" value="./fonts/rawlingsfancyblock-regular-webfont.ttf">Fancy Block</option>
+														<option data-image="./images/Rawlings Old English.png" value="./fonts/rawlingsoldenglish-webfont.ttf">Old English</option>
+														<option data-image="./images/Richardson Fancy Block.png" value="./fonts/richardson_fancy_block-webfont.ttf">Fancy Block 2</option>
+														<option data-image="./images/SPL28Script.png" value="./fonts/spl28script-webfont.ttf">SPL Script</option>
+														<option data-image="./images/VarsityClassicD.png" value="./fonts/VarsityClassicD.ttf">Varsity Classic D</option>
+														<option data-image="./images/VarsityBlockA.png" value="./fonts/VarsityBlockA.ttf">Varsity Block A</option>
+														<option data-image="./images/VarsityBlockB.png" value="./fonts/VarsityBlockB.ttf">Varsity Block B</option>
+														<option data-image="./images/VarsityBlockD.png" value="./fonts/VarsityBlockD.ttf">Varsity Block D</option>
+														<option data-image="./images/VarsityClassicA.png" value="./fonts/VarsityClassicA.ttf">Varsity Classic A</option>
+														<option data-image="./images/VarsityClassicB.png" value="./fonts/VarsityClassicB.ttf">Varsity Classic B</option>
+														<option data-image="./images/VarsityClassicC.png" value="./fonts/VarsityClassicC.ttf">Varsity Classic C</option>
+													</select>													
 												</td>
-												<td style="width:20%;">&nbsp;</td>
 											</tr>
 											<tr><td colspan="3" align="center">
-												
+												<input id="jerseyCustomFont" type="file" name="customFont" accept=".ttf, .otf" style="display:none;" />
+												<input type="button" class="button jerseyTextOption localFontButton" id="jerseyFakeFontButton" data-canvas="jersey" value="Choose a Local Font..." />
+												<input type="button" class="button jerseyTextOption" id="jerseyUploadTheFont" value="Upload Font" style="display:none;" />
 											</td></tr>
 										</table>
-										<table style="width:100%;">
+										<table style="width:100%;" class="ms-swash-container">
 											<tr>
 												<td class="checkCell"><input type="checkbox" id="swashCheck" class="swashToggle" data-id="swash" id="swashCheck"></td>
 												<td>
-													<select id="swashCombo" class="msDropDown" style="width:100%;">
+													<select id="swashCombo" class="msDropDown" style="width:100%;" is="ms-dropdown">
 														<option value="swash1" data-image="./images/swash1.png">Swash 1</option>
 														<option value="swash2" data-image="./images/swash2.png">Swash 2</option>
 														<option value="swash3" data-image="./images/swash3.png">Swash 3</option>
@@ -1667,8 +1721,77 @@
 										<table style="width:100%;">
 											<tr>
 												<td style="width:20%;">&nbsp</td>
-												<td>
-													<div id="capTextSelect" style="display:none;"></div>
+												<td class="ms-cap-container">
+													<select id="capTextSelect" class="textOption" style="width:100%;" is="ms-dropdown" data-visible-rows="6">
+														<option data-image="./images/Acme.png" value="./fonts/Acme-Regular.ttf">Acme</option>
+														<option data-image="./images/All State.png" value="./fonts/all_state-webfont.ttf">All State</option>
+														<option data-image="./images/Athletic Gothic.png" value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
+														<option data-image="./images/Athletic Gothic Shadow.png" value="./fonts/athletic_gothic_shadow-webfont.ttf">Athletic Gothic Shadow</option>
+														<option data-image="./images/Beaverton Script.png" value="./fonts/beaverton_script-webfont.ttf">Beaverton Script</option>
+														<option data-image="./images/Berkshire Swash.png" value="./fonts/BerkshireSwash-Regular.ttf">Berkshire Swash</option>
+														<option data-image="./images/CantoraOne.png" value="./fonts/CantoraOne-Regular.ttf">CantoraOne</option>
+														<option data-image="./images/Caxton Roman.png" value="./fonts/caxton_roman-webfont.ttf">Caxton Roman</option>
+														<option data-image="./images/Chela One.png" value="./fonts/ChelaOne-Regular.ttf">Chela</option>
+														<option data-image="./images/Russell Circus.png" value="./fonts/circus-webfont.ttf">Russell Circus</option>
+														<option data-image="./images/Condiment.png" value="./fonts/Condiment-Regular.ttf">Condiment</option>
+														<option data-image="./images/Cookie.png" value="./fonts/Cookie-Regular.ttf">Cookie</option>
+														<option data-image="./images/Courgette.png" value="./fonts/Courgette-Regular.ttf">Courgette</option>
+														<option data-image="./images/Croissant One.png" value="./fonts/CroissantOne-Regular.ttf">Croissant</option>
+														<option data-image="./images/Damion.png" value="./fonts/Damion-Regular.ttf">Damion</option>
+														<option data-image="./images/Engagement.png" value="./fonts/Engagement-Regular.ttf">Engagement</option>
+														<option data-image="./images/Germania One.png" value="./fonts/GermaniaOne-Regular.ttf">Germania</option>
+														<option data-image="./images/Graduate.png" value="./fonts/Graduate-Regular.ttf" selected>Graduate</option>
+														<option data-image="./images/Grand Hotel.png" value="./fonts/GrandHotel-Regular.ttf">Grand Hotel</option>
+														<option data-image="./images/Jockey One.png" value="./fonts/JockeyOne-Regular.ttf">Jockey</option>
+														<option data-image="./images/Kaushan Script.png" value="./fonts/KaushanScript-Regular.ttf">Kaushan Script</option>
+														<option data-image="./images/Leckerli One.png" value="./fonts/LeckerliOne-Regular.ttf">Leckerli</option>
+														<option data-image="./images/Lily Script One.png" value="./fonts/LilyScriptOne-Regular.ttf">Lily Script</option>
+														<option data-image="./images/Lobster.png" value="./fonts/Lobster-Regular.ttf">Lobster</option>
+														<option data-image="./images/Lobster Two.png" value="./fonts/LobsterTwo-Regular.ttf">Lobster Two</option>
+														<option data-image="./images/Metal Mania.png" value="./fonts/MetalMania-Regular.ttf">Metal Mania</option>
+														<option data-image="./images/Miniver.png" value="./fonts/Miniver-Regular.ttf">Miniver</option>
+														<option data-image="./images/MLB Block.png" value="./fonts/MLBBlock.ttf">MLB Block</option>
+														<option data-image="./images/MLB Cubs.png" value="./fonts/MLBCubs.ttf">MLB Chicago N</option>
+														<option data-image="./images/MLB Red Sox.png" value="./fonts/MLBRedSox.ttf">McAuliffe</option>
+														<option data-image="./images/Molle.png" value="./fonts/Molle-Regular.ttf">Molle</option>
+														<option data-image="./images/New Rocker.png" value="./fonts/NewRocker-Regular.ttf">New Rocker</option>
+														<option data-image="./images/Norican.png" value="./fonts/Norican-Regular.ttf">Norican</option>
+														<option data-image="./images/Oleo Script.png" value="./fonts/OleoScript-Regular.ttf">Oleo Script</option>
+														<option data-image="./images/Pacifico.png" value="./fonts/Pacifico.ttf">Pacifico</option>
+														<option data-image="./images/Pirata One.png" value="./fonts/PirataOne-Regular.ttf">Pirata</option>
+														<option data-image="./images/Playball.png" value="./fonts/Playball-Regular.ttf">Playball</option>
+														<option data-image="./images/Pro Full Block.png" value="./fonts/pro_full_block-webfont.ttf">Pro Full Block</option>
+														<option data-image="./images/Quicksand.png" value="./fonts/Quicksand-Regular.ttf">Quicksand</option>
+														<option data-image="./images/Rubik Mono One.png" value="./fonts/RubikMonoOne-Regular.ttf">Rubik Mono</option>
+														<option data-image="./images/Rubik One.png" value="./fonts/RubikOne-Regular.ttf">Rubik</option>
+														<option data-image="./images/Rum Raisin.png" value="./fonts/RumRaisin-Regular.ttf">Rum Raisin</option>
+														<option data-image="./images/Satisfy.png" value="./fonts/Satisfy-Regular.ttf">Satisfy</option>
+														<option data-image="./images/Seymour One.png" value="./fonts/SeymourOne-Regular.ttf">Seymour</option>
+														<option data-image="./images/UA Tiffany.png" value="./fonts/tiffany-webfont.ttf">Tiffany</option>
+														<option data-image="./images/Trade Winds.png" value="./fonts/TradeWinds-Regular.ttf">Trade Winds</option>
+														<option data-image="./images/Kansas.png" value="./fonts/tuscan-webfont.ttf">Kansas</option>
+														<option data-image="./images/UnifrakturCook.png" value="./fonts/UnifrakturCook-Bold.ttf">Unifraktur Cook</option>
+														<option data-image="./images/UnifrakturMaguntia.png" value="./fonts/UnifrakturMaguntia-Book.ttf">Unifraktur Maguntia</option>
+														<option data-image="./images/Varsity Block C.png" value="./fonts/VarsityBlockC.ttf">Varsity Block C</option>
+														<option data-image="./images/Varsity Classic Serif A.png" value="./fonts/VarsityClassicSerifA.ttf">Varsity Classic Serif A</option>
+														<option data-image="./images/Varsity Classic Serif B.png" value="./fonts/VarsityClassicSerifB.ttf">Varsity Classic Serif B</option>
+														<option data-image="./images/Vibur.png" value="./fonts/Vibur-Regular.ttf">Vibur</option>
+														<option data-image="./images/Viga.png" value="./fonts/Viga-Regular.ttf">Viga</option>
+														<option data-image="./images/Wellfleet.png" value="./fonts/Wellfleet-Regular.ttf">Wellfleet</option>
+														<option data-image="./images/Wendy One.png" value="./fonts/WendyOne-Regular.ttf">Wendy</option>
+														<option data-image="./images/Yellowtail.png" value="./fonts/Yellowtail-Regular.ttf">Yellowtail</option>
+														<option data-image="./images/Rawlings Fancy Block.png" value="./fonts/rawlingsfancyblock-regular-webfont.ttf">Fancy Block</option>
+														<option data-image="./images/Rawlings Old English.png" value="./fonts/rawlingsoldenglish-webfont.ttf">Old English</option>
+														<option data-image="./images/Richardson Fancy Block.png" value="./fonts/richardson_fancy_block-webfont.ttf">Fancy Block 2</option>
+														<option data-image="./images/SPL28Script.png" value="./fonts/spl28script-webfont.ttf">SPL Script</option>
+														<option data-image="./images/VarsityClassicD.png" value="./fonts/VarsityClassicD.ttf">Varsity Classic D</option>
+														<option data-image="./images/VarsityBlockA.png" value="./fonts/VarsityBlockA.ttf">Varsity Block A</option>
+														<option data-image="./images/VarsityBlockB.png" value="./fonts/VarsityBlockB.ttf">Varsity Block B</option>
+														<option data-image="./images/VarsityBlockD.png" value="./fonts/VarsityBlockD.ttf">Varsity Block D</option>
+														<option data-image="./images/VarsityClassicA.png" value="./fonts/VarsityClassicA.ttf">Varsity Classic A</option>
+														<option data-image="./images/VarsityClassicB.png" value="./fonts/VarsityClassicB.ttf">Varsity Classic B</option>
+														<option data-image="./images/VarsityClassicC.png" value="./fonts/VarsityClassicC.ttf">Varsity Classic C</option>
+													</select>	
 												</td>
 												<td style="width:20%;">&nbsp</td>
 											</tr>
@@ -1683,9 +1806,9 @@
 								<div class="skltbs-panel" id="fontPanel">
 									<div class="cap-accord-header cap-active-header">Main Font Elements</div>
                                     <div class="cap-accord-content" style="display:inline;">  
-                                        <table style="width:475px;">
+                                        <table style="width:475px;" class="ms-letter-container">
 											<tr class="color_tr">
-												<td class="checkCell"><input type="checkbox" class="toggle" data-toggle="letters" checked></td>
+												<td class="checkCell"><input type="checkbox" class="fontToggle" data-toggle="letters" checked></td>
 												<td>Letters:</td>
 												<td style="text-align:right;">
 													<input class="selector letSelector" type="text" id="lettersFill" data-element="lettersFill">
@@ -1697,55 +1820,125 @@
 												<td>&nbsp;</td>
 												<td>Font:</td>
 												<td align="right">
-													<div id="letterDropdown"></div>
+													<!-- <div id="letterDropdown"></div> -->
+													<select id="letterDropdown" class="charStyle letterToggle" style="width:85%;" is="ms-dropdown" data-visible-rows="8">
+														<option data-image="./images/Acme.png" value="./fonts/Acme-Regular.ttf">Acme</option>
+														<option data-image="./images/All State.png" value="./fonts/all_state-webfont.ttf">All State</option>
+														<option data-image="./images/Athletic Gothic.png" value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
+														<option data-image="./images/Athletic Gothic Shadow.png" value="./fonts/athletic_gothic_shadow-webfont.ttf">Athletic Gothic Shadow</option>
+														<option data-image="./images/Beaverton Script.png" value="./fonts/beaverton_script-webfont.ttf">Beaverton Script</option>
+														<option data-image="./images/Berkshire Swash.png" value="./fonts/BerkshireSwash-Regular.ttf">Berkshire Swash</option>
+														<option data-image="./images/CantoraOne.png" value="./fonts/CantoraOne-Regular.ttf">CantoraOne</option>
+														<option data-image="./images/Caxton Roman.png" value="./fonts/caxton_roman-webfont.ttf">Caxton Roman</option>
+														<option data-image="./images/Chela One.png" value="./fonts/ChelaOne-Regular.ttf">Chela</option>
+														<option data-image="./images/Russell Circus.png" value="./fonts/circus-webfont.ttf">Russell Circus</option>
+														<option data-image="./images/Condiment.png" value="./fonts/Condiment-Regular.ttf">Condiment</option>
+														<option data-image="./images/Cookie.png" value="./fonts/Cookie-Regular.ttf">Cookie</option>
+														<option data-image="./images/Courgette.png" value="./fonts/Courgette-Regular.ttf">Courgette</option>
+														<option data-image="./images/Croissant One.png" value="./fonts/CroissantOne-Regular.ttf">Croissant</option>
+														<option data-image="./images/Damion.png" value="./fonts/Damion-Regular.ttf">Damion</option>
+														<option data-image="./images/Engagement.png" value="./fonts/Engagement-Regular.ttf">Engagement</option>
+														<option data-image="./images/Germania One.png" value="./fonts/GermaniaOne-Regular.ttf">Germania</option>
+														<option data-image="./images/Graduate.png" value="./fonts/Graduate-Regular.ttf">Graduate</option>
+														<option data-image="./images/Grand Hotel.png" value="./fonts/GrandHotel-Regular.ttf">Grand Hotel</option>
+														<option data-image="./images/Jockey One.png" value="./fonts/JockeyOne-Regular.ttf">Jockey</option>
+														<option data-image="./images/Kaushan Script.png" value="./fonts/KaushanScript-Regular.ttf">Kaushan Script</option>
+														<option data-image="./images/Leckerli One.png" value="./fonts/LeckerliOne-Regular.ttf">Leckerli</option>
+														<option data-image="./images/Lily Script One.png" value="./fonts/LilyScriptOne-Regular.ttf">Lily Script</option>
+														<option data-image="./images/Lobster.png" value="./fonts/Lobster-Regular.ttf">Lobster</option>
+														<option data-image="./images/Lobster Two.png" value="./fonts/LobsterTwo-Regular.ttf">Lobster Two</option>
+														<option data-image="./images/Metal Mania.png" value="./fonts/MetalMania-Regular.ttf">Metal Mania</option>
+														<option data-image="./images/Miniver.png" value="./fonts/Miniver-Regular.ttf">Miniver</option>
+														<option data-image="./images/MLB Block.png" value="./fonts/MLBBlock.ttf" selected>MLB Block</option>
+														<option data-image="./images/MLB Cubs.png" value="./fonts/MLBCubs.ttf">MLB Chicago N</option>
+														<option data-image="./images/MLB Red Sox.png" value="./fonts/MLBRedSox.ttf">McAuliffe</option>
+														<option data-image="./images/Molle.png" value="./fonts/Molle-Regular.ttf">Molle</option>
+														<option data-image="./images/New Rocker.png" value="./fonts/NewRocker-Regular.ttf">New Rocker</option>
+														<option data-image="./images/Norican.png" value="./fonts/Norican-Regular.ttf">Norican</option>
+														<option data-image="./images/Oleo Script.png" value="./fonts/OleoScript-Regular.ttf">Oleo Script</option>
+														<option data-image="./images/Pacifico.png" value="./fonts/Pacifico.ttf">Pacifico</option>
+														<option data-image="./images/Pirata One.png" value="./fonts/PirataOne-Regular.ttf">Pirata</option>
+														<option data-image="./images/Playball.png" value="./fonts/Playball-Regular.ttf">Playball</option>
+														<option data-image="./images/Pro Full Block.png" value="./fonts/pro_full_block-webfont.ttf">Pro Full Block</option>
+														<option data-image="./images/Quicksand.png" value="./fonts/Quicksand-Regular.ttf">Quicksand</option>
+														<option data-image="./images/Rubik Mono One.png" value="./fonts/RubikMonoOne-Regular.ttf">Rubik Mono</option>
+														<option data-image="./images/Rubik One.png" value="./fonts/RubikOne-Regular.ttf">Rubik</option>
+														<option data-image="./images/Rum Raisin.png" value="./fonts/RumRaisin-Regular.ttf">Rum Raisin</option>
+														<option data-image="./images/Satisfy.png" value="./fonts/Satisfy-Regular.ttf">Satisfy</option>
+														<option data-image="./images/Seymour One.png" value="./fonts/SeymourOne-Regular.ttf">Seymour</option>
+														<option data-image="./images/UA Tiffany.png" value="./fonts/tiffany-webfont.ttf">Tiffany</option>
+														<option data-image="./images/Trade Winds.png" value="./fonts/TradeWinds-Regular.ttf">Trade Winds</option>
+														<option data-image="./images/Kansas.png" value="./fonts/tuscan-webfont.ttf">Kansas</option>
+														<option data-image="./images/UnifrakturCook.png" value="./fonts/UnifrakturCook-Bold.ttf">Unifraktur Cook</option>
+														<option data-image="./images/UnifrakturMaguntia.png" value="./fonts/UnifrakturMaguntia-Book.ttf">Unifraktur Maguntia</option>
+														<option data-image="./images/Varsity Block C.png" value="./fonts/VarsityBlockC.ttf">Varsity Block C</option>
+														<option data-image="./images/Varsity Classic Serif A.png" value="./fonts/VarsityClassicSerifA.ttf">Varsity Classic Serif A</option>
+														<option data-image="./images/Varsity Classic Serif B.png" value="./fonts/VarsityClassicSerifB.ttf">Varsity Classic Serif B</option>
+														<option data-image="./images/Vibur.png" value="./fonts/Vibur-Regular.ttf">Vibur</option>
+														<option data-image="./images/Viga.png" value="./fonts/Viga-Regular.ttf">Viga</option>
+														<option data-image="./images/Wellfleet.png" value="./fonts/Wellfleet-Regular.ttf">Wellfleet</option>
+														<option data-image="./images/Wendy One.png" value="./fonts/WendyOne-Regular.ttf">Wendy</option>
+														<option data-image="./images/Yellowtail.png" value="./fonts/Yellowtail-Regular.ttf">Yellowtail</option>
+														<option data-image="./images/Rawlings Fancy Block.png" value="./fonts/rawlingsfancyblock-regular-webfont.ttf">Fancy Block</option>
+														<option data-image="./images/Rawlings Old English.png" value="./fonts/rawlingsoldenglish-webfont.ttf">Old English</option>
+														<option data-image="./images/Richardson Fancy Block.png" value="./fonts/richardson_fancy_block-webfont.ttf">Fancy Block 2</option>
+														<option data-image="./images/SPL28Script.png" value="./fonts/spl28script-webfont.ttf">SPL Script</option>
+														<option data-image="./images/VarsityClassicD.png" value="./fonts/VarsityClassicD.ttf">Varsity Classic D</option>
+														<option data-image="./images/VarsityBlockA.png" value="./fonts/VarsityBlockA.ttf">Varsity Block A</option>
+														<option data-image="./images/VarsityBlockB.png" value="./fonts/VarsityBlockB.ttf">Varsity Block B</option>
+														<option data-image="./images/VarsityBlockD.png" value="./fonts/VarsityBlockD.ttf">Varsity Block D</option>
+														<option data-image="./images/VarsityClassicA.png" value="./fonts/VarsityClassicA.ttf">Varsity Classic A</option>
+														<option data-image="./images/VarsityClassicB.png" value="./fonts/VarsityClassicB.ttf">Varsity Classic B</option>
+														<option data-image="./images/VarsityClassicC.png" value="./fonts/VarsityClassicC.ttf">Varsity Classic C</option>
+													</select>
 												</td>
 											</tr>
 											<tr class="color_tr">
 												<td>&nbsp;</td>
 												<td>Style:</td>
 												<td align="right">
-													<select id="letterStyle" class="charStyle">
-														<option value="center" data-imagesrc="./images/shadow_centered.png" selected>Centered</option>
-														<option value="top,left" data-imagesrc="./images/shadow_bottomright.png">Bottom Right</option>
-														<option value="center,top" data-imagesrc="./images/shadow_bottom.png">Bottom Center</option>
-														<option value="top,right" data-imagesrc="./images/shadow_bottomleft.png">Bottom Left</option>
-														<option value="center,right" data-imagesrc="./images/shadow_left.png">Left Center</option>
-														<option value="bottom,right" data-imagesrc="./images/shadow_topleft.png">Top Left</option>
-														<option value="center,bottom" data-imagesrc="./images/shadow_top.png">Top Center</option>
-														<option value="bottom,left" data-imagesrc="./images/shadow_topright.png">Top Right</option>
-														<option value="center,left" data-imagesrc="./images/shadow_right.png">Right Center</option>
+													<select id="letterStyle" class="charStyle letterToggle" style="width:85%;" is="ms-dropdown" data-visible-rows="6">
+														<option value="center" data-image="./images/shadow_centered.png" selected>Centered</option>
+														<option value="top,left" data-image="./images/shadow_bottomright.png">Bottom Right</option>
+														<option value="center,top" data-image="./images/shadow_bottom.png">Bottom Center</option>
+														<option value="top,right" data-image="./images/shadow_bottomleft.png">Bottom Left</option>
+														<option value="center,right" data-image="./images/shadow_left.png">Left Center</option>
+														<option value="bottom,right" data-image="./images/shadow_topleft.png">Top Left</option>
+														<option value="center,bottom" data-image="./images/shadow_top.png">Top Center</option>
+														<option value="bottom,left" data-image="./images/shadow_topright.png">Top Right</option>
+														<option value="center,left" data-image="./images/shadow_right.png">Right Center</option>
 													</select>
 												</td>
-											</tr>
+											</tr>	
 											<tr class="color_tr">
 												<td>&nbsp;</td>
 												<td>Inner Stroke:</td>
 												<td style="text-align:right;">
-													<input type="button" id="letter1StrokeDown" class="button rangeButton" value="-" data-number="letter1StrokeInput">
-													<input type="range" class="range" id="letter1StrokeRange" data-id="letter1StrokeInput" data-control="letter1Stroke" value=8 min="0" max="20">
-													<input type="button" id="letter1StrokeUp" class="button rangeButton" value="+" data-number="letter1StrokeInput">
-													<input type="number" id="letter1StrokeInput" class="strokeWidth" data-range="letter1StrokeRange" value=8 min="0" max="20">
+													<input type="button" id="letter1StrokeDown" class="button rangeButton letterToggle" value="-" data-number="letter1StrokeInput">
+													<input type="range" class="range letterToggle" id="letter1StrokeRange" data-id="letter1StrokeInput" data-control="letter1Stroke" value=8 min="0" max="20">
+													<input type="button" id="letter1StrokeUp" class="button rangeButton letterToggle" value="+" data-number="letter1StrokeInput">
+													<input type="number" id="letter1StrokeInput" class="strokeWidth letterToggle" data-range="letter1StrokeRange" value=8 min="0" max="20">
 												</td>
 											</tr>
 											<tr class="color_tr">
 												<td>&nbsp;</td>
 												<td>Outer Stroke:</td>
 												<td style="text-align:right;">
-													<input type="button" id="letter2StrokeDown" class="button rangeButton" value="-" data-number="letter2StrokeInput">
-													<input type="range" class="range" id="letter2StrokeRange" data-id="letter2StrokeInput" data-control="letter2Stroke" value=16 min="0" max="40">
-													<input type="button" id="letter2StrokeUp" class="button rangeButton" value="+" data-number="letter2StrokeInput">
-													<input type="number" id="letter2StrokeInput" class="strokeWidth" data-range="letter2StrokeRange" value=16 min="0" max="40">
+													<input type="button" id="letter2StrokeDown" class="button rangeButton letterToggle" value="-" data-number="letter2StrokeInput">
+													<input type="range" class="range letterToggle" id="letter2StrokeRange" data-id="letter2StrokeInput" data-control="letter2Stroke" value=16 min="0" max="40">
+													<input type="button" id="letter2StrokeUp" class="button rangeButton letterToggle" value="+" data-number="letter2StrokeInput">
+													<input type="number" id="letter2StrokeInput" class="strokeWidth letterToggle" data-range="letter2StrokeRange" value=16 min="0" max="40">
 												</td>
 											</tr>
 											<tr class="color_tr">
-												<td class="checkCell"><input type="checkbox" class="toggle aspectToggle" id="letterScaling" checked></td>
+												<td class="checkCell"><input type="checkbox" class="aspectToggle letterToggle" id="letterScaling" checked></td>
 												<td colspan="2">Preserve Aspect Ratio</td>
 											</tr>
 										</table>
 										<hr>
-										<table style="width:100%;">
+										<table style="width:100%;" class="ms-number-container">
 											<tr class="color_tr">
-												<td class="checkCell"><input type="checkbox" class="toggle" data-toggle="numbers" checked></td>
+												<td class="checkCell"><input type="checkbox" class="fontToggle" data-toggle="numbers" checked></td>
 												<td><label>Numbers: </label></td>
 												<td style="text-align:right;">
 													<input class="selector numSelector" type="text" id="numbersFill" data-element="numbersFill">
@@ -1757,23 +1950,92 @@
 												<td>&nbsp;</td>
 												<td>Font:</td>
 												<td align="right">
-													<div id="numberDropdown"></div>
+													<select id="numberDropdown" class="charStyle numberToggle" style="width:85%;" is="ms-dropdown" data-visible-rows="8">
+														<option data-image="./images/Acme.png" value="./fonts/Acme-Regular.ttf">Acme</option>
+														<option data-image="./images/All State.png" value="./fonts/all_state-webfont.ttf">All State</option>
+														<option data-image="./images/Athletic Gothic.png" value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
+														<option data-image="./images/Athletic Gothic Shadow.png" value="./fonts/athletic_gothic_shadow-webfont.ttf">Athletic Gothic Shadow</option>
+														<option data-image="./images/Beaverton Script.png" value="./fonts/beaverton_script-webfont.ttf">Beaverton Script</option>
+														<option data-image="./images/Berkshire Swash.png" value="./fonts/BerkshireSwash-Regular.ttf">Berkshire Swash</option>
+														<option data-image="./images/CantoraOne.png" value="./fonts/CantoraOne-Regular.ttf">CantoraOne</option>
+														<option data-image="./images/Caxton Roman.png" value="./fonts/caxton_roman-webfont.ttf">Caxton Roman</option>
+														<option data-image="./images/Chela One.png" value="./fonts/ChelaOne-Regular.ttf">Chela</option>
+														<option data-image="./images/Russell Circus.png" value="./fonts/circus-webfont.ttf">Russell Circus</option>
+														<option data-image="./images/Condiment.png" value="./fonts/Condiment-Regular.ttf">Condiment</option>
+														<option data-image="./images/Cookie.png" value="./fonts/Cookie-Regular.ttf">Cookie</option>
+														<option data-image="./images/Courgette.png" value="./fonts/Courgette-Regular.ttf">Courgette</option>
+														<option data-image="./images/Croissant One.png" value="./fonts/CroissantOne-Regular.ttf">Croissant</option>
+														<option data-image="./images/Damion.png" value="./fonts/Damion-Regular.ttf">Damion</option>
+														<option data-image="./images/Engagement.png" value="./fonts/Engagement-Regular.ttf">Engagement</option>
+														<option data-image="./images/Germania One.png" value="./fonts/GermaniaOne-Regular.ttf">Germania</option>
+														<option data-image="./images/Graduate.png" value="./fonts/Graduate-Regular.ttf">Graduate</option>
+														<option data-image="./images/Grand Hotel.png" value="./fonts/GrandHotel-Regular.ttf">Grand Hotel</option>
+														<option data-image="./images/Jockey One.png" value="./fonts/JockeyOne-Regular.ttf">Jockey</option>
+														<option data-image="./images/Kaushan Script.png" value="./fonts/KaushanScript-Regular.ttf">Kaushan Script</option>
+														<option data-image="./images/Leckerli One.png" value="./fonts/LeckerliOne-Regular.ttf">Leckerli</option>
+														<option data-image="./images/Lily Script One.png" value="./fonts/LilyScriptOne-Regular.ttf">Lily Script</option>
+														<option data-image="./images/Lobster.png" value="./fonts/Lobster-Regular.ttf">Lobster</option>
+														<option data-image="./images/Lobster Two.png" value="./fonts/LobsterTwo-Regular.ttf">Lobster Two</option>
+														<option data-image="./images/Metal Mania.png" value="./fonts/MetalMania-Regular.ttf">Metal Mania</option>
+														<option data-image="./images/Miniver.png" value="./fonts/Miniver-Regular.ttf">Miniver</option>
+														<option data-image="./images/MLB Block.png" value="./fonts/MLBBlock.ttf" selected>MLB Block</option>
+														<option data-image="./images/MLB Cubs.png" value="./fonts/MLBCubs.ttf">MLB Chicago N</option>
+														<option data-image="./images/MLB Red Sox.png" value="./fonts/MLBRedSox.ttf">McAuliffe</option>
+														<option data-image="./images/Molle.png" value="./fonts/Molle-Regular.ttf">Molle</option>
+														<option data-image="./images/New Rocker.png" value="./fonts/NewRocker-Regular.ttf">New Rocker</option>
+														<option data-image="./images/Norican.png" value="./fonts/Norican-Regular.ttf">Norican</option>
+														<option data-image="./images/Oleo Script.png" value="./fonts/OleoScript-Regular.ttf">Oleo Script</option>
+														<option data-image="./images/Pacifico.png" value="./fonts/Pacifico.ttf">Pacifico</option>
+														<option data-image="./images/Pirata One.png" value="./fonts/PirataOne-Regular.ttf">Pirata</option>
+														<option data-image="./images/Playball.png" value="./fonts/Playball-Regular.ttf">Playball</option>
+														<option data-image="./images/Pro Full Block.png" value="./fonts/pro_full_block-webfont.ttf">Pro Full Block</option>
+														<option data-image="./images/Quicksand.png" value="./fonts/Quicksand-Regular.ttf">Quicksand</option>
+														<option data-image="./images/Rubik Mono One.png" value="./fonts/RubikMonoOne-Regular.ttf">Rubik Mono</option>
+														<option data-image="./images/Rubik One.png" value="./fonts/RubikOne-Regular.ttf">Rubik</option>
+														<option data-image="./images/Rum Raisin.png" value="./fonts/RumRaisin-Regular.ttf">Rum Raisin</option>
+														<option data-image="./images/Satisfy.png" value="./fonts/Satisfy-Regular.ttf">Satisfy</option>
+														<option data-image="./images/Seymour One.png" value="./fonts/SeymourOne-Regular.ttf">Seymour</option>
+														<option data-image="./images/UA Tiffany.png" value="./fonts/tiffany-webfont.ttf">Tiffany</option>
+														<option data-image="./images/Trade Winds.png" value="./fonts/TradeWinds-Regular.ttf">Trade Winds</option>
+														<option data-image="./images/Kansas.png" value="./fonts/tuscan-webfont.ttf">Kansas</option>
+														<option data-image="./images/UnifrakturCook.png" value="./fonts/UnifrakturCook-Bold.ttf">Unifraktur Cook</option>
+														<option data-image="./images/UnifrakturMaguntia.png" value="./fonts/UnifrakturMaguntia-Book.ttf">Unifraktur Maguntia</option>
+														<option data-image="./images/Varsity Block C.png" value="./fonts/VarsityBlockC.ttf">Varsity Block C</option>
+														<option data-image="./images/Varsity Classic Serif A.png" value="./fonts/VarsityClassicSerifA.ttf">Varsity Classic Serif A</option>
+														<option data-image="./images/Varsity Classic Serif B.png" value="./fonts/VarsityClassicSerifB.ttf">Varsity Classic Serif B</option>
+														<option data-image="./images/Vibur.png" value="./fonts/Vibur-Regular.ttf">Vibur</option>
+														<option data-image="./images/Viga.png" value="./fonts/Viga-Regular.ttf">Viga</option>
+														<option data-image="./images/Wellfleet.png" value="./fonts/Wellfleet-Regular.ttf">Wellfleet</option>
+														<option data-image="./images/Wendy One.png" value="./fonts/WendyOne-Regular.ttf">Wendy</option>
+														<option data-image="./images/Yellowtail.png" value="./fonts/Yellowtail-Regular.ttf">Yellowtail</option>
+														<option data-image="./images/Rawlings Fancy Block.png" value="./fonts/rawlingsfancyblock-regular-webfont.ttf">Fancy Block</option>
+														<option data-image="./images/Rawlings Old English.png" value="./fonts/rawlingsoldenglish-webfont.ttf">Old English</option>
+														<option data-image="./images/Richardson Fancy Block.png" value="./fonts/richardson_fancy_block-webfont.ttf">Fancy Block 2</option>
+														<option data-image="./images/SPL28Script.png" value="./fonts/spl28script-webfont.ttf">SPL Script</option>
+														<option data-image="./images/VarsityClassicD.png" value="./fonts/VarsityClassicD.ttf">Varsity Classic D</option>
+														<option data-image="./images/VarsityBlockA.png" value="./fonts/VarsityBlockA.ttf">Varsity Block A</option>
+														<option data-image="./images/VarsityBlockB.png" value="./fonts/VarsityBlockB.ttf">Varsity Block B</option>
+														<option data-image="./images/VarsityBlockD.png" value="./fonts/VarsityBlockD.ttf">Varsity Block D</option>
+														<option data-image="./images/VarsityClassicA.png" value="./fonts/VarsityClassicA.ttf">Varsity Classic A</option>
+														<option data-image="./images/VarsityClassicB.png" value="./fonts/VarsityClassicB.ttf">Varsity Classic B</option>
+														<option data-image="./images/VarsityClassicC.png" value="./fonts/VarsityClassicC.ttf">Varsity Classic C</option>
+													</select>
 												</td>
 											</tr>
 											<tr class="color_tr">
 												<td>&nbsp;</td>
 												<td>Style:</td>
 												<td align="right">
-													<select id="numberStyle" class="charStyle">
-														<option value="center" data-imagesrc="./images/shadow_centered.png" selected>Centered</option>
-														<option value="top,left" data-imagesrc="./images/shadow_bottomright.png">Bottom Right</option>
-														<option value="center,top" data-imagesrc="./images/shadow_bottom.png">Bottom Center</option>
-														<option value="top,right" data-imagesrc="./images/shadow_bottomleft.png">Bottom Left</option>
-														<option value="center,right" data-imagesrc="./images/shadow_left.png">Left Center</option>
-														<option value="bottom,right" data-imagesrc="./images/shadow_topleft.png">Top Left</option>
-														<option value="center,bottom" data-imagesrc="./images/shadow_top.png">Top Center</option>
-														<option value="bottom,left" data-imagesrc="./images/shadow_topright.png">Top Right</option>
-														<option value="center,left" data-imagesrc="./images/shadow_right.png">Right Center</option>
+													<select id="numberStyle" class="charStyle numberToggle" style="width:85%;" is="ms-dropdown" data-visible-rows="6">
+														<option value="center" data-image="./images/shadow_centered.png" selected>Centered</option>
+														<option value="top,left" data-image="./images/shadow_bottomright.png">Bottom Right</option>
+														<option value="center,top" data-image="./images/shadow_bottom.png">Bottom Center</option>
+														<option value="top,right" data-image="./images/shadow_bottomleft.png">Bottom Left</option>
+														<option value="center,right" data-image="./images/shadow_left.png">Left Center</option>
+														<option value="bottom,right" data-image="./images/shadow_topleft.png">Top Left</option>
+														<option value="center,bottom" data-image="./images/shadow_top.png">Top Center</option>
+														<option value="bottom,left" data-image="./images/shadow_topright.png">Top Right</option>
+														<option value="center,left" data-image="./images/shadow_right.png">Right Center</option>
 													</select>
 												</td>
 											</tr>
@@ -1781,24 +2043,24 @@
 												<td>&nbsp;</td>
 												<td>Inner Stroke:</td>
 												<td style="text-align:right;">
-													<input type="button" id="number1StrokeDown" class="button rangeButton" value="-" data-number="number1StrokeInput">
-													<input type="range" class="range" id="number1StrokeRange" data-id="number1StrokeInput" data-control="number1Stroke" value=12 min="0" max="20">
-													<input type="button" id="number1StrokeUp" class="button rangeButton" value="+" data-number="number1StrokeInput">
-													<input type="number" id="number1StrokeInput" class="strokeWidth" data-range="number1StrokeRange" value=12 min="0" max="20">
+													<input type="button" id="number1StrokeDown" class="button rangeButton numberToggle" value="-" data-number="number1StrokeInput">
+													<input type="range" class="range numberToggle" id="number1StrokeRange" data-id="number1StrokeInput" data-control="number1Stroke" value=12 min="0" max="20">
+													<input type="button" id="number1StrokeUp" class="button rangeButton numberToggle" value="+" data-number="number1StrokeInput">
+													<input type="number" id="number1StrokeInput" class="strokeWidth numberToggle" data-range="number1StrokeRange" value=12 min="0" max="20">
 												</td>
 											</tr>
 											<tr class="color_tr">
 												<td>&nbsp;</td>
 												<td>Outer Stroke:</td>
 												<td style="text-align:right;">
-													<input type="button" id="number2StrokeDown" class="button rangeButton" value="-" data-number="number2StrokeInput">
-													<input type="range" class="range" id="number2StrokeRange" data-id="number2StrokeInput" data-control="number2Stroke" value=24 min="0" max="40">
-													<input type="button" id="number2StrokeUp" class="button rangeButton" value="+" data-number="number2StrokeInput">
-													<input type="number" id="number2StrokeInput" class="strokeWidth" data-range="number2StrokeRange" value=24 min="0" max="40">
+													<input type="button" id="number2StrokeDown" class="button rangeButton numberToggle" value="-" data-number="number2StrokeInput">
+													<input type="range" class="range numberToggle" id="number2StrokeRange" data-id="number2StrokeInput" data-control="number2Stroke" value=24 min="0" max="40">
+													<input type="button" id="number2StrokeUp" class="button rangeButton numberToggle" value="+" data-number="number2StrokeInput">
+													<input type="number" id="number2StrokeInput" class="strokeWidth numberToggle" data-range="number2StrokeRange" value=24 min="0" max="40">
 												</td>
 											</tr>
 											<tr class="color_tr">
-												<td class="checkCell"><input type="checkbox" class="toggle aspectToggle" id="numberScaling" checked></td>
+												<td class="checkCell"><input type="checkbox" class="aspectToggle numberToggle" id="numberScaling" checked></td>
 												<td colspan="2">Preserve Aspect Ratio</td>
 											</tr>
 										</table>
@@ -2390,61 +2652,11 @@
 		$("#preferredSeamOpacity").val(prefs['preferredSeamOpacity'])
 		$("#toggleDiffuseSeams").prop("checked", prefs['seamsVisibleOnDiffuse'] == "true")
 
-		//$("#jerseyFontTypeCombo").val(prefs['preferredJerseyFont']).trigger("change")
-		//$("#capFontTypeCombo").val(prefs['preferredCapFont']).trigger('change')
-
 		$(".preference").each(function() {
 			$(this).val(prefs[$(this).attr("id")])
 		})
 
-		/* if (prefs.preferredJerseyFont == null) {
-			$("#preferredJerseyFont").val("./fonts/LeckerliOne-Regular.ttf")
-			$("#preferredJerseyFont").trigger("change")
-		} else {
-			if (prefs.preferredJerseyFont.startsWith("./fonts")) {
-				$("#preferredJerseyFont").val(prefs.preferredJerseyFont)
-			} else {
-				$("#preferredJerseyFont").val("./fonts/LeckerliOne-Regular.ttf")
-			}
-			console.log($("#preferredJerseyFont").val())
-			$("#preferredJerseyFont").trigger("change")
-		}
-
-		if (prefs.preferredCapFont == null) {
-			$("#preferredCapFont").val("./fonts/Graduate-Regular.ttf")
-			$("#preferredCapFont").trigger("change")
-		} else {
-			if (prefs.preferredCapFont.startsWith("./fonts")) {
-				$("#preferredCapFont").val(prefs.preferredCapFont)
-			} else {
-				$("#preferredCapFont").val("./fonts/Graduate-Regular.ttf")
-			}
-			$("#preferredCapFont").trigger("change")
-		}	
-		
-		if (prefs.preferredNameFont == null) {
-			$("#preferredNameFont").val("./fonts/MLBBlock.ttf")
-			$("#preferredNameFont").trigger("change")
-		} else {
-			if (prefs.preferredNameFont.startsWith("./fonts")) {
-				$("#preferredNameFont").val(prefs.preferredNameFont)
-			} else {
-				$("#preferredNameFont").val("./fonts/MLBBlock.ttf")
-			}
-			$("#preferredNameFont").trigger("change")
-		}	
-
-		if (prefs.preferredNumberFont == null) {
-			$("#preferredNumberFont").val("./fonts/MLBBlock.ttf")
-			$("#preferredNumberFont").trigger("change")
-		} else {
-			if (prefs.preferredNumberFont.startsWith("./fonts")) {
-				$("#preferredNumberFont").val(prefs.preferredNumberFont)
-			} else {
-				$("#preferredNumberFont").val("./fonts/MLBBlock.ttf")
-			}
-			$("#preferredNumberFont").trigger("change")
-		} */	
+		sortFontDropdowns()
 
 		$(".jersey-accord-header").click(function() {
 			if($(this).next("div").is(":visible")){
@@ -2528,7 +2740,7 @@
 			}
 		})
 		
-		$(".capTextToggle, .capText2Toggle, .textOption, .jerseyTextOption, .jerseyNameOption, .jerseyNumberOption, .pantsNumberOption").each(function() {
+ 		$(".capTextToggle, .capText2Toggle, .textOption, .jerseyTextOption, .jerseyNameOption, .jerseyNumberOption, .pantsNumberOption").each(function() {
 			$(this).prop("disabled",true);
 		})
 		
@@ -2536,11 +2748,11 @@
 			$(this).spectrum('disable')
 		})	
 		
-		$("#capFontTypeCombo").prop("disabled",true)
+		$("#capTextSelect").prop("disabled",true)
 
 		$("#jerseyFontTypeCombo").prop("disabled",true)
 
-		$("#jerseyWordmarkSelect").closest('tr').css("display","none")
+		//$("#jerseyWordmarkSelect").closest('tr').css("display","none")
 
 		$("#warpAmount").prop("disabled",true)
 
@@ -2556,13 +2768,13 @@
 		
 		$("#jerseyNameWarpAmount").prop("disabled",true)
 		
-		$(".msDropDown").msDropDown();
+		//$(".msDropDown").msDropDown();
 
 		$("#tabContainer").skeletabs('goTo', 0)
 
 		activeCanvas = jerseyLogoCanvas;
 
-		if (checkForUpdates == true) {
+/* 		if (checkForUpdates == true) {
 			$.ajax({
 				type: "GET",
 				url: "http://127.0.0.1:"+port+"/checkForUpdate",
@@ -2577,7 +2789,7 @@
 					} 
 				}
 			})
-		}
+		} */
 
     })
 
@@ -2828,21 +3040,6 @@
 	// JERSEY SPECIFIC
 
 	initializeJersey()
-
-	$("#jerseyWordmarkSelect").ddslick({
-		data:jerseyddData,
-		width: 300,
-		imagePosition:"left",
-		height: 250,
-		onSelected: function(selectedData){
-			if (ddCount >= 4) {
-				var ddData = $('#jerseyWordmarkSelect').data('ddslick')
-				jerseyWordmarkChange(selectedData.selectedData.value,false)
-				//changeFont(numbers, selectedData.selectedData.value)
-			}
-			ddCount++
-		}   
-	});
 
     $("#jerseyColor").spectrum({
 		type: "color",
@@ -3632,6 +3829,10 @@
 		const o = g.getObjects().find(o => o.id == id)
 		o.set("visible",state)
 		jerseyLogoCanvas.renderAll()
+	})
+
+	$("#jerseyWordmarkSelect").on("change",function(e) {
+		jerseyWordmarkChange($(this).val(),false)
 	})
 
 	$("#jerseyMakersMarkSelect").on("change",function(e) {
@@ -4444,11 +4645,11 @@
 	})
 
 	$("#wordmarkTextBox").on("change",function() {
-		var ddData = $('#jerseyWordmarkSelect').data('ddslick');
-		jerseyWordmarkChange(ddData.selectedData.value,false)
+		jerseyWordmarkChange($("#jerseyWordmarkSelect").val(),false)
 	})
 
 	$("#wordmarkCheck").on("click",function() {
+		const checked = $(this).is(":checked")
 		jerseyLogoCanvas.getObjects().forEach(function(o) {
 			if(o.id == "wordmark") {
 				if (imNeeded == true) {
@@ -4468,10 +4669,19 @@
 		$(".jerseyTextOption").each(function() {
 			$(this).prop("disabled",$("#wordmarkCheck").is(":checked") ? false : true);
 		})
-		$("#warpAmount").prop("disabled",$("#wordmarkCheck").is(":checked") ? false : true);
-	    $("#warpEffect").msDropDown().data("dd").set("disabled", $("#wordmarkCheck").is(":checked") ? false : true)
-		//$("#jerseyFontTypeCombo").set("disabled", $(this).is(":checked") ? false : true);
-		$("#jerseyWordmarkSelect").closest("tr").css("display", $(this).is(":checked") ? "inline-block" : "none");
+		$(".ms-jersey-container").each(function() {
+			if (checked) {
+				$(this).find(".ms-dd").removeClass("disabled")
+			} else {
+				$(this).find(".ms-dd").addClass("disabled")
+			}
+			
+		})
+		//$("#warpAmount").prop("disabled",$("#wordmarkCheck").is(":checked") ? false : true);
+	    //$("#warpEffect").msDropDown().data("dd").set("disabled", $("#wordmarkCheck").is(":checked") ? false : true)
+		$("#warpEffect").prop("disabled",$("#wordmarkCheck").is(":checked") ? false : true);
+		//$("#jerseyWordmarkSelect").prop("disabled",$("#wordmarkCheck").is(":checked") ? false : true);
+		//$("#jerseyWordmarkSelect").closest("tr").css("display", $(this).is(":checked") ? "inline-block" : "none");
 		$(".jerseyTextColorSelector").each(function() {
 			$(this).spectrum($("#wordmarkCheck").is(":checked") ? 'enable' : 'disable')
 		})
@@ -4663,7 +4873,16 @@
 	})
 
 	$("#swashCheck").on("change",function() {
-		$("#swashCombo").msDropDown().data("dd").set("disabled", $(this).is(":checked") ? false : true);
+		const checked = $(this).is(":checked")
+		//$("#swashCombo").msDropDown().data("dd").set("disabled", $(this).is(":checked") ? false : true);
+		$(".ms-swash-container").each(function() {
+			if (checked) {
+				$(this).find(".ms-dd").removeClass("disabled")
+			} else {
+				$(this).find(".ms-dd").addClass("disabled")
+			}
+			
+		})
 		$(".swashSelector").each(function() {
 			$(this).spectrum($("#swashCheck").is(":checked") ? 'enable' : 'disable')
 		})	
@@ -4785,7 +5004,7 @@
 					"imageSrc": foo.toDataURL()
 				}
 
-				updateDDSlick("jersey",addData,addData2)
+				//updateDDSlick("jersey",addData,addData2)
 			}
 			if (imNeeded) {
 				warpText()
@@ -5898,20 +6117,6 @@
 
 	initializeCap()
 
-	$("#capTextSelect").ddslick({
-		data:capddData,
-		width: 300,
-		imagePosition:"left",
-		height: 250,
-		onSelected: function(selectedData){
-			if (ddCount >= 4) {
-				capWordmarkChange(selectedData.selectedData.value,false)
-				//changeFont(numbers, selectedData.selectedData.value)
-			}
-			ddCount++
-		}   
-	});
-
     $("#capColor").spectrum({
 		type: "color",
 		showAlpha: false,
@@ -6217,8 +6422,11 @@
 	})
 
 	$(".capText").on("keyup",function() {
-		var ddData = $('#capTextSelect').data('ddslick');
-		capWordmarkChange(ddData.selectedData.value,false)
+		capWordmarkChange($('#capTextSelect').val(),false)
+	})
+
+	$("#capTextSelect").on("change",function() {
+		capWordmarkChange($(this).val(),false)
 	})
 
 	$(".capTextToggle").on("click",function() {
@@ -6553,7 +6761,7 @@
 					"imageSrc": foo.toDataURL()
 				}
 
-				updateDDSlick("cap",addData,addData2)
+				//updateDDSlick("cap",addData,addData2)
 			}
 		})
 		if (imNeeded) {
@@ -6937,76 +7145,86 @@
 		}
 	})
 
-	$('#numberDropdown').ddslick({
-		data:fontddData,
-		width: 300,
-		imagePosition:"left",
-		height: 250,
-		onSelected: function(selectedData){
-			if (ddCount >= 4) {
-				changeFont(numbers, selectedData.selectedData.value)
-			}
-			ddCount++
-		}   
-	});
+	$("#letterDropdown").on("change",function(e) {
+		changeFont(letters, $(this).val())
+	})
 
-	$('#letterDropdown').ddslick({
-		data:fontddData,
-		width: 300,
-		imagePosition:"left",
-		height: 250,
-		onSelected: function(selectedData){
-			if (ddCount >= 4) {
-				changeFont(letters, selectedData.selectedData.value)
-			}
-			ddCount++
-		}   
-	});
+	$("#numberDropdown").on("change",function(e) {
+		changeFont(numbers, $(this).val())
+	})
 
-	$('#letterStyle').ddslick({
-		width: 300,
-		imagePosition:"left",
-		height: 200,
-		onSelected: function(selectedData){
-			if (dsCount > 1) {
-				letterStyle = selectedData.selectedData.value
-				for (x of letters) {
-					group = fontCanvas.getObjects().find(o => o.id == x)
-					for (y of (letterStyle.split(","))) {
-						groupAlign(group,y)
-					}
-					fontCanvas.renderAll()
-				}
-				//changeFont(letters, selectedData.selectedData.value)
+	$("#letterStyle").on("change",function(e) {
+		style = $(this).val()
+		for (x of letters) {
+			group = fontCanvas.getObjects().find(o => o.id == x)
+			for (y of (style.split(","))) {
+				groupAlign(group,y)
 			}
-			dsCount++
-		}   
-	});
+			fontCanvas.renderAll()
+		}
+	})
 
-	$('#numberStyle').ddslick({
-		width: 300,
-		imagePosition:"left",
-		height: 200,
-		onSelected: function(selectedData){
-			if (dsCount > 1) {
-				numberStyle = selectedData.selectedData.value
-				for (x of numbers) {
-					group = fontCanvas.getObjects().find(o => o.id == x)
-					for (y of (numberStyle.split(","))) {
-						groupAlign(group,y)
-					}
-					fontCanvas.renderAll()
-				}
-				//changeFont(numbers, selectedData.selectedData.value)
+	$("#numberStyle").on("change",function(e) {
+		style = $(this).val()
+		for (x of numbers) {
+			group = fontCanvas.getObjects().find(o => o.id == x)
+			for (y of (style.split(","))) {
+				groupAlign(group,y)
 			}
-			dsCount++
-		}   
-	});
+			fontCanvas.renderAll()
+		}
+	})
 
 	$(".aspectToggle").on("change", function(e) {
 		var arr = ($(this).attr("id") == "numberScaling") ? numbers : letters
-		var ddData = ($(this).attr("id") == "numberScaling") ? $('#numberDropdown').data('ddslick') : $('#letterDropdown').data('ddslick')
-		changeFont(arr,ddData.selectedData.value)
+		//var ddData = ($(this).attr("id") == "numberScaling") ? $("#numberDropdown").val() : $('#letterDropdown').val()
+		changeFont(arr,($(this).attr("id") == "numberScaling") ? $("#numberDropdown").val() : $('#letterDropdown').val())
+	})
+
+	$(".fontToggle").on("change", function(e) {
+		const state = $(this).is(":checked")
+		if ($(this).data("toggle") == "letters") {
+			$(".letSelector").each(function(e) {
+				$(this).spectrum(state == true ? 'enable' : 'disable');
+			})
+			$(".letterToggle").each(function(e) {
+				$(this).prop("disabled",state == true ? false : true)
+			})
+			if (state == true) {
+				$(".ms-letter-container").each(function() {
+					$(this).find(".ms-dd").removeClass("disabled")
+				})
+			} else {
+				$(".ms-letter-container").each(function() {
+					$(this).find(".ms-dd").addClass("disabled")
+				})
+			}
+			for (x of letters) {
+				var grp = fontCanvas.getObjects('group').find(o => o.id == x)
+				grp.set("visible",state)
+			}
+		} else {
+			$(".numSelector").each(function(e) {
+				$(this).spectrum(state == true ? 'enable' : 'disable');
+			})
+			$(".numberToggle").each(function(e) {
+				$(this).prop("disabled",state == true ? false : true)
+			})
+			if (state == true) {
+				$(".ms-number-container").each(function() {
+					$(this).find(".ms-dd").removeClass("disabled")
+				})
+			} else {
+				$(".ms-number-container").each(function() {
+					$(this).find(".ms-dd").addClass("disabled")
+				})
+			}
+			for (x of numbers) {
+				var grp = fontCanvas.getObjects('group').find(o => o.id == x)
+				grp.set("visible",state)
+			}
+		}
+		fontCanvas.renderAll()
 	})
 
 	function changeFont(arr, font) {
@@ -7312,8 +7530,6 @@
 								"selected": false,
 								"imageSrc": foo.toDataURL()
 							}
-
-							updateDDSlick("font",addData,addData2)
 						})
 					}
 				}
@@ -10654,21 +10870,29 @@
 	})
 
 	$(".textActiveToggle").on("click",function(e){
+		console.log("CLICk")
 		var state = false;
 		$(".textActiveToggle").each(function(e) {
 			if ($(this).is(":checked")) {
 				state = true;
 			}
 		})
+		console.log(state)
 		if (state == true) {
 			$(".textOption").each(function() {
 				$(this).prop( "disabled", false );
 			})
-			$("#capTextSelect").css("display","inline-block")
+			$(".ms-cap-container").each(function() {
+				$(this).find(".ms-dd").removeClass("disabled")
+			})
+			//$("#capTextSelect").css("display","inline-block")
 		} else {
-			$("#capTextSelect").css("display","none")
+			//$("#capTextSelect").css("display","none")
 			$(".textOption").each(function() {
 				$(this).prop( "disabled", true );
+			})
+			$(".ms-cap-container").each(function() {
+				$(this).find(".ms-dd").addClass("disabled")
 			})
 		}
 
@@ -12003,10 +12227,10 @@
 		capSelectors.jerseyColor = { "disabled": $("#capColor").prop("disabled"), "val": $("#capColor").spectrum("get").toHexString() }
 		pantsSelectors.jerseyColor = { "disabled": $("#pantsColor").prop("disabled"), "val": $("#pantsColor").spectrum("get").toHexString() }
 
-		fontSelectors.jersey = $('#jerseyWordmarkSelect').data('ddslick');
+		/* fontSelectors.jersey = $('#jerseyWordmarkSelect').data('ddslick');
 		fontSelectors.cap = $("#capTextSelect").data('ddslick');
 		fontSelectors.name = $("#letterDropdown").data('ddslick');
-		fontSelectors.number = $("#numberDropdown").data('ddslick');
+		fontSelectors.number = $("#numberDropdown").data('ddslick'); */
 		
 
 		$("input[type=checkbox]").each(function() {
@@ -12540,66 +12764,6 @@
 						jerseyddData = exportMeta.fontSelectors.jersey.settings.data
 						fontddData = exportMeta.fontSelectors.name.settings.data
 						capddData = exportMeta.fontSelectors.cap.settings.data
-
-						$("#numberDropdown").ddslick("destroy")
-						$("#letterDropdown").ddslick("destroy")
-						$("#jerseyWordmarkSelect").ddslick("destroy")
-						//$("#capTextSelect").ddslick("destroy")
-
-						ddCount = -4
-
-						$('#numberDropdown').ddslick({
-							data:fontddData,
-							width: 300,
-							height: 250,
-							imagePosition:"left",
-							onSelected: function(selectedData){
-								if (ddCount >= 4) {
-									changeFont(numbers, selectedData.selectedData.value)
-								}
-								ddCount++
-							}   
-						});
-
-						$('#letterDropdown').ddslick({
-							data:fontddData,
-							width: 300,
-							height: 250,
-							imagePosition:"left",
-							onSelected: function(selectedData){
-								if (ddCount >= 4) {
-									changeFont(letters, selectedData.selectedData.value)
-								}
-								ddCount++
-							}   
-						});
-
-						$("#jerseyWordmarkSelect").ddslick({
-							data:jerseyddData,
-							width: 300,
-							imagePosition:"left",
-							height: 250,
-							onSelected: function(selectedData){
-								if (ddCount >= 4) {
-									jerseyWordmarkChange(selectedData.selectedData.value,false)
-								}
-								ddCount++
-								
-							}   
-						}); 
-
-						$("#capTextSelect").ddslick({
-							data:capddData,
-							width: 300,
-							imagePosition:"left",
-							height: 250,
-							onSelected: function(selectedData){
-								if (ddCount >= 4) {
-									capWordmarkChange(selectedData.selectedData.value,false)
-								}
-								ddCount++
-							}   
-						});
 						
 						reRenderBG("pants")
 						hideOverlay()
@@ -12850,127 +13014,6 @@
 	})
 
 // UTILITY FUNCTIONS
-
-	function updateDDSlick(source, addData, addData2) {
-
-		console.log(addData)
-		console.log(addData2)
-
-		$("#numberDropdown").ddslick("destroy")
-		$("#letterDropdown").ddslick("destroy")
-		$("#jerseyWordmarkSelect").ddslick("destroy")
-		$("#capTextSelect").ddslick("destroy")
-
-		switch (source) {
-			case "font":
-				console.log(source)
-				var elementToUpdate = fontddData.find(entry => entry.selected === true);
-							
-				if (elementToUpdate) {
-					elementToUpdate.selected = false;
-				}
-
-				push(fontddData, addData)
-				fontddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
-
-				push(jerseyddData, addData2)
-				jerseyddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
-
-				push(capddData, addData2)
-				capddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
-
-				break;
-			case "jersey":
-				console.log(source)
-				var elementToUpdate = jerseyddData.find(entry => entry.selected === true);
-							
-				if (elementToUpdate) {
-					elementToUpdate.selected = false;
-				}
-
-				push(jerseyddData, addData)
-				jerseyddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
-
-				push(fontddData, addData2)
-				fontddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
-
-				push(capddData, addData2)
-				capddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
-
-				break;
-			case "cap":
-				console.log(source)
-				var elementToUpdate = capddData.find(entry => entry.selected === true);
-							
-				if (elementToUpdate) {
-					elementToUpdate.selected = false;
-				}
-
-				push(capddData, addData)
-				capddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
-
-				push(fontddData, addData2)
-				fontddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
-
-				push(jerseyddData, addData2)
-				jerseyddData.sort((p1, p2) => (p1.text.toLowerCase() > p2.text.toLowerCase()) ? 1 : (p1.text.toLowerCase() < p2.text.toLowerCase()) ? -1 : 0);
-
-				break;
-		}
-
-		$('#numberDropdown').ddslick({
-			data:fontddData,
-			width: 300,
-			height: 250,
-			imagePosition:"left",
-			onSelected: function(selectedData){
-				if (ddCount >= 4) {
-					changeFont(numbers, selectedData.selectedData.value)
-				}
-				ddCount++
-			}   
-		});
-
-		$('#letterDropdown').ddslick({
-			data:fontddData,
-			width: 300,
-			height: 250,
-			imagePosition:"left",
-			onSelected: function(selectedData){
-				if (ddCount >= 4) {
-					changeFont(letters, selectedData.selectedData.value)
-				}
-				ddCount++
-			}
-			
-		});
-
-		$("#jerseyWordmarkSelect").ddslick({
-			data:jerseyddData,
-			width: 300,
-			imagePosition:"left",
-			height: 250,
-			onSelected: function(selectedData){
-				if (ddCount >= 4) {
-					jerseyWordmarkChange(selectedData.selectedData.value,false)
-				}
-				ddCount++
-			}   
-		}); 
-
-		$("#capTextSelect").ddslick({
-			data:capddData,
-			width: 300,
-			imagePosition:"left",
-			height: 250,
-			onSelected: function(selectedData){
-				if (ddCount >= 4) {
-					capWordmarkChange(selectedData.selectedData.value,false)
-				}
-				ddCount++
-			}   
-		});
-	}
 
 	function showOverlay() {
 		jerseyOverlayActive = $("#jerseyOverlay").is(":visible")
@@ -13580,5 +13623,33 @@
 		}
 		return true;
 	}
+
+	function sortFontDropdowns() {
+		const selectedJerseyFont = $("#jerseyWordmarkSelect").val()
+		const selectedCapFont = $("#capTextSelect").val()
+		const selectedNameFont = $("#letterDropdown").val()
+		const selectedNumberFont = $("#numberDropdown").val()
+
+		$("#jerseyWordmarkSelect").html($('#jerseyWordmarkSelect option').sort(function(x, y) {
+         	return $(x).text().toLowerCase() < $(y).text().toLowerCase() ? -1 : 1;
+		}))
+		$("#jerseyWordmarkSelect").val(selectedJerseyFont)
+
+		$("#capTextSelect").html($('#capTextSelect option').sort(function(x, y) {
+         	return $(x).text().toLowerCase() < $(y).text().toLowerCase() ? -1 : 1;
+		}))
+		$("#capTextSelect").val(selectedCapFont)
+
+		$("#letterDropdown").html($('#letterDropdown option').sort(function(x, y) {
+         	return $(x).text().toLowerCase() < $(y).text().toLowerCase() ? -1 : 1;
+		}))
+		$("#letterDropdown").val(selectedNameFont)
+
+		$("#numberDropdown").html($('#numberDropdown option').sort(function(x, y) {
+         	return $(x).text().toLowerCase() < $(y).text().toLowerCase() ? -1 : 1;
+		}))
+		$("#numberDropdown").val(selectedNumberFont)
+	}
+	
 </script>
 </html>
