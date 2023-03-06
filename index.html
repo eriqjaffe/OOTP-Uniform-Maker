@@ -6623,7 +6623,6 @@
 	})
 
 	function capWordmarkChange(data,newFont) {
-		console.log("hello")
 		var tmp = (data.fontBase64 == undefined) ? data : data.fontBase64;
 		opentype.load(tmp, (err,font) => {
 			if (err || !font) {
@@ -6635,7 +6634,6 @@
 			var grp2 = capLogoCanvas.getObjects("group").find(o => o.id === "textLogo2")
 
 			grp.getObjects('path').forEach(function(o) {
-				console.log(o.id)
 				grp.removeWithUpdate(o)
 			})
 
@@ -7517,19 +7515,7 @@
 
 							fontCanvas.renderAll()
 
-							var addData = {
-								"value": data.fontBase64,
-								"text": data.fontName,
-								"selected": true,
-								"imageSrc": foo.toDataURL()
-							}
-
-							var addData2 = {
-								"value": data.fontBase64,
-								"text": data.fontName,
-								"selected": false,
-								"imageSrc": foo.toDataURL()
-							}
+							refreshDropdowns("font",data,foo)
 						})
 					}
 				}
@@ -13649,6 +13635,40 @@
          	return $(x).text().toLowerCase() < $(y).text().toLowerCase() ? -1 : 1;
 		}))
 		$("#numberDropdown").val(selectedNumberFont)
+	}
+
+	function refreshDropdowns(which,data,thumb) {
+		const letterDropdown = document.getElementById("letterDropdown").msDropdown;
+		const numberDropdown = document.getElementById("numberDropdown").msDropdown;
+		const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
+		const capDropdown = document.getElementById("capTextSelect").msDropdown;
+
+		switch (which) {
+			case "font":
+				$("#letterDropdown option:selected").removeAttr("selected");
+				$("#numberDropdown option:selected").removeAttr("selected");
+				break;
+		}
+		
+
+		$('<option>').val(data.fontBase64).attr('data-image',thumb.toDataURL()).text(data.fontName).appendTo('#letterDropdown')
+		$('<option>').val(data.fontBase64).attr('data-image',thumb.toDataURL()).text(data.fontName).appendTo('#numberDropdown')
+		$('<option>').val(data.fontBase64).attr('data-image',thumb.toDataURL()).text(data.fontName).appendTo('#jerseyWordmarkSelect')
+		$('<option>').val(data.fontBase64).attr('data-image',thumb.toDataURL()).text(data.fontName).appendTo('#capTextSelect')
+
+		switch (which) {
+			case "font":
+				$("#letterDropdown option:last").attr("selected", true);
+				$("#numberDropdown option:last").attr("selected", true);
+				break;
+		}
+		
+		sortFontDropdowns()
+		
+		letterDropdown.refresh()
+		numberDropdown.refresh()
+		jerseyDropdown.refresh()
+		capDropdown.refresh()
 	}
 	
 </script>
