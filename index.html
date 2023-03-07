@@ -851,13 +851,13 @@
 									</div>
 									<div class="jersey-accord-header jersey-inactive-header">Wordmark</div>
 									<div class="jersey-accord-content">
-										<table style="width:100%">
+										<table style="width:482px;">
 											<tr>
 												<td class="checkCell"><input type="checkbox" id="wordmarkCheck" class="wordmarkToggle" data-id="wordmark"></td>
 												<td colspan="2"><label>Text: </label><input class="jerseyTextOption" type="text" id="wordmarkTextBox" value="Bulldogs" style="width:79%; text-align:center;"/></td>
 											</tr>
 										</table>
-										<table style="width:100%;">
+										<table style="width:482px;">
 											<tr>
 												<td style="text-align:center;">
 													<input type="checkbox" id="wordmarkTextColorCheck" class="jerseyTextOption jerseyTextToggle" data-id="wordmarkText" checked>
@@ -877,7 +877,7 @@
 												</td>
 											<tr>
 										</table>
-										<table style="width:100%;" class="ms-jersey-container">
+										<table style="width:482px;" class="ms-jersey-container">
 											<tr>
 												<td style="width:20%;">
 													<select id="warpEffect" class="msDropDown jerseyTextOption" style="width:100%;" is="ms-dropdown">
@@ -924,7 +924,7 @@
 											</tr>
 											<tr><td colspan="3" style="text-align:center; font-size:.8em;">Text effects may take a moment or two to process - be patient!</td></tr>
 										</table>	
-										<table style="width:100%;" class="ms-jersey-container">
+										<table style="width:482px;" class="ms-jersey-container">
 											<tr>
 												<td colspan="3">
 													<select id="jerseyWordmarkSelect" class="jerseyTextOption" style="width:100%;" is="ms-dropdown" data-visible-rows="6">
@@ -1005,7 +1005,7 @@
 												<input type="button" class="button jerseyTextOption" id="jerseyUploadTheFont" value="Upload Font" style="display:none;" />
 											</td></tr>
 										</table>
-										<table style="width:100%;" class="ms-swash-container">
+										<table style="width:482px;" class="ms-swash-container">
 											<tr>
 												<td class="checkCell"><input type="checkbox" id="swashCheck" class="swashToggle" data-id="swash" id="swashCheck"></td>
 												<td>
@@ -1667,13 +1667,13 @@
 									</div>
 									<div class="cap-accord-header cap-inactive-header">Text</div>
 									<div class="cap-accord-content">
-										<table style="width:100%;">
+										<table style="width:99.9%;">
 											<tr>
 												<td class="checkCell"><input type="checkbox" class="capTextureToggle textActiveToggle" data-id="textLogo" data-textbox="capText" data-checkbox="capTextToggle" data-selector="textColorSelector" id="textLogoCheck"></td>
 												<td colspan="2"><label>Text: </label><input type="text" class="capText" id="capText" data-id="capText" value="L" style="width:79%; text-align:center;" disabled/></td>
 											</tr>
 										</table>
-										<table style="width:100%;" id="tableOne">
+										<table style="width:99.9%;" id="tableOne">
 											<tr>
 												<td style="text-align:center;">
 													<input type="checkbox" class="capTextToggle" data-group="textLogo" data-id="capLogoText" id="capLogoTextColorCheck" checked>
@@ -1692,13 +1692,13 @@
 												</td>
 											</tr>
 										</table>
-										<table style="width:100%;">
+										<table style="width:99.9%;">
 											<tr>
 												<td class="checkCell"><input type="checkbox" class="capTextureToggle textActiveToggle" data-id="textLogo2" data-textbox="capText2" data-checkbox="capText2Toggle" data-selector="text2ColorSelector" id="textLogo2Check"></td>
 												<td colspan="2"><label>Text: </label><input type="text" class="capText" id="capText2" data-id="capText2" value="A" style="width:79%; text-align:center;" disabled/></td>
 											</tr>
 										</table>
-										<table style="width:100%;" id="tableTwo">
+										<table style="width:99.9%;" id="tableTwo">
 											<tr>
 												<td style="text-align:center;">
 													<input type="checkbox" class="capText2Toggle" data-group="textLogo2" data-id="capLogo2Text" id="capLogo2TextColorCheck" checked>
@@ -1718,10 +1718,9 @@
 												</td>
 											<tr>
 										</table>
-										<table style="width:100%;">
+										<table style="width:99.9%;">
 											<tr>
-												<td style="width:20%;">&nbsp</td>
-												<td class="ms-cap-container">
+												<td colspan="3" class="ms-cap-container">
 													<select id="capTextSelect" class="textOption" style="width:100%;" is="ms-dropdown" data-visible-rows="6">
 														<option data-image="./images/Acme.png" value="./fonts/Acme-Regular.ttf">Acme</option>
 														<option data-image="./images/All State.png" value="./fonts/all_state-webfont.ttf">All State</option>
@@ -1793,7 +1792,6 @@
 														<option data-image="./images/VarsityClassicC.png" value="./fonts/VarsityClassicC.ttf">Varsity Classic C</option>
 													</select>	
 												</td>
-												<td style="width:20%;">&nbsp</td>
 											</tr>
 											<tr><td colspan="3" align="center">
 												<input id="customFont" type="file" name="customFont" accept=".ttf, .otf" style="display:none;" />
@@ -4990,19 +4988,7 @@
 					left: 0
 				})
 
-				var addData = {
-					"value": data.fontBase64,
-					"text": data.fontName,
-					"selected": true,
-					"imageSrc": foo.toDataURL()
-				}
-
-				var addData2 = {
-					"value": data.fontBase64,
-					"text": data.fontName,
-					"selected": false,
-					"imageSrc": foo.toDataURL()
-				}
+				refreshDropdowns("jersey",data,foo)
 
 				//updateDDSlick("jersey",addData,addData2)
 			}
@@ -6745,19 +6731,7 @@
 					left: 0
 				})
 
-				var addData = {
-					"value": data.fontBase64,
-					"text": data.fontName,
-					"selected": true,
-					"imageSrc": foo.toDataURL()
-				}
-
-				var addData2 = {
-					"value": data.fontBase64,
-					"text": data.fontName,
-					"selected": false,
-					"imageSrc": foo.toDataURL()
-				}
+				refreshDropdowns("cap",data,foo)
 
 				//updateDDSlick("cap",addData,addData2)
 			}
@@ -11033,7 +11007,6 @@
 			url: "http://127.0.0.1:"+port+"/customFont",
 			success: function(data) {
 				if (data.status != "cancelled") {
-					customFonts.push(data)
 					switch (type) {
 						case "jersey":
 							jerseyWordmarkChange(data,true)
@@ -13638,6 +13611,9 @@
 	}
 
 	function refreshDropdowns(which,data,thumb) {
+		data.thumb = thumb.toDataURL()
+		customFonts.push(data)
+		console.log(customFonts)
 		const letterDropdown = document.getElementById("letterDropdown").msDropdown;
 		const numberDropdown = document.getElementById("numberDropdown").msDropdown;
 		const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
@@ -13647,6 +13623,12 @@
 			case "font":
 				$("#letterDropdown option:selected").removeAttr("selected");
 				$("#numberDropdown option:selected").removeAttr("selected");
+				break;
+			case "jersey":
+				$("#jerseyWordmarkSelect option:selected").removeAttr("selected");
+				break;
+			case "cap":
+				$("#capTextSelect option:selected").removeAttr("selected");
 				break;
 		}
 		
@@ -13660,6 +13642,12 @@
 			case "font":
 				$("#letterDropdown option:last").attr("selected", true);
 				$("#numberDropdown option:last").attr("selected", true);
+				break;
+			case "jersey":
+				$("#jerseyWordmarkSelect option:last").attr("selected", true);
+				break;
+			case "cap":
+				$("#capTextSelect option:last").attr("selected", true);
 				break;
 		}
 		
