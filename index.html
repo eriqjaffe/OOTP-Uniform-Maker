@@ -95,7 +95,7 @@
 		var pantsMakersMarkY = pantsMakersMarkCoords['leftY']
 
 		var strokeWidth = {letters1: 8, letters2: 16, numbers1: 12, numbers2: 24}
-		var overlayImage = null;
+		var fontOverlayImage = null;
 
 		var imNeeded = false;
 		var diagNeeded = false;
@@ -1809,9 +1809,9 @@
 												<td class="checkCell"><input type="checkbox" class="fontToggle" data-toggle="letters" checked></td>
 												<td>Letters:</td>
 												<td style="text-align:right;">
-													<input class="selector letSelector" type="text" id="lettersFill" data-element="lettersFill">
-													<input class="selector letSelector" type="text" id="lettersStroke1" data-element="lettersStroke1">
-													<input class="selector letSelector" type="text" id="lettersStroke2" data-element="lettersStroke2">
+													<input class="selector letSelector fontSelector" type="text" id="lettersFill" data-element="lettersFill">
+													<input class="selector letSelector fontSelector" type="text" id="lettersStroke1" data-element="lettersStroke1">
+													<input class="selector letSelector fontSelector" type="text" id="lettersStroke2" data-element="lettersStroke2">
 												</td>
 											</tr>
 											<tr class="color_tr">
@@ -1939,9 +1939,9 @@
 												<td class="checkCell"><input type="checkbox" class="fontToggle" data-toggle="numbers" checked></td>
 												<td><label>Numbers: </label></td>
 												<td style="text-align:right;">
-													<input class="selector numSelector" type="text" id="numbersFill" data-element="numbersFill">
-													<input class="selector numSelector" type="text" id="numbersStroke1" data-element="numbersStroke1">
-													<input class="selector numSelector" type="text" id="numbersStroke2" data-element="numbersStroke2">
+													<input class="selector numSelector fontSelector" type="text" id="numbersFill" data-element="numbersFill">
+													<input class="selector numSelector fontSelector" type="text" id="numbersStroke1" data-element="numbersStroke1">
+													<input class="selector numSelector fontSelector" type="text" id="numbersStroke2" data-element="numbersStroke2">
 												</td>
 											</tr>
 											<tr class="color_tr">
@@ -7256,7 +7256,7 @@
 					scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
 					var strokeWidth1 = strokeWidth["numbers1"]
 					var strokeWidth2 = strokeWidth["numbers2"]
-					var fillColor = (overlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:overlayImage})
+					var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
 					var stroke1Color = $("#numbersStroke1").spectrum("get")
 					var stroke2Color = $("#numbersStroke2").spectrum("get")
 				} else {
@@ -7264,7 +7264,7 @@
 					scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
 					var strokeWidth1 = strokeWidth["letters1"]
 					var strokeWidth2 = strokeWidth["letters2"]
-					var fillColor = (overlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:overlayImage})
+					var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
 					var stroke1Color = $("#lettersStroke1").spectrum("get")
 					var stroke2Color = $("#lettersStroke2").spectrum("get")
 				}
@@ -7423,7 +7423,7 @@
 									scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
 									var strokeWidth1 = strokeWidth["numbers1"]
 									var strokeWidth2 = strokeWidth["numbers2"]
-									var fillColor = (overlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:overlayImage})
+									var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
 									var stroke1Color = $("#numbersStroke1").spectrum("get")
 									var stroke2Color = $("#numbersStroke2").spectrum("get")
 								} else {
@@ -7431,7 +7431,7 @@
 									scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
 									var strokeWidth1 = strokeWidth["letters1"]
 									var strokeWidth2 = strokeWidth["letters2"]
-									var fillColor = (overlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:overlayImage})
+									var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
 									var stroke1Color = $("#lettersStroke1").spectrum("get")
 									var stroke2Color = $("#lettersStroke2").spectrum("get")
 								}
@@ -7501,7 +7501,7 @@
 		if ($(this).val() == "Load Overlay Image") {
 			$("#customFontLayerUploader").click()
 		} else {
-			overlayImage = null
+			fontOverlayImage = null
 			const arr = letters.concat(numbers)
 			for (x of arr) {
 				var fill = (isNumeric(x)) ? $("#numbersFill").spectrum("get") : $("#lettersFill").spectrum("get")
@@ -7524,6 +7524,12 @@
 			var image = new Image();
 			image.src = e.target.result;
 			image.onload = function() {
+				const canvas = document.createElement('canvas');
+				const ctx = canvas.getContext('2d');
+				canvas.height = image.naturalHeight;
+				canvas.width = image.naturalWidth;
+				ctx.drawImage(image, 0, 0);
+				const dataUrl = canvas.toDataURL();
 				for (x of arr) {
 					var group = fontCanvas.getObjects().find(o => o.id == x)
 					group._objects[1].set({
@@ -7532,7 +7538,7 @@
 						})
 					})
 				}
-				overlayImage = image
+				fontOverlayImage = dataUrl
 				$("#customFontLayer").val("Clear Overlay Image")
 				fontCanvas.renderAll()
 			}
@@ -10830,14 +10836,12 @@
 	})
 
 	$(".textActiveToggle").on("click",function(e){
-		console.log("CLICk")
 		var state = false;
 		$(".textActiveToggle").each(function(e) {
 			if ($(this).is(":checked")) {
 				state = true;
 			}
 		})
-		console.log(state)
 		if (state == true) {
 			$(".textOption").each(function() {
 				$(this).prop( "disabled", false );
@@ -12250,6 +12254,14 @@
 			}
 		})
 
+		$(".fontSelector").each(function(){
+			if ($(this).spectrum("get") == null) {
+				fontSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": 'transparent' }
+			} else {
+				fontSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			}
+		})
+
 		textBoxes.wordmarkTextBox = { "disabled": $("#wordmarkTextBox").prop("disabled"), "val": $("#wordmarkTextBox").val() }
 		textBoxes.capText = { "disabled": $("#capText").prop("disabled"), "val": $("#capText").val() }
 		textBoxes.capText2 = { "disabled": $("#capText2").prop("disabled"), "val": $("#capText2").val() }
@@ -12313,7 +12325,7 @@
 		exportMeta.swatchSelectors = swatchSelectors
 		exportMeta.textBoxes = textBoxes
 		exportMeta.canvases = jsonExport
-		//exportMeta.customFonts = customFonts
+		exportMeta.customFonts = customFonts
 		//exportMeta.jerseyddData = jerseyddData
 		//exportMeta.capddData = capddData
 		//exportMeta.fontddData = fontddData
@@ -12324,6 +12336,7 @@
 		exportMeta.customJerseyTexture = customJerseyTexture
 		exportMeta.customCapTexture = customCapTexture
 		exportMeta.customPantsTexture = customPantsTexture
+		exportMeta.fontOverlayImage = fontOverlayImage
 
 		var startYear = parseInt($("#startYear").val());
 		var endYear = parseInt($("#endYear").val())
@@ -12615,16 +12628,34 @@
 						customJerseyTexture = exportMeta.customJerseyTexture
 						customPantsTexture = exportMeta.customPantsTexture
 						customCapTexture = exportMeta.customCapTexture
-
-						fontddData = exportMeta.fontddData
-						jerseyddData = exportMeta.jerseyddData
-						capddData = exportMeta.capddData
+						fontOverlayImage = exportMeta.fontOverlayImage
 
 						if (exportMeta.commonPalette != undefined && exportMeta.commonPalette != null) {
 							if (exportMeta.commonPalette.length > 0) {
 								for (x in exportMeta.commonPalette) {
 									commonPalette.push(exportMeta.commonPalette[x])
 								}
+							}
+						}
+
+						if (exportMeta.customFonts != undefined && exportMeta.customFonts != null) {
+							if (exportMeta.customFonts.length > 0) {
+								for (x in exportMeta.customFonts) {
+									const data = exportMeta.customFonts[x]
+									const letterDropdown = document.getElementById("letterDropdown").msDropdown;
+									const numberDropdown = document.getElementById("numberDropdown").msDropdown;
+									const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
+									const capDropdown = document.getElementById("capTextSelect").msDropdown;
+									$('<option>').val(data.fontBase64).attr('data-image',data.thumb).text(data.fontName).appendTo('#letterDropdown')
+									$('<option>').val(data.fontBase64).attr('data-image',data.thumb).text(data.fontName).appendTo('#numberDropdown')
+									$('<option>').val(data.fontBase64).attr('data-image',data.thumb).text(data.fontName).appendTo('#jerseyWordmarkSelect')
+									$('<option>').val(data.fontBase64).attr('data-image',data.thumb).text(data.fontName).appendTo('#capTextSelect')
+									sortFontDropdowns()
+									letterDropdown.refresh()
+									numberDropdown.refresh()
+									jerseyDropdown.refresh()
+									capDropdown.refresh()
+								}	
 							}
 						}
 
@@ -12720,9 +12751,9 @@
 						})
 						pantsBelow.renderAll()
 
-						jerseyddData = exportMeta.fontSelectors.jersey.settings.data
-						fontddData = exportMeta.fontSelectors.name.settings.data
-						capddData = exportMeta.fontSelectors.cap.settings.data
+						//jerseyddData = exportMeta.fontSelectors.jersey.settings.data
+						//fontddData = exportMeta.fontSelectors.name.settings.data
+						//capddData = exportMeta.fontSelectors.cap.settings.data
 						
 						reRenderBG("pants")
 						hideOverlay()
