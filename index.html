@@ -927,7 +927,7 @@
 										<table style="width:482px;" class="ms-jersey-container">
 											<tr>
 												<td colspan="3">
-													<select id="jerseyWordmarkSelect" class="jerseyTextOption" style="width:100%;" is="ms-dropdown" data-visible-rows="6">
+													<select id="jerseyWordmarkSelect" class="jerseyTextOption" style="width:100%;" is="ms-dropdown" data-visible-rows="6" data-event="change">
 														<option data-image="./images/Acme.png" value="./fonts/Acme-Regular.ttf">Acme</option>
 														<option data-image="./images/All State.png" value="./fonts/all_state-webfont.ttf">All State</option>
 														<option data-image="./images/Athletic Gothic.png" value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
@@ -1721,7 +1721,8 @@
 										<table style="width:99.9%;">
 											<tr>
 												<td colspan="3" class="ms-cap-container">
-													<select id="capTextSelect" class="textOption" style="width:100%;" is="ms-dropdown" data-visible-rows="6">
+													<select id="capTextSelect" class="textOption" style="width:100%;" is="ms-dropdown" data-visible-rows="6" data-event="change">
+													<!--<select id="capTextSelect" class="textOption" style="width:100%;" data-visible-rows="6">-->
 														<option data-image="./images/Acme.png" value="./fonts/Acme-Regular.ttf">Acme</option>
 														<option data-image="./images/All State.png" value="./fonts/all_state-webfont.ttf">All State</option>
 														<option data-image="./images/Athletic Gothic.png" value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
@@ -3829,9 +3830,13 @@
 		jerseyLogoCanvas.renderAll()
 	})
 
-	$("#jerseyWordmarkSelect").on("change",function(e) {
+	
+
+	//ddSelect.on("change", function() {console.log(ddSelect.jwm)});
+
+/* 	$("#jerseyWordmarkSelect").on("change",function(e) {
 		jerseyWordmarkChange($(this).val(),false)
-	})
+	}) */
 
 	$("#jerseyMakersMarkSelect").on("change",function(e) {
 		loadMakersMark("jersey",$("#jerseyMakersMarkSelect").find(':selected').data('top'),$("#jerseyMakersMarkSelect").find(':selected').data('left'),$("#jerseyMakersMarkSelect").find(':selected').data('angle'),$("#jerseyMakersMarkSelect").find(':selected').data('height'));
@@ -4918,6 +4923,7 @@
 	})
 
 	function jerseyWordmarkChange(data,newFont) {
+		console.log("running function")
 		var tmp = (data.fontBase64 == undefined) ? data : data.fontBase64;
 		opentype.load(tmp, (err,font) => {
 			if (err || !font) {
@@ -12638,47 +12644,6 @@
 							}
 						}
 
-						if (exportMeta.customFonts != undefined && exportMeta.customFonts != null) {
-							if (exportMeta.customFonts.length > 0) {
-								for (x in exportMeta.customFonts) {
-									const data = exportMeta.customFonts[x]
-									const letterDropdown = document.getElementById("letterDropdown").msDropdown;
-									const numberDropdown = document.getElementById("numberDropdown").msDropdown;
-									const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
-									const capDropdown = document.getElementById("capTextSelect").msDropdown;
-									$('<option>').val(data.fontBase64).attr('data-image',data.thumb).text(data.fontName).appendTo('#letterDropdown')
-									$('<option>').val(data.fontBase64).attr('data-image',data.thumb).text(data.fontName).appendTo('#numberDropdown')
-									$('<option>').val(data.fontBase64).attr('data-image',data.thumb).text(data.fontName).appendTo('#jerseyWordmarkSelect')
-									$('<option>').val(data.fontBase64).attr('data-image',data.thumb).text(data.fontName).appendTo('#capTextSelect')
-									sortFontDropdowns()
-									letterDropdown.refresh()
-									numberDropdown.refresh()
-									jerseyDropdown.refresh()
-									capDropdown.refresh()
-								}	
-							}
-						}
-
-						/* if (exportMeta.customFonts != undefined && exportMeta.customFonts != null) {
-							if (exportMeta.customFonts.length > 0) {
-								for (x in exportMeta.customFonts) {
-									const loadedFont = exportMeta.customFonts[x]
-									validFonts.push(loadedFont.familyName)
-									$("head").prepend("<style>@font-face {\n   font-family: '"+loadedFont.familyName+"';\n   src: url('"+loadedFont.fontData+"') format('truetype');\n}\n."+loadedFont.familyName+" { font-family: '"+loadedFont.familyName+"'; font-size: 1.1em;}\n</style>");
-									fontSources[loadedFont.familyName] = loadedFont.fontData;
-									var style = loadedFont.familyName;
-									var font_family = $("."+style).css("font-family");
-									var optgroup = $("<optgroup class='"+loadedFont.familyName+"'>");
-									optgroup.append("<option value='"+loadedFont.familyName+"'>"+loadedFont.fontName+"</option>")
-									$("#jerseyFontTypeCombo").append(optgroup)
-									var optgroup2 = $("<optgroup class='"+loadedFont.familyName+"'>");
-									optgroup2.append("<option value='"+loadedFont.familyName+"'>"+loadedFont.fontName+"</option>")
-									$("#capFontTypeCombo").append(optgroup2)
-									customFonts.push(loadedFont)
-								}	
-							}
-						} */
-
 						Object.keys(exportMeta.checkboxes).forEach(function(key){
 							$("#"+key).prop('checked', exportMeta.checkboxes[key].checked)
 						})	
@@ -12750,12 +12715,36 @@
 							pantsLogoCanvas.add(object)
 						})
 						pantsBelow.renderAll()
-
-						//jerseyddData = exportMeta.fontSelectors.jersey.settings.data
-						//fontddData = exportMeta.fontSelectors.name.settings.data
-						//capddData = exportMeta.fontSelectors.cap.settings.data
-						
 						reRenderBG("pants")
+
+						if (exportMeta.customFonts != undefined && exportMeta.customFonts != null) {
+							if (exportMeta.customFonts.length > 0) {
+								for (x in exportMeta.customFonts) {
+									const data = exportMeta.customFonts[x]
+									$('<option>').val(data.fontBase64).attr('data-image',data.thumb).text(data.fontName).appendTo('#letterDropdown')
+									$('<option>').val(data.fontBase64).attr('data-image',data.thumb).text(data.fontName).appendTo('#numberDropdown')
+									$('<option>').val(data.fontBase64).attr('data-image',data.thumb).text(data.fontName).appendTo('#jerseyWordmarkSelect')
+									$('<option>').val(data.fontBase64).attr('data-image',data.thumb).text(data.fontName).appendTo('#capTextSelect')
+								}	
+							}
+						} 
+
+						const letterDropdown = document.getElementById("letterDropdown").msDropdown;
+						const numberDropdown = document.getElementById("numberDropdown").msDropdown;
+						const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
+						const capDropdown = document.getElementById("capTextSelect").msDropdown;
+						sortFontDropdowns()
+						//console.log(exportMeta.selects.letterDropdown.val)
+						$("#letterDropdown").val(exportMeta.selects.letterDropdown.val)
+						$("#numberDropdown").val(exportMeta.selects.numberDropdown.val)
+						$("#jerseyWordmarkSelect").val(exportMeta.selects.jerseyWordmarkSelect.val)
+						$("#capTextSelect").val(exportMeta.selects.capTextSelect.val)
+						
+						letterDropdown.refresh()
+						numberDropdown.refresh()
+						//jerseyDropdown.refresh()
+						//capDropdown.refresh()
+
 						hideOverlay()
 					}
 				} else {
