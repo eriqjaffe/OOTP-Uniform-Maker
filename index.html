@@ -56,6 +56,12 @@
 		var defaultJerseyTexture = params.get('preferredJerseyTexture')
 		var defaultPantsTexture = params.get('preferredPantsTexture')
 		var defaultCapTexture = params.get('preferredCapTexture')
+		var localFontFolder = params.get('localFontFolder')
+
+		if (localFontFolder == "null") {
+			console.log ("local font folder: "+localFontFolder)
+		}
+		
 		//var preferredJerseyFont = (prefs.preferredJerseyFont != null) ? prefs.preferredJerseyFont : "./fonts/LeckerliOne-Regular.ttf"
 		//$("#preferredJerseyFont").val(prefs.preferredJerseyFont != null ? prefs.preferredJerseyFont : "./fonts/LeckerliOne-Regular.ttf")
 
@@ -106,14 +112,11 @@
 		var pantsOverlayActive = false;
 		var capOverlayActive = false;
 		var fontActive = false;
-
-		var fontSources = {Acme: "Acme-Regular.ttf", athletic_gothicregular: "athletic_gothic-webfont.ttf", athletic_gothic_shadowregular: "athletic_gothic_shadow-webfont.ttf", beaverton_scriptregular: "beaverton_script-webfont.ttf", '"Berkshire Swash"': "BerkshireSwash-Regular.ttf", '"Cantora One"': "CantoraOne-Regular.ttf", caxton_romanregular: "caxton_roman-webfont.ttf", '"Chela One"': "ChelaOne-Regular.ttf", russell_circusregular: "circus-webfont.ttf", Condiment: "Condiment-Regular.ttf", Cookie: "Cookie-Regular.ttf", Courgette: "Courgette-Regular.ttf", '"Croissant One"': "CroissantOne-Regular.ttf", Damion: "Damion-Regular.ttf", Engagement: "Engagement-Regular.ttf", rawlings_fancy_blockregular: "rawlingsfancyblock-regular-webfont.ttf", '"Germania One"': "GermaniaOne-Regular.ttf", Graduate: "Graduate-Regular.ttf", '"Grand Hotel"': "GrandHotel-Regular.ttf", '"Jockey One"': "JockeyOne-Regular.ttf", kansasregular: "tuscan-webfont.ttf", '"Kaushan Script"': "KaushanScript-Regular.ttf", '"Leckerli One"': "LeckerliOne-Regular.ttf", '"Lily Script One"': "LilyScriptOne-Regular.ttf", Lobster: "Lobster-Regular.ttf", '"Lobster Two"': "LobsterTwo-Regular.ttf", '"Metal Mania"': "MetalMania-Regular.ttf", Miniver: "Miniver-Regular.ttf", 'Molle, italic': "Molle-Regular.ttf", '"New Rocker"': "NewRocker-Regular.ttf", Norican: "Norican-Regular.ttf", rawlings_old_englishmedium: "rawlingsoldenglish-webfont.ttf", '"Oleo Script"': "OleoScript-Regular.ttf", '"Oleo Script Swash Caps"': "OleoScriptSwashCaps-Regular.ttf", Pacifico: "Pacifico.ttf", '"Pirata One"': "PirataOne-Regular.ttf", Playball: "Playball-Regular.ttf", pro_full_blockregular: "pro_full_block-webfont.ttf", richardson_fancy_blockregular: "richardson_fancy_block-webfont.ttf", '"Rubik One"': "RubikOne-Regular.ttf", '"Rum Raisin"': "RumRaisin-Regular.ttf", Satisfy: "Satisfy-Regular.ttf", '"Seymour One"': "SeymourOne-Regular.ttf", spl28scriptregular: "spl28script-webfont.ttf", ua_tiffanyregular: "tiffany-webfont.ttf", '"Trade Winds"': "TradeWinds-Regular.ttf", mlb_tuscan_newmedium: "mlb_tuscan_new-webfont.ttf", UnifrakturCook: "UnifrakturCook-Bold.ttf", UnifrakturMaguntia: "UnifrakturMaguntia-Book.ttf", Vibur: "Vibur-Regular.ttf", Viga: "Viga-Regular.ttf", Wellfleet: "Wellfleet-Regular.ttf", '"Wendy One"': "WendyOne-Regular.ttf", Yellowtail: "Yellowtail-Regular.ttf", VarsityBlock: "VarsityBlockC.ttf", MLBBlock: "MLBBlock.ttf", ChicagoNL: "MLBCubs.ttf", McAuliffe: "MLBRedSox.ttf", VarsityBlock2: 'VarsityClassicSerifB', VarsityBlock3: 'VarsityClassicSerifA'};
-		
-		var validFonts = ['Acme','AthleticGothic','AthleticGothicShadow','BeavertonScript','Berkshire_Swash','Cantora_One','CaxtonRoman','Chela_One','Circus','Condiment','Cookie','Courgette','Croissant_One','Damion','Engagement','RawlingsFancyBlock','Germania_One','Graduate','Grand_Hotel','Jockey_One','Kansas','Kaushan_Script','Leckerli_One','Lily_Script_One','Lobster','Lobster_Two','Metal_Mania','Miniver','Molle','New_Rocker','Norican','OldEnglish','Oleo_Script','Oleo_Script_Swash_Caps','Pacifico','Pirata_One','Playball','ProFullBlock','RichardsonFancyBlock','Rubik_One','Rum_Raisin','Satisfy','Seymour_One','spl28','TiffanyRegular','Trade_Winds','Tuscan','UnifrakturCook','UnifrakturMaguntia','Vibur','Viga','Wellfleet','Wendy_One','Yellowtail','VarsityBlock','MLBBlock','ChicagoNL','McAuliffe','VarsityBlock2', 'VarsityBlock3']
-		
-		var fontFamilies = {Acme: "Acme", athletic_gothicregular: "AthleticGothic", athletic_gothic_shadowregular: "AthleticGothicShadow", beaverton_scriptregular: "BeavertonScript", 'Berkshire Swash': "Berkshire_Swash", 'Cantora One': "Cantora_One", caxton_romanregular: "CaxtonRoman", 'Chela One': "Chela_One", russell_circusregular: "Circus", Condiment: "Comdiment", Cookie: "Coookie", Courgette: "Courgette", 'Croissant One': "Croissant_one", Damion: "Damion", Engagement: "Engagement", rawlings_fancy_blockregular: "RawlingsFancyBlock", 'Germania One': "Germania_One", Graduate: "Graduate", 'Grand Hotel': "Grand_Hotel", 'Jockey One': "Jockey_One", kansasregular: "Kansas", 'Kaushan Script': "Kaushan_Script", 'Leckerli One': "Leckerli_One", 'Lily Script One': "Lily_Script_One", Lobster: "Lobster", 'Lobster Two': "Lobster_Two", 'Metal Mania': "Metal_Mania", Miniver: "Miniver", 'Molle, italic': "Molle", 'New Rocker': "New_Rocker", Norican: "Norican", rawlings_old_englishmedium: "OldEnglish", 'Oleo Script': "Oleo_Script", 'Oleo Script Swash Caps': "Oleo_Script_Swash_Caps", Pacifico: "Pacifico", 'Pirata One': "Pirata_One", Playball: "Playball", pro_full_blockregular: "ProFullBlock", richardson_fancy_blockregular: "RichardsonFancyBlock", 'Rubik One': "Rubik_One", 'Rum Raisin': "Rum_Raisin", Satisfy: "Satisfy", 'Seymour One': "Seymour_One", spl28scriptregular: "spl28", ua_tiffanyregular: "TiffanyRegular", 'Trade Winds': "Trade_Winds", mlb_tuscan_newmedium: "Tuscan", UnifrakturCook: "UnifrakturCook", UnifrakturMaguntia: "UnifrakturMaguntia", Vibur: "Vibur", Viga: "Viga", Wellfleet: "Wellfleet", 'Wendy One': "Wendy_One", Yellowtail: "Yellowtail", VarsityBlock: "VarsityBlock", MLBBlock: "MLBBlock", ChicagoNL: "ChicagoNL", McAuliffe: "McAuliffe", VarsityBlock2: "VarsityBlock2", VarsityBlock3: "VarsityBlock3"};
   
+		var fontList = ["Acme", "All State", "Athletic Gothic", "Athletic Gothic Shadow", "Beaverton Script", "Berkshire Swash", "CantoraOne", "Caxton Roman", "Chela", "Russell Circus", "Condiment", "Cookie", "Courgette", "Croissant", "Damion", "Engagement", "Germania", "Graduate", "Grand Hotel", "Jockey", "Kaushan Script", "Leckerli", "Lily Script", "Lobster", "Lobster Two", "Metal Mania", "Miniver", "MLB Block", "MLB Chicago N", "McAuliffe", "Molle", "New Rocker", "Norican", "Oleo Script", "Pacifico", "Pirata", "Playball", "Pro Full Block", "Quicksand", "Rubik Mono", "Rubik", "Rum Raisin", "Satisfy", "Seymour", "Tiffany", "Trade Winds", "Kansas", "Unifraktur Cook", "Unifraktur Maguntia", "Varsity Block C", "Varsity Classic Serif A", "Varsity Classic Serif B", "Vibur", "Viga", "Wellfleet", "Wendy", "Yellowtail", "Fancy Block", "Old English", "Fancy Block 2", "SPL Script", "Varsity Classic D", "Varsity Block A", "Varsity Block B", "Varsity Block D", "Varsity Classic A", "Varsity Classic B", "Varsity Classic C"]
+
 		var customFonts = [];
+
 		var capPalette = ["#0C2340","#BA0C2F","#002F6C","#024638","#1e1e1e","#3F2021"]
 		var jerseyPalette = ["#FFFFFF","#A2AAAD","#6CACE4"]
 		var commonPalette = []
@@ -927,7 +930,7 @@
 										<table style="width:482px;" class="ms-jersey-container">
 											<tr>
 												<td colspan="3">
-													<select id="jerseyWordmarkSelect" class="jerseyTextOption" style="width:100%;" is="ms-dropdown" data-visible-rows="6" data-event="change">
+													<select id="jerseyWordmarkSelect" class="jerseyTextOption" style="width:100%;" is="ms-dropdown" data-visible-rows="6">
 														<option data-image="./images/Acme.png" value="./fonts/Acme-Regular.ttf">Acme</option>
 														<option data-image="./images/All State.png" value="./fonts/all_state-webfont.ttf">All State</option>
 														<option data-image="./images/Athletic Gothic.png" value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
@@ -1721,7 +1724,7 @@
 										<table style="width:99.9%;">
 											<tr>
 												<td colspan="3" class="ms-cap-container">
-													<select id="capTextSelect" class="textOption" style="width:100%;" is="ms-dropdown" data-visible-rows="6" data-event="change">
+													<select id="capTextSelect" class="textOption" style="width:100%;" is="ms-dropdown" data-visible-rows="6">
 													<!--<select id="capTextSelect" class="textOption" style="width:100%;" data-visible-rows="6">-->
 														<option data-image="./images/Acme.png" value="./fonts/Acme-Regular.ttf">Acme</option>
 														<option data-image="./images/All State.png" value="./fonts/all_state-webfont.ttf">All State</option>
@@ -2092,6 +2095,8 @@
 						<input type="button" class="button" id="loadSwatches" value="Load Swatches" style="display:none;">
                         <input type="button" class="button" id="save" value="Save Uniform">
                         <input type="button" class="button" id="load" value="Load Uniform">
+						<input type="button" class="button" id="localFontFolder" value="Choose a Local Font Folder">
+						<input type="button" class="button" id="temp" value="Temp Button">
 						<!--<input type="button" class="button" id="eyedropper" value="Eyedropper">-->
                         <input type="button" class="button copypaste" id="copy" value="Copy Object" onclick="copy()">
 						<input type="button" class="button copypaste" id="paste" value="Paste Object" onclick="paste()">
@@ -2655,6 +2660,10 @@
 			$(this).val(prefs[$(this).attr("id")])
 		})
 
+		if (localFontFolder != "null") {
+			$("#localFontFolder").css("display","none")
+		}
+
 		sortFontDropdowns()
 
 		$(".jersey-accord-header").click(function() {
@@ -2790,6 +2799,52 @@
 			})
 		} */
 
+		$("#localFontFolder").on("click",function() {
+			showOverlay()
+			$.ajax({
+				type: "GET",
+				url: "http://127.0.0.1:"+port+"/localFontFolder",
+				success: function(data) {
+					if (data.result == 'success') {
+						const letterDropdown = document.getElementById("letterDropdown").msDropdown;
+						const numberDropdown = document.getElementById("numberDropdown").msDropdown;
+						const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
+						const capDropdown = document.getElementById("capTextSelect").msDropdown;
+						for (result of data.fonts) {
+							const name = result.fontName
+							const value = result.fontPath
+							opentype.load(result.fontPath, (err,font) => {
+								if (err || !font) {
+									console.log(err)
+									return;
+								}
+								
+								const thumbText = font.getPath("ABC 123", 0, 0, 96)
+								const outPath = thumbText.toPathData(5)
+
+								const foo = new fabric.Path(outPath, {
+									fill: 'black',
+									top: 0,
+									left: 0
+								})
+
+								const thumb = foo.toDataURL()
+
+								if (findIndexByText(letterDropdown, name) == -1) {
+									letterDropdown.add({text:name, value:value, image:thumb})
+									numberDropdown.add({text:name, value:value, image:thumb})
+									jerseyDropdown.add({text:name, value:value, image:thumb})
+									capDropdown.add({text:name, value:value, image:thumb})
+								}
+
+								sortFontDropdowns()
+							})
+						}
+					}
+				hideOverlay()
+				}
+			})
+		})
     })
 
 	$(document).keydown(function(e) {   
@@ -3830,13 +3885,9 @@
 		jerseyLogoCanvas.renderAll()
 	})
 
-	
-
-	//ddSelect.on("change", function() {console.log(ddSelect.jwm)});
-
-/* 	$("#jerseyWordmarkSelect").on("change",function(e) {
+ 	$("#jerseyWordmarkSelect").on("change",function(e) {
 		jerseyWordmarkChange($(this).val(),false)
-	}) */
+	})
 
 	$("#jerseyMakersMarkSelect").on("change",function(e) {
 		loadMakersMark("jersey",$("#jerseyMakersMarkSelect").find(':selected').data('top'),$("#jerseyMakersMarkSelect").find(':selected').data('left'),$("#jerseyMakersMarkSelect").find(':selected').data('angle'),$("#jerseyMakersMarkSelect").find(':selected').data('height'));
@@ -4923,7 +4974,6 @@
 	})
 
 	function jerseyWordmarkChange(data,newFont) {
-		console.log("running function")
 		var tmp = (data.fontBase64 == undefined) ? data : data.fontBase64;
 		opentype.load(tmp, (err,font) => {
 			if (err || !font) {
@@ -13633,50 +13683,59 @@
 	function refreshDropdowns(which,data,thumb) {
 		data.thumb = thumb.toDataURL()
 		customFonts.push(data)
-		console.log(customFonts)
+
 		const letterDropdown = document.getElementById("letterDropdown").msDropdown;
 		const numberDropdown = document.getElementById("numberDropdown").msDropdown;
 		const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
 		const capDropdown = document.getElementById("capTextSelect").msDropdown;
 
-		switch (which) {
-			case "font":
-				$("#letterDropdown option:selected").removeAttr("selected");
-				$("#numberDropdown option:selected").removeAttr("selected");
-				break;
-			case "jersey":
-				$("#jerseyWordmarkSelect option:selected").removeAttr("selected");
-				break;
-			case "cap":
-				$("#capTextSelect option:selected").removeAttr("selected");
-				break;
-		}
-		
+		const displayName = (data.fontStyle == "Regular") ? data.fontName : data.fontName +" "+data.fontStyle
 
-		$('<option>').val(data.fontBase64).attr('data-image',thumb.toDataURL()).text(data.fontName).appendTo('#letterDropdown')
-		$('<option>').val(data.fontBase64).attr('data-image',thumb.toDataURL()).text(data.fontName).appendTo('#numberDropdown')
-		$('<option>').val(data.fontBase64).attr('data-image',thumb.toDataURL()).text(data.fontName).appendTo('#jerseyWordmarkSelect')
-		$('<option>').val(data.fontBase64).attr('data-image',thumb.toDataURL()).text(data.fontName).appendTo('#capTextSelect')
+		const idx = findIndexByText(letterDropdown, displayName)
 
-		switch (which) {
-			case "font":
-				$("#letterDropdown option:last").attr("selected", true);
-				$("#numberDropdown option:last").attr("selected", true);
-				break;
-			case "jersey":
-				$("#jerseyWordmarkSelect option:last").attr("selected", true);
-				break;
-			case "cap":
-				$("#capTextSelect option:last").attr("selected", true);
-				break;
-		}
+		if (idx == -1) {
+			letterDropdown.add({text:displayName, value:data.fontBase64, image:thumb.toDataURL()},0)
+			numberDropdown.add({text:displayName, value:data.fontBase64, image:thumb.toDataURL()},0)
+			jerseyDropdown.add({text:displayName, value:data.fontBase64, image:thumb.toDataURL()},0)
+			capDropdown.add({text:displayName, value:data.fontBase64, image:thumb.toDataURL()},0)
 		
+			switch (which) {
+				case "font":
+					letterDropdown.selectedIndex = 0;
+					numberDropdown.selectedIndex = 0;
+					break;
+				case "jersey":
+					jerseyDropdown.selectedIndex = 0;
+					break;
+				case "cap":
+					capDropdown.selectedIndex = 0;
+					break;
+			}
+		} else {
+			switch (which) {
+				case "font":
+					letterDropdown.selectedIndex = idx;
+					numberDropdown.selectedIndex = idx;
+					break;
+				case "jersey":
+					jerseyDropdown.selectedIndex = idx;
+					break;
+				case "cap":
+					capDropdown.selectedIndex = idx;
+					break;
+			}
+		}
+
 		sortFontDropdowns()
-		
-		letterDropdown.refresh()
-		numberDropdown.refresh()
-		jerseyDropdown.refresh()
-		capDropdown.refresh()
+	}
+
+	function findIndexByText(dropdown, text) {
+		for (child of dropdown.children) {
+			if (child.text == text) {
+				return child.index
+			}
+		}
+		return -1
 	}
 	
 </script>

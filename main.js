@@ -16,6 +16,8 @@ const { createSVGWindow } = require('svgdom')
 const versionCheck = require('github-version-checker');
 const pkg = require('./package.json');
 const e = require('express');
+const { off } = require('process');
+const fontscan = require('fontscan')
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -53,6 +55,7 @@ const preferredSeamOpacity = store.get("preferredSeamOpacity", "33")
 const gridsVisible = store.get("gridsVisible", true)
 const checkForUpdates = store.get("checkForUpdates", true)
 const seamsVisibleOnDiffuse = store.get("seamsVisibleOnDiffuse", false)
+const localFontFolder = store.get("localFontFolder",null)
 
 /* for (const dependency of ['chrome', 'node', 'electron']) {
     console.log(dependency+", "+process.versions[dependency])
@@ -307,7 +310,7 @@ app2.get("/customFont", (req, res) => {
 			store.set("uploadFontPath", path.dirname(result.filePaths[0]))
 			try {
 				ttfInfo(result.filePaths[0], function(err, info) {
-				var ext = getExtension(result.filePaths[0])
+					var ext = getExtension(result.filePaths[0])
 					const dataUrl = font2base64.encodeToDataUrlSync(result.filePaths[0])
 					var fontPath = url.pathToFileURL(result.filePaths[0])
 					res.json({
@@ -1317,6 +1320,55 @@ app2.get("/loadUniform", (req, res) => {
 	})
 })
 
+app2.get("/localFontFolder", (req, res) => {
+	
+	dialog.showOpenDialog(null, {
+		properties: ['openFile', 'openDirectory']
+	}).then(result => {
+		if (!result.canceled) {
+			createJSON()
+			async function createJSON() {
+				const jsonArr = []
+				const jsonObj = {}
+				jsonObj.path = result.filePaths[0]
+				let info = await fontscan.getDirectoryFonts(result.filePaths[0])
+				for (font of info) {
+					const ext = getExtension(font.path)
+					//const dataUrl = font2base64.encodeToDataUrlSync(font.path)
+					const fontPath = url.pathToFileURL(font.path)
+					const json = {
+						"status": "ok",
+						"fontName": font.family,
+						"fontStyle": font.style,
+						"familyName": font.family,
+						"fontFormat": ext,
+						"fontMimetype": 'font/' + ext,
+						"fontData": fontPath.href,
+						"fontPath": fontPath
+					}
+					jsonArr.push(json)
+				}
+				jsonObj.result = "success"
+				jsonObj.fonts = jsonArr
+				res.json(jsonObj)
+				res.end()
+			}
+		} else {
+			res.json({
+				"result": "cancelled"
+			})
+			res.end()
+		}
+	}).catch(err => {
+		res.json({
+			"result": "error"
+		})
+		console.log(err)
+		res.end()
+	})
+	
+})
+
 app2.post('/setPreference', (req, res) => {
 	const pref = req.body.pref;
 	const val = req.body.val;
@@ -1484,7 +1536,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}&localFontFolder=${localFontFolder}`);
     //mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}`);
 	
   
