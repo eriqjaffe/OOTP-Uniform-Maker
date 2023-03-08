@@ -1321,51 +1321,83 @@ app2.get("/loadUniform", (req, res) => {
 })
 
 app2.get("/localFontFolder", (req, res) => {
-	
-	dialog.showOpenDialog(null, {
-		properties: ['openFile', 'openDirectory']
-	}).then(result => {
-		if (!result.canceled) {
-			createJSON()
-			async function createJSON() {
-				const jsonArr = []
-				const jsonObj = {}
-				jsonObj.path = result.filePaths[0]
-				let info = await fontscan.getDirectoryFonts(result.filePaths[0])
-				for (font of info) {
-					const ext = getExtension(font.path)
-					//const dataUrl = font2base64.encodeToDataUrlSync(font.path)
-					const fontPath = url.pathToFileURL(font.path)
-					const json = {
-						"status": "ok",
-						"fontName": font.family,
-						"fontStyle": font.style,
-						"familyName": font.family,
-						"fontFormat": ext,
-						"fontMimetype": 'font/' + ext,
-						"fontData": fontPath.href,
-						"fontPath": fontPath
+	if (req.query.folder == "null") {
+		dialog.showOpenDialog(null, {
+			properties: ['openFile', 'openDirectory']
+		}).then(result => {
+			if (!result.canceled) {
+				store.set("localFontFolder",result.filePaths[0])
+				createJSON()
+				async function createJSON() {
+					const jsonArr = []
+					const jsonObj = {}
+					jsonObj.path = result.filePaths[0]
+					let info = await fontscan.getDirectoryFonts(result.filePaths[0])
+					for (font of info) {
+						const ext = getExtension(font.path)
+						//const dataUrl = font2base64.encodeToDataUrlSync(font.path)
+						const fontPath = url.pathToFileURL(font.path)
+						const json = {
+							"status": "ok",
+							"fontName": font.family,
+							"fontStyle": font.style,
+							"familyName": font.family,
+							"fontFormat": ext,
+							"fontMimetype": 'font/' + ext,
+							"fontData": fontPath.href,
+							"fontPath": fontPath
+						}
+						jsonArr.push(json)
 					}
-					jsonArr.push(json)
+					jsonObj.result = "success"
+					jsonObj.fonts = jsonArr
+					res.json(jsonObj)
+					res.end()
 				}
-				jsonObj.result = "success"
-				jsonObj.fonts = jsonArr
-				res.json(jsonObj)
+			} else {
+				res.json({
+					"result": "cancelled"
+				})
 				res.end()
 			}
-		} else {
+		}).catch(err => {
 			res.json({
-				"result": "cancelled"
+				"result": "error"
 			})
+			console.log(err)
+			res.end()
+		})
+	} else {
+		createJSON()
+
+		async function createJSON() {
+			const jsonArr = []
+			const jsonObj = {}
+			jsonObj.path = req.query.folder
+			let info = await fontscan.getDirectoryFonts(req.query.folder)
+			for (font of info) {
+				const ext = getExtension(font.path)
+				//const dataUrl = font2base64.encodeToDataUrlSync(font.path)
+				const fontPath = url.pathToFileURL(font.path)
+				const json = {
+					"status": "ok",
+					"fontName": font.family,
+					"fontStyle": font.style,
+					"familyName": font.family,
+					"fontFormat": ext,
+					"fontMimetype": 'font/' + ext,
+					"fontData": fontPath.href,
+					"fontPath": fontPath
+				}
+				jsonArr.push(json)
+			}
+			jsonObj.result = "success"
+			jsonObj.fonts = jsonArr
+			res.json(jsonObj)
 			res.end()
 		}
-	}).catch(err => {
-		res.json({
-			"result": "error"
-		})
-		console.log(err)
-		res.end()
-	})
+	}
+	
 	
 })
 
