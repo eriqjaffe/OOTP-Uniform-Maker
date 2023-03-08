@@ -2126,7 +2126,7 @@
 			<div class="answer">That would be me.  My name is Eriq Jaffe, and I've been playing OOTP Baseball since 2004.  Feel free to <a href="mailto:eriqjaffe@gmail.com">shoot me an email</a> with any questions or comments.  You can also view the source code for this on <a href="https://github.com/eriqjaffe/OOTP-Uniform-Maker" target="_blank">GitHub</a>.<br><br>Some of the textures and shapes are taken directly from OOTP, but a lot of them are based on the work of Gern44, silvam14, txranger, Deft, NoPepper, Reds1, davwms and probably several others (my record keeping isn't all that great, and I'm not 100% sure where every piece came from - if I'm using one of your components and I forgot to give you credit, thanks!).<br><br>I'd also like to give an additional shout out to Conrad Burry, who created some of the default fonts.</div><br>
 		</div>
 	</div>
-	<div id="prefs" class="jm-white-popup mfp-hide" style="height:300px!important;">
+	<div id="prefs" class="jm-white-popup mfp-hide" style="height:350px!important;">
 		<div style="width:100%; text-align:center;">	
 			<span class="header" style="color:#103959!important; font-size:2em!important;">Uniform Maker Preferences</span>
 		</div><br>
@@ -2519,11 +2519,17 @@
 		<table class="prefs" style="width:100%;">
 			<tr>
 				<td><center>
-				<label>Local Font Folder:&nbsp;</label>
-				<span id="localFontFolderPref"></span>
-				<input type="button" class="button" id="changeLocalFontFolder" value="&nbsp;&nbsp;Select New Folder&nbsp;&nbsp;">
+					<label>Local Font Folder:&nbsp;</label>
+					<span id="localFontFolderPref"></span>
+					<input type="button" class="button" id="changeLocalFontFolder" value="&nbsp;&nbsp;Select New Folder&nbsp;&nbsp;">
 				</td>
 			</tr>
+<!-- 			<tr>
+				<td><center>
+					<label>Monitor Folder:&nbsp;</label>
+					<input type="checkbox" id="monitorFontFolder" >
+				</td>
+			</tr> -->
 		</table>
 	</div>
 </div>
@@ -13473,6 +13479,23 @@
 			}
 		})
 	})
+
+/* 	$("#monitorFontFolder").on("change",function() {
+		const pref = "monitorFontFolder"
+		const val = $(this).is(":checked")
+		$.ajax({
+			type: "POST",
+			url: "http://127.0.0.1:"+port+"/setPreference",
+			data: {pref:pref,val:val.toString()},
+			success: function(result) {
+				$.ajax({
+					type: "POST",
+					url: "http://127.0.0.1:"+port+"/toggleWatcher",
+					data: {toggle: val}
+				})
+			}
+		})
+	}) */
 
 	$("#seamsVisibleOnDiffuse").on("change", function() {
 		const pref = "seamsVisibleOnDiffuse"

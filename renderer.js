@@ -51,3 +51,7 @@ ipcRenderer.on('prefs', (event, data) => {
 ipcRenderer.on('update', (event, data) => {
     $("#checkForUpdates").trigger("click")
 });
+
+ipcRenderer.on('updateFonts', (event, data) => {
+    $("#localFontFolder").trigger("click")
+})
