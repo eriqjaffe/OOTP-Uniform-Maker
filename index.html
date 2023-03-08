@@ -58,9 +58,11 @@
 		var defaultCapTexture = params.get('preferredCapTexture')
 		var localFontFolder = params.get('localFontFolder')
 
-		if (localFontFolder == "null") {
+/* 		if (localFontFolder == "null") {
 			console.log ("local font folder: "+localFontFolder)
-		}
+		} else {
+			conso
+		} */
 		
 		//var preferredJerseyFont = (prefs.preferredJerseyFont != null) ? prefs.preferredJerseyFont : "./fonts/LeckerliOne-Regular.ttf"
 		//$("#preferredJerseyFont").val(prefs.preferredJerseyFont != null ? prefs.preferredJerseyFont : "./fonts/LeckerliOne-Regular.ttf")
@@ -158,7 +160,8 @@
 					<div id="fontContainer">
 						<canvas id="fontCanvas" width="1024" height="1024" style="position:absolute; top:0; float:left; z-index:1;"></canvas>
 					</div>
-					<div id="overlay">	
+					<div id="overlay">
+						<div id="overlayText"></div>
 						<div id="jerseyOverlay" class="jerseyOverlay"></div>
 						<div id="pantsOverlay"></div>
 						<div id="capOverlay"></div>
@@ -2512,6 +2515,16 @@
 					</select>
 				</center></td>
 		</table>
+		<br>
+		<table class="prefs" style="width:100%;">
+			<tr>
+				<td><center>
+				<label>Local Font Folder:&nbsp;</label>
+				<span id="localFontFolderPref"></span>
+				<input type="button" class="button" id="changeLocalFontFolder" value="&nbsp;&nbsp;Select New Folder&nbsp;&nbsp;">
+				</td>
+			</tr>
+		</table>
 	</div>
 </div>
 </body>
@@ -2660,9 +2673,18 @@
 			$(this).val(prefs[$(this).attr("id")])
 		})
 
-		if (localFontFolder != "null") {
-			$("#localFontFolder").css("display","none")
+ 		if (localFontFolder != "null") {
+			$("#localFontFolderPref").text(localFontFolder)
+			$("#localFontFolder").val("Refresh Local Font Folder")
+			$("#localFontFolder").trigger("click")
+		} else {
+			$("#localFontFolderPref").text("Not Selected")
 		}
+
+		$("#changeLocalFontFolder").on("click",function() {
+			localFontFolder = "null"
+			$("#localFontFolder").trigger("click")
+		})
 
 		sortFontDropdowns()
 
@@ -2798,53 +2820,6 @@
 				}
 			})
 		} */
-
-		$("#localFontFolder").on("click",function() {
-			showOverlay()
-			$.ajax({
-				type: "GET",
-				url: "http://127.0.0.1:"+port+"/localFontFolder",
-				success: function(data) {
-					if (data.result == 'success') {
-						const letterDropdown = document.getElementById("letterDropdown").msDropdown;
-						const numberDropdown = document.getElementById("numberDropdown").msDropdown;
-						const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
-						const capDropdown = document.getElementById("capTextSelect").msDropdown;
-						for (result of data.fonts) {
-							const name = result.fontName
-							const value = result.fontPath
-							opentype.load(result.fontPath, (err,font) => {
-								if (err || !font) {
-									console.log(err)
-									return;
-								}
-								
-								const thumbText = font.getPath("ABC 123", 0, 0, 96)
-								const outPath = thumbText.toPathData(5)
-
-								const foo = new fabric.Path(outPath, {
-									fill: 'black',
-									top: 0,
-									left: 0
-								})
-
-								const thumb = foo.toDataURL()
-
-								if (findIndexByText(letterDropdown, name) == -1) {
-									letterDropdown.add({text:name, value:value, image:thumb})
-									numberDropdown.add({text:name, value:value, image:thumb})
-									jerseyDropdown.add({text:name, value:value, image:thumb})
-									capDropdown.add({text:name, value:value, image:thumb})
-								}
-
-								sortFontDropdowns()
-							})
-						}
-					}
-				hideOverlay()
-				}
-			})
-		})
     })
 
 	$(document).keydown(function(e) {   
@@ -3090,6 +3065,56 @@
 		dropImage(pantsLogoCanvas, files[0].path, 1)
 		return false;
 	});
+
+	$("#localFontFolder").on("click",function() {
+		showOverlay("Loading Local Fonts...")
+		$.ajax({
+			type: "GET",
+			url: "http://127.0.0.1:"+port+"/localFontFolder",
+			data: {folder: localFontFolder},
+			success: function(data) {
+				if (data.result == 'success') {
+					$("#localFontFolderPref").text(data.path)
+					localFontFolder = data.path
+					const letterDropdown = document.getElementById("letterDropdown").msDropdown;
+					const numberDropdown = document.getElementById("numberDropdown").msDropdown;
+					const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
+					const capDropdown = document.getElementById("capTextSelect").msDropdown;
+					for (result of data.fonts) {
+						const name = result.fontName
+						const value = result.fontPath
+						opentype.load(result.fontPath, (err,font) => {
+							if (err || !font) {
+								console.log(err)
+								return;
+							}
+							
+							const thumbText = font.getPath("ABC 123", 0, 0, 96)
+							const outPath = thumbText.toPathData(5)
+
+							const foo = new fabric.Path(outPath, {
+								fill: 'black',
+								top: 0,
+								left: 0
+							})
+
+							const thumb = foo.toDataURL()
+
+							if (findIndexByText(letterDropdown, name) == -1) {
+								letterDropdown.add({text:name, value:value, image:thumb})
+								numberDropdown.add({text:name, value:value, image:thumb})
+								jerseyDropdown.add({text:name, value:value, image:thumb})
+								capDropdown.add({text:name, value:value, image:thumb})
+							}
+
+							sortFontDropdowns()
+						})
+					}
+				}
+			hideOverlay()
+			}
+		})
+	})
 
 	// JERSEY SPECIFIC
 
@@ -4612,7 +4637,7 @@
 	})
 
 	$(".makePatch").on("click",function(e) {
-		showOverlay()	
+		showOverlay("Processing Image...")	
 		var object = jerseyLogoCanvas.getActiveObject();
 		if (object.get('type') == "image") {
 			var imageHeight = object.height;
@@ -10484,7 +10509,7 @@
 	}
 
 	function uploadCustomTexture(type) {
-		showOverlay()
+		showOverlay("Processing Image...")
 		$.ajax({
 			type: "GET",
 			url: "http://127.0.0.1:"+port+"/uploadImage",
@@ -10641,7 +10666,7 @@
 		}
 		
 		if (warp == true) {	
-			showOverlay()
+			showOverlay("Applying Warp...")
 			var obj = jerseyLogoCanvas.getObjects().forEach(function(o) {
 				if (o.id == "warpedText") {
 					jerseyLogoCanvas.remove(o);
@@ -10753,7 +10778,7 @@
 			g.set("skewY", 0)
 			jerseyLogoCanvas.renderAll();
 		} else {	
-			showOverlay()
+			showOverlay("Applying Warp...")
 			var obj = jerseyLogoCanvas.getObjects().forEach(function(o) {
 				if (o.id == "warpedName") {
 					jerseyLogoCanvas.remove(o);
@@ -11333,7 +11358,7 @@
 			var object = canvas.getActiveObject()
 			var idx = canvas.getObjects().indexOf(object)
 			if (object.get('type') == "image") {
-				showOverlay()
+				showOverlay("Processing Image...")
 				var pictureName = object.get('name');
 				var pLeft = object.get('left')
 				var pTop = object.get('top')
@@ -11451,7 +11476,7 @@
 			var object = canvas.getActiveObject()
 			var idx = canvas.getObjects().indexOf(object)
 			if (object.get('type') == "image") {
-				showOverlay()
+				showOverlay("Processing Image...")
 				var pictureName = object.get('name');
 				var pLeft = object.get('left')
 				var pTop = object.get('top')
@@ -11605,7 +11630,7 @@
 			var object = canvas.getActiveObject()
 			var idx = canvas.getObjects().indexOf(object)
 			if (object.get('type') == "image") {
-				showOverlay()
+				showOverlay("Processing Image...")
 				var pictureName = object.get('name');
 				colorSquare.removeClass("colorSquareActive").removeClass("colorSquareSelected");
 				
@@ -11708,7 +11733,7 @@
 
 // LOADING AND SAVING FUNCTIONS
 	$("#saveCap").on("click",function(e){
-		showOverlay();
+		showOverlay("Generating Cap...");
 		capBelow.setOverlayImage(null,capBelow.renderAll.bind(capBelow));
 
 		var startYear = parseInt($("#startYear").val());
@@ -11793,7 +11818,7 @@
 	})
 
 	$("#savePants").on("click",function(e){
-		showOverlay();
+		showOverlay("Generating Pants...");
 		pantsBelow.setOverlayImage(null,pantsBelow.renderAll.bind(pantsBelow));
 
 		var startYear = parseInt($("#startYear").val());
@@ -11879,7 +11904,7 @@
 	})
 
 	$("#saveJersey").on("click",function(e){
-		showOverlay()
+		showOverlay("Generating Jersey...")
 		jerseyBelow.setOverlayImage(null,jerseyBelow.renderAll.bind(jerseyBelow));
 		var showPlanket = false
 		var buttonStyle = "blank"
@@ -12147,6 +12172,7 @@
 	})
 
 	$("#saveFont").on("click", function(e) {
+		showOverlay("Generating Font...")
 		var startYear = parseInt($("#startYear").val());
 		var endYear = parseInt($("#endYear").val())
 		var yearRange = "";
@@ -12206,12 +12232,16 @@
 				fontCanvas.setDimensions({ width: fontCanvas.getWidth() * 0.75, height: fontCanvas.getHeight() * 0.75 });
 				fontCanvas.setZoom(scaleRatio)
 				fontCanvas.setBackgroundImage('./images/symbol_grid.png', fontCanvas.renderAll.bind(fontCanvas));
+				hideOverlay()
+			},
+			error: function(data) {
+				hideOverlay()
 			}
 		})
 	})
 
 	$("#save").on("click",function(e) {
-		showOverlay();
+		showOverlay("Generating Uniform...");
 		var showPlanket = false
 		var buttonStyle = "blank"
 		var buttonPadStyle = "blank"
@@ -12653,9 +12683,8 @@
 		
 	})
 
-	$("#load").on("click",function(e){
-		
-		showOverlay()
+	$("#load").on("click",function(e){	
+		showOverlay("Loading Uniform...")
 		$.ajax({
 			type: "GET",
 			url: "http://127.0.0.1:"+port+"/loadUniform",
@@ -12805,7 +12834,7 @@
 	})
 
 	$(".fakeLayerButton").on("click",function(e){
-		showOverlay()
+		showOverlay("Loading Custom Layer...")
 		const target = $(this).data("canvas")
 		const renderTarget = $(this).data("canvas")
 		switch (target) {
@@ -13044,7 +13073,7 @@
 
 // UTILITY FUNCTIONS
 
-	function showOverlay() {
+	function showOverlay(text) {
 		jerseyOverlayActive = $("#jerseyOverlay").is(":visible")
 		pantsOverlayActive = $("#pantsOverlay").is(":visible")
 		capOverlayActive = $("#capOverlay").is(":visible")
@@ -13053,6 +13082,10 @@
 		$("#capOverlay").css("display","none")
 		$("#pantsOverlay").css("display","none")
 		$("#overlay").css("background","rgba(0,0,0,0.5)")
+		if (text != null) {
+			$("#overlayText").text(text)
+			$("#overlayText").css("display","inline-block")
+		}
 		$("#jerseyContainer").css("display","none")
 		$("#capContainer").css("display","none")
 		$("#pantsContainer").css("display","none")
@@ -13069,6 +13102,8 @@
 		$("#capContainer").css("display","inline-block")
 		$("#pantsContainer").css("display","inline-block")
 		$("#fontContainer").css("display","inline-block")
+		$("#overlayText").text(null)
+		$("#overlayText").css("display","none")
 		if (jerseyOverlayActive) { $("#jerseyOverlay").css("display","inline-block") } else { $("#jerseyOverlay").css("display","none") }
 		if (pantsOverlayActive) { $("#pantsOverlay").css("display","inline-block") } else { $("#pantsOverlay").css("display","none") }
 		if (capOverlayActive) { $("#capOverlay").css("display","inline-block") } else { $("#capOverlay").css("display","none") }
@@ -13453,7 +13488,7 @@
 	})
 
 	$("#saveSwatches").on("click",function() {	
-		showOverlay()
+		showOverlay("Generating Swatches...")
 
 		var startYear = parseInt($("#startYear").val());
 		var endYear = parseInt($("#endYear").val())
@@ -13507,7 +13542,7 @@
 
 	$("#loadSwatches").on("click",function() {
 		if (confirm("Are you sure?\r\n\r\nThis will overwrite any non-default colors in the color picker palettes.")) {
-			showOverlay()
+			showOverlay("Loading Swatches...")
 			$.ajax({
 				type: "GET",
 				url: "http://127.0.0.1:"+port+"/loadSwatches",

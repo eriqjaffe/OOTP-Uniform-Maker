@@ -314,6 +314,22 @@ a.dd-option:hover{
 	border-radius: 5px; 
 }
 
+#overlayText {
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-family: "Rowdies", sans-serif;
+	color:rgba(255,255,255,0.25);
+	font-size:3em;
+	font-size:2.5vw;
+	color: rgba(255,255,255,0.25);
+	-webkit-text-stroke: 2px rgba(0,0,0,0.5);
+	display: none;
+	text-align: center;
+}
+
 #text {
 	background-color: rgba(255,255,255,0.5);
 	-moz-background-clip: padding;
