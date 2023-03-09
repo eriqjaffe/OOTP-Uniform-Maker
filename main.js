@@ -1356,7 +1356,7 @@ app2.get("/localFontFolder", (req, res) => {
 				"fontFormat": ext,
 				"fontMimetype": 'font/' + ext,
 				"fontData": fontPath.href,
-				"fontPath": fontPath
+				"fontPath": font.path
 			}
 			jsonArr.push(json)
 		}
