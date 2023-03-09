@@ -36,6 +36,7 @@ const app2 = express();
 const store = new Store();
 const window = createSVGWindow()
 const document = window.document
+const userFontsFolder = app.getPath('userData')+"\\fonts"
 
 const server = app2.listen(0, () => {
 	console.log(`Server running on port ${server.address().port}`);
@@ -56,29 +57,26 @@ const preferredSeamOpacity = store.get("preferredSeamOpacity", "33")
 const gridsVisible = store.get("gridsVisible", true)
 const checkForUpdates = store.get("checkForUpdates", true)
 const seamsVisibleOnDiffuse = store.get("seamsVisibleOnDiffuse", false)
-const localFontFolder = store.get("localFontFolder",null)
-const monitorFontFolder = store.get("monitorFontFolder",false)
+
+console.log(userFontsFolder)
+
+if (!fs.existsSync(userFontsFolder)){
+    fs.mkdirSync(userFontsFolder);
+}
 
 /* for (const dependency of ['chrome', 'node', 'electron']) {
     console.log(dependency+", "+process.versions[dependency])
 } */
 
-/* const watcher = chokidar.watch(localFontFolder, {
+const watcher = chokidar.watch(userFontsFolder, {
 	ignored: /(^|[\/\\])\../, // ignore dotfiles
 	persistent: true
-}); */
+});
 
-/* watcher.on('ready', () => {
-	if (localFontFolder == null || monitorFontFolder == false || monitorFontFolder == "false") {
-		unwatch()
-		async function unwatch() {
-			await watcher.unwatch(localFontFolder)
-			console.log(watcher.getWatched())
-		}
-	} else {
-		console.log(watcher.getWatched())
-	}
-}) */
+watcher.on('ready', () => {
+	console.log("Watcher Ready!")
+	console.log(watcher.getWatched())
+})
 
 const fontArray = {"Acme": "Acme-Regular.ttf", "athletic_gothicregular": "athletic_gothic-webfont.ttf", "athletic_gothic_shadowregular": "athletic_gothic_shadow-webfont.ttf", "beaverton_scriptregular": "beaverton_script-webfont.ttf", "BerkshireSwash": "BerkshireSwash-Regular.ttf", "CantoraOne": "CantoraOne-Regular.ttf", "caxton_romanregular": "caxton_roman-webfont.ttf", "ChelaOne": "ChelaOne-Regular.ttf", "russell_circusregular": "circus-webfont.ttf", "Condiment": "Condiment-Regular.ttf", "Cookie": "Cookie-Regular.ttf", "Courgette": "Courgette-Regular.ttf", "CroissantOne": "CroissantOne-Regular.ttf", "Damion": "Damion-Regular.ttf", "Engagement": "Engagement-Regular.ttf", "rawlings_fancy_blockregular": "rawlingsfancyblock-regular-webfont.ttf", "GermaniaOne": "GermaniaOne-Regular.ttf", "Graduate": "Graduate-Regular.ttf", "GrandHotel": "GrandHotel-Regular.ttf", "JockeyOne": "JockeyOne-Regular.ttf", "kansasregular": "tuscan-webfont.ttf", "KaushanScript": "KaushanScript-Regular.ttf", "LeckerliOne": "LeckerliOne-Regular.ttf", "LilyScriptOne": "LilyScriptOne-Regular.ttf", "Lobster": "Lobster-Regular.ttf", "LobsterTwo": "LobsterTwo-Regular.ttf", "MetalMania": "MetalMania-Regular.ttf", "Miniver": "Miniver-Regular.ttf", "Molle,italic": "Molle-Regular.ttf", "NewRocker": "NewRocker-Regular.ttf", "Norican": "Norican-Regular.ttf", "rawlings_old_englishmedium": "rawlingsoldenglish-webfont.ttf", "OleoScript": "OleoScript-Regular.ttf", "OleoScriptSwashCaps": "OleoScriptSwashCaps-Regular.ttf", "Pacifico": "Pacifico.ttf", "PirataOne": "PirataOne-Regular.ttf", "Playball": "Playball-Regular.ttf", "pro_full_blockregular": "pro_full_block-webfont.ttf", "richardson_fancy_blockregular": "richardson_fancy_block-webfont.ttf", "RubikOne": "RubikOne-Regular.ttf", "RumRaisin": "RumRaisin-Regular.ttf", "Satisfy": "Satisfy-Regular.ttf", "SeymourOne": "SeymourOne-Regular.ttf", "spl28scriptregular": "spl28script-webfont.ttf", "ua_tiffanyregular": "tiffany-webfont.ttf", "TradeWinds": "TradeWinds-Regular.ttf", "mlb_tuscan_newmedium": "mlb_tuscan_new-webfont.ttf", "UnifrakturCook": "UnifrakturCook-Bold.ttf", "UnifrakturMaguntia": "UnifrakturMaguntia-Book.ttf", "Vibur": "Vibur-Regular.ttf", "Viga": "Viga-Regular.ttf", "Wellfleet": "Wellfleet-Regular.ttf", "WendyOne": "WendyOne-Regular.ttf", "Yellowtail": "Yellowtail-Regular.ttf"};
 
@@ -1340,84 +1338,33 @@ app2.get("/loadUniform", (req, res) => {
 })
 
 app2.get("/localFontFolder", (req, res) => {
-	if (req.query.folder == "null") {
-		dialog.showOpenDialog(null, {
-			properties: ['openFile', 'openDirectory']
-		}).then(result => {
-			if (!result.canceled) {
-				store.set("localFontFolder",result.filePaths[0])
-				createJSON()
-				async function createJSON() {
-					const jsonArr = []
-					const jsonObj = {}
-					jsonObj.path = result.filePaths[0]
-					let info = await fontscan.getDirectoryFonts(result.filePaths[0])
-					for (font of info) {
-						const ext = getExtension(font.path)
-						//const dataUrl = font2base64.encodeToDataUrlSync(font.path)
-						const fontPath = url.pathToFileURL(font.path)
-						const json = {
-							"status": "ok",
-							"fontName": font.family,
-							"fontStyle": font.style,
-							"familyName": font.family,
-							"fontFormat": ext,
-							"fontMimetype": 'font/' + ext,
-							"fontData": fontPath.href,
-							"fontPath": fontPath
-						}
-						jsonArr.push(json)
-					}
-					jsonObj.result = "success"
-					jsonObj.fonts = jsonArr
-					res.json(jsonObj)
-					res.end()
-				}
-			} else {
-				res.json({
-					"result": "cancelled"
-				})
-				res.end()
-			}
-		}).catch(err => {
-			res.json({
-				"result": "error"
-			})
-			console.log(err)
-			res.end()
-		})
-	} else {
-		createJSON()
+	createJSON()
 
-		async function createJSON() {
-			const jsonArr = []
-			const jsonObj = {}
-			jsonObj.path = req.query.folder
-			let info = await fontscan.getDirectoryFonts(req.query.folder)
-			for (font of info) {
-				const ext = getExtension(font.path)
-				//const dataUrl = font2base64.encodeToDataUrlSync(font.path)
-				const fontPath = url.pathToFileURL(font.path)
-				const json = {
-					"status": "ok",
-					"fontName": font.family,
-					"fontStyle": font.style,
-					"familyName": font.family,
-					"fontFormat": ext,
-					"fontMimetype": 'font/' + ext,
-					"fontData": fontPath.href,
-					"fontPath": fontPath
-				}
-				jsonArr.push(json)
+	async function createJSON() {
+		const jsonArr = []
+		const jsonObj = {}
+		let info = await fontscan.getDirectoryFonts(userFontsFolder)
+		for (font of info) {
+			const ext = getExtension(font.path)
+			//const dataUrl = font2base64.encodeToDataUrlSync(font.path)
+			const fontPath = url.pathToFileURL(font.path)
+			const json = {
+				"status": "ok",
+				"fontName": font.family,
+				"fontStyle": font.style,
+				"familyName": font.family,
+				"fontFormat": ext,
+				"fontMimetype": 'font/' + ext,
+				"fontData": fontPath.href,
+				"fontPath": fontPath
 			}
-			jsonObj.result = "success"
-			jsonObj.fonts = jsonArr
-			res.json(jsonObj)
-			res.end()
+			jsonArr.push(json)
 		}
+		jsonObj.result = "success"
+		jsonObj.fonts = jsonArr
+		res.json(jsonObj)
+		res.end()
 	}
-	
-	
 })
 
 app2.post('/setPreference', (req, res) => {
@@ -1427,18 +1374,10 @@ app2.post('/setPreference', (req, res) => {
 	res.end()
 });
 
-/* app2.post("/toggleWatcher", (req, res) => {
-	if (req.body.toggle == true) {
-		watcher.add(localFontFolder)
-		console.log(watcher.getWatched())
-	} else {
-		unwatch()
-		async function unwatch() {
-			await watcher.unwatch(localFontFolder)
-			console.log(watcher.getWatched())
-		}
-	}
-}) */
+app2.post('/openFontFolder', (req, res) => {
+	shell.openPath(userFontsFolder)
+	res.end()
+})
 
 function createWindow () {
     const mainWindow = new BrowserWindow({
@@ -1451,10 +1390,10 @@ function createWindow () {
       }
     })
 
-/* 	watcher.on('add', (path, stats) => {
+	watcher.on('add', (path, stats) => {
 		console.log(path)
 		mainWindow.webContents.send('updateFonts','click')
-	}) */
+	})
     
     const template = [
       ...(isMac ? [{
@@ -1516,6 +1455,15 @@ function createWindow () {
               accelerator: isMac ? 'Cmd+Shift+L' : 'Control+Shift+L',
               label: 'Load Palette',
           },
+		  { type: 'separator' },
+          {
+              click: () => mainWindow.webContents.send('updateFonts','click'),
+              label: 'Refresh User Fonts',
+          },
+		  {
+			click: () => mainWindow.webContents.send('openFontFolder','click'),
+			label: 'Open User Fonts Folder',
+		  },
 		  { type: 'separator' },
           isMac ? { role: 'close' } : { role: 'quit' }
           ]
@@ -1605,7 +1553,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}&localFontFolder=${localFontFolder}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}`);
     //mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}`);
 	
   
@@ -1613,7 +1561,7 @@ function createWindow () {
       shell.openExternal(url);
       return { action: 'deny' };
     });
-  
+
     // Open the DevTools.
     // mainWindow.maximize()
     // mainWindow.webContents.openDevTools()

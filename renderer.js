@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron')
+const { app, shell, ipcRenderer } = require('electron')
 
 ipcRenderer.on('load-uniform', (event, data) => {
     $("#load").trigger("click")
@@ -54,4 +54,8 @@ ipcRenderer.on('update', (event, data) => {
 
 ipcRenderer.on('updateFonts', (event, data) => {
     $("#localFontFolder").trigger("click")
+})
+
+ipcRenderer.on('openFontFolder', (event, data) => {
+    $("#openFontFolder").trigger("click")
 })

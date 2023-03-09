@@ -2098,8 +2098,8 @@
 						<input type="button" class="button" id="loadSwatches" value="Load Swatches" style="display:none;">
                         <input type="button" class="button" id="save" value="Save Uniform">
                         <input type="button" class="button" id="load" value="Load Uniform">
-						<input type="button" class="button" id="localFontFolder" value="Choose a Local Font Folder">
-						<input type="button" class="button" id="temp" value="Temp Button">
+						<input type="button" class="button" id="localFontFolder" value="Refresh User Fonts">
+						<input type="button" class="button" id="openFontFolder" value="Open User Fonts Folder">
 						<!--<input type="button" class="button" id="eyedropper" value="Eyedropper">-->
                         <input type="button" class="button copypaste" id="copy" value="Copy Object" onclick="copy()">
 						<input type="button" class="button copypaste" id="paste" value="Paste Object" onclick="paste()">
@@ -2515,22 +2515,6 @@
 					</select>
 				</center></td>
 		</table>
-		<br>
-		<table class="prefs" style="width:100%;">
-			<tr>
-				<td><center>
-					<label>Local Font Folder:&nbsp;</label>
-					<span id="localFontFolderPref"></span>
-					<input type="button" class="button" id="changeLocalFontFolder" value="&nbsp;&nbsp;Select New Folder&nbsp;&nbsp;">
-				</td>
-			</tr>
-<!-- 			<tr>
-				<td><center>
-					<label>Monitor Folder:&nbsp;</label>
-					<input type="checkbox" id="monitorFontFolder" >
-				</td>
-			</tr> -->
-		</table>
 	</div>
 </div>
 </body>
@@ -2679,7 +2663,7 @@
 			$(this).val(prefs[$(this).attr("id")])
 		})
 
- 		if (localFontFolder != "null") {
+/*  		if (localFontFolder != "null") {
 			$("#localFontFolderPref").text(localFontFolder)
 			$("#localFontFolder").val("Refresh Local Font Folder")
 			$("#localFontFolder").trigger("click")
@@ -2690,7 +2674,9 @@
 		$("#changeLocalFontFolder").on("click",function() {
 			localFontFolder = "null"
 			$("#localFontFolder").trigger("click")
-		})
+		}) */
+
+		$("#localFontFolder").trigger("click")
 
 		sortFontDropdowns()
 
@@ -3072,16 +3058,21 @@
 		return false;
 	});
 
+	$("#openFontFolder").on("click",function(e) {
+		$.ajax({
+			type: "POST",
+			url: "http://127.0.0.1:"+port+"/openFontFolder",
+			success: function(data) {}
+		})
+	})
+
 	$("#localFontFolder").on("click",function() {
-		showOverlay("Loading Local Fonts...")
+		showOverlay("Loading User Fonts...")
 		$.ajax({
 			type: "GET",
 			url: "http://127.0.0.1:"+port+"/localFontFolder",
-			data: {folder: localFontFolder},
 			success: function(data) {
 				if (data.result == 'success') {
-					$("#localFontFolderPref").text(data.path)
-					localFontFolder = data.path
 					const letterDropdown = document.getElementById("letterDropdown").msDropdown;
 					const numberDropdown = document.getElementById("numberDropdown").msDropdown;
 					const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
