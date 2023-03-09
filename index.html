@@ -14,7 +14,6 @@
 	<script type="text/javascript" src="./scripts/jquery.range-min.js"></script>
 	<script type="text/javascript" src="./scripts/jquery.mousewheel.min.js"></script>
 	<script type="text/javascript" src="./scripts/spin.min.js"></script>
-	<script type="text/javascript" src="./scripts/fontfaceobserver.js"></script>
     <script type="text/javascript" src="./scripts/skeletabs.js"></script>
 	<script type="text/javascript" src="./scripts/tinycolor-min.js"></script>
 	<script type="text/javascript" src="./scripts/opentype.js"></script>
@@ -64,6 +63,7 @@
 			conso
 		} */
 		
+
 		//var preferredJerseyFont = (prefs.preferredJerseyFont != null) ? prefs.preferredJerseyFont : "./fonts/LeckerliOne-Regular.ttf"
 		//$("#preferredJerseyFont").val(prefs.preferredJerseyFont != null ? prefs.preferredJerseyFont : "./fonts/LeckerliOne-Regular.ttf")
 
@@ -132,6 +132,8 @@
 		var letterStyle = "center"
 		var numberStyle = "center"
 		var prevDirection = null;
+
+		const fontPrefMessage = "This will not take effect until you restart the Uniform Maker.\r\n\r\nNote that setting a user font as the default will cause the dropdown to appear blank at first."
     </script>
 </head>
 <body>
@@ -2224,153 +2226,153 @@
 			<tr>
 				<td><center>
 					<label>Preferred Jersey Font:&nbsp;</label>
-					<select id="preferredJerseyFont" class="preference">
-						<option value="./fonts/Acme-Regular.ttf">Acme</option>
-						<option value="./fonts/all_state-webfont.ttf">All State</option>
-						<option value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
-						<option value="./fonts/athletic_gothic_shadow-webfont.ttf">Athletic Gothic Shadow</option>
-						<option value="./fonts/beaverton_script-webfont.ttf">Beaverton Script</option>
-						<option value="./fonts/BerkshireSwash-Regular.ttf">Berkshire Swash</option>
-						<option value="./fonts/CantoraOne-Regular.ttf">CantoraOne</option>
-						<option value="./fonts/caxton_roman-webfont.ttf">Caxton Roman</option>
-						<option value="./fonts/ChelaOne-Regular.ttf">Chela</option>
-						<option value="./fonts/circus-webfont.ttf">Russell Circus</option>
-						<option value="./fonts/Condiment-Regular.ttf">Condiment</option>
-						<option value="./fonts/Cookie-Regular.ttf">Cookie</option>
-						<option value="./fonts/Courgette-Regular.ttf">Courgette</option>
-						<option value="./fonts/CroissantOne-Regular.ttf">Croissant</option>
-						<option value="./fonts/Damion-Regular.ttf">Damion</option>
-						<option value="./fonts/Engagement-Regular.ttf">Engagement</option>
-						<option value="./fonts/GermaniaOne-Regular.ttf">Germania</option>
-						<option value="./fonts/Graduate-Regular.ttf">Graduate</option>
-						<option value="./fonts/GrandHotel-Regular.ttf">Grand Hotel</option>
-						<option value="./fonts/JockeyOne-Regular.ttf">Jockey</option>
-						<option value="./fonts/KaushanScript-Regular.ttf">Kaushan Script</option>
-						<option value="./fonts/LeckerliOne-Regular.ttf" selected>Leckerli</option>
-						<option value="./fonts/LilyScriptOne-Regular.ttf">Lily Script</option>
-						<option value="./fonts/Lobster-Regular.ttf">Lobster</option>
-						<option value="./fonts/LobsterTwo-Regular.ttf">Lobster Two</option>
-						<option value="./fonts/MetalMania-Regular.ttf">Metal Mania</option>
-						<option value="./fonts/Miniver-Regular.ttf">Miniver</option>
-						<option value="./fonts/MLBBlock.ttf">MLB Block</option>
-						<option value="./fonts/MLBCubs.ttf">MLB Chicago N</option>
-						<option value="./fonts/MLBRedSox.ttf">McAuliffe</option>
-						<option value="./fonts/Molle-Regular.ttf">Molle</option>
-						<option value="./fonts/NewRocker-Regular.ttf">New Rocker</option>
-						<option value="./fonts/Norican-Regular.ttf">Norican</option>
-						<option value="./fonts/OleoScript-Regular.ttf">Oleo Script</option>
-						<option value="./fonts/Pacifico.ttf">Pacifico</option>
-						<option value="./fonts/PirataOne-Regular.ttf">Pirata</option>
-						<option value="./fonts/Playball-Regular.ttf">Playball</option>
-						<option value="./fonts/pro_full_block-webfont.ttf">Pro Full Block</option>
-						<option value="./fonts/Quicksand-Regular.ttf">Quicksand</option>
-						<option value="./fonts/rawlingsfancyblock-regular-webfont.ttf">Fancy Block</option>
-						<option value="./fonts/rawlingsoldenglish-webfont.ttf">Old English</option>
-						<option value="./fonts/richardson_fancy_block-webfont.ttf">Fancy Block 2</option>
-						<option value="./fonts/RubikMonoOne-Regular.ttf">Rubik Mono</option>
-						<option value="./fonts/RubikOne-Regular.ttf">Rubik</option>
-						<option value="./fonts/RumRaisin-Regular.ttf">Rum Raisin</option>
-						<option value="./fonts/Satisfy-Regular.ttf">Satisfy</option>
-						<option value="./fonts/SeymourOne-Regular.ttf">Seymour</option>
-						<option value="./fonts/spl28script-webfont.ttf">SPL Script</option>
-						<option value="./fonts/tiffany-webfont.ttf">Tiffany</option>
-						<option value="./fonts/TradeWinds-Regular.ttf">Trade Winds</option>
-						<option value="./fonts/tuscan-webfont.ttf">Kansas</option>
-						<option value="./fonts/UnifrakturCook-Bold.ttf">Unifraktur Cook</option>
-						<option value="./fonts/UnifrakturMaguntia-Book.ttf">Unifraktur Maguntia</option>
-						<option value="./fonts/VarsityBlockA.ttf">Varsity Block A</option>
-						<option value="./fonts/VarsityBlockB.ttf">Varsity Block B</option>
-						<option value="./fonts/VarsityBlockC.ttf">Varsity Block C</option>
-						<option value="./fonts/VarsityBlockD.ttf">Varsity Block D</option>
-						<option value="./fonts/VarsityClassicA.ttf">Varsity Classic A</option>
-						<option value="./fonts/VarsityClassicB.ttf">Varsity Classic B</option>
-						<option value="./fonts/VarsityClassicC.ttf">Varsity Classic C</option>
-						<option value="./fonts/VarsityClassicD.ttf">Varsity Classic D</option>
-						<option value="./fonts/VarsityClassicSerifA.ttf">Varsity Classic Serif A</option>
-						<option value="./fonts/VarsityClassicSerifB.ttf">Varsity Classic Serif B</option>
-						<option value="./fonts/Vibur-Regular.ttf">Vibur</option>
-						<option value="./fonts/Viga-Regular.ttf">Viga</option>
-						<option value="./fonts/Wellfleet-Regular.ttf">Wellfleet</option>
-						<option value="./fonts/WendyOne-Regular.ttf">Wendy</option>
-						<option value="./fonts/Yellowtail-Regular.ttf">Yellowtail</option>
+					<select id="preferredJerseyFont" class="preference fontPref">
+						<option data-image="./images/Acme.png" value="./fonts/Acme-Regular.ttf">Acme</option>
+						<option data-image="./images/All State.png" value="./fonts/all_state-webfont.ttf">All State</option>
+						<option data-image="./images/Athletic Gothic.png" value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
+						<option data-image="./images/Athletic Gothic Shadow.png" value="./fonts/athletic_gothic_shadow-webfont.ttf">Athletic Gothic Shadow</option>
+						<option data-image="./images/Beaverton Script.png" value="./fonts/beaverton_script-webfont.ttf">Beaverton Script</option>
+						<option data-image="./images/Berkshire Swash.png" value="./fonts/BerkshireSwash-Regular.ttf">Berkshire Swash</option>
+						<option data-image="./images/CantoraOne.png" value="./fonts/CantoraOne-Regular.ttf">CantoraOne</option>
+						<option data-image="./images/Caxton Roman.png" value="./fonts/caxton_roman-webfont.ttf">Caxton Roman</option>
+						<option data-image="./images/Chela One.png" value="./fonts/ChelaOne-Regular.ttf">Chela</option>
+						<option data-image="./images/Russell Circus.png" value="./fonts/circus-webfont.ttf">Russell Circus</option>
+						<option data-image="./images/Condiment.png" value="./fonts/Condiment-Regular.ttf">Condiment</option>
+						<option data-image="./images/Cookie.png" value="./fonts/Cookie-Regular.ttf">Cookie</option>
+						<option data-image="./images/Courgette.png" value="./fonts/Courgette-Regular.ttf">Courgette</option>
+						<option data-image="./images/Croissant One.png" value="./fonts/CroissantOne-Regular.ttf">Croissant</option>
+						<option data-image="./images/Damion.png" value="./fonts/Damion-Regular.ttf">Damion</option>
+						<option data-image="./images/Engagement.png" value="./fonts/Engagement-Regular.ttf">Engagement</option>
+						<option data-image="./images/Germania One.png" value="./fonts/GermaniaOne-Regular.ttf">Germania</option>
+						<option data-image="./images/Graduate.png" value="./fonts/Graduate-Regular.ttf">Graduate</option>
+						<option data-image="./images/Grand Hotel.png" value="./fonts/GrandHotel-Regular.ttf">Grand Hotel</option>
+						<option data-image="./images/Jockey One.png" value="./fonts/JockeyOne-Regular.ttf">Jockey</option>
+						<option data-image="./images/Kaushan Script.png" value="./fonts/KaushanScript-Regular.ttf">Kaushan Script</option>
+						<option data-image="./images/Leckerli One.png" value="./fonts/LeckerliOne-Regular.ttf">Leckerli</option>
+						<option data-image="./images/Lily Script One.png" value="./fonts/LilyScriptOne-Regular.ttf">Lily Script</option>
+						<option data-image="./images/Lobster.png" value="./fonts/Lobster-Regular.ttf">Lobster</option>
+						<option data-image="./images/Lobster Two.png" value="./fonts/LobsterTwo-Regular.ttf">Lobster Two</option>
+						<option data-image="./images/Metal Mania.png" value="./fonts/MetalMania-Regular.ttf">Metal Mania</option>
+						<option data-image="./images/Miniver.png" value="./fonts/Miniver-Regular.ttf">Miniver</option>
+						<option data-image="./images/MLB Block.png" value="./fonts/MLBBlock.ttf">MLB Block</option>
+						<option data-image="./images/MLB Cubs.png" value="./fonts/MLBCubs.ttf">MLB Chicago N</option>
+						<option data-image="./images/MLB Red Sox.png" value="./fonts/MLBRedSox.ttf">McAuliffe</option>
+						<option data-image="./images/Molle.png" value="./fonts/Molle-Regular.ttf">Molle</option>
+						<option data-image="./images/New Rocker.png" value="./fonts/NewRocker-Regular.ttf">New Rocker</option>
+						<option data-image="./images/Norican.png" value="./fonts/Norican-Regular.ttf">Norican</option>
+						<option data-image="./images/Oleo Script.png" value="./fonts/OleoScript-Regular.ttf">Oleo Script</option>
+						<option data-image="./images/Pacifico.png" value="./fonts/Pacifico.ttf">Pacifico</option>
+						<option data-image="./images/Pirata One.png" value="./fonts/PirataOne-Regular.ttf">Pirata</option>
+						<option data-image="./images/Playball.png" value="./fonts/Playball-Regular.ttf">Playball</option>
+						<option data-image="./images/Pro Full Block.png" value="./fonts/pro_full_block-webfont.ttf">Pro Full Block</option>
+						<option data-image="./images/Quicksand.png" value="./fonts/Quicksand-Regular.ttf">Quicksand</option>
+						<option data-image="./images/Rubik Mono One.png" value="./fonts/RubikMonoOne-Regular.ttf">Rubik Mono</option>
+						<option data-image="./images/Rubik One.png" value="./fonts/RubikOne-Regular.ttf">Rubik</option>
+						<option data-image="./images/Rum Raisin.png" value="./fonts/RumRaisin-Regular.ttf">Rum Raisin</option>
+						<option data-image="./images/Satisfy.png" value="./fonts/Satisfy-Regular.ttf">Satisfy</option>
+						<option data-image="./images/Seymour One.png" value="./fonts/SeymourOne-Regular.ttf">Seymour</option>
+						<option data-image="./images/UA Tiffany.png" value="./fonts/tiffany-webfont.ttf">Tiffany</option>
+						<option data-image="./images/Trade Winds.png" value="./fonts/TradeWinds-Regular.ttf">Trade Winds</option>
+						<option data-image="./images/Kansas.png" value="./fonts/tuscan-webfont.ttf">Kansas</option>
+						<option data-image="./images/UnifrakturCook.png" value="./fonts/UnifrakturCook-Bold.ttf">Unifraktur Cook</option>
+						<option data-image="./images/UnifrakturMaguntia.png" value="./fonts/UnifrakturMaguntia-Book.ttf">Unifraktur Maguntia</option>
+						<option data-image="./images/Varsity Block C.png" value="./fonts/VarsityBlockC.ttf">Varsity Block C</option>
+						<option data-image="./images/Varsity Classic Serif A.png" value="./fonts/VarsityClassicSerifA.ttf">Varsity Classic Serif A</option>
+						<option data-image="./images/Varsity Classic Serif B.png" value="./fonts/VarsityClassicSerifB.ttf">Varsity Classic Serif B</option>
+						<option data-image="./images/Vibur.png" value="./fonts/Vibur-Regular.ttf">Vibur</option>
+						<option data-image="./images/Viga.png" value="./fonts/Viga-Regular.ttf">Viga</option>
+						<option data-image="./images/Wellfleet.png" value="./fonts/Wellfleet-Regular.ttf">Wellfleet</option>
+						<option data-image="./images/Wendy One.png" value="./fonts/WendyOne-Regular.ttf">Wendy</option>
+						<option data-image="./images/Yellowtail.png" value="./fonts/Yellowtail-Regular.ttf">Yellowtail</option>
+						<option data-image="./images/Rawlings Fancy Block.png" value="./fonts/rawlingsfancyblock-regular-webfont.ttf">Fancy Block</option>
+						<option data-image="./images/Rawlings Old English.png" value="./fonts/rawlingsoldenglish-webfont.ttf">Old English</option>
+						<option data-image="./images/Richardson Fancy Block.png" value="./fonts/richardson_fancy_block-webfont.ttf">Fancy Block 2</option>
+						<option data-image="./images/SPL28Script.png" value="./fonts/spl28script-webfont.ttf">SPL Script</option>
+						<option data-image="./images/VarsityClassicD.png" value="./fonts/VarsityClassicD.ttf">Varsity Classic D</option>
+						<option data-image="./images/VarsityBlockA.png" value="./fonts/VarsityBlockA.ttf">Varsity Block A</option>
+						<option data-image="./images/VarsityBlockB.png" value="./fonts/VarsityBlockB.ttf">Varsity Block B</option>
+						<option data-image="./images/VarsityBlockD.png" value="./fonts/VarsityBlockD.ttf">Varsity Block D</option>
+						<option data-image="./images/VarsityClassicA.png" value="./fonts/VarsityClassicA.ttf">Varsity Classic A</option>
+						<option data-image="./images/VarsityClassicB.png" value="./fonts/VarsityClassicB.ttf">Varsity Classic B</option>
+						<option data-image="./images/VarsityClassicC.png" value="./fonts/VarsityClassicC.ttf">Varsity Classic C</option>
 					</select>
 				</center></td>
 				<td><center>
 					<label>Preferred Cap Font:&nbsp;</label>
-					<select id="preferredCapFont" class="preference">
-						<option value="./fonts/Acme-Regular.ttf">Acme</option>
-						<option value="./fonts/all_state-webfont.ttf">All State</option>
-						<option value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
-						<option value="./fonts/athletic_gothic_shadow-webfont.ttf">Athletic Gothic Shadow</option>
-						<option value="./fonts/beaverton_script-webfont.ttf">Beaverton Script</option>
-						<option value="./fonts/BerkshireSwash-Regular.ttf">Berkshire Swash</option>
-						<option value="./fonts/CantoraOne-Regular.ttf">CantoraOne</option>
-						<option value="./fonts/caxton_roman-webfont.ttf">Caxton Roman</option>
-						<option value="./fonts/ChelaOne-Regular.ttf">Chela</option>
-						<option value="./fonts/circus-webfont.ttf">Russell Circus</option>
-						<option value="./fonts/Condiment-Regular.ttf">Condiment</option>
-						<option value="./fonts/Cookie-Regular.ttf">Cookie</option>
-						<option value="./fonts/Courgette-Regular.ttf">Courgette</option>
-						<option value="./fonts/CroissantOne-Regular.ttf">Croissant</option>
-						<option value="./fonts/Damion-Regular.ttf">Damion</option>
-						<option value="./fonts/Engagement-Regular.ttf">Engagement</option>
-						<option value="./fonts/GermaniaOne-Regular.ttf">Germania</option>
-						<option value="./fonts/Graduate-Regular.ttf" selected>Graduate</option>
-						<option value="./fonts/GrandHotel-Regular.ttf">Grand Hotel</option>
-						<option value="./fonts/JockeyOne-Regular.ttf">Jockey</option>
-						<option value="./fonts/KaushanScript-Regular.ttf">Kaushan Script</option>
-						<option value="./fonts/LeckerliOne-Regular.ttf">Leckerli</option>
-						<option value="./fonts/LilyScriptOne-Regular.ttf">Lily Script</option>
-						<option value="./fonts/Lobster-Regular.ttf">Lobster</option>
-						<option value="./fonts/LobsterTwo-Regular.ttf">Lobster Two</option>
-						<option value="./fonts/MetalMania-Regular.ttf">Metal Mania</option>
-						<option value="./fonts/Miniver-Regular.ttf">Miniver</option>
-						<option value="./fonts/MLBBlock.ttf">MLB Block</option>
-						<option value="./fonts/MLBCubs.ttf">MLB Chicago N</option>
-						<option value="./fonts/MLBRedSox.ttf">McAuliffe</option>
-						<option value="./fonts/Molle-Regular.ttf">Molle</option>
-						<option value="./fonts/NewRocker-Regular.ttf">New Rocker</option>
-						<option value="./fonts/Norican-Regular.ttf">Norican</option>
-						<option value="./fonts/OleoScript-Regular.ttf">Oleo Script</option>
-						<option value="./fonts/Pacifico.ttf">Pacifico</option>
-						<option value="./fonts/PirataOne-Regular.ttf">Pirata</option>
-						<option value="./fonts/Playball-Regular.ttf">Playball</option>
-						<option value="./fonts/pro_full_block-webfont.ttf">Pro Full Block</option>
-						<option value="./fonts/Quicksand-Regular.ttf">Quicksand</option>
-						<option value="./fonts/rawlingsfancyblock-regular-webfont.ttf">Fancy Block</option>
-						<option value="./fonts/rawlingsoldenglish-webfont.ttf">Old English</option>
-						<option value="./fonts/richardson_fancy_block-webfont.ttf">Fancy Block 2</option>
-						<option value="./fonts/RubikMonoOne-Regular.ttf">Rubik Mono</option>
-						<option value="./fonts/RubikOne-Regular.ttf">Rubik</option>
-						<option value="./fonts/RumRaisin-Regular.ttf">Rum Raisin</option>
-						<option value="./fonts/Satisfy-Regular.ttf">Satisfy</option>
-						<option value="./fonts/SeymourOne-Regular.ttf">Seymour</option>
-						<option value="./fonts/spl28script-webfont.ttf">SPL Script</option>
-						<option value="./fonts/tiffany-webfont.ttf">Tiffany</option>
-						<option value="./fonts/TradeWinds-Regular.ttf">Trade Winds</option>
-						<option value="./fonts/tuscan-webfont.ttf">Kansas</option>
-						<option value="./fonts/UnifrakturCook-Bold.ttf">Unifraktur Cook</option>
-						<option value="./fonts/UnifrakturMaguntia-Book.ttf">Unifraktur Maguntia</option>
-						<option value="./fonts/VarsityBlockA.ttf">Varsity Block A</option>
-						<option value="./fonts/VarsityBlockB.ttf">Varsity Block B</option>
-						<option value="./fonts/VarsityBlockC.ttf">Varsity Block C</option>
-						<option value="./fonts/VarsityBlockD.ttf">Varsity Block D</option>
-						<option value="./fonts/VarsityClassicA.ttf">Varsity Classic A</option>
-						<option value="./fonts/VarsityClassicB.ttf">Varsity Classic B</option>
-						<option value="./fonts/VarsityClassicC.ttf">Varsity Classic C</option>
-						<option value="./fonts/VarsityClassicD.ttf">Varsity Classic D</option>
-						<option value="./fonts/VarsityClassicSerifA.ttf">Varsity Classic Serif A</option>
-						<option value="./fonts/VarsityClassicSerifB.ttf">Varsity Classic Serif B</option>
-						<option value="./fonts/Vibur-Regular.ttf">Vibur</option>
-						<option value="./fonts/Viga-Regular.ttf">Viga</option>
-						<option value="./fonts/Wellfleet-Regular.ttf">Wellfleet</option>
-						<option value="./fonts/WendyOne-Regular.ttf">Wendy</option>
-						<option value="./fonts/Yellowtail-Regular.ttf">Yellowtail</option>
+					<select id="preferredCapFont" class="preference fontPref">
+						<option data-image="./images/Acme.png" value="./fonts/Acme-Regular.ttf">Acme</option>
+						<option data-image="./images/All State.png" value="./fonts/all_state-webfont.ttf">All State</option>
+						<option data-image="./images/Athletic Gothic.png" value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
+						<option data-image="./images/Athletic Gothic Shadow.png" value="./fonts/athletic_gothic_shadow-webfont.ttf">Athletic Gothic Shadow</option>
+						<option data-image="./images/Beaverton Script.png" value="./fonts/beaverton_script-webfont.ttf">Beaverton Script</option>
+						<option data-image="./images/Berkshire Swash.png" value="./fonts/BerkshireSwash-Regular.ttf">Berkshire Swash</option>
+						<option data-image="./images/CantoraOne.png" value="./fonts/CantoraOne-Regular.ttf">CantoraOne</option>
+						<option data-image="./images/Caxton Roman.png" value="./fonts/caxton_roman-webfont.ttf">Caxton Roman</option>
+						<option data-image="./images/Chela One.png" value="./fonts/ChelaOne-Regular.ttf">Chela</option>
+						<option data-image="./images/Russell Circus.png" value="./fonts/circus-webfont.ttf">Russell Circus</option>
+						<option data-image="./images/Condiment.png" value="./fonts/Condiment-Regular.ttf">Condiment</option>
+						<option data-image="./images/Cookie.png" value="./fonts/Cookie-Regular.ttf">Cookie</option>
+						<option data-image="./images/Courgette.png" value="./fonts/Courgette-Regular.ttf">Courgette</option>
+						<option data-image="./images/Croissant One.png" value="./fonts/CroissantOne-Regular.ttf">Croissant</option>
+						<option data-image="./images/Damion.png" value="./fonts/Damion-Regular.ttf">Damion</option>
+						<option data-image="./images/Engagement.png" value="./fonts/Engagement-Regular.ttf">Engagement</option>
+						<option data-image="./images/Germania One.png" value="./fonts/GermaniaOne-Regular.ttf">Germania</option>
+						<option data-image="./images/Graduate.png" value="./fonts/Graduate-Regular.ttf">Graduate</option>
+						<option data-image="./images/Grand Hotel.png" value="./fonts/GrandHotel-Regular.ttf">Grand Hotel</option>
+						<option data-image="./images/Jockey One.png" value="./fonts/JockeyOne-Regular.ttf">Jockey</option>
+						<option data-image="./images/Kaushan Script.png" value="./fonts/KaushanScript-Regular.ttf">Kaushan Script</option>
+						<option data-image="./images/Leckerli One.png" value="./fonts/LeckerliOne-Regular.ttf">Leckerli</option>
+						<option data-image="./images/Lily Script One.png" value="./fonts/LilyScriptOne-Regular.ttf">Lily Script</option>
+						<option data-image="./images/Lobster.png" value="./fonts/Lobster-Regular.ttf">Lobster</option>
+						<option data-image="./images/Lobster Two.png" value="./fonts/LobsterTwo-Regular.ttf">Lobster Two</option>
+						<option data-image="./images/Metal Mania.png" value="./fonts/MetalMania-Regular.ttf">Metal Mania</option>
+						<option data-image="./images/Miniver.png" value="./fonts/Miniver-Regular.ttf">Miniver</option>
+						<option data-image="./images/MLB Block.png" value="./fonts/MLBBlock.ttf">MLB Block</option>
+						<option data-image="./images/MLB Cubs.png" value="./fonts/MLBCubs.ttf">MLB Chicago N</option>
+						<option data-image="./images/MLB Red Sox.png" value="./fonts/MLBRedSox.ttf">McAuliffe</option>
+						<option data-image="./images/Molle.png" value="./fonts/Molle-Regular.ttf">Molle</option>
+						<option data-image="./images/New Rocker.png" value="./fonts/NewRocker-Regular.ttf">New Rocker</option>
+						<option data-image="./images/Norican.png" value="./fonts/Norican-Regular.ttf">Norican</option>
+						<option data-image="./images/Oleo Script.png" value="./fonts/OleoScript-Regular.ttf">Oleo Script</option>
+						<option data-image="./images/Pacifico.png" value="./fonts/Pacifico.ttf">Pacifico</option>
+						<option data-image="./images/Pirata One.png" value="./fonts/PirataOne-Regular.ttf">Pirata</option>
+						<option data-image="./images/Playball.png" value="./fonts/Playball-Regular.ttf">Playball</option>
+						<option data-image="./images/Pro Full Block.png" value="./fonts/pro_full_block-webfont.ttf">Pro Full Block</option>
+						<option data-image="./images/Quicksand.png" value="./fonts/Quicksand-Regular.ttf">Quicksand</option>
+						<option data-image="./images/Rubik Mono One.png" value="./fonts/RubikMonoOne-Regular.ttf">Rubik Mono</option>
+						<option data-image="./images/Rubik One.png" value="./fonts/RubikOne-Regular.ttf">Rubik</option>
+						<option data-image="./images/Rum Raisin.png" value="./fonts/RumRaisin-Regular.ttf">Rum Raisin</option>
+						<option data-image="./images/Satisfy.png" value="./fonts/Satisfy-Regular.ttf">Satisfy</option>
+						<option data-image="./images/Seymour One.png" value="./fonts/SeymourOne-Regular.ttf">Seymour</option>
+						<option data-image="./images/UA Tiffany.png" value="./fonts/tiffany-webfont.ttf">Tiffany</option>
+						<option data-image="./images/Trade Winds.png" value="./fonts/TradeWinds-Regular.ttf">Trade Winds</option>
+						<option data-image="./images/Kansas.png" value="./fonts/tuscan-webfont.ttf">Kansas</option>
+						<option data-image="./images/UnifrakturCook.png" value="./fonts/UnifrakturCook-Bold.ttf">Unifraktur Cook</option>
+						<option data-image="./images/UnifrakturMaguntia.png" value="./fonts/UnifrakturMaguntia-Book.ttf">Unifraktur Maguntia</option>
+						<option data-image="./images/Varsity Block C.png" value="./fonts/VarsityBlockC.ttf">Varsity Block C</option>
+						<option data-image="./images/Varsity Classic Serif A.png" value="./fonts/VarsityClassicSerifA.ttf">Varsity Classic Serif A</option>
+						<option data-image="./images/Varsity Classic Serif B.png" value="./fonts/VarsityClassicSerifB.ttf">Varsity Classic Serif B</option>
+						<option data-image="./images/Vibur.png" value="./fonts/Vibur-Regular.ttf">Vibur</option>
+						<option data-image="./images/Viga.png" value="./fonts/Viga-Regular.ttf">Viga</option>
+						<option data-image="./images/Wellfleet.png" value="./fonts/Wellfleet-Regular.ttf">Wellfleet</option>
+						<option data-image="./images/Wendy One.png" value="./fonts/WendyOne-Regular.ttf">Wendy</option>
+						<option data-image="./images/Yellowtail.png" value="./fonts/Yellowtail-Regular.ttf">Yellowtail</option>
+						<option data-image="./images/Rawlings Fancy Block.png" value="./fonts/rawlingsfancyblock-regular-webfont.ttf">Fancy Block</option>
+						<option data-image="./images/Rawlings Old English.png" value="./fonts/rawlingsoldenglish-webfont.ttf">Old English</option>
+						<option data-image="./images/Richardson Fancy Block.png" value="./fonts/richardson_fancy_block-webfont.ttf">Fancy Block 2</option>
+						<option data-image="./images/SPL28Script.png" value="./fonts/spl28script-webfont.ttf">SPL Script</option>
+						<option data-image="./images/VarsityClassicD.png" value="./fonts/VarsityClassicD.ttf">Varsity Classic D</option>
+						<option data-image="./images/VarsityBlockA.png" value="./fonts/VarsityBlockA.ttf">Varsity Block A</option>
+						<option data-image="./images/VarsityBlockB.png" value="./fonts/VarsityBlockB.ttf">Varsity Block B</option>
+						<option data-image="./images/VarsityBlockD.png" value="./fonts/VarsityBlockD.ttf">Varsity Block D</option>
+						<option data-image="./images/VarsityClassicA.png" value="./fonts/VarsityClassicA.ttf">Varsity Classic A</option>
+						<option data-image="./images/VarsityClassicB.png" value="./fonts/VarsityClassicB.ttf">Varsity Classic B</option>
+						<option data-image="./images/VarsityClassicC.png" value="./fonts/VarsityClassicC.ttf">Varsity Classic C</option>
 					</select>
 				</center></td>
 				<td><center>
 					<label>Preferred Name Font:&nbsp;</label>
-					<select id="preferredNameFont" class="preference">
+					<select id="preferredNameFont" class="preference fontPref">
 						<option value="./fonts/Acme-Regular.ttf">Acme</option>
 						<option value="./fonts/all_state-webfont.ttf">All State</option>
 						<option value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
@@ -2443,7 +2445,7 @@
 				</center></td>
 				<td><center>
 					<label>Preferred Number Font:&nbsp;</label>
-					<select id="preferredNumberFont" class="preference">
+					<select id="preferredNumberFont" class="preference fontPref">
 						<option value="./fonts/Acme-Regular.ttf">Acme</option>
 						<option value="./fonts/all_state-webfont.ttf">All State</option>
 						<option value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
@@ -2597,12 +2599,6 @@
 		enableRetinaScaling:false
 	})
 
-	/* var heightMapCanvas = new fabric.Canvas('heightMapCanvas',{
-		selection:false,
-		enableRetinaScaling:false,
-		backgroundColor:"#00ff00"
-	}) */
-
 	var normalMapCanvas = new fabric.Canvas('normalMapCanvas',{
 		selection:false,
 		enableRetinaScaling:false
@@ -2613,9 +2609,6 @@
 		controlsAboveOverlay:true,
 		id: 'fontCanvasCanvas'
 	})
-
-	//heightMapCanvas.renderAll()
-	//normalMapCanvas.renderAll()
 
 	if (gridsVisible == true) {
 		jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
@@ -2663,20 +2656,12 @@
 			$(this).val(prefs[$(this).attr("id")])
 		})
 
-/*  		if (localFontFolder != "null") {
-			$("#localFontFolderPref").text(localFontFolder)
-			$("#localFontFolder").val("Refresh Local Font Folder")
-			$("#localFontFolder").trigger("click")
-		} else {
-			$("#localFontFolderPref").text("Not Selected")
-		}
-
-		$("#changeLocalFontFolder").on("click",function() {
-			localFontFolder = "null"
-			$("#localFontFolder").trigger("click")
-		}) */
-
 		$("#localFontFolder").trigger("click")
+
+		$("#jerseyWordmarkSelect").val(prefs.preferredJerseyFont)
+		$("#capTextSelect").val(prefs.preferredCapFont)
+		$("#letterDropdown").val(prefs.preferredNameFont)
+		$("#numberDropdown").val(prefs.preferredNumberFont)
 
 		sortFontDropdowns()
 
@@ -3102,6 +3087,10 @@
 								numberDropdown.add({text:name, value:value, image:thumb})
 								jerseyDropdown.add({text:name, value:value, image:thumb})
 								capDropdown.add({text:name, value:value, image:thumb})
+								$('#preferredJerseyFont').append($('<option>', {value: value, text: name}));
+								$('#preferredCapFont').append($('<option>', {value: value, text: name}));
+								$('#preferredNameFont').append($('<option>', {value: value, text: name}));
+								$('#preferredNumberFont').append($('<option>', {value: value, text: name}));
 							}
 
 							sortFontDropdowns()
@@ -13410,19 +13399,13 @@
 		})
 	})
 
-	$("#preferredJerseyFont").on("change",function() {
+	$(".fontPref").on("change",function(e) {
+		alert(fontPrefMessage)
+	})
+
+/* 	$("#preferredJerseyFont").on("change",function() {
 		const pref = $(this).attr("id")
 		const style = $(this).val();
-		const font_family = $("."+style).css("font-family");
-		var g = jerseyLogoCanvas.getObjects().find(o => o.id === 'wordmark');
-		g.getObjects().forEach(function(o) {
-			o.set("fontFamily", font_family)
-			wordmark.dirty = true;
-		})
-		jerseyLogoCanvas.renderAll();
-		$(this).removeClass().addClass(style);
-		$("#jerseyFontTypeCombo").val(style);
-		$("#jerseyFontTypeCombo").removeClass().addClass(style);
 		$.ajax({
 			type: "POST",
 			url: "http://127.0.0.1:"+port+"/setPreference",
@@ -13442,7 +13425,7 @@
 			success: function(result) {
 			}
 		})
-	})
+	}) */
 
 	$("#checkForUpdatesPref").on("change",function() {
 		const pref = "checkForUpdates"
@@ -13470,23 +13453,6 @@
 			}
 		})
 	})
-
-/* 	$("#monitorFontFolder").on("change",function() {
-		const pref = "monitorFontFolder"
-		const val = $(this).is(":checked")
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/setPreference",
-			data: {pref:pref,val:val.toString()},
-			success: function(result) {
-				$.ajax({
-					type: "POST",
-					url: "http://127.0.0.1:"+port+"/toggleWatcher",
-					data: {toggle: val}
-				})
-			}
-		})
-	}) */
 
 	$("#seamsVisibleOnDiffuse").on("change", function() {
 		const pref = "seamsVisibleOnDiffuse"
@@ -13707,6 +13673,10 @@
 		const selectedCapFont = $("#capTextSelect").val()
 		const selectedNameFont = $("#letterDropdown").val()
 		const selectedNumberFont = $("#numberDropdown").val()
+		const selectedPreferredJerseyFont = $("#preferredJerseyFont").val()
+		const selectedPreferredCapFont = $("#preferredCapFont").val()
+		const selectedPreferredNameFont = $("#preferredNameFont").val()
+		const selectedPreferredNumberFont = $("#preferredNumberFont").val()
 
 		$("#jerseyWordmarkSelect").html($('#jerseyWordmarkSelect option').sort(function(x, y) {
          	return $(x).text().toLowerCase() < $(y).text().toLowerCase() ? -1 : 1;
@@ -13727,6 +13697,26 @@
          	return $(x).text().toLowerCase() < $(y).text().toLowerCase() ? -1 : 1;
 		}))
 		$("#numberDropdown").val(selectedNumberFont)
+
+		$("#preferredJerseyFont").html($('#preferredJerseyFont option').sort(function(x, y) {
+         	return $(x).text().toLowerCase() < $(y).text().toLowerCase() ? -1 : 1;
+		}))
+		$("#preferredJerseyFont").val(selectedPreferredJerseyFont)
+
+		$("#preferredCapFont").html($('#preferredCapFont option').sort(function(x, y) {
+         	return $(x).text().toLowerCase() < $(y).text().toLowerCase() ? -1 : 1;
+		}))
+		$("#preferredCapFont").val(selectedPreferredCapFont)
+
+		$("#preferredNameFont").html($('#preferredNameFont option').sort(function(x, y) {
+         	return $(x).text().toLowerCase() < $(y).text().toLowerCase() ? -1 : 1;
+		}))
+		$("#preferredNameFont").val(selectedPreferredNameFont)
+
+		$("#preferredNumberFont").html($('#preferredNumberFont option').sort(function(x, y) {
+         	return $(x).text().toLowerCase() < $(y).text().toLowerCase() ? -1 : 1;
+		}))
+		$("#preferredNumberFont").val(selectedPreferredNumberFont)
 	}
 
 	function refreshDropdowns(which,data,thumb) {
