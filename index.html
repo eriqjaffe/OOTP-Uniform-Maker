@@ -3073,6 +3073,7 @@
 							
 							const thumbText = font.getPath("ABC 123", 0, 0, 96)
 							const outPath = thumbText.toPathData(5)
+	
 
 							const foo = new fabric.Path(outPath, {
 								fill: 'black',
@@ -3082,6 +3083,16 @@
 
 							const thumb = foo.toDataURL()
 
+							$.ajax({
+								type: "POST",
+								url: "http://127.0.0.1:"+port+"/generateFontThumb",
+								data: {
+									thumb: thumb,
+									name: name
+								},
+								success: function(data) {}
+							})
+						
 							if (findIndexByText(letterDropdown, name) == -1) {
 								letterDropdown.add({text:name, value:value, image:thumb})
 								numberDropdown.add({text:name, value:value, image:thumb})
@@ -12187,7 +12198,7 @@
 			teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
 		}
 	
-		var fileName = "font_"+teamName+"_"+$("#fontType").val()+yearRange;
+		var fileName = teamName+"_"+$("#uniformType").val()+yearRange;
 
 		fileName = fileName.split(' ').join('_').toLowerCase();
 
