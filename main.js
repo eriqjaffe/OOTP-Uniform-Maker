@@ -1294,9 +1294,10 @@ app2.post('/saveUniform', (req, res) => {
 		archive.append(jerseyBakedBuffer, {name: "jerseys_"+req.body.name+"_textured.png"})
 		//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'_textured.png')
 
-		fs.writeFile("d:\\users\\eriq\\desktop\\testoutput.uni", req.body.json, 'utf8', function(err) {
+/*  		fs.writeFile(app.getPath('desktop')+"/testoutput.uni", req.body.json, 'utf8', function(err) {
             console.log(err)
-        })
+        }) */
+		
 		archive.append(JSON.stringify(swatchJSON, null, 2), {name: req.body.name+".pal"});
 		archive.append(json, {name: "uniform_"+req.body.name+".uni"})
 		archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });
