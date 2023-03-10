@@ -1389,7 +1389,7 @@ function createWindow () {
     const mainWindow = new BrowserWindow({
       width: 1400,
       height: 1020,
-      icon: (__dirname + '/images/ballcap.png'),
+      icon: (__dirname + '/images/icon.ico'),
       webPreferences: {
           nodeIntegration: true,
             contextIsolation: false 
