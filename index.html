@@ -2766,6 +2766,14 @@
 
 		//$("#jerseyWordmarkSelect").closest('tr').css("display","none")
 
+		$(".ms-jersey-container").each(function() {
+			$(this).find(".ms-dd").addClass("disabled")
+		})
+
+		$(".ms-cap-container").each(function() {
+			$(this).find(".ms-dd").addClass("disabled")
+		})
+
 		$("#warpAmount").prop("disabled",true)
 
 		$("#jerseyNameTypeCombo").prop("disabled",true)
