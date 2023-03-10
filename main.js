@@ -60,8 +60,14 @@ const seamsVisibleOnDiffuse = store.get("seamsVisibleOnDiffuse", false)
 
 console.log(userFontsFolder)
 
-if (!fs.existsSync(userFontsFolder)){
+if (!fs.existsSync(userFontsFolder)) {
     fs.mkdirSync(userFontsFolder);
+}
+
+if (!fs.existsSync(userFontsFolder+"/README.txt")) {
+	var writeStream = fs.createWriteStream(userFontsFolder+"/README.txt");
+	writeStream.write("TTF and OTF fonts dropped into this folder will automatically be imported into the Uniform Maker!\r\n\r\nFonts removed from this folder will still be available in the Uniform Maker until you quit the app, and they will not reload after that.  Of course, that may cause uniforms that you load into the app to misbehave.")
+	writeStream.end()
 }
 
 /* for (const dependency of ['chrome', 'node', 'electron']) {
@@ -1170,7 +1176,7 @@ app2.post('/saveUniform', (req, res) => {
 		// font
 		let fontBase = await Jimp.read(fontCanvas)
 		let fontBuffer = await fontBase.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(fontBuffer, {name: "font_"+req.body.name+".png"})
+		archive.append(fontBuffer, {name: req.body.name+".png"})
 
 		// jersey diffuse map
 		let jerseyBase = await Jimp.read(jerseyBelow)
@@ -1347,7 +1353,6 @@ app2.get("/localFontFolder", (req, res) => {
 		let info = await fontscan.getDirectoryFonts(userFontsFolder)
 		for (font of info) {
 			const ext = getExtension(font.path)
-			//const dataUrl = font2base64.encodeToDataUrlSync(font.path)
 			const fontPath = url.pathToFileURL(font.path)
 			const json = {
 				"status": "ok",
