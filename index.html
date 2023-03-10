@@ -3063,8 +3063,10 @@
 					const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
 					const capDropdown = document.getElementById("capTextSelect").msDropdown;
 					for (result of data.fonts) {
+						var thumb = null;
 						const name = result.fontName
 						const value = result.fontPath
+						const fontThumb = result.fontThumb
 						opentype.load(result.fontPath, (err,font) => {
 							if (err || !font) {
 								console.log(err)
@@ -3074,25 +3076,28 @@
 							const thumbText = font.getPath("ABC 123", 0, 0, 96)
 							const outPath = thumbText.toPathData(5)
 	
+							if (fontThumb == "noimage") {
+								const foo = new fabric.Path(outPath, {
+									fill: 'black',
+									top: 0,
+									left: 0
+								})
 
-							const foo = new fabric.Path(outPath, {
-								fill: 'black',
-								top: 0,
-								left: 0
-							})
+								thumb = foo.toDataURL()
 
-							const thumb = foo.toDataURL()
+								$.ajax({
+									type: "POST",
+									url: "http://127.0.0.1:"+port+"/generateThumbnail",
+									data: {
+										thumb: thumb,
+										name: name
+									},
+									success: function(data) {}
+								})
+							} else {
+								thumb = fontThumb;
+							}
 
-							$.ajax({
-								type: "POST",
-								url: "http://127.0.0.1:"+port+"/generateFontThumb",
-								data: {
-									thumb: thumb,
-									name: name
-								},
-								success: function(data) {}
-							})
-						
 							if (findIndexByText(letterDropdown, name) == -1) {
 								letterDropdown.add({text:name, value:value, image:thumb})
 								numberDropdown.add({text:name, value:value, image:thumb})

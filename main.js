@@ -1354,6 +1354,7 @@ app2.get("/localFontFolder", (req, res) => {
 		for (font of info) {
 			const ext = getExtension(font.path)
 			const fontPath = url.pathToFileURL(font.path)
+			const fontThumb = (fs.existsSync(userFontsFolder+"/"+font.family+".png")) ? userFontsFolder+"/"+font.family+".png" : "noimage"
 			const json = {
 				"status": "ok",
 				"fontName": font.family,
@@ -1362,7 +1363,8 @@ app2.get("/localFontFolder", (req, res) => {
 				"fontFormat": ext,
 				"fontMimetype": 'font/' + ext,
 				"fontData": fontPath.href,
-				"fontPath": font.path
+				"fontPath": font.path,
+				"fontThumb": fontThumb
 			}
 			jsonArr.push(json)
 		}
@@ -1371,6 +1373,18 @@ app2.get("/localFontFolder", (req, res) => {
 		res.json(jsonObj)
 		res.end()
 	}
+})
+
+app2.post('/generateThumbnail', (req, res) => {
+	const buffer = Buffer.from(req.body.thumb.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const name = req.body.name
+	Jimp.read(buffer, (err, image) => {
+		if (err) {
+			console.log(err);
+		} else {
+			image.write(userFontsFolder+"/"+name+".png");
+		}
+	})
 })
 
 app2.post('/setPreference', (req, res) => {
