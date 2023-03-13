@@ -11836,7 +11836,7 @@
 				text: textLine,
 				capLogoCanvas: capLogoCanvas.toDataURL(),
 				capBelow: capBelow.toDataURL(),
-				name: fileName.split(' ').join('_'),
+				name: fileName.split(' ').join('_').toLowerCase(),
 				capWatermarkColor: idealTextColor(capBelow.backgroundColor),
 				capTexture: ($("#capTextureSelect").val() == "custom") ? customCapTexture : $("#capTextureSelect").val(),
 			},
@@ -11921,7 +11921,7 @@
 				text: textLine,
 				pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
 				pantsBelow: pantsBelow.toDataURL(),
-				name: fileName.split(' ').join('_'),
+				name: fileName.split(' ').join('_').toLowerCase(),
 				pantsWatermarkColor: idealTextColor(pantsBelow.backgroundColor),
 				pantsTexture: ($("#pantsTextureSelect").val() == "custom") ? customPantsTexture : $("#pantsTextureSelect").val(),
 			},
@@ -12149,7 +12149,7 @@
 							//normalMap: normalMap,
 							jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
 							jerseyBelow: jerseyBelow.toDataURL(),
-							name: fileName.split(' ').join('_'),
+							name: fileName.split(' ').join('_').toLowerCase(),
 							jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
 							jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
 							showPlanket: showPlanket,
@@ -12265,7 +12265,7 @@
 			url: "http://127.0.0.1:"+port+"/saveFont",
 			dataType: "json",
 			data: {
-				name: fileName,
+				name: fileName.toLowerCase(),
 				fontCanvas: fontCanvas.toDataURL()
 			},
 			success: function(data) {
@@ -12627,7 +12627,7 @@
 							pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
 							pantsBelow: pantsBelow.toDataURL(),
 							fontCanvas: fontCanvas.toDataURL(),
-							name: fileName,
+							name: fileName.toLowerCase(),
 							showPlanket: showPlanket,
 							buttonPadSeams: buttonPadSeams,
 							seamsVisible: seamsVisible,
@@ -13537,7 +13537,7 @@
 			type: "POST",
 			url: "http://127.0.0.1:"+port+"/saveSwatches",
 			data: {
-				name: fileName, 
+				name: fileName.toLowerCase(), 
 				swatch1: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].text, 
 				swatch2: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].text, 
 				swatch3: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].text, 
