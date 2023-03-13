@@ -1394,15 +1394,15 @@
 												<td>
 													<label>Eyelets:&nbsp;</label>
 													<select id="eyeletGrouping">
-														<option value="groupedEyelets">Grouped</option>
-														<option value="individualEyelets" selected>Individual</option>
+														<option value="groupedEyelets" selected>Grouped</option>
+														<option value="individualEyelets">Individual</option>
 													</select>
 												</td>
 												<td style="text-align:right;">
-													<span id="groupedEyelets" style="display:none;">
+													<span id="groupedEyelets" style="display:inline-block;">
 														<input class="capSelector selector" type="text" id="eyeletGroupColor" data-element="eyeletGroupColor" data-canvas="above">
 													</span>
-													<span id="individualEyelets" style="display:inline-block;">
+													<span id="individualEyelets" style="display:none;">
 														<div>
 															<input class="capSelector selector" type="text" id="eyelet1Color" data-element="eyelet1Color" data-canvas="above">
 															<input class="capSelector selector" type="text" id="eyelet2Color" data-element="eyelet2Color" data-canvas="above">
@@ -7913,14 +7913,14 @@
 
 		var individualEyelets = new fabric.Group ([eyeletFillColor, eyelet1Color, eyelet2Color, eyelet3Color, eyelet4Color, eyelet5Color, eyelet6Color])
 		individualEyelets.set({
-			visible:true,
+			visible:false,
 			selectable:false,
 			id:'individualEyelets'
 		});
 
 		var groupedEyelets = new fabric.Group ([eyeletGroupFillColor, eyeletGroupColor])
 		groupedEyelets.set({
-			visible:false,
+			visible:true,
 			selectable:false,
 			id:'groupedEyelets'
 		});
