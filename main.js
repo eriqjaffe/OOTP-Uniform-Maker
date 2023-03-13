@@ -16,6 +16,9 @@ const { createSVGWindow } = require('svgdom')
 const versionCheck = require('github-version-checker');
 const pkg = require('./package.json');
 const e = require('express');
+const { off } = require('process');
+const fontscan = require('fontscan')
+const chokidar = require('chokidar')
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -33,6 +36,7 @@ const app2 = express();
 const store = new Store();
 const window = createSVGWindow()
 const document = window.document
+const userFontsFolder = app.getPath('userData')+"\\fonts"
 
 const server = app2.listen(0, () => {
 	console.log(`Server running on port ${server.address().port}`);
@@ -44,17 +48,41 @@ const preferredPantsTexture = store.get("preferredPantsTexture", "pants_texture_
 const preferredCapTexture = store.get("preferredCapTexture", "cap_texture_wool.png")
 const preferredPlayerName = store.get("preferredPlayerName", "PLAYER")
 const preferredPlayerNumber = store.get("preferredPlayerNumber", "23")
-const preferredJerseyFont = store.get("preferredJerseyFont", "Leckerli_One")
-const preferredCapFont = store.get("preferredCapFont", "Graduate")
+const preferredJerseyFont = store.get("preferredJerseyFont", "./fonts/LeckerliOne-Regular.ttf")
+const preferredCapFont = store.get("preferredCapFont", "./fonts/Graduate-Regular.ttf")
+const preferredNameFont = store.get("preferredNameFont", "./fonts/MLBBlock.ttf")
+const preferredNumberFont = store.get("preferredNumberFont", "./fonts/MLBBlock.ttf")
 const preferredHeightMapBrightness = store.get("preferredHeightMapBrightness", "85") 
 const preferredSeamOpacity = store.get("preferredSeamOpacity", "33")
 const gridsVisible = store.get("gridsVisible", true)
 const checkForUpdates = store.get("checkForUpdates", true)
 const seamsVisibleOnDiffuse = store.get("seamsVisibleOnDiffuse", false)
 
+console.log(userFontsFolder)
+
+if (!fs.existsSync(userFontsFolder)) {
+    fs.mkdirSync(userFontsFolder);
+}
+
+if (!fs.existsSync(userFontsFolder+"/README.txt")) {
+	var writeStream = fs.createWriteStream(userFontsFolder+"/README.txt");
+	writeStream.write("TTF and OTF fonts dropped into this folder will automatically be imported into the Uniform Maker!\r\n\r\nFonts removed from this folder will still be available in the Uniform Maker until you quit the app, and they will not reload after that.  Of course, that may cause uniforms that you load into the app to misbehave.")
+	writeStream.end()
+}
+
 /* for (const dependency of ['chrome', 'node', 'electron']) {
     console.log(dependency+", "+process.versions[dependency])
 } */
+
+const watcher = chokidar.watch(userFontsFolder, {
+	ignored: /(^|[\/\\])\../, // ignore dotfiles
+	persistent: true
+});
+
+watcher.on('ready', () => {
+	console.log("Watcher Ready!")
+	console.log(watcher.getWatched())
+})
 
 const fontArray = {"Acme": "Acme-Regular.ttf", "athletic_gothicregular": "athletic_gothic-webfont.ttf", "athletic_gothic_shadowregular": "athletic_gothic_shadow-webfont.ttf", "beaverton_scriptregular": "beaverton_script-webfont.ttf", "BerkshireSwash": "BerkshireSwash-Regular.ttf", "CantoraOne": "CantoraOne-Regular.ttf", "caxton_romanregular": "caxton_roman-webfont.ttf", "ChelaOne": "ChelaOne-Regular.ttf", "russell_circusregular": "circus-webfont.ttf", "Condiment": "Condiment-Regular.ttf", "Cookie": "Cookie-Regular.ttf", "Courgette": "Courgette-Regular.ttf", "CroissantOne": "CroissantOne-Regular.ttf", "Damion": "Damion-Regular.ttf", "Engagement": "Engagement-Regular.ttf", "rawlings_fancy_blockregular": "rawlingsfancyblock-regular-webfont.ttf", "GermaniaOne": "GermaniaOne-Regular.ttf", "Graduate": "Graduate-Regular.ttf", "GrandHotel": "GrandHotel-Regular.ttf", "JockeyOne": "JockeyOne-Regular.ttf", "kansasregular": "tuscan-webfont.ttf", "KaushanScript": "KaushanScript-Regular.ttf", "LeckerliOne": "LeckerliOne-Regular.ttf", "LilyScriptOne": "LilyScriptOne-Regular.ttf", "Lobster": "Lobster-Regular.ttf", "LobsterTwo": "LobsterTwo-Regular.ttf", "MetalMania": "MetalMania-Regular.ttf", "Miniver": "Miniver-Regular.ttf", "Molle,italic": "Molle-Regular.ttf", "NewRocker": "NewRocker-Regular.ttf", "Norican": "Norican-Regular.ttf", "rawlings_old_englishmedium": "rawlingsoldenglish-webfont.ttf", "OleoScript": "OleoScript-Regular.ttf", "OleoScriptSwashCaps": "OleoScriptSwashCaps-Regular.ttf", "Pacifico": "Pacifico.ttf", "PirataOne": "PirataOne-Regular.ttf", "Playball": "Playball-Regular.ttf", "pro_full_blockregular": "pro_full_block-webfont.ttf", "richardson_fancy_blockregular": "richardson_fancy_block-webfont.ttf", "RubikOne": "RubikOne-Regular.ttf", "RumRaisin": "RumRaisin-Regular.ttf", "Satisfy": "Satisfy-Regular.ttf", "SeymourOne": "SeymourOne-Regular.ttf", "spl28scriptregular": "spl28script-webfont.ttf", "ua_tiffanyregular": "tiffany-webfont.ttf", "TradeWinds": "TradeWinds-Regular.ttf", "mlb_tuscan_newmedium": "mlb_tuscan_new-webfont.ttf", "UnifrakturCook": "UnifrakturCook-Bold.ttf", "UnifrakturMaguntia": "UnifrakturMaguntia-Book.ttf", "Vibur": "Vibur-Regular.ttf", "Viga": "Viga-Regular.ttf", "Wellfleet": "Wellfleet-Regular.ttf", "WendyOne": "WendyOne-Regular.ttf", "Yellowtail": "Yellowtail-Regular.ttf"};
 
@@ -305,31 +333,20 @@ app2.get("/customFont", (req, res) => {
 			store.set("uploadFontPath", path.dirname(result.filePaths[0]))
 			try {
 				ttfInfo(result.filePaths[0], function(err, info) {
-				var ext = getExtension(result.filePaths[0])
+					var ext = getExtension(result.filePaths[0])
 					const dataUrl = font2base64.encodeToDataUrlSync(result.filePaths[0])
-					var fontPath = url.pathToFileURL(tempDir + '/'+path.basename(result.filePaths[0]))
-					fs.copyFile(result.filePaths[0], tempDir + '/'+path.basename(result.filePaths[0]), (err) => {
-						if (err) {
-							console.log(err)
-							res.json({
-								"status":"error",
-								"message": err
-							})
-							res.end()
-						} else {
-							res.json({
-								"status": "ok",
-								"fontName": info.tables.name[1],
-								"fontStyle": info.tables.name[2],
-								"familyName": info.tables.name[6],
-								"fontFormat": ext,
-								"fontMimetype": 'font/' + ext,
-								"fontData": fontPath.href,
-								'fontBase64': dataUrl
-							});
-							res.end()
-						}
-					})
+					var fontPath = url.pathToFileURL(result.filePaths[0])
+					res.json({
+						"status": "ok",
+						"fontName": info.tables.name[1],
+						"fontStyle": info.tables.name[2],
+						"familyName": info.tables.name[6],
+						"fontFormat": ext,
+						"fontMimetype": 'font/' + ext,
+						"fontData": fontPath.href,
+						'fontBase64': dataUrl
+					});
+					res.end()
 				});
 			} catch (err) {
 				res.json({
@@ -700,6 +717,34 @@ app2.post('/saveCap', (req, res) => {
 	}
 })
 
+app2.post("/saveFont", (req, res) => {
+    const fontCanvas = Buffer.from(req.body.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+
+    const options = {
+        defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png'
+	}
+            
+	prepareImages()
+
+	async function prepareImages() {
+		let finalImage = Buffer.from(fontCanvas).toString('base64');
+		dialog.showSaveDialog(null, options).then((result) => {
+			if (!result.canceled) {
+				store.set("downloadPath", path.dirname(result.filePath))
+				fs.writeFile(result.filePath, finalImage, 'base64', function(err) {
+					console.log(err)
+				})
+				res.json({result: "success"})
+			} else {
+				res.json({result: "success"})
+			}
+		}).catch((err) => {
+			console.log(err);
+			res.json({result: "success"})
+		});
+	}
+})
+
 app2.post("/generateHeightMap", (req, res) => {
 	const jerseyLogoCanvas = Buffer.from(req.body.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const showPlanket = req.body.showPlanket
@@ -988,6 +1033,7 @@ app2.post('/saveUniform', (req, res) => {
 	const nameCanvas = Buffer.from(req.body.nameCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const heightMap = Buffer.from(req.body.heightMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const normalMap = Buffer.from(req.body.normalMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const fontCanvas = Buffer.from(req.body.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const text = req.body.text;
 	const tmpCapTexture = req.body.capTexture
 	const tmpJerseyTexture = req.body.jerseyTexture
@@ -1030,7 +1076,7 @@ app2.post('/saveUniform', (req, res) => {
 		var pantsTexture = __dirname+"/images/"+tmpPantsTexture
 	}
 
-	//fs.writeFileSync(app.getPath('downloads') + '/uniform_Unknown_Team_Home/uniform_' + req.body.name+'.uni', json)
+	fs.writeFileSync(app.getPath('downloads') + '/uniform_' + req.body.name+'.uni', json)
 
 	const output = fs.createWriteStream(tempDir + '/uniform_'+req.body.name+'.zip');
 
@@ -1126,6 +1172,11 @@ app2.post('/saveUniform', (req, res) => {
 		let pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(pantsBuffer, {name: "pants_"+req.body.name+".png"})
 		//await pantsBase.write(app.getPath('downloads') + '/pants_' + req.body.name+'.png')
+
+		// font
+		let fontBase = await Jimp.read(fontCanvas)
+		let fontBuffer = await fontBase.getBufferAsync(Jimp.MIME_PNG)
+		archive.append(fontBuffer, {name: req.body.name+".png"})
 
 		// jersey diffuse map
 		let jerseyBase = await Jimp.read(jerseyBelow)
@@ -1249,6 +1300,10 @@ app2.post('/saveUniform', (req, res) => {
 		archive.append(jerseyBakedBuffer, {name: "jerseys_"+req.body.name+"_textured.png"})
 		//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'_textured.png')
 
+/*  		fs.writeFile(app.getPath('desktop')+"/testoutput.uni", req.body.json, 'utf8', function(err) {
+            console.log(err)
+        }) */
+		
 		archive.append(JSON.stringify(swatchJSON, null, 2), {name: req.body.name+".pal"});
 		archive.append(json, {name: "uniform_"+req.body.name+".uni"})
 		archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });
@@ -1289,6 +1344,49 @@ app2.get("/loadUniform", (req, res) => {
 	})
 })
 
+app2.get("/localFontFolder", (req, res) => {
+	createJSON()
+
+	async function createJSON() {
+		const jsonArr = []
+		const jsonObj = {}
+		let info = await fontscan.getDirectoryFonts(userFontsFolder)
+		for (font of info) {
+			const ext = getExtension(font.path)
+			const fontPath = url.pathToFileURL(font.path)
+			const fontThumb = (fs.existsSync(userFontsFolder+"/"+font.family+".png")) ? userFontsFolder+"/"+font.family+".png" : "noimage"
+			const json = {
+				"status": "ok",
+				"fontName": font.family,
+				"fontStyle": font.style,
+				"familyName": font.family,
+				"fontFormat": ext,
+				"fontMimetype": 'font/' + ext,
+				"fontData": fontPath.href,
+				"fontPath": font.path,
+				"fontThumb": fontThumb
+			}
+			jsonArr.push(json)
+		}
+		jsonObj.result = "success"
+		jsonObj.fonts = jsonArr
+		res.json(jsonObj)
+		res.end()
+	}
+})
+
+app2.post('/generateThumbnail', (req, res) => {
+	const buffer = Buffer.from(req.body.thumb.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const name = req.body.name
+	Jimp.read(buffer, (err, image) => {
+		if (err) {
+			console.log(err);
+		} else {
+			image.write(userFontsFolder+"/"+name+".png");
+		}
+	})
+})
+
 app2.post('/setPreference', (req, res) => {
 	const pref = req.body.pref;
 	const val = req.body.val;
@@ -1296,16 +1394,26 @@ app2.post('/setPreference', (req, res) => {
 	res.end()
 });
 
+app2.post('/openFontFolder', (req, res) => {
+	shell.openPath(userFontsFolder)
+	res.end()
+})
+
 function createWindow () {
     const mainWindow = new BrowserWindow({
       width: 1400,
       height: 1020,
-      icon: (__dirname + '/images/ballcap.png'),
+      icon: (__dirname + '/images/icon.ico'),
       webPreferences: {
           nodeIntegration: true,
             contextIsolation: false 
       }
     })
+
+	watcher.on('add', (path, stats) => {
+		console.log(path)
+		mainWindow.webContents.send('updateFonts','click')
+	})
     
     const template = [
       ...(isMac ? [{
@@ -1351,6 +1459,11 @@ function createWindow () {
               accelerator: isMac ? 'Cmd+J' : 'Control+J',
               label: 'Save Jersey Only',
           },
+          {
+              click: () => mainWindow.webContents.send('save-font','click'),
+              accelerator: isMac ? 'Cmd+F' : 'Control+F',
+              label: 'Save Font Only',
+          },
 		  { type: 'separator' },
           {
               click: () => mainWindow.webContents.send('save-swatches','click'),
@@ -1362,6 +1475,15 @@ function createWindow () {
               accelerator: isMac ? 'Cmd+Shift+L' : 'Control+Shift+L',
               label: 'Load Palette',
           },
+		  { type: 'separator' },
+          {
+              click: () => mainWindow.webContents.send('updateFonts','click'),
+              label: 'Refresh User Fonts',
+          },
+		  {
+			click: () => mainWindow.webContents.send('openFontFolder','click'),
+			label: 'Open User Fonts Folder',
+		  },
 		  { type: 'separator' },
           isMac ? { role: 'close' } : { role: 'quit' }
           ]
@@ -1451,7 +1573,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredPlayerName=${preferredPlayerName}&preferredPlayerNumber=${preferredPlayerNumber}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}`);
     //mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}`);
 	
   
@@ -1459,7 +1581,7 @@ function createWindow () {
       shell.openExternal(url);
       return { action: 'deny' };
     });
-  
+
     // Open the DevTools.
     // mainWindow.maximize()
     // mainWindow.webContents.openDevTools()

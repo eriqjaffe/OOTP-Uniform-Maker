@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron')
+const { app, shell, ipcRenderer } = require('electron')
 
 ipcRenderer.on('load-uniform', (event, data) => {
     $("#load").trigger("click")
@@ -18,6 +18,10 @@ ipcRenderer.on('save-pants', (event, data) => {
 
 ipcRenderer.on('save-jersey', (event, data) => {
     $("#saveJersey").trigger("click")
+});
+
+ipcRenderer.on('save-font', (event, data) => {
+    $("#saveFont").trigger("click")
 });
 
 ipcRenderer.on('save-swatches', (event, data) => {
@@ -47,3 +51,11 @@ ipcRenderer.on('prefs', (event, data) => {
 ipcRenderer.on('update', (event, data) => {
     $("#checkForUpdates").trigger("click")
 });
+
+ipcRenderer.on('updateFonts', (event, data) => {
+    $("#localFontFolder").trigger("click")
+})
+
+ipcRenderer.on('openFontFolder', (event, data) => {
+    $("#openFontFolder").trigger("click")
+})
