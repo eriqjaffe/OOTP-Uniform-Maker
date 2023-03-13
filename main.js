@@ -19,6 +19,7 @@ const e = require('express');
 const { off } = require('process');
 const fontscan = require('fontscan')
 const chokidar = require('chokidar')
+const sharp = require('sharp')
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -721,7 +722,10 @@ app2.post("/saveFont", (req, res) => {
     const fontCanvas = Buffer.from(req.body.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 
     const options = {
-        defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png'
+        defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.webp',
+		filters: [
+            { name: 'WebP Image', extensions: ['webp'] },
+        ]
 	}
             
 	prepareImages()
@@ -731,9 +735,12 @@ app2.post("/saveFont", (req, res) => {
 		dialog.showSaveDialog(null, options).then((result) => {
 			if (!result.canceled) {
 				store.set("downloadPath", path.dirname(result.filePath))
-				fs.writeFile(result.filePath, finalImage, 'base64', function(err) {
+				sharp(fontCanvas)
+                	.webp({lossless:true})
+                	.toFile(result.filePath)
+				/* fs.writeFile(result.filePath, finalImage, 'base64', function(err) {
 					console.log(err)
-				})
+				}) */
 				res.json({result: "success"})
 			} else {
 				res.json({result: "success"})
@@ -1174,9 +1181,8 @@ app2.post('/saveUniform', (req, res) => {
 		//await pantsBase.write(app.getPath('downloads') + '/pants_' + req.body.name+'.png')
 
 		// font
-		let fontBase = await Jimp.read(fontCanvas)
-		let fontBuffer = await fontBase.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(fontBuffer, {name: req.body.name+".png"})
+		let fontBuffer = await sharp(fontCanvas).webp({lossless:true}).toBuffer()
+		archive.append(fontBuffer, {name: req.body.name+".webp"})
 
 		// jersey diffuse map
 		let jerseyBase = await Jimp.read(jerseyBelow)
