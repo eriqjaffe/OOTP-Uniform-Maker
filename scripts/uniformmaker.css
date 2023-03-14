@@ -20,7 +20,7 @@ body {
 	display: none;
 }
 
-.rangeButton {
+.rangeButton, .fontRangeButton {
 	padding-left:5px;
 	padding-right:5px;
 }
