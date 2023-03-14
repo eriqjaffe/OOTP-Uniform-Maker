@@ -7296,6 +7296,7 @@
 
 	$(".fontRange").on("change",function(e) {
 		const w = parseInt($(this).val())
+		$("#"+$(this).data("id")).val(w)
 		switch($(this).data("control")) {
 			case ("letter1Stroke"):
 				fontCanvas.getObjects('group').forEach(function(g) {
