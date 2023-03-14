@@ -2077,6 +2077,8 @@
 									<td style="text-align: center;">
 										<input type="button" class="button" id="customFontFace" value="Choose a Local Font...">
 										<input type="button" class="button" id="customFontLayer" value="Load Overlay Image">
+										<input type="button" class="button selectChars" id="selectLetters" data-chars="letters" value="Select All Letters">
+										<input type="button" class="button selectChars" id="selectNumbers" data-chars="numbers" value="Select All Numbers">
 										<input id="customFontLayerUploader" type="file" accept="image/*" style="display:none;"/>
 										<!--<input type="button" class="button" id="uploadTheFont" value="Upload Font" style="display:none;" />-->
 										<!--<input type="button" class="button" id="fitFont" value="temp button">-->
@@ -7274,8 +7276,6 @@
 			fontCanvas.renderAll()
 		}
 	})
-
-
 	
 	$(".fontRangeButton").on("click",function(e) {
 		if ($(this).val() == "-") {
@@ -7384,6 +7384,10 @@
 			}
 		}
 		fontCanvas.renderAll()
+	})
+
+	$(".selectChars").on("click",function(e) {
+		selectObjectsByIds(fontCanvas, $(this).data("chars") == "letters" ? letters : numbers)
 	})
 
 	function changeFont(arr, font) {
@@ -13881,6 +13885,16 @@
 		return -1
 	}
 
+	function selectObjectsByIds(canvas, ids) {
+		const objects = canvas.getObjects();
+		const selectedObjects = objects.filter((o) => ids.includes(o.id));
+		canvas.discardActiveObject();
+		var sel = new fabric.ActiveSelection(selectedObjects, {
+			canvas: canvas,
+		});
+		canvas.setActiveObject(sel);
+		canvas.requestRenderAll();
+	}
 
 </script>
 </html>
