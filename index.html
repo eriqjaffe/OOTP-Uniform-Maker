@@ -1394,15 +1394,15 @@
 												<td>
 													<label>Eyelets:&nbsp;</label>
 													<select id="eyeletGrouping">
-														<option value="groupedEyelets">Grouped</option>
-														<option value="individualEyelets" selected>Individual</option>
+														<option value="groupedEyelets" selected>Grouped</option>
+														<option value="individualEyelets">Individual</option>
 													</select>
 												</td>
 												<td style="text-align:right;">
-													<span id="groupedEyelets" style="display:none;">
+													<span id="groupedEyelets" style="display:inline-block;">
 														<input class="capSelector selector" type="text" id="eyeletGroupColor" data-element="eyeletGroupColor" data-canvas="above">
 													</span>
-													<span id="individualEyelets" style="display:inline-block;">
+													<span id="individualEyelets" style="display:none;">
 														<div>
 															<input class="capSelector selector" type="text" id="eyelet1Color" data-element="eyelet1Color" data-canvas="above">
 															<input class="capSelector selector" type="text" id="eyelet2Color" data-element="eyelet2Color" data-canvas="above">
@@ -1921,20 +1921,20 @@
 												<td>&nbsp;</td>
 												<td>Inner Stroke:</td>
 												<td style="text-align:right;">
-													<input type="button" id="letter1StrokeDown" class="button rangeButton letterToggle" value="-" data-number="letter1StrokeInput">
-													<input type="range" class="range letterToggle" id="letter1StrokeRange" data-id="letter1StrokeInput" data-control="letter1Stroke" value=8 min="0" max="20">
-													<input type="button" id="letter1StrokeUp" class="button rangeButton letterToggle" value="+" data-number="letter1StrokeInput">
-													<input type="number" id="letter1StrokeInput" class="strokeWidth letterToggle" data-range="letter1StrokeRange" value=8 min="0" max="20">
+													<input type="button" id="letter1StrokeDown" class="button fontRangeButton letterToggle" value="-" data-number="letter1StrokeInput">
+													<input type="range" class="fontRange letterToggle" id="letter1StrokeRange" data-id="letter1StrokeInput" data-control="letter1Stroke" value=8 min="0" max="20">
+													<input type="button" id="letter1StrokeUp" class="button fontRangeButton letterToggle" value="+" data-number="letter1StrokeInput">
+													<input type="number" id="letter1StrokeInput" class="fontStrokeWidth letterToggle" data-range="letter1StrokeRange" value=8 min="0" max="20">
 												</td>
 											</tr>
 											<tr class="color_tr">
 												<td>&nbsp;</td>
 												<td>Outer Stroke:</td>
 												<td style="text-align:right;">
-													<input type="button" id="letter2StrokeDown" class="button rangeButton letterToggle" value="-" data-number="letter2StrokeInput">
-													<input type="range" class="range letterToggle" id="letter2StrokeRange" data-id="letter2StrokeInput" data-control="letter2Stroke" value=16 min="0" max="40">
-													<input type="button" id="letter2StrokeUp" class="button rangeButton letterToggle" value="+" data-number="letter2StrokeInput">
-													<input type="number" id="letter2StrokeInput" class="strokeWidth letterToggle" data-range="letter2StrokeRange" value=16 min="0" max="40">
+													<input type="button" id="letter2StrokeDown" class="button fontRangeButton letterToggle" value="-" data-number="letter2StrokeInput">
+													<input type="range" class="fontRange letterToggle" id="letter2StrokeRange" data-id="letter2StrokeInput" data-control="letter2Stroke" value=16 min="0" max="40">
+													<input type="button" id="letter2StrokeUp" class="button fontRangeButton letterToggle" value="+" data-number="letter2StrokeInput">
+													<input type="number" id="letter2StrokeInput" class="fontStrokeWidth letterToggle" data-range="letter2StrokeRange" value=16 min="0" max="40">
 												</td>
 											</tr>
 											<tr class="color_tr">
@@ -2050,20 +2050,20 @@
 												<td>&nbsp;</td>
 												<td>Inner Stroke:</td>
 												<td style="text-align:right;">
-													<input type="button" id="number1StrokeDown" class="button rangeButton numberToggle" value="-" data-number="number1StrokeInput">
-													<input type="range" class="range numberToggle" id="number1StrokeRange" data-id="number1StrokeInput" data-control="number1Stroke" value=12 min="0" max="20">
-													<input type="button" id="number1StrokeUp" class="button rangeButton numberToggle" value="+" data-number="number1StrokeInput">
-													<input type="number" id="number1StrokeInput" class="strokeWidth numberToggle" data-range="number1StrokeRange" value=12 min="0" max="20">
+													<input type="button" id="number1StrokeDown" class="button fontRangeButton numberToggle" value="-" data-number="number1StrokeInput">
+													<input type="range" class="fontRange numberToggle" id="number1StrokeRange" data-id="number1StrokeInput" data-control="number1Stroke" value=12 min="0" max="20">
+													<input type="button" id="number1StrokeUp" class="button fontRangeButton numberToggle" value="+" data-number="number1StrokeInput">
+													<input type="number" id="number1StrokeInput" class="fontStrokeWidth numberToggle" data-range="number1StrokeRange" value=12 min="0" max="20">
 												</td>
 											</tr>
 											<tr class="color_tr">
 												<td>&nbsp;</td>
 												<td>Outer Stroke:</td>
 												<td style="text-align:right;">
-													<input type="button" id="number2StrokeDown" class="button rangeButton numberToggle" value="-" data-number="number2StrokeInput">
-													<input type="range" class="range numberToggle" id="number2StrokeRange" data-id="number2StrokeInput" data-control="number2Stroke" value=24 min="0" max="40">
-													<input type="button" id="number2StrokeUp" class="button rangeButton numberToggle" value="+" data-number="number2StrokeInput">
-													<input type="number" id="number2StrokeInput" class="strokeWidth numberToggle" data-range="number2StrokeRange" value=24 min="0" max="40">
+													<input type="button" id="number2StrokeDown" class="button fontRangeButton numberToggle" value="-" data-number="number2StrokeInput">
+													<input type="range" class="fontRange numberToggle" id="number2StrokeRange" data-id="number2StrokeInput" data-control="number2Stroke" value=24 min="0" max="40">
+													<input type="button" id="number2StrokeUp" class="button fontRangeButton numberToggle" value="+" data-number="number2StrokeInput">
+													<input type="number" id="number2StrokeInput" class="fontStrokeWidth numberToggle" data-range="number2StrokeRange" value=24 min="0" max="40">
 												</td>
 											</tr>
 											<tr class="color_tr">
@@ -2077,6 +2077,8 @@
 									<td style="text-align: center;">
 										<input type="button" class="button" id="customFontFace" value="Choose a Local Font...">
 										<input type="button" class="button" id="customFontLayer" value="Load Overlay Image">
+										<input type="button" class="button selectChars" id="selectLetters" data-chars="letters" value="Select All Letters">
+										<input type="button" class="button selectChars" id="selectNumbers" data-chars="numbers" value="Select All Numbers">
 										<input id="customFontLayerUploader" type="file" accept="image/*" style="display:none;"/>
 										<!--<input type="button" class="button" id="uploadTheFont" value="Upload Font" style="display:none;" />-->
 										<!--<input type="button" class="button" id="fitFont" value="temp button">-->
@@ -7274,6 +7276,63 @@
 			fontCanvas.renderAll()
 		}
 	})
+	
+	$(".fontRangeButton").on("click",function(e) {
+		if ($(this).val() == "-") {
+			$(this).next().val(parseInt($(this).next().val())-1);
+			$("#"+$(this).data("number")).val($(this).next().val())
+			$(this).next().trigger("change")
+		} else if ($(this).val() == "+") {
+			$(this).prev().val(parseInt($(this).prev().val())+1);
+			$("#"+$(this).data("number")).val($(this).prev().val())
+			$(this).prev().trigger("change")
+		}
+	})
+
+	$(".fontStrokeWidth").on("change",function(e) {
+		$("#"+$(this).data("range")).val($(this).val())
+		$("#"+$(this).data("range")).trigger("change")
+	})
+
+	$(".fontRange").on("change",function(e) {
+		const w = parseInt($(this).val())
+		switch($(this).data("control")) {
+			case ("letter1Stroke"):
+				fontCanvas.getObjects('group').forEach(function(g) {
+					if (!isNumeric(g.id)) {
+						g._objects[1].set("strokeWidth", w)
+					}
+				})
+				strokeWidth["letters1"] = w
+				break;
+			case ("letter2Stroke"):
+				fontCanvas.getObjects('group').forEach(function(g) {
+					if (!isNumeric(g.id)) {
+						g._objects[0].set("strokeWidth", w)
+					}
+				})
+				strokeWidth["letters2"] = w
+				break;
+			case ("number1Stroke"):
+				fontCanvas.getObjects('group').forEach(function(g) {
+					if (isNumeric(g.id)) {
+						g._objects[1].set("strokeWidth", w)
+					}
+				})
+				strokeWidth["numbers1"] = w
+				break;
+			case ("number2Stroke"):
+				fontCanvas.getObjects('group').forEach(function(g) {
+					if (isNumeric(g.id)) {
+						g._objects[0].set("strokeWidth", w)
+					}
+				})
+				strokeWidth["numbers2"] = w
+				break;
+		}
+
+		fontCanvas.renderAll()
+	})
 
 	$(".aspectToggle").on("change", function(e) {
 		var arr = ($(this).attr("id") == "numberScaling") ? numbers : letters
@@ -7325,6 +7384,10 @@
 			}
 		}
 		fontCanvas.renderAll()
+	})
+
+	$(".selectChars").on("click",function(e) {
+		selectObjectsByIds(fontCanvas, $(this).data("chars") == "letters" ? letters : numbers)
 	})
 
 	function changeFont(arr, font) {
@@ -7913,14 +7976,14 @@
 
 		var individualEyelets = new fabric.Group ([eyeletFillColor, eyelet1Color, eyelet2Color, eyelet3Color, eyelet4Color, eyelet5Color, eyelet6Color])
 		individualEyelets.set({
-			visible:true,
+			visible:false,
 			selectable:false,
 			id:'individualEyelets'
 		});
 
 		var groupedEyelets = new fabric.Group ([eyeletGroupFillColor, eyeletGroupColor])
 		groupedEyelets.set({
-			visible:false,
+			visible:true,
 			selectable:false,
 			id:'groupedEyelets'
 		});
@@ -11295,6 +11358,7 @@
 	})
 
 	$(".rangeButton").on("click",function(e) {
+		console.log("hello")
 		if ($(this).val() == "-") {
 			$(this).next().val(parseInt($(this).next().val())-1);
 			$("#"+$(this).data("span")).html($(this).next().val())
@@ -11302,6 +11366,7 @@
 		} else if ($(this).val() == "+") {
 			$(this).prev().val(parseInt($(this).prev().val())+1);
 			$("#"+$(this).data("span")).html($(this).prev().val())
+			$("#"+$(this).data("number")).val($(this).prev().val())
 			$(this).prev().trigger("change")
 		}
 		$("#"+$(this).data('span')).change();
@@ -11836,7 +11901,7 @@
 				text: textLine,
 				capLogoCanvas: capLogoCanvas.toDataURL(),
 				capBelow: capBelow.toDataURL(),
-				name: fileName.split(' ').join('_'),
+				name: fileName.split(' ').join('_').toLowerCase(),
 				capWatermarkColor: idealTextColor(capBelow.backgroundColor),
 				capTexture: ($("#capTextureSelect").val() == "custom") ? customCapTexture : $("#capTextureSelect").val(),
 			},
@@ -11921,7 +11986,7 @@
 				text: textLine,
 				pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
 				pantsBelow: pantsBelow.toDataURL(),
-				name: fileName.split(' ').join('_'),
+				name: fileName.split(' ').join('_').toLowerCase(),
 				pantsWatermarkColor: idealTextColor(pantsBelow.backgroundColor),
 				pantsTexture: ($("#pantsTextureSelect").val() == "custom") ? customPantsTexture : $("#pantsTextureSelect").val(),
 			},
@@ -12149,7 +12214,7 @@
 							//normalMap: normalMap,
 							jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
 							jerseyBelow: jerseyBelow.toDataURL(),
-							name: fileName.split(' ').join('_'),
+							name: fileName.split(' ').join('_').toLowerCase(),
 							jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
 							jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
 							showPlanket: showPlanket,
@@ -12265,7 +12330,7 @@
 			url: "http://127.0.0.1:"+port+"/saveFont",
 			dataType: "json",
 			data: {
-				name: fileName,
+				name: fileName.toLowerCase(),
 				fontCanvas: fontCanvas.toDataURL()
 			},
 			success: function(data) {
@@ -12627,7 +12692,7 @@
 							pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
 							pantsBelow: pantsBelow.toDataURL(),
 							fontCanvas: fontCanvas.toDataURL(),
-							name: fileName,
+							name: fileName.toLowerCase(),
 							showPlanket: showPlanket,
 							buttonPadSeams: buttonPadSeams,
 							seamsVisible: seamsVisible,
@@ -13537,7 +13602,7 @@
 			type: "POST",
 			url: "http://127.0.0.1:"+port+"/saveSwatches",
 			data: {
-				name: fileName, 
+				name: fileName.toLowerCase(), 
 				swatch1: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].text, 
 				swatch2: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].text, 
 				swatch3: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].text, 
@@ -13820,6 +13885,16 @@
 		return -1
 	}
 
+	function selectObjectsByIds(canvas, ids) {
+		const objects = canvas.getObjects();
+		const selectedObjects = objects.filter((o) => ids.includes(o.id));
+		canvas.discardActiveObject();
+		var sel = new fabric.ActiveSelection(selectedObjects, {
+			canvas: canvas,
+		});
+		canvas.setActiveObject(sel);
+		canvas.requestRenderAll();
+	}
 
 </script>
 </html>

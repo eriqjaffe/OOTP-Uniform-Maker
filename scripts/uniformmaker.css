@@ -20,10 +20,14 @@ body {
 	display: none;
 }
 
-.rangeButton {
+.rangeButton, .fontRangeButton {
+	font-family: "Rowdies", sans-serif;
+	font-weight: bold;
 	padding-left:5px;
 	padding-right:5px;
 }
+
+
 
 input {
 	font-family: 'BenchNine', sans-serif;
