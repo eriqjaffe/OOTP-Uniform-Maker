@@ -215,10 +215,19 @@
 							<td><label for="endYear">End:</label>
 								<input type="number" class="year" id="endYear" name="endYear" onkeypress="return isNumberKey(event)" style="width:35px;">
 							</td>
-						</tr>	
+						</tr>
+						<tr>
+							<td colspan="4"><center>
+									Team Display Colors:&nbsp;
+									<input type="text" id="exampleText" value="TEAM NAME" readonly>
+									<input class="teamSelector selector" type="text" id="teamBGColor">
+									<input class="teamSelector selector" type="text" id="teamTextColor">
+							</center></td>
+						</tr>
 					<table>
-					<div class="accordion">	
-                        <table style="width:100%; height:760px"><tr><td>
+					<div class="accordion">
+                        <table style="width:100%; height:760px;">
+						<tr><td>
                         <div id="tabContainer" class="skltbs-theme-light" data-skeletabs='{ "panelHeight": "adaptive", "keyboard": false, "startIndex": 0 }' style="position:absolute; top:60px;">
                             <ul class="skltbs-tab-group">
                                 <li class="skltbs-tab-item">
@@ -1353,7 +1362,7 @@
                                                 <td>&nbsp;</td>
                                                 <td>
 													<label>Texture:&nbsp;</label>
-													<select id="capTextureSelect">
+													<select id="capTextureSelect">capColor"
 														<option value="cap_texture_wool.png" selected>Wool</option>
 														<option value="cap_texture_gern44.png">Gern44</option>	
 														<option value="cap_texture_mottled.png">Mottled</option>
@@ -3164,6 +3173,61 @@
 			}
 		})
 	})
+
+	$("#teamBGColor").spectrum({
+		type: "color",
+		showAlpha: false,
+		showInput: true,
+		preferredFormat: prefs['preferredColorFormat'],
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		color: "#0C2340",
+		show: function(color) {
+			console.log(color)
+		},
+		move: function(color) {
+			$("#exampleText").css("background-color",color.toHexString())
+		},
+		change: function(color) {
+			$("#exampleText").css("background-color",color.toHexString())
+		},
+		hide: function(color) {
+			$("#exampleText").css("background-color",color.toHexString())
+		}
+	})
+
+	$("#teamTextColor").spectrum({
+		type: "color",
+		showAlpha: false,
+		showInput: true,
+		preferredFormat: prefs['preferredColorFormat'],
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		color: "#FFFFFF",
+		show: function(color) {
+			console.log(color)
+		},
+		move: function(color) {
+			$("#exampleText").css("color",color.toHexString())
+		},
+		change: function(color) {
+			$("#exampleText").css("color",color.toHexString())
+		},
+		hide: function(color) {
+			$("#exampleText").css("color",color.toHexString())
+		}
+	})
+
+	$("#teamName").on("change",function(e) {
+		$("#exampleText").val($(this).val().toUpperCase())
+	})
+
+	$("#teamName").on("keyup",function(e) {
+		$("#exampleText").val($(this).val().toUpperCase())
+	})
+
 
 	// JERSEY SPECIFIC
 
@@ -12383,6 +12447,17 @@
 		exportMeta.start = parseInt($("#startYear").val());
 		exportMeta.end = parseInt($("#endYear").val());
 		exportMeta.type = $("#uniformType").val()
+		exportMeta.backgroundColor = $("#teamBGColor").spectrum("get").toHexString()
+		exportMeta.textColor = $("#teamTextColor").spectrum("get").toHexString()
+		exportMeta.jerseyColor1 = $("#jerseyColor").spectrum("get").toHexString()
+		exportMeta.jerseyColor2 = $("#collarColor").spectrum("get").toHexString()
+		exportMeta.jerseyColor3 = $("#jerseyPinstripesColor").spectrum("get").toHexString()
+		exportMeta.capColor1 = $("#capColor").spectrum("get").toHexString()
+		exportMeta.capColor2 = $("#topsideBrimColor").spectrum("get").toHexString()
+		exportMeta.capColor2 = $("#squatcheeColor").spectrum("get").toHexString()
+		exportMeta.pantsColor1 = $("#pantsColor").spectrum("get").toHexString()
+		exportMeta.pantsColor2 = $("#belt").spectrum("get").toHexString()
+		exportMeta.pantsColor3 = $("#pantsPinstripes").spectrum("get").toHexString()
 
 		jerseySelectors.jerseyColor = { "disabled": $("#jerseyColor").prop("disabled"), "val": $("#jerseyColor").spectrum("get").toHexString() }
 		jerseySelectors.buttonSelector = { "disabled": $("#buttonSelector").prop("disabled"), "val": $("#buttonSelector").spectrum("get").toHexString() }
@@ -12714,7 +12789,19 @@
 							commonPalette: commonPalette,
 							brightness: $("#preferredHeightMapBrightness").val(),
 							heightMap: heightMap.src,		
-							normalMap: normalMap.toDataURL()
+							normalMap: normalMap.toDataURL(),
+							backgroundColor: $("#teamBGColor").spectrum("get").toHexString().slice(-6),
+							textColor: $("#teamTextColor").spectrum("get").toHexString().slice(-6),
+							jerseyColor1: $("#jerseyColor").spectrum("get").toHexString().slice(-6),
+							jerseyColor2:  $("#collarColor").spectrum("get").toHexString().slice(-6),
+							jerseyColor3: $("#jerseyPinstripesColor").spectrum("get").toHexString().slice(-6),
+							capColor1: $("#capColor").spectrum("get").toHexString().slice(-6),
+							capColor2: $("#topsideBrimColor").spectrum("get").toHexString().slice(-6),
+							capColor3: $("#squatcheeColor").spectrum("get").toHexString().slice(-6),
+							pantsColor1: $("#pantsColor").spectrum("get").toHexString().slice(-6),
+							pantsColor2: $("#belt").spectrum("get").toHexString().slice(-6),
+							pantsColor3: $("#pantsPinstripes").spectrum("get").toHexString().slice(-6),
+							type: $("#uniformType").val()
 						},
 						success: function(data) {
 							if (data.result == "error") {

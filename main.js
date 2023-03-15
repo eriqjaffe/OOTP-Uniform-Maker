@@ -20,6 +20,7 @@ const { off } = require('process');
 const fontscan = require('fontscan')
 const chokidar = require('chokidar')
 const sharp = require('sharp')
+const { create } = require('xmlbuilder2')
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -1052,6 +1053,8 @@ app2.post('/saveUniform', (req, res) => {
 	const seamsOnDiffuse = req.body.seamsOnDiffuse
 	const commonPalette = req.body.commonPalette
 	const json = Buffer.from(req.body.json, 'utf8')
+	const from = (req.body.from == null) ? "" : req.body.from
+	const to = (req.body.to == null) ? "" : req.body.to
 
 	const swatchJSON = {
 		name: req.body.name,
@@ -1061,6 +1064,19 @@ app2.post('/saveUniform', (req, res) => {
 		swatch4: req.body.swatch4,
 		commonPalette: commonPalette
 	}
+
+	const root = create({ version: '1.0', encoding: 'UTF-8' })
+		.ele("COLORS", {fileversion: "OOTP Developments 2022-08-12 09:30:00"})
+		.ele("TEAMCOLORS", {from: from, to: to, color1: req.body.backgroundColor, color: req.body.textColor})
+		.ele("NOTES").txt(" current team colors ").up()
+		.ele("UNIFORM", {name: req.body.type, from: from, to: to, showname: 'y', shownumber: 'y', highsocks: 'n', font: req.body.name})
+		.ele("NOTES").txt(req.body.type+" uniform").up()
+		.ele("CAP", {color1: req.body.capColor1, color2: req.body.capColor2, color3: req.body.capColor3, id: "", filname: "caps_"+req.body.name+".png"}).up()
+		.ele("JERSEY", {color1: req.body.jerseyColor1, color2: req.body.jerseyColor2, color3: req.body.jerseyColor3, id: "", filname: "jerseys_"+req.body.name+".png"}).up()
+		.ele("PANTS", {color1: req.body.pantsColor1, color2: req.body.pantsColor2, color3: req.body.pantsColor3, id: "", filname: "pants_"+req.body.name+".png"}).up()
+
+
+	const xml = root.end({prettyPrint:true})
 
 	if (tmpCapTexture.startsWith("data:image")) {
 		fs.writeFileSync(tempDir+"/tempCapTexture.png", tmpCapTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
@@ -1310,6 +1326,7 @@ app2.post('/saveUniform', (req, res) => {
             console.log(err)
         }) */
 		
+		archive.append(xml, {name: req.body.name+".xml"});
 		archive.append(JSON.stringify(swatchJSON, null, 2), {name: req.body.name+".pal"});
 		archive.append(json, {name: "uniform_"+req.body.name+".uni"})
 		archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });

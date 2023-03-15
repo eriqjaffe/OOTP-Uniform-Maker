@@ -1,6 +1,7 @@
 /*@import url('http://fonts.googleapis.com/css?family=Quicksand:400,700');*/
-@import url(https://fonts.googleapis.com/css?family=Quicksand:400,700|Lobster|Pacifico|Kaushan+Script|Courgette|Lobster+Two|Playball|Satisfy|Cookie|Damion|Berkshire+Swash|Oleo+Script|Yellowtail|Lily+Script+One|Grand+Hotel|Leckerli+One|Norican|Engagement|Graduate|Oleo+Script+Swash+Caps|UnifrakturMaguntia|Vibur|Trade+Winds|Condiment|Wellfleet|UnifrakturCook:700|Miniver|Pirata+One|Molle:400italic|New+Rocker|Germania+One|Chela+One|Croissant+One|Metal+Mania|Rubik+Mono+One|Rubik+One|Seymour+One|Rum+Raisin|Wendy+One|Cantora+One|Acme|Jockey+One|Viga|Alegreya+Sans+SC:400,700|Rowdies|Maiden+Orange|BenchNine);
-
+/* @import url(https://fonts.googleapis.com/css?family=Quicksand:400,700|Lobster|Pacifico|Kaushan+Script|Courgette|Lobster+Two|Playball|Satisfy|Cookie|Damion|Berkshire+Swash|Oleo+Script|Yellowtail|Lily+Script+One|Grand+Hotel|Leckerli+One|Norican|Engagement|Graduate|Oleo+Script+Swash+Caps|UnifrakturMaguntia|Vibur|Trade+Winds|Condiment|Wellfleet|UnifrakturCook:700|Miniver|Pirata+One|Molle:400italic|New+Rocker|Germania+One|Chela+One|Croissant+One|Metal+Mania|Rubik+Mono+One|Rubik+One|Seymour+One|Rum+Raisin|Wendy+One|Cantora+One|Acme|Jockey+One|Viga|Alegreya+Sans+SC:400,700|Rowdies|Maiden+Orange|BenchNine); */
+@import url('http://fonts.googleapis.com/css?family=BenchNine|Rowdies');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
 
 body {
 	font-family: 'BenchNine', sans-serif;
@@ -9,6 +10,19 @@ body {
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-position: center bottom;	
+}
+
+#tabContainer {
+	margin-top: 30px;
+}
+
+#exampleText {
+	width: 200px;
+	text-align: center;
+	font-family: 'Roboto', sans-serif;
+	background-color: #0C2340;
+	color: #FFFFFF;
+	font-size: 1.2em;
 }
 
 .button {

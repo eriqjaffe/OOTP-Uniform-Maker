@@ -37,7 +37,8 @@
     "semver": "^7.3.7",
     "sharp": "^0.31.3",
     "svgdom": "^0.1.10",
-    "ttfinfo": "^0.2.0"
+    "ttfinfo": "^0.2.0",
+    "xmlbuilder2": "^3.0.2"
   },
   "build": {
     "appId": "com.ootputilities.uniformmaker",
