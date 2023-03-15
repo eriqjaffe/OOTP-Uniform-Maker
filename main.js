@@ -458,7 +458,9 @@ app2.post('/jitterText', (req, res) => {
 	var fill = req.body.fill;
 	var stroke1 = req.body.stroke1Color;
 	var stroke2 = req.body.stroke2Color;
-	var font = fontArray[req.body.font];
+	var stroke1Width = req.body.stroke1Width;
+	var stroke2Width = req.body.stroke2Width;
+	var font = req.body.font;
 	var size = req.body.size;
 	var h = parseInt(req.body.hSpacing);
 	var v = parseInt(req.body.vSpacing);
@@ -475,7 +477,7 @@ app2.post('/jitterText', (req, res) => {
 	if (req.body.font.substring(0,5) === "file:") {
 		var buff = fs.readFileSync(url.fileURLToPath(req.body.font));
 	} else {
-		var buff = fs.readFileSync(__dirname+'\\fonts\\'+font);
+		var buff = fs.readFileSync(font);
 	}
 	var font_data = 'data:'+font_mimetype+';charset=ascii;base64,' + buff.toString('base64')
 
@@ -506,7 +508,7 @@ app2.post('/jitterText', (req, res) => {
 			//text.x(x)
 			text.cx(x)
 			text.y(y)
-			text.stroke({ color: stroke2, width: 10 })
+			text.stroke({ color: stroke2, width: stroke2Width })
 			x += h*2;
 			y += v*2;
 		}
@@ -525,7 +527,7 @@ app2.post('/jitterText', (req, res) => {
 			//text.x(x)
 			text.cx(x)
 			text.y(y)
-			text.stroke({ color: stroke1, width: 6 })
+			text.stroke({ color: stroke1, width: stroke1Width })
 			x += h*2;
 			y += v*2;
 		}

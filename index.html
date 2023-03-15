@@ -897,7 +897,7 @@
 										<table style="width:482px;" class="ms-jersey-container">
 											<tr>
 												<td style="width:20%;">
-													<select id="warpEffect" class="msDropDown jerseyTextOption" style="width:100%;" is="ms-dropdown">
+													<select id="warpEffect" class="msDropDown jerseyTextOption" style="width:100%;" is="ms-dropdown" data-visible-rows="8">
 														<option value="none" data-image="./images/none.png"></option>
 														<option value="arch" data-value="15" data-image="./images/arched.png"></option>
 														<option value="arc" data-value="70" data-image="./images/arced.png"></option>
@@ -5188,6 +5188,12 @@
 			}
 			if (imNeeded) {
 				warpText()
+			}
+			if (diagNeeded) {
+				diagonalText("diag");
+			}
+			if (vertNeeded) {
+				diagonalText("vert");
 			}
 		})
 		
@@ -10744,10 +10750,11 @@
 	function diagonalText(type) {
 		const hSpacing = (type == "diag") ? $("#hSpacing").val() : 0
 		const vSpacing = (type == "diag") ? $("#vSpacing").val() : $("#vSpacing2").val()
-		var result = customFonts.filter(obj => {
+/* 		var result = customFonts.filter(obj => {
   			return obj.familyName === wordmarkText.fontFamily
 		})
-		const font = (result.length > 0) ? result[0].fontData : wordmarkText.fontFamily.replace(/\s/g,'').replace(/"/g,"")
+		const font = (result.length > 0) ? result[0].fontData : wordmarkText.fontFamily.replace(/\s/g,'').replace(/"/g,"") */
+		const font = $("#jerseyWordmarkSelect").val()
 		$("#overlay").css("display","inline-block");
 		var objects = jerseyLogoCanvas.getObjects();
 		for (x in objects) {
@@ -10755,10 +10762,23 @@
 				jerseyLogoCanvas.remove(objects[x]);
 			}
 		}
+		console.log(wordmarkText)
 		$.ajax({
 			type: "POST",
 			url: "http://127.0.0.1:"+port+"/jitterText",
-			data: {text:wordmarkText.text, font:font, size:wordmarkText.fontSize, fill:wordmarkText.fill, fillVisible:wordmarkText.visible, stroke1Visible:wordmarkTextStroke1.visible, stroke1Color:wordmarkTextStroke1.stroke, stroke2Visible:wordmarkTextStroke2.visible, stroke2Color:wordmarkTextStroke2.stroke,hSpacing:hSpacing,vSpacing:vSpacing},
+			data: {
+				text:$("#wordmarkTextBox").val(), 
+				font:font, size:50, 
+				fill:wordmarkText.fill, 
+				fillVisible:wordmarkText.visible, 
+				stroke1Visible:wordmarkTextStroke1.visible, 
+				stroke1Color:wordmarkTextStroke1.stroke, 
+				stroke1Width:wordmarkTextStroke1.strokeWidth,
+				stroke2Visible:wordmarkTextStroke2.visible, 
+				stroke2Color:wordmarkTextStroke2.stroke,
+				stroke2Width:wordmarkTextStroke2.strokeWidth,
+				hSpacing:hSpacing,
+				vSpacing:vSpacing},
 			success: function(data) {
 				var imgObj = new Image();
 				imgObj.src = data;
