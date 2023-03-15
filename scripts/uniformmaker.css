@@ -23,6 +23,7 @@ body {
 	background-color: #0C2340;
 	color: #FFFFFF;
 	font-size: 1.2em;
+	border: 1px solid #999999;
 }
 
 .button {
