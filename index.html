@@ -3365,6 +3365,12 @@
 					if (imNeeded) {
 						warpText()
 					}
+					if (diagNeeded) {
+						diagonalText("diag");
+					}
+					if (vertNeeded) {
+						diagonalText("vert");
+					}
 				}
 			},
 			change: function(color) {
@@ -3406,6 +3412,12 @@
 				if ($(this).hasClass('jerseyTextColorSelector')) {
 					if (imNeeded) {
 						warpText()
+					}
+					if (diagNeeded) {
+						diagonalText("diag");
+					}
+					if (vertNeeded) {
+						diagonalText("vert");
 					}
 				}
 				if (color !=  null) {
@@ -3459,6 +3471,12 @@
 				if ($(this).hasClass('jerseyTextColorSelector')) {
 					if (imNeeded) {
 						warpText()
+					}
+					if (diagNeeded) {
+						diagonalText("diag");
+					}
+					if (vertNeeded) {
+						diagonalText("vert");
 					}
 				}
 			}
@@ -10751,12 +10769,8 @@
 	}
 
 	function diagonalText(type) {
-		const hSpacing = (type == "diag") ? $("#hSpacing").val() : 0
-		const vSpacing = (type == "diag") ? $("#vSpacing").val() : $("#vSpacing2").val()
-/* 		var result = customFonts.filter(obj => {
-  			return obj.familyName === wordmarkText.fontFamily
-		})
-		const font = (result.length > 0) ? result[0].fontData : wordmarkText.fontFamily.replace(/\s/g,'').replace(/"/g,"") */
+		const h = (type == "diag") ? parseInt($("#hSpacing").val()) : 0
+		const v = (type == "diag") ? parseInt($("#vSpacing").val()) : parseInt($("#vSpacing2").val())
 		const font = $("#jerseyWordmarkSelect").val()
 		$("#overlay").css("display","inline-block");
 		var objects = jerseyLogoCanvas.getObjects();
@@ -10765,67 +10779,122 @@
 				jerseyLogoCanvas.remove(objects[x]);
 			}
 		}
-		console.log(wordmarkText)
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/jitterText",
-			data: {
-				text:$("#wordmarkTextBox").val(), 
-				font:font, size:50, 
-				fill:wordmarkText.fill, 
-				fillVisible:wordmarkText.visible, 
-				stroke1Visible:wordmarkTextStroke1.visible, 
-				stroke1Color:wordmarkTextStroke1.stroke, 
-				stroke1Width:wordmarkTextStroke1.strokeWidth,
-				stroke2Visible:wordmarkTextStroke2.visible, 
-				stroke2Color:wordmarkTextStroke2.stroke,
-				stroke2Width:wordmarkTextStroke2.strokeWidth,
-				hSpacing:hSpacing,
-				vSpacing:vSpacing},
-			success: function(data) {
-				var imgObj = new Image();
-				imgObj.src = data;
-				imgObj.onload = function () {
-					var image = new fabric.Image(imgObj);
-					image.set({
-						originX: 'center',
-						originY: 'center',
-						left: 256,
-						top: 750,
-						perPixelTargetFind: true,
-						centeredScaling: true,
-						centeredRotation: true,
-						borderColor: 'red',
-						cornerColor: 'yellow',
-						cornerSize: 12,
-						name: 'warpedText',
-						id: 'warpedText',
-						transparentCorners: false,
-						scaleX: 0.5,
-						scaleY: 0.5
-					});
-					
-					image.filters.push(new fabric.Image.filters.Resize({
-							resizeType: 'lanczos', // typo fixed
-							lanczosLobes: 2 // typo fixed
-					}));
-					
-					image.on('object:modified',function() {
-						wmLeft = image.getBoundingRect()['left'];
-						wmTop = image.getBoundingRect()['top'];
-					});
-					
-					var objects = jerseyLogoCanvas.getObjects();
-					for (x in objects) {
-						if (objects[x].id == "wordmark") {
-							objects[x].visible = false;
-						}
-					}
 
-					jerseyLogoCanvas.add(image);
-					jerseyLogoCanvas.renderAll();
-					$("#overlay").css("display","none");
+		opentype.load(font, (err,font) => {
+			if (err || !font) {
+				console.log(err)
+				return;
+			}
+
+			nameCanvas.clear()
+
+			var diag = $("#wordmarkTextBox").val().split("");
+			var x = 50
+			var y = 50
+
+			var group = new fabric.Group ([],{
+				visible: true,
+				id:'wordmark',
+				borderColor: 'red',
+				cornerColor: 'yellow',
+				cornerSize: 12,
+				transparentCorners: false,
+				originX: 'center',
+				originY: 'center'
+			})
+
+			for (chr of diag) {
+				const path = font.getPath(chr,y,x,100)
+				const svgPath = path.toPathData(5)
+
+				wordmarkText = new fabric.Path(svgPath, {
+					left: x*2,
+					top: y*2,
+					originX: 'center',
+					originY: 'center',
+					centeredScaling: true,
+					centeredRotation: true,
+					fill: $("#wordmarkTextColor").spectrum("get").toHexString(),
+					stroke: $("#wordmarkTextColor").spectrum("get").toHexString(),
+					strokeWidth: 0
+				})
+			
+				wordmarkTextStroke1 = new fabric.Path(svgPath, {
+					left: x*2,
+					top: y*2,
+					originX: 'center',
+					originY: 'center',
+					centeredScaling: true,
+					centeredRotation: true,
+					stroke: $("#wordmarkTextStroke1Color").spectrum("get").toHexString(),
+					strokeWidth: parseInt($("#wordmarkTextStroke1StrokeWidth").val())*2,
+					strokeLineCap: "round",
+					fill: $("#wordmarkTextStroke1Color").spectrum("get").toHexString(),
+				})
+			
+				wordmarkTextStroke2 = new fabric.Path(svgPath, {
+					left: x*2,
+					top: y*2,
+					originX: 'center',
+					originY: 'center',
+					centeredScaling: true,
+					centeredRotation: true,
+					stroke: $("#wordmarkTextStroke2Color").spectrum("get").toHexString(),
+					strokeWidth: parseInt($("#wordmarkTextStroke2StrokeWidth").val())*2,
+					strokeLineCap: "round",
+					fill: $("#wordmarkTextStroke2Color").spectrum("get").toHexString(),
+				})
+
+				group.addWithUpdate(wordmarkTextStroke2)
+				group.addWithUpdate(wordmarkTextStroke1)
+				group.addWithUpdate(wordmarkText)
+
+				x += h*1.3;
+				y += v*1.3;
+			}
+
+			var imgObj = new Image();
+			imgObj.src = group.toDataURL();
+			imgObj.onload = function () {
+				var image = new fabric.Image(imgObj);
+				image.set({
+					originX: 'center',
+					originY: 'center',
+					left: 256,
+					top: 750,
+					perPixelTargetFind: true,
+					centeredScaling: true,
+					centeredRotation: true,
+					borderColor: 'red',
+					cornerColor: 'yellow',
+					cornerSize: 12,
+					name: 'warpedText',
+					id: 'warpedText',
+					transparentCorners: false,
+					scaleX: 0.5,
+					scaleY: 0.5
+				});
+				
+				image.filters.push(new fabric.Image.filters.Resize({
+						resizeType: 'lanczos', // typo fixed
+						lanczosLobes: 2 // typo fixed
+				}));
+				
+				image.on('object:modified',function() {
+					wmLeft = image.getBoundingRect()['left'];
+					wmTop = image.getBoundingRect()['top'];
+				});
+				
+				var objects = jerseyLogoCanvas.getObjects();
+				for (x in objects) {
+					if (objects[x].id == "wordmark") {
+						objects[x].visible = false;
+					}
 				}
+
+				jerseyLogoCanvas.add(image);
+				jerseyLogoCanvas.renderAll();
+				$("#overlay").css("display","none");
 			}
 		})
 	}
@@ -13281,6 +13350,12 @@
 				case "wordmark":
 					if (imNeeded) {
 						warpText();
+					}
+					if (diagNeeded) {
+						diagonalText("diag");
+					}
+					if (vertNeeded) {
+						diagonalText("vert");
 					}
 					break;
 				case "playerName":
