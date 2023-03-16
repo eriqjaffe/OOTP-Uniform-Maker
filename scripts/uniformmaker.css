@@ -1,5 +1,3 @@
-/*@import url('http://fonts.googleapis.com/css?family=Quicksand:400,700');*/
-/* @import url(https://fonts.googleapis.com/css?family=Quicksand:400,700|Lobster|Pacifico|Kaushan+Script|Courgette|Lobster+Two|Playball|Satisfy|Cookie|Damion|Berkshire+Swash|Oleo+Script|Yellowtail|Lily+Script+One|Grand+Hotel|Leckerli+One|Norican|Engagement|Graduate|Oleo+Script+Swash+Caps|UnifrakturMaguntia|Vibur|Trade+Winds|Condiment|Wellfleet|UnifrakturCook:700|Miniver|Pirata+One|Molle:400italic|New+Rocker|Germania+One|Chela+One|Croissant+One|Metal+Mania|Rubik+Mono+One|Rubik+One|Seymour+One|Rum+Raisin|Wendy+One|Cantora+One|Acme|Jockey+One|Viga|Alegreya+Sans+SC:400,700|Rowdies|Maiden+Orange|BenchNine); */
 @import url('http://fonts.googleapis.com/css?family=BenchNine|Rowdies');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
 
@@ -38,8 +36,6 @@ body {
 	padding-left:5px;
 	padding-right:5px;
 }
-
-
 
 input {
 	font-family: 'BenchNine', sans-serif;
@@ -118,8 +114,6 @@ td {
 	-webkit-border-radius: 5px 5px 0 0;
 	border-radius: 5px 5px 0 0;
  	background: #103959;
-/*	background-repeat: no-repeat;
-	background-position: right 50%; */
 }
 
 .locked-active-header {
@@ -178,8 +172,6 @@ td {
 
 .pants-accord-content { display: none; }
 
-
-
 .jersey-accord-header {
 	font-size: 16px;
 	background: #ebebeb;
@@ -225,8 +217,6 @@ td {
 }
 
 .jersey-accord-content { display: none; }
-
-
 
 .cap-accord-header {
 	font-size: 16px;
@@ -367,10 +357,6 @@ a.dd-option:hover{
 	position:absolute;
 	z-index:3;
 	display:none; 
-	/* background: rgba(0,0,0,0.5);
-	background-position: center;
-	background-repeat: no-repeat;
-	display:none; */
 }
 
 #overlay {
@@ -381,10 +367,6 @@ a.dd-option:hover{
 	position:absolute;
 	z-index:2;
 	pointer-events:none;    
-	/* background: rgba(0,0,0,0.5);
-	background-position: center;
-	background-repeat: no-repeat;
-	display:none; */
 }
 
 #jerseyOverlay {
@@ -466,13 +448,10 @@ fieldset {
 	width: 512px;
 	height: 50px;
 	background-color: rgba(255,255,255,0.5);
-	
 	-moz-background-clip: padding; 
 	-webkit-background-clip: padding; 
-	background-clip: padding-box;
-				 
-	border: 8px solid rgba(255,255,255,0.5);
-				
+	background-clip: padding-box;			 
+	border: 8px solid rgba(255,255,255,0.5);		
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px; 
