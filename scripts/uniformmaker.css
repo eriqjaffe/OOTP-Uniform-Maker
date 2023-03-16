@@ -12,18 +12,15 @@ body {
 	background-position: center bottom;	
 }
 
-#tabContainer {
-	margin-top: 30px;
-}
-
 #exampleText {
-	width: 200px;
 	text-align: center;
 	font-family: 'Roboto', sans-serif;
 	background-color: #0C2340;
 	color: #FFFFFF;
 	font-size: 1.2em;
 	border: 1px solid #999999;
+	text-overflow:ellipsis;
+	text-shadow: 1px 1px 3px #000000;
 }
 
 .button {
@@ -466,7 +463,6 @@ a.dd-option:hover{
 }
 
 fieldset {
-	margin-top:20px;
 	width: 512px;
 	height: 50px;
 	background-color: rgba(255,255,255,0.5);
