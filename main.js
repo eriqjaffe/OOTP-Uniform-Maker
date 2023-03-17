@@ -21,6 +21,7 @@ const fontscan = require('fontscan')
 const chokidar = require('chokidar')
 const sharp = require('sharp')
 const { create } = require('xmlbuilder2')
+const increment = require('add-filename-increment');
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -560,7 +561,8 @@ app2.post('/jitterText', (req, res) => {
 
 app2.post('/saveSwatches', (req, res) => {
 	const options = {
-		defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')) + '/' + req.body.name+'.pal'
+		//defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')) + '/' + req.body.name+'.pal'
+		defaultPath: increment(store.get("downloadSwatchPath", app.getPath('downloads')) + '/' + req.body.name+'.pal',{fs: true})
 	}
 
 	dialog.showSaveDialog(null, options).then((result) => {
@@ -617,7 +619,8 @@ app2.post('/savePants', (req, res) => {
 	const tmpPantsTexture = req.body.pantsTexture
 
 	const options = {
-		defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png'
+		//defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png'
+		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png',{fs: true})
 	}
 
 	if (tmpPantsTexture.startsWith("data:image")) {
@@ -670,7 +673,8 @@ app2.post('/saveCap', (req, res) => {
 	const tmpCapTexture = req.body.capTexture
 
 	const options = {
-		defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png'
+		//defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png'
+		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png',{fs: true})
 	}
 
 	if (tmpCapTexture.startsWith("data:image")) {
@@ -720,7 +724,8 @@ app2.post("/saveFont", (req, res) => {
     const fontCanvas = Buffer.from(req.body.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 
     const options = {
-        defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.webp',
+        //defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.webp',
+		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.webp',{fs: true}),
 		filters: [
             { name: 'WebP Image', extensions: ['webp'] },
         ]
@@ -851,7 +856,8 @@ app2.post('/saveJersey', (req, res) => {
 	output.on('close', function() {
 		var data = fs.readFileSync(tempDir + '/'+req.body.name+'.zip');
 		var saveOptions = {
-		  defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.zip'
+		  //defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.zip'
+		  defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.zip',{fs: true})
 		}
 		dialog.showSaveDialog(null, saveOptions).then((result) => { 
 		  if (!result.canceled) {
@@ -1105,7 +1111,7 @@ app2.post('/saveUniform', (req, res) => {
 	output.on('close', function() {
 		var data = fs.readFileSync(tempDir + '/uniform_'+req.body.name+'.zip');
 		var saveOptions = {
-		  defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/uniform_' + req.body.name+'.zip'
+		  defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/uniform_' + req.body.name+'.zip',{fs: true})
 		}
 		dialog.showSaveDialog(null, saveOptions).then((result) => { 
 		  if (!result.canceled) {
