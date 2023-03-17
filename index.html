@@ -1827,7 +1827,7 @@
                                     <div class="cap-accord-content" style="display:inline;">  
                                         <table style="width:475px;" class="ms-letter-container">
 											<tr class="color_tr">
-												<td class="checkCell"><input type="checkbox" class="fontToggle" data-toggle="letters" checked></td>
+												<td class="checkCell"><input type="checkbox" id="lettersVisible" class="fontToggle" data-toggle="letters" checked></td>
 												<td>Letters:</td>
 												<td style="text-align:right;">
 													<input class="selector letSelector fontSelector" type="text" id="lettersFill" data-element="lettersFill">
@@ -1957,7 +1957,7 @@
 										<hr>
 										<table style="width:100%;" class="ms-number-container">
 											<tr class="color_tr">
-												<td class="checkCell"><input type="checkbox" class="fontToggle" data-toggle="numbers" checked></td>
+												<td class="checkCell"><input type="checkbox" id="numbersVisible" class="fontToggle" data-toggle="numbers" checked></td>
 												<td><label>Numbers: </label></td>
 												<td style="text-align:right;">
 													<input class="selector numSelector fontSelector" type="text" id="numbersFill" data-element="numbersFill">
@@ -12891,7 +12891,9 @@
 							pantsColor1: $("#pantsColor").spectrum("get").toHexString().slice(-6),
 							pantsColor2: $("#belt").spectrum("get").toHexString().slice(-6),
 							pantsColor3: $("#pantsPinstripes").spectrum("get").toHexString().slice(-6),
-							type: $("#uniformType").val()
+							type: $("#uniformType").val(),
+							lettersVisible: $("#lettersVisible").is(":checked") ? "y" : "n",
+							numbersVisible: $("#numbersVisible").is(":checked") ? "y" : "n"
 						},
 						success: function(data) {
 							if (data.result == "error") {

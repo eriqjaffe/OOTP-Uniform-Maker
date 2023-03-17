@@ -1052,6 +1052,8 @@ app2.post('/saveUniform', (req, res) => {
 	const json = Buffer.from(req.body.json, 'utf8')
 	const from = (req.body.from == null) ? "" : req.body.from
 	const to = (req.body.to == null) ? "" : req.body.to
+	const lettersVisible = req.body.lettersVisible
+	const numbersVisible = req.body.numbersVisible
 
 	const swatchJSON = {
 		name: req.body.name,
@@ -1066,7 +1068,7 @@ app2.post('/saveUniform', (req, res) => {
 		.ele("COLORS", {fileversion: "OOTP Developments 2022-08-12 09:30:00"})
 		.ele("TEAMCOLORS", {from: from, to: to, color1: req.body.backgroundColor, color: req.body.textColor})
 		.ele("NOTES").txt(" current team colors ").up()
-		.ele("UNIFORM", {name: req.body.type, from: from, to: to, showname: 'y', shownumber: 'y', highsocks: 'n', font: req.body.name})
+		.ele("UNIFORM", {name: req.body.type, from: from, to: to, showname: lettersVisible, shownumber: numbersVisible, highsocks: 'n', font: req.body.name})
 		.ele("NOTES").txt(req.body.type+" uniform").up()
 		.ele("CAP", {color1: req.body.capColor1, color2: req.body.capColor2, color3: req.body.capColor3, id: "", filname: "caps_"+req.body.name+".png"}).up()
 		.ele("JERSEY", {color1: req.body.jerseyColor1, color2: req.body.jerseyColor2, color3: req.body.jerseyColor3, id: "", filname: "jerseys_"+req.body.name+".png"}).up()
