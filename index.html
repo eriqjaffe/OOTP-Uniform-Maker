@@ -10772,7 +10772,6 @@
 		const h = (type == "diag") ? parseInt($("#hSpacing").val()) : 0
 		const v = (type == "diag") ? parseInt($("#vSpacing").val()) : parseInt($("#vSpacing2").val())
 		const font = $("#jerseyWordmarkSelect").val()
-		$("#overlay").css("display","inline-block");
 		var objects = jerseyLogoCanvas.getObjects();
 		for (x in objects) {
 			if (objects[x].get('name') == "warpedText") {
@@ -10894,7 +10893,6 @@
 
 				jerseyLogoCanvas.add(image);
 				jerseyLogoCanvas.renderAll();
-				$("#overlay").css("display","none");
 			}
 		})
 	}
