@@ -3105,37 +3105,26 @@
 						var thumb = null;
 						const name = result.fontName
 						const value = result.fontPath
-						const fontThumb = result.fontThumb
 						opentype.load(result.fontPath, (err,font) => {
 							if (err || !font) {
 								console.log(err)
 								return;
 							}
 							
-							const thumbText = font.getPath("ABC 123", 0, 0, 96)
-							const outPath = thumbText.toPathData(5)
-	
-							if (fontThumb == "noimage") {
-								const foo = new fabric.Path(outPath, {
-									fill: 'black',
-									top: 0,
-									left: 0
-								})
+							var thumbText = font.getPath("ABC 123", 0, 0, 96)
+							var outPath = thumbText.toPathData(5)
 
-								thumb = foo.toDataURL()
+							thumbText = new fabric.Path(outPath, {
+								left: 0,
+								originX: 'center',
+								originY: 'center',
+								centeredScaling: true,
+								centeredRotation: true,
+								fill: 'black',
+								height: '80px'
+							})
 
-								$.ajax({
-									type: "POST",
-									url: "http://127.0.0.1:"+port+"/generateThumbnail",
-									data: {
-										thumb: thumb,
-										name: name
-									},
-									success: function(data) {}
-								})
-							} else {
-								thumb = fontThumb;
-							}
+							thumb = thumbText.toDataURL()
 
 							if (findIndexByText(letterDropdown, name) == -1) {
 								letterDropdown.add({text:name, value:value, image:thumb},0)
