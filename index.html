@@ -1702,12 +1702,12 @@
 												<td style="text-align:center;">
 													<input type="checkbox" class="capTextToggle" data-group="textLogo" data-id="capLogoTextStroke1" id="capLogoStroke1ColorCheck" checked>
 													<label>Width:&nbsp;</label>
-													<input type="number" id="capLogoStroke1Width" class="capTextToggle strokeWidth" data-group="textLogo" data-id="capLogoTextStroke1" data-canvas="capLogoCanvas" value="4" min="0" max="20">
+													<input type="number" id="capLogoStroke1Width" class="strokeWidth" data-group="textLogo" data-id="capLogoTextStroke1" data-canvas="capLogoCanvas" value="4" min="0" max="20">
 													<input class="capSelector textColorSelector selector" type="text" id="capLogoStroke1Color" data-element="capLogoTextStroke1" data-canvas="above">
 												</td>
 												<td style="text-align:center;"><input type="checkbox" class="capTextToggle" data-group="textLogo" data-id="capLogoTextStroke2" id="capLogoStroke2ColorCheck" checked>
 													<label>Width:&nbsp;</label>
-													<input type="number" id="capLogoStroke2Width" class="capTextToggle strokeWidth" data-group="textLogo" data-id="capLogoTextStroke2" data-canvas="capLogoCanvas" value="6" min="0" max="20">
+													<input type="number" id="capLogoStroke2Width" class="strokeWidth" data-group="textLogo" data-id="capLogoTextStroke2" data-canvas="capLogoCanvas" value="6" min="0" max="20">
 													<input class="capSelector textColorSelector selector" type="text" id="capLogoStroke2Color" data-element="capLogoTextStroke2" data-canvas="above">
 												</td>
 											</tr>
@@ -1727,13 +1727,13 @@
 												<td style="text-align:center;">
 													<input type="checkbox" class="capText2Toggle" data-group="textLogo2" data-id="capLogo2TextStroke1" id="capLogo2Stroke1ColorCheck" checked>
 													<label>Width:&nbsp;</label>
-													<input type="number" id="capLogo2Stroke1Width" class="capText2Toggle strokeWidth" data-group="textLogo2" data-id="capLogo2TextStroke2" data-canvas="capLogoCanvas" value="4" min="0" max="20">
+													<input type="number" id="capLogo2Stroke1Width" class="strokeWidth" data-group="textLogo2" data-id="capLogo2TextStroke1" data-canvas="capLogoCanvas" value="4" min="0" max="20">
 													<input class="capSelector text2ColorSelector selector" type="text" id="capLogo2Stroke1Color" data-element="capLogo2TextStroke1" data-canvas="above">
 												</td>
 												<td style="text-align:center;">
-													<input type="checkbox" class="capText2Toggle" data-group="textLogo2" data-id="capLogo2TextStroke2" id="capLogo2Stroke2Color" checked>
+													<input type="checkbox" class="capText2Toggle" data-group="textLogo2" data-id="capLogo2TextStroke2" id="capLogo2Stroke2ColorCheck" checked>
 													<label>Width:&nbsp;</label>
-													<input type="number" id="capLogo2Stroke2Width" class="capText2Toggle strokeWidth" data-group="textLogo2" data-id="capLogo2TextStroke2" data-canvas="capLogoCanvas" value="6" min="0" max="20">
+													<input type="number" id="capLogo2Stroke2Width" class="strokeWidth" data-group="textLogo2" data-id="capLogo2TextStroke2" data-canvas="capLogoCanvas" value="6" min="0" max="20">
 													<input class="capSelector text2ColorSelector selector" type="text" id="capLogo2Stroke2Color" data-element="capLogo2TextStroke2" data-canvas="above">
 												</td>
 											<tr>
@@ -3181,11 +3181,8 @@
 							sortFontDropdowns()
 						})
 					}
-
-					console.log(fontList)
 				}
 			hideOverlay()
-			
 			}
 		})
 	})
@@ -5169,8 +5166,8 @@
 				centeredScaling: true,
 				centeredRotation: true,
 				id: 'wordmarkText',
-				fill: initialJerseyColors["wordmarkTextColor"],
-				stroke: initialJerseyColors["wordmarkTextColor"],
+				fill: $("#wordmarkTextColor").spectrum("get").toHexString(),
+				stroke: $("#wordmarkTextColor").spectrum("get").toHexString(),
 				strokeWidth: 0
 			})
 		
@@ -5180,11 +5177,11 @@
 				originY: 'center',
 				centeredScaling: true,
 				centeredRotation: true,
-				stroke: initialJerseyColors["wordmarkTextStroke1Color"],
-				strokeWidth: 6,
-				strokeLineCap: "round",
 				id: 'wordmarkTextStroke1',
-				fill: initialJerseyColors["wordmarkTextStroke1Color"]
+				stroke: $("#wordmarkTextStroke1Color").spectrum("get").toHexString(),
+				strokeWidth: parseInt($("#wordmarkTextStroke1StrokeWidth").val()),
+				strokeLineCap: "round",
+				fill: $("#wordmarkTextStroke1Color").spectrum("get").toHexString(),
 			})
 		
 			wordmarkTextStroke2 = new fabric.Path(svgPath, {
@@ -5193,11 +5190,12 @@
 				originY: 'center',
 				centeredScaling: true,
 				centeredRotation: true,
-				stroke: initialJerseyColors["wordmarkTextStroke2Color"],
-				strokeWidth: 10,
 				strokeLineCap: "round",
 				id: 'wordmarkTextStroke2',
-				fill: initialJerseyColors["wordmarkTextStroke2Color"]
+				stroke: $("#wordmarkTextStroke2Color").spectrum("get").toHexString(),
+				strokeWidth: parseInt($("#wordmarkTextStroke2StrokeWidth").val()),
+				strokeLineCap: "round",
+				fill: $("#wordmarkTextStroke2Color").spectrum("get").toHexString(),
 			})
 
 			grp.addWithUpdate(wordmarkTextStroke2)
@@ -6872,7 +6870,7 @@
 				centeredScaling: true,
 				centeredRotation: true,
 				id: 'capLogoText',
-				fill: initialCapColors["capLogoTextColor"]
+				fill: $("#capLogoTextColor").spectrum("get")
 			})
 			
 			capLogoTextStroke1 = new fabric.Path(svgPath,{
@@ -6882,11 +6880,11 @@
 				top: 275,
 				centeredScaling: true,
 				centeredRotation: true,
-				stroke: initialCapColors["capLogoStroke1Color"],
-				strokeWidth: 4,
+				stroke: $("#capLogoStroke1Color").spectrum("get"),
+				strokeWidth: $("#capLogoStroke1Width").val(),
 				strokeLineCap: "round",
 				id: 'capLogoTextStroke1',
-				fill: initialCapColors["capLogoStroke1Color"]
+				fill: $("#capLogoStroke1Color").spectrum("get")
 			})
 			
 			capLogoTextStroke2 = new fabric.Path(svgPath,{
@@ -6896,11 +6894,11 @@
 				top: 275,
 				centeredScaling: true,
 				centeredRotation: true,
-				stroke: initialCapColors["capLogoStroke2Color"],
-				strokeWidth: 6,
+				stroke: $("#capLogoStroke2Color").spectrum("get"),
+				strokeWidth: $("#capLogoStroke2Width").val(),
 				strokeLineCap: "round",
 				id: 'capLogoTextStroke2',
-				fill: initialCapColors["capLogoStroke2Color"]
+				fill: $("#capLogoStroke2Color").spectrum("get")
 			})
 
 			textLogo.addWithUpdate(capLogoTextStroke2)
@@ -6918,7 +6916,7 @@
 				centeredScaling: true,
 				centeredRotation: true,
 				id: 'capLogo2Text',
-				fill: initialCapColors["capLogoTextColor"]
+				fill: $("#capLogo2TextColor").spectrum("get")
 			})
 			
 			capLogo2TextStroke1 = new fabric.Path(svgPath2,{
@@ -6928,11 +6926,11 @@
 				top: 295,
 				centeredScaling: true,
 				centeredRotation: true,
-				stroke: initialCapColors["capLogoStroke1Color"],
-				strokeWidth: 4,
+				stroke: $("#capLogo2Stroke1Color").spectrum("get"),
+				strokeWidth: $("#capLogo2Stroke1Width").val(),
 				strokeLineCap: "round",
 				id: 'capLogo2TextStroke1',
-				fill: initialCapColors["capLogoStroke1Color"]
+				fill: $("#capLogo2Stroke1Color").spectrum("get")
 			})
 			
 			capLogo2TextStroke2 = new fabric.Path(svgPath2,{
@@ -6942,11 +6940,11 @@
 				top: 295,
 				centeredScaling: true,
 				centeredRotation: true,
-				stroke: initialCapColors["capLogoStroke2Color"],
-				strokeWidth: 6,
+				stroke: $("#capLogo2Stroke2Color").spectrum("get"),
+				strokeWidth: $("#capLogo2Stroke2Width").val(),
 				strokeLineCap: "round",
 				id: 'capLogo2TextStroke2',
-				fill: initialCapColors["capLogoStroke2Color"]
+				fill: $("#capLogo2Stroke2Color").spectrum("get")
 			})
 
 			textLogo2.addWithUpdate(capLogo2TextStroke2)
@@ -13556,7 +13554,6 @@
 						alert("An error occurred:\r\n\r\n"+data.message)
 					} else {
 						if (fontList.includes(data.fontName)) {
-							console.log("\""+data.fontName+"\" appears to already be present.")
 							const letterDropdown = document.getElementById("letterDropdown").msDropdown;
 							const numberDropdown = document.getElementById("numberDropdown").msDropdown;
 							const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
