@@ -368,6 +368,35 @@ app2.get("/customFont", (req, res) => {
 	})
 })
 
+app2.get("/dropFont", (req, res) => {
+	try {
+		console.log(userFontsFolder+"/"+path.basename(req.query.file))
+		ttfInfo(req.query.file, function(err, info) {
+			var ext = getExtension(req.query.file)
+			const dataUrl = font2base64.encodeToDataUrlSync(req.query.file)
+			var fontPath = url.pathToFileURL(req.query.file)
+			res.json({
+				"status": "ok",
+				"fontName": info.tables.name[1],
+				"fontStyle": info.tables.name[2],
+				"familyName": info.tables.name[6],
+				"fontFormat": ext,
+				"fontMimetype": 'font/' + ext,
+				"fontData": fontPath.href,
+				'fontBase64': dataUrl
+			});
+			fs.copyFileSync(req.query.file, userFontsFolder+"/"+path.basename(req.query.file))
+			res.end()
+		});
+	} catch (err) {
+		res.json({
+			"status":"error",
+			"message": err
+		})
+		res.end()
+	}
+})
+
 
 app2.post('/warpText', (req, res)=> {
 /* 	if (imInstalled == false) {
