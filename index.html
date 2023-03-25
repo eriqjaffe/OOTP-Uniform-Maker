@@ -7843,8 +7843,43 @@
 	}) 
 
 	$("#saveFontPositions").on("click",function() {
-		const json = []
+		var startYear = parseInt($("#startYear").val());
+		var endYear = parseInt($("#endYear").val())
+		var yearRange = "";
+		var teamName = "";
+		if (startYear > endYear && endYear > 0) {
+			alert("The start year has to be before the end year!");
+			return false;
+		}
+		if (startYear == endYear && startYear > 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear == 0 && endYear > 0) {
+			yearRange = $("#endYear").val();
+		} else if (startYear > 0 && endYear == 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear > 0 && endYear > 0) {
+			yearRange = $("#startYear").val()+"-"+$("#endYear").val()
+		} else {
+			yearRange = ""
+		}
+		if (yearRange.length > 0) {
+			yearRange = "_"+yearRange;
+		}
+		if ($("#teamName").val().length == 0) {
+			teamName = "Unknown_Team";
+		} else {
+			teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
+		}
+		teamName = teamName.split(' ').join('_');
+		if ($("#uniformType").val().toLowerCase() != "home") {
+			var fileName = "fontPosition_"+teamName+"_"+$("#uniformType").val().split(' ').join('_').toLowerCase()+yearRange;
+		} else {
+			var fileName = "fontPosition_"+teamName+yearRange;
+		}
+
+		const json = {}
 		const chars = []
+
 		json.letterFont = $("#letterDropdown").val()
 		json.numberFont = $("#numberDropdown").val()
 		fontCanvas.getObjects().forEach(function(o) {
@@ -7857,6 +7892,12 @@
 			chars.push(obj)
 		})
 		json.chars = chars
+		$.ajax({
+			type: "POST",
+				url: "http://127.0.0.1:"+port+"/saveFontPosition",
+				data: {json:json, filename:fileName},
+				success: function(data) {}
+		})
 		console.log(json)
 	})
 

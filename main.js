@@ -398,6 +398,25 @@ app2.get("/dropFont", (req, res) => {
 	}
 })
 
+app2.post("/saveFontPosition", (req, res) => {
+	const options = {
+		defaultPath: increment(store.get("downloadPositionPath", app.getPath('downloads'))+'/'+req.body.filename+'.json',{fs: true})
+	}
+	dialog.showSaveDialog(null, options).then((result) => {
+		if (!result.canceled) {
+			store.set("downloadPositionPath", path.dirname(result.filePath))
+			fs.writeFile(result.filePath, JSON.stringify(req.body.json, null, 2), 'utf8', function(err) {
+				console.log(err)
+			})
+			res.json({result: "success"})
+		} else {
+			res.json({result: "success"})
+		}
+	}).catch((err) => {
+		console.log(err);
+		res.json({result: "success"})
+	});
+})
 
 app2.post('/warpText', (req, res)=> {
 /* 	if (imInstalled == false) {
