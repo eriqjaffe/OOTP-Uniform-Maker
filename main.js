@@ -344,6 +344,7 @@ app2.get("/customFont", (req, res) => {
 						"fontData": fontPath.href,
 						'fontBase64': dataUrl
 					});
+					fs.copyFileSync(req.query.file, userFontsFolder+"/"+path.basename(req.query.file))
 					res.end()
 				});
 			} catch (err) {
