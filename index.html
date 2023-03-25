@@ -2091,6 +2091,7 @@
 										<input type="button" class="button" id="customFontLayer" value="Load Overlay Image">
 										<input type="button" class="button selectChars" id="selectLetters" data-chars="letters" value="Select All Letters">
 										<input type="button" class="button selectChars" id="selectNumbers" data-chars="numbers" value="Select All Numbers">
+										<input type="button" class="button" id="saveFontPositions" value="Save Font Positions">
 										<input id="customFontLayerUploader" type="file" accept="image/*" style="display:none;"/>
 										<!--<input type="button" class="button" id="uploadTheFont" value="Upload Font" style="display:none;" />-->
 										<!--<input type="button" class="button" id="fitFont" value="temp button">-->
@@ -7840,6 +7841,24 @@
 		}
 		reader.readAsDataURL(e.target.files[0]);
 	}) 
+
+	$("#saveFontPositions").on("click",function() {
+		const json = []
+		const chars = []
+		json.letterFont = $("#letterDropdown").val()
+		json.numberFont = $("#numberDropdown").val()
+		fontCanvas.getObjects().forEach(function(o) {
+			const obj = {}
+			obj.id = o.id
+			obj.top = o.top
+			obj.left = o.left
+			obj.height = o.height
+			obj.width = o.width
+			chars.push(obj)
+		})
+		json.chars = chars
+		console.log(json)
+	})
 
 	fontCanvas.on('selection:created', function(e) {
 		const g = fontCanvas.getActiveObject()
