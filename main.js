@@ -1427,22 +1427,31 @@ app2.get("/localFontFolder", (req, res) => {
 	async function createJSON() {
 		const jsonArr = []
 		const jsonObj = {}
-		const attributes = {fill: 'red', stroke: 'black'};
 		let info = await fontscan.getDirectoryFonts(userFontsFolder)
 		for (font of info) {
-			const ext = getExtension(font.path)
-			const fontPath = url.pathToFileURL(font.path)
-			const json = {
-				"status": "ok",
-				"fontName": font.family,
-				"fontStyle": font.style,
-				"familyName": font.family,
-				"fontFormat": ext,
-				"fontMimetype": 'font/' + ext,
-				"fontData": fontPath.href,
-				"fontPath": font.path
+			try {
+				const ext = getExtension(font.path)
+				const fontPath = url.pathToFileURL(font.path)
+				const json = {
+					"status": "ok",
+					"fontName": font.family,
+					"fontStyle": font.style,
+					"familyName": font.family,
+					"fontFormat": ext,
+					"fontMimetype": 'font/' + ext,
+					"fontData": fontPath.href,
+					"fontPath": font.path
+				}
+				jsonArr.push(json)
+			} catch (err) {
+				const json = {
+					"status": "error",
+					"fontName": fs.basename(font.path),
+					"fontPath": font.path
+				}
+				jsonArr.push(json)
 			}
-			jsonArr.push(json)
+	
 		}
 		jsonObj.result = "success"
 		jsonObj.fonts = jsonArr
