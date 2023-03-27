@@ -31,7 +31,8 @@
 		const gridsVisible = (params.get('gridsVisible').toLowerCase() == "true") ? true : false
 		const checkForUpdates = (params.get('checkForUpdates').toLowerCase() == "true") ? true : false
 		const preferredPlayerName = params.get('preferredPlayerName')
-		const preferredPlayerNumber = params.get('preferredPlayerNumber') 
+		const preferredPlayerNumber = params.get('preferredPlayerNumber')
+		const imageMagick = (params.get("imagemagick") == "true") ? true : false
 
 		var prefs = {
 			appVersion: params.get('appVersion'),
@@ -839,8 +840,8 @@
 														<input type="button" class="button makePatch" data-sleeve="reset" value="Reset Image">
 													</td>
 												</tr>
-												<tr>
-													<td><center>
+												<tr class="imagemagick">
+													<td style="width:482px;"><center>
 														<input type="button" id="jerseyColorSquare" class="colorSquare" value="Pick Color" style="margin-right:10px;" data-canvas="jerseyLogoCanvas"><span id="jerseyChosenCoordinates" style="margin-right:5px;"></span>
 														Fuzz %:
 														<input type="button" class="button rangeButton" value="-">
@@ -849,8 +850,8 @@
 														<span id="fuzzAmount">50</span>%
 													</td>
 												</tr>
-												<tr>
-													<td><center>
+												<tr class="imagemagick">
+													<td style="width:482px;"><center>
 														<input type="button" class="button border" id="jerseyBorder" value="Remove Border" data-canvas="jerseyLogoCanvas">
 														<input type="button" class="button removeColor removeColorRange" id="jerseyRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="jerseyLogoCanvas">
 														<input type="button" class="button removeColor removeAllColor" id="jerseyRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="jerseyLogoCanvas">
@@ -902,16 +903,16 @@
 												<td style="width:20%;">
 													<select id="warpEffect" class="msDropDown jerseyTextOption" style="width:100%;" is="ms-dropdown" data-visible-rows="8">
 														<option value="none" data-image="./images/none.png"></option>
-														<option value="arch" data-value="15" data-image="./images/arched.png"></option>
-														<option value="arc" data-value="70" data-image="./images/arced.png"></option>
+														<option class="imagemagick" value="arch" data-value="15" data-image="./images/arched.png"></option>
+														<option class="imagemagick" value="arc" data-value="70" data-image="./images/arced.png"></option>
 														<option value="skewUp" data-value="25" data-image="./images/skewup.png"></option>
 														<option value="skewDown" data-value="25" data-image="./images/skewdown.png"></option>
 														<option value="skewLeft" data-value="25" data-image="./images/skewleft.png"></option>
 														<option value="skewRight" data-value="25" data-image="./images/skewright.png"></option>
-														<option value="bilinearUp" data-value="40" data-image="./images/angleup.png"></option>
-														<option value="bilinearDown" data-value="40" data-image="./images/angledown.png"></option>
-														<option value="archUp" data-value="15" data-image="./images/archup.png"></option>
-														<option value="archDown" data-value="15" data-image="./images/archdown.png"></option>
+														<option class="imagemagick" value="bilinearUp" data-value="40" data-image="./images/angleup.png"></option>
+														<option class="imagemagick" value="bilinearDown" data-value="40" data-image="./images/angledown.png"></option>
+														<option class="imagemagick" value="archUp" data-value="15" data-image="./images/archup.png"></option>
+														<option class="imagemagick" value="archDown" data-value="15" data-image="./images/archdown.png"></option>
 														<option value="vertical" data=value="15" data-image="./images/vert.png"></option>
 														<option value="diagonal" data=value="15" data-image="./images/diag.png"></option>
 														<!-- <option value="pinch" data-value="10" data-image="../images/pinch.png"></option>
@@ -1314,8 +1315,8 @@
 										</div>
 										<div id="pantsTrimImageDiv" style="display:none;">
 											<table style="width:100%;">
-												<tr>
-													<td><center>
+												<tr class="imagemagick">
+													<td style="width:482px;"><center>
 														<input type="button" id="pantsColorSquare" class="colorSquare" value="Pick Color" style="margin-right:10px;" data-canvas="pantsLogoCanvas"><span id="chosenCoordinates" style="margin-right:5px;"></span>
 														Fuzz %:
 														<input type="button" class="button rangeButton" value="-">
@@ -1324,8 +1325,8 @@
 														<span id="fuzzAmount">50</span>%
 													</td>
 												</tr>
-												<tr>
-													<td><center>
+												<tr class="imagemagick">
+													<td style="width:482px;"><center>
 														<input type="button" class="button border" id="pantsBorder" value="Remove Border" data-canvas="pantsLogoCanvas">
 														<input type="button" class="button removeColor removeColorRange" id="pantsRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
 														<input type="button" class="button removeColor removeAllColor" id="pantsRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
@@ -1647,8 +1648,8 @@
 										</div>
 										<div id="capTrimImageDiv" style="display:none;">
 											<table style="width:100%;">
-												<tr>
-													<td><center>
+												<tr class="imagemagick">
+													<td style="width:482px;"><center>
 														<input type="button" id="capColorSquare" class="colorSquare" value="Pick Color" style="margin-right:10px;" data-canvas="capLogoCanvas"><span id="chosenCoordinates" style="margin-right:5px;"></span>
 														Fuzz %:
 														<input type="button" class="button rangeButton" value="-">
@@ -1657,8 +1658,8 @@
 														<span id="fuzzAmount">50</span>%
 													</td>
 												</tr>
-												<tr>
-													<td><center>
+												<tr class="imagemagick">
+													<td style="width:482px;"><center>
 														<input type="button" class="button border" id="capBorder" value="Remove Border" data-canvas="capLogoCanvas">
 														<input type="button" class="button removeColor removeColorRange" id="capRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="capLogoCanvas">
 														<input type="button" class="button removeColor removeAllColor" id="capRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="capLogoCanvas">
@@ -1702,12 +1703,12 @@
 												<td style="text-align:center;">
 													<input type="checkbox" class="capTextToggle" data-group="textLogo" data-id="capLogoTextStroke1" id="capLogoStroke1ColorCheck" checked>
 													<label>Width:&nbsp;</label>
-													<input type="number" id="capLogoStroke1Width" class="capTextToggle strokeWidth" data-group="textLogo" data-id="capLogoTextStroke1" data-canvas="capLogoCanvas" value="4" min="0" max="20">
+													<input type="number" id="capLogoStroke1Width" class="strokeWidth" data-group="textLogo" data-id="capLogoTextStroke1" data-canvas="capLogoCanvas" value="4" min="0" max="20">
 													<input class="capSelector textColorSelector selector" type="text" id="capLogoStroke1Color" data-element="capLogoTextStroke1" data-canvas="above">
 												</td>
 												<td style="text-align:center;"><input type="checkbox" class="capTextToggle" data-group="textLogo" data-id="capLogoTextStroke2" id="capLogoStroke2ColorCheck" checked>
 													<label>Width:&nbsp;</label>
-													<input type="number" id="capLogoStroke2Width" class="capTextToggle strokeWidth" data-group="textLogo" data-id="capLogoTextStroke2" data-canvas="capLogoCanvas" value="6" min="0" max="20">
+													<input type="number" id="capLogoStroke2Width" class="strokeWidth" data-group="textLogo" data-id="capLogoTextStroke2" data-canvas="capLogoCanvas" value="6" min="0" max="20">
 													<input class="capSelector textColorSelector selector" type="text" id="capLogoStroke2Color" data-element="capLogoTextStroke2" data-canvas="above">
 												</td>
 											</tr>
@@ -1727,13 +1728,13 @@
 												<td style="text-align:center;">
 													<input type="checkbox" class="capText2Toggle" data-group="textLogo2" data-id="capLogo2TextStroke1" id="capLogo2Stroke1ColorCheck" checked>
 													<label>Width:&nbsp;</label>
-													<input type="number" id="capLogo2Stroke1Width" class="capText2Toggle strokeWidth" data-group="textLogo2" data-id="capLogo2TextStroke2" data-canvas="capLogoCanvas" value="4" min="0" max="20">
+													<input type="number" id="capLogo2Stroke1Width" class="strokeWidth" data-group="textLogo2" data-id="capLogo2TextStroke1" data-canvas="capLogoCanvas" value="4" min="0" max="20">
 													<input class="capSelector text2ColorSelector selector" type="text" id="capLogo2Stroke1Color" data-element="capLogo2TextStroke1" data-canvas="above">
 												</td>
 												<td style="text-align:center;">
-													<input type="checkbox" class="capText2Toggle" data-group="textLogo2" data-id="capLogo2TextStroke2" id="capLogo2Stroke2Color" checked>
+													<input type="checkbox" class="capText2Toggle" data-group="textLogo2" data-id="capLogo2TextStroke2" id="capLogo2Stroke2ColorCheck" checked>
 													<label>Width:&nbsp;</label>
-													<input type="number" id="capLogo2Stroke2Width" class="capText2Toggle strokeWidth" data-group="textLogo2" data-id="capLogo2TextStroke2" data-canvas="capLogoCanvas" value="6" min="0" max="20">
+													<input type="number" id="capLogo2Stroke2Width" class="strokeWidth" data-group="textLogo2" data-id="capLogo2TextStroke2" data-canvas="capLogoCanvas" value="6" min="0" max="20">
 													<input class="capSelector text2ColorSelector selector" type="text" id="capLogo2Stroke2Color" data-element="capLogo2TextStroke2" data-canvas="above">
 												</td>
 											<tr>
@@ -2091,6 +2092,7 @@
 										<input type="button" class="button" id="customFontLayer" value="Load Overlay Image">
 										<input type="button" class="button selectChars" id="selectLetters" data-chars="letters" value="Select All Letters">
 										<input type="button" class="button selectChars" id="selectNumbers" data-chars="numbers" value="Select All Numbers">
+										<!-- <input type="button" class="button" id="saveFontPositions" value="Save Font Positions"> -->
 										<input id="customFontLayerUploader" type="file" accept="image/*" style="display:none;"/>
 										<!--<input type="button" class="button" id="uploadTheFont" value="Upload Font" style="display:none;" />-->
 										<!--<input type="button" class="button" id="fitFont" value="temp button">-->
@@ -2671,6 +2673,14 @@
 		$("#preferredSeamOpacity").val(prefs['preferredSeamOpacity'])
 		$("#toggleDiffuseSeams").prop("checked", prefs['seamsVisibleOnDiffuse'] == "true")
 
+		$(".imagemagick").each(function() {
+			if (imageMagick == true) {
+				$(this).css("display","inline-block");
+			} else {
+				$(this).css("display","none");
+			}
+		})
+
 		$(".preference").each(function() {
 			$(this).val(prefs[$(this).attr("id")])
 		})
@@ -3018,6 +3028,27 @@
 		});
 	})
 
+	$("#fontContainer").on('dragover', function() {
+		activeCanvas = fontCanvas;
+		$("#fontContainer").addClass('hover')
+		return false;
+	});
+
+	$("#fontContainer").on('dragleave', function() {
+		$("#fontContainer").removeClass('hover');
+		return false;
+	});
+
+	$("#fontContainer").on('drop', function(e) {
+		activeCanvas = fontCanvas;
+		$("#fontContainer").removeClass('hover');
+		e.stopPropagation();
+		e.preventDefault();
+		var files = e.originalEvent.dataTransfer.files;
+		dropImage(fontCanvas, files[0].path, 3)
+		return false;
+	});
+
 	$("#jerseyContainer").on('dragover', function() {
 		activeCanvas = jerseyLogoCanvas;
 		$("#jerseyContainer").addClass('hover')
@@ -3086,6 +3117,7 @@
 	})
 
 	$("#localFontFolder").on("click",function() {
+		const fontErrors = []
 		showOverlay("Loading User Fonts...")
 		$.ajax({
 			type: "GET",
@@ -3102,77 +3134,73 @@
 					const preferredNumberDropdown = document.getElementById("preferredNumberFont").msDropdown;
 
 					for (result of data.fonts) {
-						var thumb = null;
-						const name = result.fontName
-						const value = result.fontPath
-						const fontThumb = result.fontThumb
-						opentype.load(result.fontPath, (err,font) => {
-							if (err || !font) {
-								console.log(err)
-								return;
-							}
-							
-							const thumbText = font.getPath("ABC 123", 0, 0, 96)
-							const outPath = thumbText.toPathData(5)
-	
-							if (fontThumb == "noimage") {
-								const foo = new fabric.Path(outPath, {
-									fill: 'black',
-									top: 0,
-									left: 0
-								})
-
-								thumb = foo.toDataURL()
-
-								$.ajax({
-									type: "POST",
-									url: "http://127.0.0.1:"+port+"/generateThumbnail",
-									data: {
-										thumb: thumb,
-										name: name
-									},
-									success: function(data) {}
-								})
-							} else {
-								thumb = fontThumb;
-							}
-
-							if (findIndexByText(letterDropdown, name) == -1) {
-								letterDropdown.add({text:name, value:value, image:thumb},0)
-								if (value == prefs.preferredNameFont) { letterDropdown.selectedIndex = 0 }
-
-								numberDropdown.add({text:name, value:value, image:thumb},0)
-								if (value == prefs.preferredNumberFont) { numberDropdown.selectedIndex = 0 }
+						if (result.status == "ok") {
+							fontList.push(result.fontName)
+							var thumb = null;
+							const name = result.fontName
+							const value = result.fontPath
+							opentype.load(result.fontPath, (err,font) => {
+								if (err || !font) {
+									console.log(err)
+									return;
+								}
 								
-								jerseyDropdown.add({text:name, value:value, image:thumb},0)
-								if (value == prefs.preferredJerseyFont) { jerseyDropdown.selectedIndex = 0 }
+								var thumbText = font.getPath("ABC 123", 0, 0, 96)
+								var outPath = thumbText.toPathData(5)
 
-								capDropdown.add({text:name, value:value, image:thumb},0)
-								if (value == prefs.preferredCapFont) { capDropdown.selectedIndex = 0 }
+								thumbText = new fabric.Path(outPath, {
+									left: 0,
+									originX: 'center',
+									originY: 'center',
+									centeredScaling: true,
+									centeredRotation: true,
+									fill: 'black',
+									height: '80px'
+								})
 
-								preferredJerseyDropdown.add({text:name, value:value, image:thumb},0)
-								if (value == prefs.preferredJerseyFont) { preferredJerseyDropdown.selectedIndex = 0 }
+								thumb = thumbText.toDataURL()
 
-								preferredCapDropdown.add({text:name, value:value, image:thumb},0)
-								if (value == prefs.preferredCapFont) { preferredCapDropdown.selectedIndex = 0 }
+								if (findIndexByText(letterDropdown, name) == -1) {
+									letterDropdown.add({text:name, value:value, image:thumb},0)
+									if (value == prefs.preferredNameFont) { letterDropdown.selectedIndex = 0 }
 
-								preferredNameDropdown.add({text:name, value:value, image:thumb},0)
-								if (value == prefs.preferredNameFont) { preferredNameDropdown.selectedIndex = 0 }
+									numberDropdown.add({text:name, value:value, image:thumb},0)
+									if (value == prefs.preferredNumberFont) { numberDropdown.selectedIndex = 0 }
+									
+									jerseyDropdown.add({text:name, value:value, image:thumb},0)
+									if (value == prefs.preferredJerseyFont) { jerseyDropdown.selectedIndex = 0 }
 
-								preferredNumberDropdown.add({text:name, value:value, image:thumb},0)
-								if (value == prefs.preferredNumberFont) { preferredNumberDropdown.selectedIndex = 0 }
-								/* $('#preferredJerseyFont').append($('<option>', {value: value, text: name}));
-								$('#preferredCapFont').append($('<option>', {value: value, text: name}));
-								$('#preferredNameFont').append($('<option>', {value: value, text: name}));
-								$('#preferredNumberFont').append($('<option>', {value: value, text: name})); */
-							}
+									capDropdown.add({text:name, value:value, image:thumb},0)
+									if (value == prefs.preferredCapFont) { capDropdown.selectedIndex = 0 }
 
-							sortFontDropdowns()
-						})
+									preferredJerseyDropdown.add({text:name, value:value, image:thumb},0)
+									if (value == prefs.preferredJerseyFont) { preferredJerseyDropdown.selectedIndex = 0 }
+
+									preferredCapDropdown.add({text:name, value:value, image:thumb},0)
+									if (value == prefs.preferredCapFont) { preferredCapDropdown.selectedIndex = 0 }
+
+									preferredNameDropdown.add({text:name, value:value, image:thumb},0)
+									if (value == prefs.preferredNameFont) { preferredNameDropdown.selectedIndex = 0 }
+
+									preferredNumberDropdown.add({text:name, value:value, image:thumb},0)
+									if (value == prefs.preferredNumberFont) { preferredNumberDropdown.selectedIndex = 0 }
+								}
+
+								sortFontDropdowns()
+							})
+						} else {
+							fontErrors.push(result.fontName)
+						}
 					}
 				}
-			hideOverlay()
-			
+				hideOverlay()
+				if (fontErrors.length > 0) {
+					var message = "The following fonts failed to import:\r\n\r\n"
+					for (font of fontErrors) {
+						message += font+"\r\n"
+					}
+					alert(message)
+				}
 			}
 		})
 	})
@@ -5156,8 +5184,8 @@
 				centeredScaling: true,
 				centeredRotation: true,
 				id: 'wordmarkText',
-				fill: initialJerseyColors["wordmarkTextColor"],
-				stroke: initialJerseyColors["wordmarkTextColor"],
+				fill: $("#wordmarkTextColor").spectrum("get").toHexString(),
+				stroke: $("#wordmarkTextColor").spectrum("get").toHexString(),
 				strokeWidth: 0
 			})
 		
@@ -5167,11 +5195,11 @@
 				originY: 'center',
 				centeredScaling: true,
 				centeredRotation: true,
-				stroke: initialJerseyColors["wordmarkTextStroke1Color"],
-				strokeWidth: 6,
-				strokeLineCap: "round",
 				id: 'wordmarkTextStroke1',
-				fill: initialJerseyColors["wordmarkTextStroke1Color"]
+				stroke: $("#wordmarkTextStroke1Color").spectrum("get").toHexString(),
+				strokeWidth: parseInt($("#wordmarkTextStroke1StrokeWidth").val()),
+				strokeLineCap: "round",
+				fill: $("#wordmarkTextStroke1Color").spectrum("get").toHexString(),
 			})
 		
 			wordmarkTextStroke2 = new fabric.Path(svgPath, {
@@ -5180,11 +5208,12 @@
 				originY: 'center',
 				centeredScaling: true,
 				centeredRotation: true,
-				stroke: initialJerseyColors["wordmarkTextStroke2Color"],
-				strokeWidth: 10,
 				strokeLineCap: "round",
 				id: 'wordmarkTextStroke2',
-				fill: initialJerseyColors["wordmarkTextStroke2Color"]
+				stroke: $("#wordmarkTextStroke2Color").spectrum("get").toHexString(),
+				strokeWidth: parseInt($("#wordmarkTextStroke2StrokeWidth").val()),
+				strokeLineCap: "round",
+				fill: $("#wordmarkTextStroke2Color").spectrum("get").toHexString(),
 			})
 
 			grp.addWithUpdate(wordmarkTextStroke2)
@@ -5204,18 +5233,9 @@
 				})
 
 				refreshDropdowns("jersey",data,foo)
+			}
 
-				//updateDDSlick("jersey",addData,addData2)
-			}
-			if (imNeeded) {
-				warpText()
-			}
-			if (diagNeeded) {
-				diagonalText("diag");
-			}
-			if (vertNeeded) {
-				diagonalText("vert");
-			}
+			$("#warpEffect").trigger("change")
 		})
 		
 	}
@@ -6859,7 +6879,7 @@
 				centeredScaling: true,
 				centeredRotation: true,
 				id: 'capLogoText',
-				fill: initialCapColors["capLogoTextColor"]
+				fill: $("#capLogoTextColor").spectrum("get")
 			})
 			
 			capLogoTextStroke1 = new fabric.Path(svgPath,{
@@ -6869,11 +6889,11 @@
 				top: 275,
 				centeredScaling: true,
 				centeredRotation: true,
-				stroke: initialCapColors["capLogoStroke1Color"],
-				strokeWidth: 4,
+				stroke: $("#capLogoStroke1Color").spectrum("get"),
+				strokeWidth: $("#capLogoStroke1Width").val(),
 				strokeLineCap: "round",
 				id: 'capLogoTextStroke1',
-				fill: initialCapColors["capLogoStroke1Color"]
+				fill: $("#capLogoStroke1Color").spectrum("get")
 			})
 			
 			capLogoTextStroke2 = new fabric.Path(svgPath,{
@@ -6883,11 +6903,11 @@
 				top: 275,
 				centeredScaling: true,
 				centeredRotation: true,
-				stroke: initialCapColors["capLogoStroke2Color"],
-				strokeWidth: 6,
+				stroke: $("#capLogoStroke2Color").spectrum("get"),
+				strokeWidth: $("#capLogoStroke2Width").val(),
 				strokeLineCap: "round",
 				id: 'capLogoTextStroke2',
-				fill: initialCapColors["capLogoStroke2Color"]
+				fill: $("#capLogoStroke2Color").spectrum("get")
 			})
 
 			textLogo.addWithUpdate(capLogoTextStroke2)
@@ -6905,7 +6925,7 @@
 				centeredScaling: true,
 				centeredRotation: true,
 				id: 'capLogo2Text',
-				fill: initialCapColors["capLogoTextColor"]
+				fill: $("#capLogo2TextColor").spectrum("get")
 			})
 			
 			capLogo2TextStroke1 = new fabric.Path(svgPath2,{
@@ -6915,11 +6935,11 @@
 				top: 295,
 				centeredScaling: true,
 				centeredRotation: true,
-				stroke: initialCapColors["capLogoStroke1Color"],
-				strokeWidth: 4,
+				stroke: $("#capLogo2Stroke1Color").spectrum("get"),
+				strokeWidth: $("#capLogo2Stroke1Width").val(),
 				strokeLineCap: "round",
 				id: 'capLogo2TextStroke1',
-				fill: initialCapColors["capLogoStroke1Color"]
+				fill: $("#capLogo2Stroke1Color").spectrum("get")
 			})
 			
 			capLogo2TextStroke2 = new fabric.Path(svgPath2,{
@@ -6929,11 +6949,11 @@
 				top: 295,
 				centeredScaling: true,
 				centeredRotation: true,
-				stroke: initialCapColors["capLogoStroke2Color"],
-				strokeWidth: 6,
+				stroke: $("#capLogo2Stroke2Color").spectrum("get"),
+				strokeWidth: $("#capLogo2Stroke2Width").val(),
 				strokeLineCap: "round",
 				id: 'capLogo2TextStroke2',
-				fill: initialCapColors["capLogoStroke2Color"]
+				fill: $("#capLogo2Stroke2Color").spectrum("get")
 			})
 
 			textLogo2.addWithUpdate(capLogo2TextStroke2)
@@ -7596,6 +7616,12 @@
 			})
 
 			fontCanvas.renderAll()
+
+			if (arr == letters) {
+				$("#letterStyle").trigger("change")
+			} else {
+				$("#numberStyle").trigger("change")
+			}
 		})
 	}
 
@@ -7647,6 +7673,7 @@
 					if (data.status == "error") {
 						alert("An error occurred:\r\n\r\n"+data.message)
 					} else {
+						fontList.push(data.fontName)
 						opentype.load(data.fontBase64, (err,font) => {
 							if (err || !font) {
 								console.log(err)
@@ -7828,6 +7855,38 @@
 		}
 		reader.readAsDataURL(e.target.files[0]);
 	}) 
+
+	$("#saveFontPositions").on("click",function() {
+		var filename = getFileName()
+		
+		if (filename == null) {
+			alert("The start year has to be before the end year!");
+			return false
+		}
+
+		const json = {}
+		const chars = []
+
+		json.letterFont = $("#letterDropdown").val()
+		json.numberFont = $("#numberDropdown").val()
+		fontCanvas.getObjects().forEach(function(o) {
+			const obj = {}
+			obj.id = o.id
+			obj.top = o.top
+			obj.left = o.left
+			obj.height = o.height
+			obj.width = o.width
+			chars.push(obj)
+		})
+		json.chars = chars
+		$.ajax({
+			type: "POST",
+				url: "http://127.0.0.1:"+port+"/saveFontPosition",
+				data: {json:json, filename:filename},
+				success: function(data) {}
+		})
+		console.log(json)
+	})
 
 	fontCanvas.on('selection:created', function(e) {
 		const g = fontCanvas.getActiveObject()
@@ -11357,6 +11416,7 @@
 			url: "http://127.0.0.1:"+port+"/customFont",
 			success: function(data) {
 				if (data.status != "cancelled") {
+					fontList.push(data.fontName)
 					switch (type) {
 						case "jersey":
 							jerseyWordmarkChange(data,true)
@@ -13531,99 +13591,411 @@
 	}
 
 	function dropImage(dropCanvas, file, tab) {
-		$.ajax({
-			type: "GET",
-			url: "http://127.0.0.1:"+port+"/dropImage",
-			data: {file:file},
-			success: function(data) { 
-				if (data.image != "error not an image") {
-					var imgObj = new Image();
-					imgObj.src = data.image;
-					$("#fileName").html(data.filename);
-					imgObj.onload = function () {
-						switch (dropCanvas.id) {
-							case "jerseyLogoCanvas":
-								var canvas = jerseyLogoCanvas
-								var imLeft = 256
-								var imTop = 512
-								var moveBelow = 'buttons'
-								var header = $("#jerseyImagesHeader")
-								break;
-							case "capLogoCanvas":
-								var canvas = capLogoCanvas
-								var imLeft = 256
-								var imTop = 256
-								var moveBelow = 'eyeletGroup'
-								var header = $("#capImagesHeader")
-								break;
-							case "pantsLogoCanvas":
-								var canvas = pantsLogoCanvas
-								var imLeft = 256
-								var imTop = 256
-								var moveBelow = belt
-								var header = $("#pantsImagesHeader")
-								break;
-						} 
-						var image = new fabric.Image(imgObj);
-						image.set({
-							originX: 'center',
-							originY: 'center',
-							perPixelTargetFind: true,
-							centeredScaling: true,
-							centeredRotation: true,
-							name: data.filename,
-							id: data.filename
-						});
-						image.filters.push(new fabric.Image.filters.Resize({
-							resizeType: 'lanczos', // typo fixed
-							lanczosLobes: 2 // typo fixed
-						}));
-						image.on('object:modified',function() {
-							imLeft = image.get('left')
-							imTop = image.get('top');
-						})
-						image.on('selected',function() {
-							switch (activeCanvas.id) {
-								case "jerseyLogoCanvas":
-									var canStr = "jersey"
+		if (getExtension(file).toLowerCase() == "ttf" || getExtension(file).toLowerCase() == "otf") {
+			$.ajax({
+				type: "GET",
+				url: "http://127.0.0.1:"+port+"/dropFont",
+				data: {file:file},
+				success: function(data) { 
+					if (data.status == "error") {
+						alert("An error occurred:\r\n\r\n"+data.message)
+					} else {
+						if (fontList.includes(data.fontName)) {
+							const letterDropdown = document.getElementById("letterDropdown").msDropdown;
+							const numberDropdown = document.getElementById("numberDropdown").msDropdown;
+							const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
+							const capDropdown = document.getElementById("capTextSelect").msDropdown;
+							switch(tab) {
+								case 0:
+									var foo = findIndexByText(jerseyDropdown, data.fontName)
+									jerseyDropdown.selectedIndex = foo
+									jerseyDropdown.refresh()
+									jerseyWordmarkChange(data,false)
 									break;
-								case "capLogoCanvas":
-									var canStr = "cap"
+								case 1:
 									break;
-								case "pantsLogoCanvas":
-									var canStr = "pants"
+								case 2:
+									var foo = findIndexByText(capDropdown, data.fontName)
+									capDropdown.selectedIndex = foo
+									capDropdown.refresh()
+									capWordmarkChange(data,false)
 									break;
-							} 
-							$("#"+canStr+"FileName").html(image.get('id'));
-							if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-								$("#"+canStr+"TrimImageDiv").css("display","block");
-								$("#"+canStr+"UploadImageDiv").css("display","none");
-								$("#"+canStr+"SelectedImageDiv").css("display","block");
+								case 3:
+									opentype.load(data.fontBase64, (err,font) => {
+										if (err || !font) {
+											console.log(err)
+											return;
+										}
+
+										const maxNumWidth = 170
+										const maxLetWidth = 56
+
+										var nArr = []
+										var lArr = []
+
+										const arr = letters.concat(numbers)
+
+										arr.forEach((chr) => {
+											var char = chars.find(o => o.char === chr)
+											var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+											const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+											const svgPath = paths.toPathData(5)
+											var tmp = new fabric.Path(svgPath, {
+												fill: initialTextColors['fillColor'], 
+											});
+											if (isNumeric(chr)) {
+												nArr.push(tmp.width)
+											} else {
+												lArr.push(tmp.width)
+											}
+										})
+
+										if (arr == numbers) {
+											var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
+											var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
+										} else {
+											var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
+											var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
+										}
+
+										arr.forEach((chr) => {
+											var char = chars.find(o => o.char === chr)
+											var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
+											var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+											const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+											const svgPath = paths.toPathData(5)
+											var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
+											grp.getObjects('path').forEach(function(o) {
+												grp.removeWithUpdate(o)
+											})
+											fontCanvas.renderAll()
+
+											var tmp = new fabric.Path(svgPath, {
+												fill: initialTextColors['fillColor'], 
+											});
+
+											
+											if (isNumeric(chr)) {
+												var scaleX = 1.0 * scaleMod
+												scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
+												var strokeWidth1 = strokeWidth["numbers1"]
+												var strokeWidth2 = strokeWidth["numbers2"]
+												var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
+												var stroke1Color = $("#numbersStroke1").spectrum("get")
+												var stroke2Color = $("#numbersStroke2").spectrum("get")
+											} else {
+												var scaleX = 1.0 * scaleMod
+												scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
+												var strokeWidth1 = strokeWidth["letters1"]
+												var strokeWidth2 = strokeWidth["letters2"]
+												var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
+												var stroke1Color = $("#lettersStroke1").spectrum("get")
+												var stroke2Color = $("#lettersStroke2").spectrum("get")
+											}
+
+											var strokePath = new fabric.Path(svgPath, {
+												id: char.char.toLowerCase()+"Stroke",
+												fill: stroke2Color, 
+												stroke: stroke2Color, 
+												strokeWidth: strokeWidth2, 
+												strokeLineCap: "round",
+												paintFirst: "stroke",
+												visible: true,
+												originX: "center",
+												originY: "center",
+												scaleX: scaleX,
+												scaleY: scaleY
+											})
+
+											var newTextPath = new fabric.Path(svgPath, {
+												id: char.char.toLowerCase()+"Fill",
+												fill: fillColor, 
+												stroke: stroke1Color, 
+												strokeWidth: strokeWidth1, 
+												strokeLineCap: "round",
+												paintFirst: "stroke",
+												visible: true,
+												originX: "center",
+												originY: "center",
+												scaleX: scaleX,
+												scaleY: scaleY
+											});
+											
+											grp.addWithUpdate(strokePath)
+											grp.addWithUpdate(newTextPath)
+
+											if (isNumeric(chr)) {
+												for (y of numberStyle.split(",")) {
+													groupAlign(grp,y)
+												}
+											} else {
+												for (y of letterStyle.split(",")) {
+													groupAlign(grp,y)
+												}
+											}
+										})
+
+										var thumbText = font.getPath("ABC 123", 0, 0, 96)
+										var outPath = thumbText.toPathData(5)
+
+										var foo = new fabric.Path(outPath, {
+											fill: 'black',
+											top: 0,
+											left: 0
+										})
+
+										fontCanvas.renderAll()
+
+										var foo = findIndexByText(letterDropdown, data.fontName)
+										letterDropdown.selectedIndex = foo
+										letterDropdown.refresh()
+										numberDropdown.selectedIndex = foo
+										numberDropdown.refresh()
+									})
+									break;
 							}
-							$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-							$(".copypaste").each(function() {
-								$(this).css("display","inline-block")
-							})
-						})
-						var h = image.height;
-						var w = image.width;
-						canvas.add(image);
-						image.set({"left":imLeft,"top":imTop});
-						image.setCoords();
-						if (moveBelow != 'belt') {
-							canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
 						} else {
-							canvas.sendToBack(image)	
+							fontList.push(data.fontName)
+							switch (tab) {
+								case 0:
+									jerseyWordmarkChange(data,true)
+									break;
+								case 1:
+									break;
+								case 2:
+									capWordmarkChange(data,true)
+									break;
+								case 3:
+									opentype.load(data.fontBase64, (err,font) => {
+										if (err || !font) {
+											console.log(err)
+											return;
+										}
+
+										const maxNumWidth = 170
+										const maxLetWidth = 56
+
+										var nArr = []
+										var lArr = []
+
+										const arr = letters.concat(numbers)
+
+										arr.forEach((chr) => {
+											var char = chars.find(o => o.char === chr)
+											var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+											const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+											const svgPath = paths.toPathData(5)
+											var tmp = new fabric.Path(svgPath, {
+												fill: initialTextColors['fillColor'], 
+											});
+											if (isNumeric(chr)) {
+												nArr.push(tmp.width)
+											} else {
+												lArr.push(tmp.width)
+											}
+										})
+
+										if (arr == numbers) {
+											var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
+											var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
+										} else {
+											var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
+											var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
+										}
+
+										arr.forEach((chr) => {
+											var char = chars.find(o => o.char === chr)
+											var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
+											var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+											const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+											const svgPath = paths.toPathData(5)
+											var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
+											grp.getObjects('path').forEach(function(o) {
+												grp.removeWithUpdate(o)
+											})
+											fontCanvas.renderAll()
+
+											var tmp = new fabric.Path(svgPath, {
+												fill: initialTextColors['fillColor'], 
+											});
+
+											
+											if (isNumeric(chr)) {
+												var scaleX = 1.0 * scaleMod
+												scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
+												var strokeWidth1 = strokeWidth["numbers1"]
+												var strokeWidth2 = strokeWidth["numbers2"]
+												var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
+												var stroke1Color = $("#numbersStroke1").spectrum("get")
+												var stroke2Color = $("#numbersStroke2").spectrum("get")
+											} else {
+												var scaleX = 1.0 * scaleMod
+												scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
+												var strokeWidth1 = strokeWidth["letters1"]
+												var strokeWidth2 = strokeWidth["letters2"]
+												var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
+												var stroke1Color = $("#lettersStroke1").spectrum("get")
+												var stroke2Color = $("#lettersStroke2").spectrum("get")
+											}
+
+											var strokePath = new fabric.Path(svgPath, {
+												id: char.char.toLowerCase()+"Stroke",
+												fill: stroke2Color, 
+												stroke: stroke2Color, 
+												strokeWidth: strokeWidth2, 
+												strokeLineCap: "round",
+												paintFirst: "stroke",
+												visible: true,
+												originX: "center",
+												originY: "center",
+												scaleX: scaleX,
+												scaleY: scaleY
+											})
+
+											var newTextPath = new fabric.Path(svgPath, {
+												id: char.char.toLowerCase()+"Fill",
+												fill: fillColor, 
+												stroke: stroke1Color, 
+												strokeWidth: strokeWidth1, 
+												strokeLineCap: "round",
+												paintFirst: "stroke",
+												visible: true,
+												originX: "center",
+												originY: "center",
+												scaleX: scaleX,
+												scaleY: scaleY
+											});
+											
+											grp.addWithUpdate(strokePath)
+											grp.addWithUpdate(newTextPath)
+
+											if (isNumeric(chr)) {
+												for (y of numberStyle.split(",")) {
+													groupAlign(grp,y)
+												}
+											} else {
+												for (y of letterStyle.split(",")) {
+													groupAlign(grp,y)
+												}
+											}
+										})
+
+										var thumbText = font.getPath("ABC 123", 0, 0, 96)
+										var outPath = thumbText.toPathData(5)
+
+										var foo = new fabric.Path(outPath, {
+											fill: 'black',
+											top: 0,
+											left: 0
+										})
+
+										fontCanvas.renderAll()
+
+										refreshDropdowns("font",data,foo)
+									})
+									break;
+							}
 						}
-						canvas.setActiveObject(image)
-						canvas.requestRenderAll()
-						canvas.renderAll();
-						$("#tabContainer").skeletabs('goTo', tab)
-						header.click()
 					}
 				}
+			})
+		} else {
+			if (tab < 3) {
+				$.ajax({
+					type: "GET",
+					url: "http://127.0.0.1:"+port+"/dropImage",
+					data: {file:file},
+					success: function(data) { 
+						if (data.image != "error not an image") {
+							var imgObj = new Image();
+							imgObj.src = data.image;
+							$("#fileName").html(data.filename);
+							imgObj.onload = function () {
+								switch (dropCanvas.id) {
+									case "jerseyLogoCanvas":
+										var canvas = jerseyLogoCanvas
+										var imLeft = 256
+										var imTop = 512
+										var moveBelow = 'buttons'
+										var header = $("#jerseyImagesHeader")
+										break;
+									case "capLogoCanvas":
+										var canvas = capLogoCanvas
+										var imLeft = 256
+										var imTop = 256
+										var moveBelow = 'eyeletGroup'
+										var header = $("#capImagesHeader")
+										break;
+									case "pantsLogoCanvas":
+										var canvas = pantsLogoCanvas
+										var imLeft = 256
+										var imTop = 256
+										var moveBelow = belt
+										var header = $("#pantsImagesHeader")
+										break;
+								} 
+								var image = new fabric.Image(imgObj);
+								image.set({
+									originX: 'center',
+									originY: 'center',
+									perPixelTargetFind: true,
+									centeredScaling: true,
+									centeredRotation: true,
+									name: data.filename,
+									id: data.filename
+								});
+								image.filters.push(new fabric.Image.filters.Resize({
+									resizeType: 'lanczos', // typo fixed
+									lanczosLobes: 2 // typo fixed
+								}));
+								image.on('object:modified',function() {
+									imLeft = image.get('left')
+									imTop = image.get('top');
+								})
+								image.on('selected',function() {
+									switch (activeCanvas.id) {
+										case "jerseyLogoCanvas":
+											var canStr = "jersey"
+											break;
+										case "capLogoCanvas":
+											var canStr = "cap"
+											break;
+										case "pantsLogoCanvas":
+											var canStr = "pants"
+											break;
+									} 
+									$("#"+canStr+"FileName").html(image.get('id'));
+									if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+										$("#"+canStr+"TrimImageDiv").css("display","block");
+										$("#"+canStr+"UploadImageDiv").css("display","none");
+										$("#"+canStr+"SelectedImageDiv").css("display","block");
+									}
+									$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+									$(".copypaste").each(function() {
+										$(this).css("display","inline-block")
+									})
+								})
+								var h = image.height;
+								var w = image.width;
+								canvas.add(image);
+								image.set({"left":imLeft,"top":imTop});
+								image.setCoords();
+								if (moveBelow != 'belt') {
+									canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
+								} else {
+									canvas.sendToBack(image)	
+								}
+								canvas.setActiveObject(image)
+								canvas.requestRenderAll()
+								canvas.renderAll();
+								$("#tabContainer").skeletabs('goTo', tab)
+								header.click()
+							}
+						}
+					}
+				})
 			}
-		})
+		}
 	}
 
 	function getNumberAtEnd(str) {
@@ -14080,6 +14452,47 @@
 		});
 		canvas.setActiveObject(sel);
 		canvas.requestRenderAll();
+	}
+
+	function getExtension(filename) {
+		var ext = (filename||'').split('.');
+		return ext[ext.length - 1];
+	}
+
+	function getFileName() {
+		var startYear = parseInt($("#startYear").val());
+		var endYear = parseInt($("#endYear").val())
+		var yearRange = "";
+		var teamName = "";
+		if (startYear > endYear && endYear > 0) {
+			return null;
+		}
+		if (startYear == endYear && startYear > 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear == 0 && endYear > 0) {
+			yearRange = $("#endYear").val();
+		} else if (startYear > 0 && endYear == 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear > 0 && endYear > 0) {
+			yearRange = $("#startYear").val()+"-"+$("#endYear").val()
+		} else {
+			yearRange = ""
+		}
+		if (yearRange.length > 0) {
+			yearRange = "_"+yearRange;
+		}
+		if ($("#teamName").val().length == 0) {
+			teamName = "Unknown_Team";
+		} else {
+			teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
+		}
+		teamName = teamName.split(' ').join('_');
+		if ($("#uniformType").val().toLowerCase() != "home") {
+			var fileName = teamName+"_"+$("#uniformType").val().split(' ').join('_').toLowerCase()+yearRange;
+		} else {
+			var fileName = teamName+yearRange;
+		}
+		return fileName
 	}
 
 </script>

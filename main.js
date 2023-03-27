@@ -19,9 +19,9 @@ const e = require('express');
 const { off } = require('process');
 const fontscan = require('fontscan')
 const chokidar = require('chokidar')
-const sharp = require('sharp')
 const { create } = require('xmlbuilder2')
 const increment = require('add-filename-increment');
+const hasbin = require('hasbin')
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -90,7 +90,7 @@ const options = {
 	currentVersion: pkg.version
 };
 
-var imInstalled = true;
+const imInstalled = hasbin.sync('magick');
 
 /* exec("magick -version", (error, stdout, stderr) => {
 	if (error) {
@@ -344,6 +344,7 @@ app2.get("/customFont", (req, res) => {
 						"fontData": fontPath.href,
 						'fontBase64': dataUrl
 					});
+					fs.copyFileSync(req.query.file, userFontsFolder+"/"+path.basename(req.query.file))
 					res.end()
 				});
 			} catch (err) {
@@ -368,6 +369,54 @@ app2.get("/customFont", (req, res) => {
 	})
 })
 
+app2.get("/dropFont", (req, res) => {
+	try {
+		console.log(userFontsFolder+"/"+path.basename(req.query.file))
+		ttfInfo(req.query.file, function(err, info) {
+			var ext = getExtension(req.query.file)
+			const dataUrl = font2base64.encodeToDataUrlSync(req.query.file)
+			var fontPath = url.pathToFileURL(req.query.file)
+			res.json({
+				"status": "ok",
+				"fontName": info.tables.name[1],
+				"fontStyle": info.tables.name[2],
+				"familyName": info.tables.name[6],
+				"fontFormat": ext,
+				"fontMimetype": 'font/' + ext,
+				"fontData": fontPath.href,
+				'fontBase64': dataUrl
+			});
+			fs.copyFileSync(req.query.file, userFontsFolder+"/"+path.basename(req.query.file))
+			res.end()
+		});
+	} catch (err) {
+		res.json({
+			"status":"error",
+			"message": err
+		})
+		res.end()
+	}
+})
+
+app2.post("/saveFontPosition", (req, res) => {
+	const options = {
+		defaultPath: increment(store.get("downloadPositionPath", app.getPath('downloads'))+'/'+req.body.filename+'.json',{fs: true})
+	}
+	dialog.showSaveDialog(null, options).then((result) => {
+		if (!result.canceled) {
+			store.set("downloadPositionPath", path.dirname(result.filePath))
+			fs.writeFile(result.filePath, JSON.stringify(req.body.json, null, 2), 'utf8', function(err) {
+				console.log(err)
+			})
+			res.json({result: "success"})
+		} else {
+			res.json({result: "success"})
+		}
+	}).catch((err) => {
+		console.log(err);
+		res.json({result: "success"})
+	});
+})
 
 app2.post('/warpText', (req, res)=> {
 /* 	if (imInstalled == false) {
@@ -725,25 +774,18 @@ app2.post("/saveFont", (req, res) => {
 
     const options = {
         //defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.webp',
-		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.webp',{fs: true}),
-		filters: [
-            { name: 'WebP Image', extensions: ['webp'] },
-        ]
+		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png',{fs: true})
 	}
             
 	prepareImages()
 
 	async function prepareImages() {
-		let finalImage = Buffer.from(fontCanvas).toString('base64');
 		dialog.showSaveDialog(null, options).then((result) => {
 			if (!result.canceled) {
 				store.set("downloadPath", path.dirname(result.filePath))
-				sharp(fontCanvas)
-                	.webp({lossless:true})
-                	.toFile(result.filePath)
-				/* fs.writeFile(result.filePath, finalImage, 'base64', function(err) {
+				fs.writeFile(result.filePath, fontCanvas, 'base64', function(err) {
 					console.log(err)
-				}) */
+				})
 				res.json({result: "success"})
 			} else {
 				res.json({result: "success"})
@@ -1202,8 +1244,9 @@ app2.post('/saveUniform', (req, res) => {
 		//await pantsBase.write(app.getPath('downloads') + '/pants_' + req.body.name+'.png')
 
 		// font
-		let fontBuffer = await sharp(fontCanvas).webp({lossless:true}).toBuffer()
-		archive.append(fontBuffer, {name: req.body.name+".webp"})
+		let fontBase = await Jimp.read(fontCanvas)
+		let fontBuffer = await fontBase.getBufferAsync(Jimp.MIME_PNG)
+		archive.append(fontBuffer, {name: req.body.name+".png"})
 
 		// jersey diffuse map
 		let jerseyBase = await Jimp.read(jerseyBelow)
@@ -1380,39 +1423,35 @@ app2.get("/localFontFolder", (req, res) => {
 		const jsonObj = {}
 		let info = await fontscan.getDirectoryFonts(userFontsFolder)
 		for (font of info) {
-			const ext = getExtension(font.path)
-			const fontPath = url.pathToFileURL(font.path)
-			const fontThumb = (fs.existsSync(userFontsFolder+"/"+font.family+".png")) ? userFontsFolder+"/"+font.family+".png" : "noimage"
-			const json = {
-				"status": "ok",
-				"fontName": font.family,
-				"fontStyle": font.style,
-				"familyName": font.family,
-				"fontFormat": ext,
-				"fontMimetype": 'font/' + ext,
-				"fontData": fontPath.href,
-				"fontPath": font.path,
-				"fontThumb": fontThumb
+			try {
+				const ext = getExtension(font.path)
+				const fontPath = url.pathToFileURL(font.path)
+				const json = {
+					"status": "ok",
+					"fontName": font.family,
+					"fontStyle": font.style,
+					"familyName": font.family,
+					"fontFormat": ext,
+					"fontMimetype": 'font/' + ext,
+					"fontData": fontPath.href,
+					"fontPath": font.path
+				}
+				jsonArr.push(json)
+			} catch (err) {
+				const json = {
+					"status": "error",
+					"fontName": fs.basename(font.path),
+					"fontPath": font.path
+				}
+				jsonArr.push(json)
 			}
-			jsonArr.push(json)
+	
 		}
 		jsonObj.result = "success"
 		jsonObj.fonts = jsonArr
 		res.json(jsonObj)
 		res.end()
 	}
-})
-
-app2.post('/generateThumbnail', (req, res) => {
-	const buffer = Buffer.from(req.body.thumb.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const name = req.body.name
-	Jimp.read(buffer, (err, image) => {
-		if (err) {
-			console.log(err);
-		} else {
-			image.write(userFontsFolder+"/"+name+".png");
-		}
-	})
 })
 
 app2.post('/setPreference', (req, res) => {
@@ -1600,7 +1639,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}&imagemagick=${imInstalled}`);
     //mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}`);
 	
   

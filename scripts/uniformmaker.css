@@ -308,6 +308,10 @@ a.dd-option:hover{
     background:#c3dff4; 
 }
 
+tr.imagemagick {
+	width: 100%;
+}
+
 #canvasContainer {
 	-moz-background-clip: padding;
 	-webkit-background-clip: padding;

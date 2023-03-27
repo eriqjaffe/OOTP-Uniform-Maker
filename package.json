@@ -1,7 +1,7 @@
 {
   "name": "OOTP-Uniform-Maker",
   "productName": "OOTP Uniform Maker",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "OOTP Uniform Maker",
   "main": "main.js",
   "scripts": {
@@ -30,13 +30,13 @@
     "express": "^4.17.3",
     "fontscan": "^0.3.3",
     "github-version-checker": "^2.3.0",
+    "hasbin": "^1.2.3",
     "imagemagick-cli": "^0.5.0",
     "jimp": "^0.16.1",
     "node-font2base64": "^0.7.1",
     "node-gyp": "^9.3.1",
     "promise-synchronizer": "^1.1.8",
     "semver": "^7.3.7",
-    "sharp": "0.31.1",
     "svgdom": "^0.1.10",
     "ttfinfo": "^0.2.0",
     "xmlbuilder2": "^3.0.2"
