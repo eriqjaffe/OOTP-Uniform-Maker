@@ -19,7 +19,6 @@ const e = require('express');
 const { off } = require('process');
 const fontscan = require('fontscan')
 const chokidar = require('chokidar')
-const sharp = require('sharp')
 const { create } = require('xmlbuilder2')
 const increment = require('add-filename-increment');
 const hasbin = require('hasbin')
@@ -775,25 +774,18 @@ app2.post("/saveFont", (req, res) => {
 
     const options = {
         //defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.webp',
-		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.webp',{fs: true}),
-		filters: [
-            { name: 'WebP Image', extensions: ['webp'] },
-        ]
+		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png',{fs: true})
 	}
             
 	prepareImages()
 
 	async function prepareImages() {
-		let finalImage = Buffer.from(fontCanvas).toString('base64');
 		dialog.showSaveDialog(null, options).then((result) => {
 			if (!result.canceled) {
 				store.set("downloadPath", path.dirname(result.filePath))
-				sharp(fontCanvas)
-                	.webp({lossless:true})
-                	.toFile(result.filePath)
-				/* fs.writeFile(result.filePath, finalImage, 'base64', function(err) {
+				fs.writeFile(result.filePath, fontCanvas, 'base64', function(err) {
 					console.log(err)
-				}) */
+				})
 				res.json({result: "success"})
 			} else {
 				res.json({result: "success"})
@@ -1252,8 +1244,9 @@ app2.post('/saveUniform', (req, res) => {
 		//await pantsBase.write(app.getPath('downloads') + '/pants_' + req.body.name+'.png')
 
 		// font
-		let fontBuffer = await sharp(fontCanvas).webp({lossless:true}).toBuffer()
-		archive.append(fontBuffer, {name: req.body.name+".webp"})
+		let fontBase = await Jimp.read(fontCanvas)
+		let fontBuffer = await fontBase.getBufferAsync(Jimp.MIME_PNG)
+		archive.append(fontBuffer, {name: req.body.name+".png"})
 
 		// jersey diffuse map
 		let jerseyBase = await Jimp.read(jerseyBelow)
