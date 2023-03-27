@@ -22,6 +22,7 @@ const chokidar = require('chokidar')
 const sharp = require('sharp')
 const { create } = require('xmlbuilder2')
 const increment = require('add-filename-increment');
+const hasbin = require('hasbin')
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -90,7 +91,7 @@ const options = {
 	currentVersion: pkg.version
 };
 
-var imInstalled = true;
+const imInstalled = hasbin.sync('magick');
 
 /* exec("magick -version", (error, stdout, stderr) => {
 	if (error) {
@@ -1645,7 +1646,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}&imagemagick=${imInstalled}`);
     //mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}`);
 	
   

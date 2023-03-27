@@ -31,7 +31,8 @@
 		const gridsVisible = (params.get('gridsVisible').toLowerCase() == "true") ? true : false
 		const checkForUpdates = (params.get('checkForUpdates').toLowerCase() == "true") ? true : false
 		const preferredPlayerName = params.get('preferredPlayerName')
-		const preferredPlayerNumber = params.get('preferredPlayerNumber') 
+		const preferredPlayerNumber = params.get('preferredPlayerNumber')
+		const imageMagick = (params.get("imagemagick") == "true") ? true : false
 
 		var prefs = {
 			appVersion: params.get('appVersion'),
@@ -839,8 +840,8 @@
 														<input type="button" class="button makePatch" data-sleeve="reset" value="Reset Image">
 													</td>
 												</tr>
-												<tr>
-													<td><center>
+												<tr class="imagemagick">
+													<td style="width:482px;"><center>
 														<input type="button" id="jerseyColorSquare" class="colorSquare" value="Pick Color" style="margin-right:10px;" data-canvas="jerseyLogoCanvas"><span id="jerseyChosenCoordinates" style="margin-right:5px;"></span>
 														Fuzz %:
 														<input type="button" class="button rangeButton" value="-">
@@ -849,8 +850,8 @@
 														<span id="fuzzAmount">50</span>%
 													</td>
 												</tr>
-												<tr>
-													<td><center>
+												<tr class="imagemagick">
+													<td style="width:482px;"><center>
 														<input type="button" class="button border" id="jerseyBorder" value="Remove Border" data-canvas="jerseyLogoCanvas">
 														<input type="button" class="button removeColor removeColorRange" id="jerseyRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="jerseyLogoCanvas">
 														<input type="button" class="button removeColor removeAllColor" id="jerseyRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="jerseyLogoCanvas">
@@ -902,16 +903,16 @@
 												<td style="width:20%;">
 													<select id="warpEffect" class="msDropDown jerseyTextOption" style="width:100%;" is="ms-dropdown" data-visible-rows="8">
 														<option value="none" data-image="./images/none.png"></option>
-														<option value="arch" data-value="15" data-image="./images/arched.png"></option>
-														<option value="arc" data-value="70" data-image="./images/arced.png"></option>
+														<option class="imagemagick" value="arch" data-value="15" data-image="./images/arched.png"></option>
+														<option class="imagemagick" value="arc" data-value="70" data-image="./images/arced.png"></option>
 														<option value="skewUp" data-value="25" data-image="./images/skewup.png"></option>
 														<option value="skewDown" data-value="25" data-image="./images/skewdown.png"></option>
 														<option value="skewLeft" data-value="25" data-image="./images/skewleft.png"></option>
 														<option value="skewRight" data-value="25" data-image="./images/skewright.png"></option>
-														<option value="bilinearUp" data-value="40" data-image="./images/angleup.png"></option>
-														<option value="bilinearDown" data-value="40" data-image="./images/angledown.png"></option>
-														<option value="archUp" data-value="15" data-image="./images/archup.png"></option>
-														<option value="archDown" data-value="15" data-image="./images/archdown.png"></option>
+														<option class="imagemagick" value="bilinearUp" data-value="40" data-image="./images/angleup.png"></option>
+														<option class="imagemagick" value="bilinearDown" data-value="40" data-image="./images/angledown.png"></option>
+														<option class="imagemagick" value="archUp" data-value="15" data-image="./images/archup.png"></option>
+														<option class="imagemagick" value="archDown" data-value="15" data-image="./images/archdown.png"></option>
 														<option value="vertical" data=value="15" data-image="./images/vert.png"></option>
 														<option value="diagonal" data=value="15" data-image="./images/diag.png"></option>
 														<!-- <option value="pinch" data-value="10" data-image="../images/pinch.png"></option>
@@ -1314,8 +1315,8 @@
 										</div>
 										<div id="pantsTrimImageDiv" style="display:none;">
 											<table style="width:100%;">
-												<tr>
-													<td><center>
+												<tr class="imagemagick">
+													<td style="width:482px;"><center>
 														<input type="button" id="pantsColorSquare" class="colorSquare" value="Pick Color" style="margin-right:10px;" data-canvas="pantsLogoCanvas"><span id="chosenCoordinates" style="margin-right:5px;"></span>
 														Fuzz %:
 														<input type="button" class="button rangeButton" value="-">
@@ -1324,8 +1325,8 @@
 														<span id="fuzzAmount">50</span>%
 													</td>
 												</tr>
-												<tr>
-													<td><center>
+												<tr class="imagemagick">
+													<td style="width:482px;"><center>
 														<input type="button" class="button border" id="pantsBorder" value="Remove Border" data-canvas="pantsLogoCanvas">
 														<input type="button" class="button removeColor removeColorRange" id="pantsRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
 														<input type="button" class="button removeColor removeAllColor" id="pantsRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
@@ -1647,8 +1648,8 @@
 										</div>
 										<div id="capTrimImageDiv" style="display:none;">
 											<table style="width:100%;">
-												<tr>
-													<td><center>
+												<tr class="imagemagick">
+													<td style="width:482px;"><center>
 														<input type="button" id="capColorSquare" class="colorSquare" value="Pick Color" style="margin-right:10px;" data-canvas="capLogoCanvas"><span id="chosenCoordinates" style="margin-right:5px;"></span>
 														Fuzz %:
 														<input type="button" class="button rangeButton" value="-">
@@ -1657,8 +1658,8 @@
 														<span id="fuzzAmount">50</span>%
 													</td>
 												</tr>
-												<tr>
-													<td><center>
+												<tr class="imagemagick">
+													<td style="width:482px;"><center>
 														<input type="button" class="button border" id="capBorder" value="Remove Border" data-canvas="capLogoCanvas">
 														<input type="button" class="button removeColor removeColorRange" id="capRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="capLogoCanvas">
 														<input type="button" class="button removeColor removeAllColor" id="capRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="capLogoCanvas">
@@ -2671,6 +2672,14 @@
 		$("#preferredHeightMapBrightness").val(prefs['preferredHeightMapBrightness'])
 		$("#preferredSeamOpacity").val(prefs['preferredSeamOpacity'])
 		$("#toggleDiffuseSeams").prop("checked", prefs['seamsVisibleOnDiffuse'] == "true")
+
+		$(".imagemagick").each(function() {
+			if (imageMagick == true) {
+				$(this).css("display","inline-block");
+			} else {
+				$(this).css("display","none");
+			}
+		})
 
 		$(".preference").each(function() {
 			$(this).val(prefs[$(this).attr("id")])
