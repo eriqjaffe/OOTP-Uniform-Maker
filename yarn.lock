@@ -1793,6 +1793,13 @@ fs-extra@^9.0.0, fs-extra@^9.0.1:
     jsonfile "^6.0.1"
     universalify "^2.0.0"
 
+fs-jetpack@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/fs-jetpack/-/fs-jetpack-5.1.0.tgz#dcd34d709b69007c9dc2420a6f2b9e8f986cff0d"
+  integrity sha512-Xn4fDhLydXkuzepZVsr02jakLlmoARPy+YWIclo4kh0GyNGUHnTqeH/w/qIsVn50dFxtp8otPL2t/HcPJBbxUA==
+  dependencies:
+    minimatch "^5.1.0"
+
 fs-minipass@^2.0.0, fs-minipass@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/fs-minipass/-/fs-minipass-2.1.0.tgz#7f5036fdbf12c63c169190cbe4199c852271f9fb"

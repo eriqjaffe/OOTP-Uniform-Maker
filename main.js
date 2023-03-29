@@ -2,6 +2,7 @@ const { app, BrowserWindow, dialog, Menu, shell } = require('electron')
 const path = require('path')
 const os = require('os');
 const fs = require('fs')
+const jetpack = require('fs-jetpack')
 const url = require('url');
 const express = require('express')
 const Jimp = require('jimp')
@@ -287,29 +288,42 @@ app2.get("/customFont", (req, res) => {
 	dialog.showOpenDialog(null, options).then(result => {
 		if(!result.canceled) {
 			store.set("uploadFontPath", path.dirname(result.filePaths[0]))
-			try {
-				ttfInfo(result.filePaths[0], function(err, info) {
-					var ext = getExtension(result.filePaths[0])
-					const dataUrl = font2base64.encodeToDataUrlSync(result.filePaths[0])
-					var fontPath = url.pathToFileURL(result.filePaths[0])
-					res.json({
-						"status": "ok",
-						"fontName": info.tables.name[1],
-						"fontStyle": info.tables.name[2],
-						"familyName": info.tables.name[6],
-						"fontFormat": ext,
-						"fontMimetype": 'font/' + ext,
-						"fontData": fontPath.href,
-						'fontBase64': dataUrl
-					});
-					fs.copyFileSync(req.query.file, userFontsFolder+"/"+path.basename(req.query.file))
-					res.end()
-				});
-			} catch (err) {
-				res.json({
-					"status":"error",
-					"message": err
-				})
+			importFont()
+
+			async function importFont() {
+				const jsonArr = []
+				const jsonObj = {}
+				try {
+					let info = await fontscan.getDescriptorFromPaths([result.filePaths[0]])
+					for (font of info) {
+						const dataUrl = font2base64.encodeToDataUrlSync(result.filePaths[0])
+						const ext = getExtension(font.path)
+						const fontPath = url.pathToFileURL(font.path)
+						const json = {
+							"status": "ok",
+							"fontName": font.family,
+							"fontStyle": font.style,
+							"familyName": font.family,
+							"fontFormat": ext,
+							"fontMimetype": 'font/' + ext,
+							"fontData": fontPath.href,
+							"fontPath": font.path,
+							"fontBase64": dataUrl
+						}
+						jsonArr.push(json)
+						fs.copyFileSync(req.query.file, userFontsFolder+"/"+path.basename(req.query.file))
+					}
+				} catch (err) {
+					const json = {
+						"status": "error",
+						"fontName": path.basename(result.filePaths[0]),
+						"fontPath": result.filePaths[0]
+					}
+					jsonArr.push(json)
+				}
+				jsonObj.result = "success"
+				jsonObj.fonts = jsonArr
+				res.json(jsonObj)
 				res.end()
 			}
 		} else {
@@ -328,30 +342,42 @@ app2.get("/customFont", (req, res) => {
 })
 
 app2.get("/dropFont", (req, res) => {
-	try {
-		console.log(userFontsFolder+"/"+path.basename(req.query.file))
-		ttfInfo(req.query.file, function(err, info) {
-			var ext = getExtension(req.query.file)
-			const dataUrl = font2base64.encodeToDataUrlSync(req.query.file)
-			var fontPath = url.pathToFileURL(req.query.file)
-			res.json({
-				"status": "ok",
-				"fontName": info.tables.name[1],
-				"fontStyle": info.tables.name[2],
-				"familyName": info.tables.name[6],
-				"fontFormat": ext,
-				"fontMimetype": 'font/' + ext,
-				"fontData": fontPath.href,
-				'fontBase64': dataUrl
-			});
-			fs.copyFileSync(req.query.file, userFontsFolder+"/"+path.basename(req.query.file))
-			res.end()
-		});
-	} catch (err) {
-		res.json({
-			"status":"error",
-			"message": err
-		})
+	importFont()
+
+	async function importFont() {
+		const jsonArr = []
+		const jsonObj = {}
+		try {
+			let info = await fontscan.getDescriptorFromPaths([req.query.file])
+			for (font of info) {
+				const dataUrl = font2base64.encodeToDataUrlSync(req.query.file)
+				const ext = getExtension(font.path)
+				const fontPath = url.pathToFileURL(font.path)
+				const json = {
+					"status": "ok",
+					"fontName": font.family,
+					"fontStyle": font.style,
+					"familyName": font.family,
+					"fontFormat": ext,
+					"fontMimetype": 'font/' + ext,
+					"fontData": fontPath.href,
+					"fontPath": font.path,
+					"fontBase64": dataUrl
+				}
+				jsonArr.push(json)
+				fs.copyFileSync(req.query.file, userFontsFolder+"/"+path.basename(req.query.file))
+			}
+		} catch (err) {
+			const json = {
+				"status": "error",
+				"fontName": path.basename(req.query.file),
+				"fontPath": req.query.file
+			}
+			jsonArr.push(json)
+		}
+		jsonObj.result = "success"
+		jsonObj.fonts = jsonArr
+		res.json(jsonObj)
 		res.end()
 	}
 })
@@ -1256,36 +1282,43 @@ app2.get("/loadUniform", (req, res) => {
 })
 
 app2.get("/localFontFolder", (req, res) => {
-	createJSON()
+	const files = jetpack.find(userFontsFolder, {matching: ["*.ttf", "*.TTF", "*.otf", "*.OTF"]})
 
-	async function createJSON() {
+	createJSON(files) 
+
+	async function createJSON(files) {
 		const jsonArr = []
 		const jsonObj = {}
-		let info = await fontscan.getDirectoryFonts(userFontsFolder)
-		for (font of info) {
+		for (filename of files) {
 			try {
-				const ext = getExtension(font.path)
-				const fontPath = url.pathToFileURL(font.path)
-				const json = {
-					"status": "ok",
-					"fontName": font.family,
-					"fontStyle": font.style,
-					"familyName": font.family,
-					"fontFormat": ext,
-					"fontMimetype": 'font/' + ext,
-					"fontData": fontPath.href,
-					"fontPath": font.path
+				let info = await fontscan.getDescriptorFromPaths([filename])
+				for (font of info) {
+					const dataUrl = font2base64.encodeToDataUrlSync(filename)
+					const ext = getExtension(font.path)
+					const fontPath = url.pathToFileURL(font.path)
+					const json = {
+						"status": "ok",
+						"fontName": font.family,
+						"fontStyle": font.style,
+						"familyName": font.family,
+						"fontFormat": ext,
+						"fontMimetype": 'font/' + ext,
+						"fontData": fontPath.href,
+						"fontPath": font.path,
+						"fontBase64": dataUrl
+					}
+					jsonArr.push(json)
 				}
-				jsonArr.push(json)
 			} catch (err) {
 				const json = {
 					"status": "error",
-					"fontName": fs.basename(font.path),
-					"fontPath": font.path
+					"fontName": path.basename(filename),
+					"fontPath": filename,
+					"message": err
 				}
 				jsonArr.push(json)
+				fs.unlinkSync(filename)
 			}
-	
 		}
 		jsonObj.result = "success"
 		jsonObj.fonts = jsonArr
