@@ -5136,9 +5136,10 @@
 	})
 
 	function jerseyWordmarkChange(data,newFont) {
-		var tmp = (data.fontBase64 == undefined) ? data : data.fontBase64;
+		var tmp = (data.fontPath == undefined) ? data : data.fontPath;
 		opentype.load(tmp, (err,font) => {
 			if (err || !font) {
+				console.log(data.fontPath)
 				console.log(err)
 				return;
 			}
@@ -6825,7 +6826,7 @@
 	})
 
 	function capWordmarkChange(data,newFont) {
-		var tmp = (data.fontBase64 == undefined) ? data : data.fontBase64;
+		var tmp = (data.fontPath == undefined) ? data : data.fontPath;
 		opentype.load(tmp, (err,font) => {
 			if (err || !font) {
 				console.log(err)
@@ -7648,18 +7649,17 @@
 					if (data.result == "error") {
 						alert("An error occurred:\r\n\r\n"+data.message)
 						return false;
-					} else if (data.fonts[0].status == "error") {
-						alert("The font '"+data.fonts[0].fontName+"' could not be loaded.")
+					} else if (data.status == "error") {
+						alert("The font '"+data.fontName+"' could not be loaded.")
 						return false;
 					} else {
-						console.log(data.fonts[0])
-						if (fontList.includes(data.fonts[0].fontName)) {
+						if (fontList.includes(data.fontName)) {
 							const letterDropdown = document.getElementById("letterDropdown").msDropdown;
 							const numberDropdown = document.getElementById("numberDropdown").msDropdown;
 							const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
 							const capDropdown = document.getElementById("capTextSelect").msDropdown;
 									
-							opentype.load(data.fonts[0].fontBase64, (err,font) => {
+							opentype.load(data.fontPath, (err,font) => {
 								if (err || !font) {
 									console.log(err)
 									return;
@@ -7784,15 +7784,15 @@
 
 								fontCanvas.renderAll()
 
-								var foo = findIndexByText(letterDropdown, data.fonts[0].fontName)
+								var foo = findIndexByText(letterDropdown, data.fontName)
 								letterDropdown.selectedIndex = foo
 								letterDropdown.refresh()
 								numberDropdown.selectedIndex = foo
 								numberDropdown.refresh()
 							})
 						} else {
-							fontList.push(data.fonts[0].fontName)
-							opentype.load(data.fonts[0].fontBase64, (err,font) => {
+							fontList.push(data.fontName)
+							opentype.load(data.fontPath, (err,font) => {
 								if (err || !font) {
 									console.log(err)
 									return;
@@ -7917,7 +7917,7 @@
 
 								fontCanvas.renderAll()
 
-								refreshDropdowns("font",data.fonts[0],foo)
+								refreshDropdowns("font",data,foo)
 							})
 						}
 					}
@@ -7925,7 +7925,7 @@
 						alert("An error occurred:\r\n\r\n"+data.message)
 					} else {
 						fontList.push(data.fontName)
-						opentype.load(data.fontBase64, (err,font) => {
+						opentype.load(data.fontPath, (err,font) => {
 							if (err || !font) {
 								console.log(err)
 								return;
@@ -11670,35 +11670,35 @@
 					if (data.result == "error") {
 						alert("An error occurred:\r\n\r\n"+data.message)
 						return false;
-					} else if (data.fonts[0].status == "error") {
-						alert("The font '"+data.fonts[0].fontName+"' could not be loaded.")
+					} else if (data.status == "error") {
+						alert("The font '"+data.fontName+"' could not be loaded.")
 						return false;
 					} else {
-						if (fontList.includes(data.fonts[0].fontName)) {
+						if (fontList.includes(data.fontName)) {
 							switch (type) {
 							case "jersey":
 								const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
-								jerseyWordmarkChange(data.fonts[0],true)
-								var foo = findIndexByText(jerseyDropdown, data.fonts[0].fontName)
+								jerseyWordmarkChange(data,true)
+								var foo = findIndexByText(jerseyDropdown, data.fontName)
 								jerseyDropdown.selectedIndex = foo
 								jerseyDropdown.refresh()
 								break;
 							case "cap":
 								const capDropdown = document.getElementById("capTextSelect").msDropdown;
-								capWordmarkChange(data.fonts[0],true)
-								var foo = findIndexByText(capDropdown, data.fonts[0].fontName)
+								capWordmarkChange(data,true)
+								var foo = findIndexByText(capDropdown, data.fontName)
 								capDropdown.selectedIndex = foo
 								capDropdown.refresh()
 								break;
 							}
 						} else {
-							fontList.push(data.fonts[0].fontName)
+							fontList.push(data.fontName)
 							switch (type) {
 							case "jersey":
-								jerseyWordmarkChange(data.fonts[0],true)
+								jerseyWordmarkChange(data,true)
 								break;
 							case "cap":
-								capWordmarkChange(data.fonts[0],true)
+								capWordmarkChange(data,true)
 								break;
 							}
 						}
@@ -13432,10 +13432,10 @@
 							if (exportMeta.customFonts.length > 0) {
 								for (x in exportMeta.customFonts) {
 									const data = exportMeta.customFonts[x]
-									$('<option>').val(data.fontBase64).attr('data-image',data.thumb).text(data.fontName).appendTo('#letterDropdown')
-									$('<option>').val(data.fontBase64).attr('data-image',data.thumb).text(data.fontName).appendTo('#numberDropdown')
-									$('<option>').val(data.fontBase64).attr('data-image',data.thumb).text(data.fontName).appendTo('#jerseyWordmarkSelect')
-									$('<option>').val(data.fontBase64).attr('data-image',data.thumb).text(data.fontName).appendTo('#capTextSelect')
+									$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#letterDropdown')
+									$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#numberDropdown')
+									$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#jerseyWordmarkSelect')
+									$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#capTextSelect')
 								}	
 							}
 						} 
@@ -13880,33 +13880,33 @@
 					if (data.result == "error") {
 						alert("An error occurred:\r\n\r\n"+data.message)
 						return false;
-					} else if (data.fonts[0].status == "error") {
-						alert("The font '"+data.fonts[0].fontName+"' could not be loaded.")
+					} else if (data.status == "error") {
+						alert("The font '"+data.fontName+"' could not be loaded.")
 						return false;
 					} else {
-						console.log(data.fonts[0])
-						if (fontList.includes(data.fonts[0].fontName)) {
+						console.log(data)
+						if (fontList.includes(data.fontName)) {
 							const letterDropdown = document.getElementById("letterDropdown").msDropdown;
 							const numberDropdown = document.getElementById("numberDropdown").msDropdown;
 							const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
 							const capDropdown = document.getElementById("capTextSelect").msDropdown;
 							switch(tab) {
 								case 0:
-									var foo = findIndexByText(jerseyDropdown, data.fonts[0].fontName)
+									var foo = findIndexByText(jerseyDropdown, data.fontName)
 									jerseyDropdown.selectedIndex = foo
 									jerseyDropdown.refresh()
-									jerseyWordmarkChange(data.fonts[0],false)
+									jerseyWordmarkChange(data,false)
 									break;
 								case 1:
 									break;
 								case 2:
-									var foo = findIndexByText(capDropdown, data.fonts[0].fontName)
+									var foo = findIndexByText(capDropdown, data.fontName)
 									capDropdown.selectedIndex = foo
 									capDropdown.refresh()
-									capWordmarkChange(data.fonts[0],false)
+									capWordmarkChange(data,false)
 									break;
 								case 3:
-									opentype.load(data.fonts[0].fontBase64, (err,font) => {
+									opentype.load(data.fontPath, (err,font) => {
 										if (err || !font) {
 											console.log(err)
 											return;
@@ -14040,18 +14040,18 @@
 									break;
 							}
 						} else {
-							fontList.push(data.fonts[0].fontName)
+							fontList.push(data.fontName)
 							switch (tab) {
 								case 0:
-									jerseyWordmarkChange(data.fonts[0],true)
+									jerseyWordmarkChange(data,true)
 									break;
 								case 1:
 									break;
 								case 2:
-									capWordmarkChange(data.fonts[0],true)
+									capWordmarkChange(data,true)
 									break;
 								case 3:
-									opentype.load(data.fonts[0].fontBase64, (err,font) => {
+									opentype.load(data.fontPath, (err,font) => {
 										if (err || !font) {
 											console.log(err)
 											return;
@@ -14176,7 +14176,7 @@
 
 										fontCanvas.renderAll()
 
-										refreshDropdowns("font",data.fonts[0],foo)
+										refreshDropdowns("font",data,foo)
 									})
 									break;
 							}
@@ -14675,10 +14675,10 @@
 		const idx = findIndexByText(letterDropdown, displayName)
 
 		if (idx == -1) {
-			letterDropdown.add({text:displayName, value:data.fontBase64, image:thumb.toDataURL()},0)
-			numberDropdown.add({text:displayName, value:data.fontBase64, image:thumb.toDataURL()},0)
-			jerseyDropdown.add({text:displayName, value:data.fontBase64, image:thumb.toDataURL()},0)
-			capDropdown.add({text:displayName, value:data.fontBase64, image:thumb.toDataURL()},0)
+			letterDropdown.add({text:displayName, value:data.fontPath, image:thumb.toDataURL()},0)
+			numberDropdown.add({text:displayName, value:data.fontPath, image:thumb.toDataURL()},0)
+			jerseyDropdown.add({text:displayName, value:data.fontPath, image:thumb.toDataURL()},0)
+			capDropdown.add({text:displayName, value:data.fontPath, image:thumb.toDataURL()},0)
 		
 			switch (which) {
 				case "font":

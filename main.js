@@ -17,7 +17,9 @@ const fontscan = require('fontscan')
 const chokidar = require('chokidar')
 const { create } = require('xmlbuilder2')
 const increment = require('add-filename-increment');
-const hasbin = require('hasbin')
+const hasbin = require('hasbin');
+const { get } = require('http');
+const fontname = require('fontname')
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -288,43 +290,33 @@ app2.get("/customFont", (req, res) => {
 	dialog.showOpenDialog(null, options).then(result => {
 		if(!result.canceled) {
 			store.set("uploadFontPath", path.dirname(result.filePaths[0]))
-			importFont()
-
-			async function importFont() {
-				const jsonArr = []
-				const jsonObj = {}
-				try {
-					let info = await fontscan.getDescriptorFromPaths([result.filePaths[0]])
-					for (font of info) {
-						const dataUrl = font2base64.encodeToDataUrlSync(result.filePaths[0])
-						const ext = getExtension(font.path)
-						const fontPath = url.pathToFileURL(font.path)
-						const json = {
-							"status": "ok",
-							"fontName": font.family,
-							"fontStyle": font.style,
-							"familyName": font.family,
-							"fontFormat": ext,
-							"fontMimetype": 'font/' + ext,
-							"fontData": fontPath.href,
-							"fontPath": font.path,
-							"fontBase64": dataUrl
-						}
-						jsonArr.push(json)
-						fs.copyFileSync(req.query.file, userFontsFolder+"/"+path.basename(req.query.file))
-					}
-				} catch (err) {
-					const json = {
-						"status": "error",
-						"fontName": path.basename(result.filePaths[0]),
-						"fontPath": result.filePaths[0]
-					}
-					jsonArr.push(json)
-				}
-				jsonObj.result = "success"
-				jsonObj.fonts = jsonArr
-				res.json(jsonObj)
+			try {
+				const fontMeta = fontname.parse(fs.readFileSync(result.filePaths[0]))[0];
+				var ext = getExtension(result.filePaths[0])
+				var fontPath = url.pathToFileURL(result.filePaths[0])
+				var json = {
+					"status": "ok",
+					"fontName": fontMeta.fullName,
+					"fontStyle": fontMeta.fontSubfamily,
+					"familyName": fontMeta.fontFamily,
+					"fontFormat": ext,
+					"fontMimetype": 'font/' + ext,
+					"fontData": fontPath.href,
+					"fontPath": userFontsFolder+"\\"+path.basename(result.filePaths[0])
+				};
+				fs.copyFileSync(result.filePaths[0], userFontsFolder+"/"+path.basename(result.filePaths[0]))
+				res.json(json)
 				res.end()
+			} catch (err) {
+				const json = {
+					"status": "error",
+					"fontName": path.basename(result.filePaths[0]),
+					"fontPath": result.filePaths[0],
+					"message": err
+				}
+				res.json(json)
+				res.end()
+				fs.unlinkSync(result.filePaths[0])
 			}
 		} else {
 			res.json({"status":"cancelled"})
@@ -342,43 +334,33 @@ app2.get("/customFont", (req, res) => {
 })
 
 app2.get("/dropFont", (req, res) => {
-	importFont()
-
-	async function importFont() {
-		const jsonArr = []
-		const jsonObj = {}
-		try {
-			let info = await fontscan.getDescriptorFromPaths([req.query.file])
-			for (font of info) {
-				const dataUrl = font2base64.encodeToDataUrlSync(req.query.file)
-				const ext = getExtension(font.path)
-				const fontPath = url.pathToFileURL(font.path)
-				const json = {
-					"status": "ok",
-					"fontName": font.family,
-					"fontStyle": font.style,
-					"familyName": font.family,
-					"fontFormat": ext,
-					"fontMimetype": 'font/' + ext,
-					"fontData": fontPath.href,
-					"fontPath": font.path,
-					"fontBase64": dataUrl
-				}
-				jsonArr.push(json)
-				fs.copyFileSync(req.query.file, userFontsFolder+"/"+path.basename(req.query.file))
-			}
-		} catch (err) {
-			const json = {
-				"status": "error",
-				"fontName": path.basename(req.query.file),
-				"fontPath": req.query.file
-			}
-			jsonArr.push(json)
-		}
-		jsonObj.result = "success"
-		jsonObj.fonts = jsonArr
-		res.json(jsonObj)
+	try {
+		const fontMeta = fontname.parse(fs.readFileSync(req.query.file))[0];
+		var ext = getExtension(req.query.file)
+		var fontPath = url.pathToFileURL(req.query.file)
+		var json = {
+			"status": "ok",
+			"fontName": fontMeta.fullName,
+			"fontStyle": fontMeta.fontSubfamily,
+			"familyName": fontMeta.fontFamily,
+			"fontFormat": ext,
+			"fontMimetype": 'font/' + ext,
+			"fontData": fontPath.href,
+			"fontPath": userFontsFolder+"\\"+path.basename(req.query.file)
+		};
+		fs.copyFileSync(req.query.file, userFontsFolder+"/"+path.basename(req.query.file))
+		res.json(json)
 		res.end()
+	} catch (err) {
+		const json = {
+			"status": "error",
+			"fontName": path.basename(req.query.file),
+			"fontPath": req.query.file,
+			"message": err
+		}
+		res.json(json)
+		res.end()
+		fs.unlinkSync(req.query.file)
 	}
 })
 
@@ -1282,49 +1264,45 @@ app2.get("/loadUniform", (req, res) => {
 })
 
 app2.get("/localFontFolder", (req, res) => {
-	const files = jetpack.find(userFontsFolder, {matching: ["*.ttf", "*.TTF", "*.otf", "*.OTF"]})
+	const jsonObj = {}
+	const jsonArr = []
 
-	createJSON(files) 
-
-	async function createJSON(files) {
-		const jsonArr = []
-		const jsonObj = {}
-		for (filename of files) {
+	filenames = fs.readdirSync(userFontsFolder);
+	for (i=0; i<filenames.length; i++) {
+		if (path.extname(filenames[i]).toLowerCase() == ".ttf" || path.extname(filenames[i]).toLowerCase() == ".otf") {
 			try {
-				let info = await fontscan.getDescriptorFromPaths([filename])
-				for (font of info) {
-					const dataUrl = font2base64.encodeToDataUrlSync(filename)
-					const ext = getExtension(font.path)
-					const fontPath = url.pathToFileURL(font.path)
-					const json = {
-						"status": "ok",
-						"fontName": font.family,
-						"fontStyle": font.style,
-						"familyName": font.family,
-						"fontFormat": ext,
-						"fontMimetype": 'font/' + ext,
-						"fontData": fontPath.href,
-						"fontPath": font.path,
-						"fontBase64": dataUrl
-					}
-					jsonArr.push(json)
-				}
+				const fontMeta = fontname.parse(fs.readFileSync(userFontsFolder+"\\"+filenames[i]))[0];
+				var ext = getExtension(userFontsFolder+"\\"+filenames[i])
+				const dataUrl = font2base64.encodeToDataUrlSync(userFontsFolder+"\\"+filenames[i])
+				var fontPath = url.pathToFileURL(userFontsFolder+"\\"+filenames[i])
+				var json = {
+					"status": "ok",
+					"fontName": fontMeta.fullName,
+					"fontStyle": fontMeta.fontSubfamily,
+					"familyName": fontMeta.fontFamily,
+					"fontFormat": ext,
+					"fontMimetype": 'font/' + ext,
+					"fontData": fontPath.href,
+					"fontBase64": dataUrl,
+					"fontPath": userFontsFolder+"\\"+filenames[i],
+				};
+				jsonArr.push(json)
 			} catch (err) {
 				const json = {
 					"status": "error",
-					"fontName": path.basename(filename),
-					"fontPath": filename,
+					"fontName": path.basename(userFontsFolder+"\\"+filenames[i]),
+					"fontPath": userFontsFolder+"\\"+filenames[i],
 					"message": err
 				}
 				jsonArr.push(json)
-				fs.unlinkSync(filename)
+				fs.unlinkSync(userFontsFolder+"\\"+filenames[i])
 			}
 		}
-		jsonObj.result = "success"
-		jsonObj.fonts = jsonArr
-		res.json(jsonObj)
-		res.end()
 	}
+	jsonObj.result = "success"
+	jsonObj.fonts = jsonArr
+	res.json(jsonObj)
+	res.end()
 })
 
 app2.post('/setPreference', (req, res) => {
