@@ -2067,6 +2067,7 @@
 										<input type="button" class="button" id="customFontLayer" value="Load Overlay Image">
 										<input type="button" class="button selectChars" id="selectLetters" data-chars="letters" value="Select All Letters">
 										<input type="button" class="button selectChars" id="selectNumbers" data-chars="numbers" value="Select All Numbers">
+										<input type="button" class="button" id="resetFont" value="Reset Font Positions">
 										<!-- <input type="button" class="button" id="saveFontPositions" value="Save Font Positions"> -->
 										<input id="customFontLayerUploader" type="file" accept="image/*" style="display:none;"/>
 										<!--<input type="button" class="button" id="uploadTheFont" value="Upload Font" style="display:none;" />-->
@@ -7476,6 +7477,12 @@
 
 	$(".selectChars").on("click",function(e) {
 		selectObjectsByIds(fontCanvas, $(this).data("chars") == "letters" ? letters : numbers)
+	})
+
+	$("#resetFont").on("click",function(e) {
+		fontCanvas.discardActiveObject()
+		changeFont(letters, $("#letterDropdown").val())
+		changeFont(numbers, $("#numberDropdown").val())
 	})
 
 	function changeFont(arr, font) {
