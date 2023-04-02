@@ -137,7 +137,7 @@
         <div class="section group" style="position:relative;">
             <div class="col span_3_of_5">
                 <div id="hiddenContainer" style="display:none;">
-					<canvas id="nameCanvas" width="512" height="1024"></canvas>
+					<!-- <canvas id="nameCanvas" width="512" height="1024"></canvas> -->
                     <canvas id="jerseyTexture" width="512" height="1024"></canvas>
                     <canvas id="jerseyBelow" width="512" height="1024"></canvas>
                     <canvas id="pantsTexture" width="512" height="512"></canvas>
@@ -148,6 +148,7 @@
 					<img id="heightMapSrc" width="512", height="1024">
 					<canvas id="normalMapCanvas" width="512" height="1024"></canvas>
                 </div>
+				<canvas id="nameCanvas" width="512" height="1024"></canvas>
                 <div id="canvasContainer" style="position:absolute; height:828px; width:768px;">
 					<div id="fontContainer">
 						<canvas id="fontCanvas" width="1024" height="1024" style="position:absolute; top:0; float:left; z-index:1;"></canvas>
@@ -998,6 +999,7 @@
 											<tr><td colspan="3" align="center">
 												<input id="jerseyCustomFont" type="file" name="customFont" accept=".ttf, .otf" style="display:none;" />
 												<input type="button" class="button jerseyTextOption localFontButton" id="jerseyFakeFontButton" data-canvas="jersey" value="Choose a Local Font..." />
+												<input type="button" class="button jerseyTextOption" id="exportWordmark" value="Export Wordmark" />
 												<input type="button" class="button jerseyTextOption" id="jerseyUploadTheFont" value="Upload Font" style="display:none;" />
 											</td></tr>
 										</table>
@@ -3951,6 +3953,72 @@
 					} 
 				})
 				jerseyLogoCanvas.renderAll();
+			}
+		})
+	})
+
+	$("#exportWordmark").on("click",function() {
+		showOverlay("Exporting Wordmark...")
+
+		var fileName = getFileName()
+		
+		if (fileName == null) {
+			alert("The start year has to be before the end year!");
+			return false
+		}
+
+		var g = jerseyLogoCanvas.getObjects('group').find(o => o.id == "wordmark")
+		var i = jerseyLogoCanvas.getObjects('image').find(o => o.id == "warpedText")
+		var mark = (g.visible) ? g.toDataURL() : i.toDataURL()
+
+		nameCanvas.clear()
+
+		if (g.visible) {
+			g.clone(function(cloned) {
+				nameCanvas.add(cloned)
+				nameCanvas.requestRenderAll()
+			})
+		} else {
+			i.clone(function(cloned) {
+				nameCanvas.add(cloned)
+				nameCanvas.requestRenderAll()
+			})
+		}
+
+		/* if (swash1Group.vislble) {
+			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'swash1Group').getObjects().forEach(function (o) {
+				o.clone(function(cloned) {
+    				nameCanvas.add(cloned)
+				});
+			})
+		}
+
+		if (swash2Group.vislble) {
+			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'swash2Group').getObjects().forEach(function (o) {
+				o.clone(function(cloned) {
+    				nameCanvas.add(cloned)
+				});
+			})
+		} */
+		
+		nameCanvas.renderAll()
+		
+		$.ajax({
+			type: "POST",
+			url: "http://127.0.0.1:"+port+"/saveWordmark",
+			dataType: "json",
+			data: {
+				name: fileName.toLowerCase(),
+				image: nameCanvas.toDataURL()
+			},
+			success: function(data) {
+				if (data.result == "error") {
+					console.log("ERROR")
+				}
+				hideOverlay()
+			},
+			error: function(data) {
+				hideOverlay()
 			}
 		})
 	})
@@ -13891,7 +13959,6 @@
 						alert("The font '"+data.fontName+"' could not be loaded.")
 						return false;
 					} else {
-						console.log(data)
 						if (fontList.includes(data.fontName)) {
 							const letterDropdown = document.getElementById("letterDropdown").msDropdown;
 							const numberDropdown = document.getElementById("numberDropdown").msDropdown;
