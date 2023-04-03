@@ -5174,20 +5174,22 @@
 	})
 
 	$("#swashCombo").on("change",function() {
-		jerseyLogoCanvas.getObjects('group').forEach(function(o) {
-			if (o.id.indexOf("swash") > -1) {
-				if (state == true) {
-					if (o.id ==  $("#swashCombo").val()) {
-						o.visible = true;
+		if (!reloading) {
+			jerseyLogoCanvas.getObjects('group').forEach(function(o) {
+				if (o.id.indexOf("swash") > -1) {
+					if (state == true) {
+						if (o.id ==  $("#swashCombo").val()) {
+							o.visible = true;
+						} else {
+							o.visible = false;
+						}
 					} else {
 						o.visible = false;
 					}
-				} else {
-					o.visible = false;
 				}
-			}
-		})
-		jerseyLogoCanvas.renderAll();
+			})
+			jerseyLogoCanvas.renderAll();
+		}
 	})
 
 	function jerseyWordmarkChange(data,newFont) {
@@ -5272,139 +5274,141 @@
 	}
 
 	$("#warpEffect").on("change",function(e) {
-		if ($(this).val() == "none") {
-			$("#warpAmount").prop("disabled", true)
-			$("#warpAmountDisplay").prop("disabled", true)
-		} else {
-			$("#warpAmount").prop("disabled", false)
-			$("#warpAmountDisplay").prop("disabled", false)
-		}
-		var selected = $(this).find('option:selected');
-		var value = selected.data('value');
-		$("#warpAmount").val(value);
-		$("#warpAmountDisplay").val(value);
-		const g = jerseyLogoCanvas.getObjects('group').find(o => o.id === 'wordmark');
-		switch ($(this).val()) {
-			case "none":
-				$(".diagonalWarp").css("display","none");
-				$(".verticalWarp").css("display","none");
-				$(".standardWarp").css("display","inline-block");
-				imNeeded = false
-				diagNeeded = false
-				vertNeeded = false
-				jerseyLogoCanvas.getObjects('image').forEach(function(o) {
-					if (o.id == 'warpedText') {
-						jerseyLogoCanvas.remove(o)
-					}
-				})
-				g.set("visible", $("#wordmarkCheck").is(":checked"))
-				g.set("skewX", 0)
-				g.set("skewY", 0)
-				jerseyLogoCanvas.renderAll();
-				break;
-			case "skewUp":
-				$(".diagonalWarp").css("display","none");
-				$(".verticalWarp").css("display","none");
-				$(".standardWarp").css("display","inline-block");
-				imNeeded = false
-				diagNeeded = false
-				vertNeeded = false
-				var amount = (parseInt($("#warpAmount").val())/100)*-45;
-				jerseyLogoCanvas.getObjects('image').forEach(function(o) {
-					if (o.id == 'warpedText') {
-						jerseyLogoCanvas.remove(o)
-					}
-				})
-				g.set("visible", true)
-				g.set("skewX", 0)
-				g.set("skewY", amount)
-				jerseyLogoCanvas.renderAll();
-				break;
-			case "skewDown":
-				$(".diagonalWarp").css("display","none");
-				$(".verticalWarp").css("display","none");
-				$(".standardWarp").css("display","inline-block");
-				imNeeded = false
-				diagNeeded = false
-				vertNeeded = false
-				var amount = (parseInt($("#warpAmount").val())/100)*45;
-				jerseyLogoCanvas.getObjects('image').forEach(function(o) {
-					if (o.id == 'warpedText') {
-						jerseyLogoCanvas.remove(o)
-					}
-				})
-				g.set("visible", true)
-				g.set("skewX", 0)
-				g.set("skewY", amount)
-				jerseyLogoCanvas.renderAll();
-				break;
-			case "skewLeft":
-				$(".diagonalWarp").css("display","none");
-				$(".verticalWarp").css("display","none");
-				$(".standardWarp").css("display","inline-block");
-				imNeeded = false
-				diagNeeded = false
-				vertNeeded = false
-				var amount = (parseInt($("#warpAmount").val())/100)*45;
-				jerseyLogoCanvas.getObjects('image').forEach(function(o) {
-					if (o.id == 'warpedText') {
-						jerseyLogoCanvas.remove(o)
-					}
-				})
-				g.set("visible", true)
-				g.set("skewY", 0)
-				g.set("skewX", amount)
-				jerseyLogoCanvas.renderAll();
-				break;
-			case "skewRight":
-				$(".diagonalWarp").css("display","none");
-				$(".verticalWarp").css("display","none");
-				$(".standardWarp").css("display","inline-block");
-				imNeeded = false
-				diagNeeded = false
-				vertNeeded = false
-				var amount = (parseInt($("#warpAmount").val())/100)*-45;
-				jerseyLogoCanvas.getObjects('image').forEach(function(o) {
-					if (o.id == 'warpedText') {
-						jerseyLogoCanvas.remove(o)
-					}
-				})
-				g.set("visible", true)
-				g.set("skewY", 0)
-				g.set("skewX", amount)
-				jerseyLogoCanvas.renderAll();
-				break;
-			case "vertical":
-				$(".diagonalWarp").css("display","none");
-				$(".verticalWarp").css("display","inline-block");
-				$(".standardWarp").css("display","none");
-				jerseyLogoCanvas.renderAll();
-				imNeeded = false
-				diagNeeded = false
-				vertNeeded = true
-				diagonalText("vert");
-				break;
-			case "diagonal":
-				$(".diagonalWarp").css("display","inline-block");
-				$(".verticalWarp").css("display","none");
-				$(".standardWarp").css("display","none");
-				jerseyLogoCanvas.renderAll();
-				imNeeded = false
-				diagNeeded = true
-				vertNeeded = false
-				diagonalText("diag");
-				break;
-			default:
-				$(".diagonalWarp").css("display","none");
-				$(".verticalWarp").css("display","none");
-				$(".standardWarp").css("display","inline-block");
-				imNeeded = true
-				diagNeeded = false
-				g.set("skewX", 0)
-				g.set("skewY", 0)
-				jerseyLogoCanvas.renderAll();
-				warpText();
-				break;
+		if (!reloading) {
+			if ($(this).val() == "none") {
+				$("#warpAmount").prop("disabled", true)
+				$("#warpAmountDisplay").prop("disabled", true)
+			} else {
+				$("#warpAmount").prop("disabled", false)
+				$("#warpAmountDisplay").prop("disabled", false)
+			}
+			var selected = $(this).find('option:selected');
+			var value = selected.data('value');
+			$("#warpAmount").val(value);
+			$("#warpAmountDisplay").val(value);
+			const g = jerseyLogoCanvas.getObjects('group').find(o => o.id === 'wordmark');
+			switch ($(this).val()) {
+				case "none":
+					$(".diagonalWarp").css("display","none");
+					$(".verticalWarp").css("display","none");
+					$(".standardWarp").css("display","inline-block");
+					imNeeded = false
+					diagNeeded = false
+					vertNeeded = false
+					jerseyLogoCanvas.getObjects('image').forEach(function(o) {
+						if (o.id == 'warpedText') {
+							jerseyLogoCanvas.remove(o)
+						}
+					})
+					g.set("visible", $("#wordmarkCheck").is(":checked"))
+					g.set("skewX", 0)
+					g.set("skewY", 0)
+					jerseyLogoCanvas.renderAll();
+					break;
+				case "skewUp":
+					$(".diagonalWarp").css("display","none");
+					$(".verticalWarp").css("display","none");
+					$(".standardWarp").css("display","inline-block");
+					imNeeded = false
+					diagNeeded = false
+					vertNeeded = false
+					var amount = (parseInt($("#warpAmount").val())/100)*-45;
+					jerseyLogoCanvas.getObjects('image').forEach(function(o) {
+						if (o.id == 'warpedText') {
+							jerseyLogoCanvas.remove(o)
+						}
+					})
+					g.set("visible", true)
+					g.set("skewX", 0)
+					g.set("skewY", amount)
+					jerseyLogoCanvas.renderAll();
+					break;
+				case "skewDown":
+					$(".diagonalWarp").css("display","none");
+					$(".verticalWarp").css("display","none");
+					$(".standardWarp").css("display","inline-block");
+					imNeeded = false
+					diagNeeded = false
+					vertNeeded = false
+					var amount = (parseInt($("#warpAmount").val())/100)*45;
+					jerseyLogoCanvas.getObjects('image').forEach(function(o) {
+						if (o.id == 'warpedText') {
+							jerseyLogoCanvas.remove(o)
+						}
+					})
+					g.set("visible", true)
+					g.set("skewX", 0)
+					g.set("skewY", amount)
+					jerseyLogoCanvas.renderAll();
+					break;
+				case "skewLeft":
+					$(".diagonalWarp").css("display","none");
+					$(".verticalWarp").css("display","none");
+					$(".standardWarp").css("display","inline-block");
+					imNeeded = false
+					diagNeeded = false
+					vertNeeded = false
+					var amount = (parseInt($("#warpAmount").val())/100)*45;
+					jerseyLogoCanvas.getObjects('image').forEach(function(o) {
+						if (o.id == 'warpedText') {
+							jerseyLogoCanvas.remove(o)
+						}
+					})
+					g.set("visible", true)
+					g.set("skewY", 0)
+					g.set("skewX", amount)
+					jerseyLogoCanvas.renderAll();
+					break;
+				case "skewRight":
+					$(".diagonalWarp").css("display","none");
+					$(".verticalWarp").css("display","none");
+					$(".standardWarp").css("display","inline-block");
+					imNeeded = false
+					diagNeeded = false
+					vertNeeded = false
+					var amount = (parseInt($("#warpAmount").val())/100)*-45;
+					jerseyLogoCanvas.getObjects('image').forEach(function(o) {
+						if (o.id == 'warpedText') {
+							jerseyLogoCanvas.remove(o)
+						}
+					})
+					g.set("visible", true)
+					g.set("skewY", 0)
+					g.set("skewX", amount)
+					jerseyLogoCanvas.renderAll();
+					break;
+				case "vertical":
+					$(".diagonalWarp").css("display","none");
+					$(".verticalWarp").css("display","inline-block");
+					$(".standardWarp").css("display","none");
+					jerseyLogoCanvas.renderAll();
+					imNeeded = false
+					diagNeeded = false
+					vertNeeded = true
+					diagonalText("vert");
+					break;
+				case "diagonal":
+					$(".diagonalWarp").css("display","inline-block");
+					$(".verticalWarp").css("display","none");
+					$(".standardWarp").css("display","none");
+					jerseyLogoCanvas.renderAll();
+					imNeeded = false
+					diagNeeded = true
+					vertNeeded = false
+					diagonalText("diag");
+					break;
+				default:
+					$(".diagonalWarp").css("display","none");
+					$(".verticalWarp").css("display","none");
+					$(".standardWarp").css("display","inline-block");
+					imNeeded = true
+					diagNeeded = false
+					g.set("skewX", 0)
+					g.set("skewY", 0)
+					jerseyLogoCanvas.renderAll();
+					warpText();
+					break;
+			}
 		}
 		
 	})
@@ -7405,24 +7409,29 @@
 	})
 
 	$("#letterStyle").on("change",function(e) {
-		style = $(this).val()
-		for (x of letters) {
-			group = fontCanvas.getObjects().find(o => o.id == x)
-			for (y of (style.split(","))) {
-				groupAlign(group,y)
+		if (!reloading) {
+			style = $(this).val()
+			for (x of letters) {
+				group = fontCanvas.getObjects().find(o => o.id == x)
+				for (y of (style.split(","))) {
+					groupAlign(group,y)
+				}
+				fontCanvas.renderAll()
 			}
-			fontCanvas.renderAll()
 		}
+		
 	})
 
 	$("#numberStyle").on("change",function(e) {
-		style = $(this).val()
-		for (x of numbers) {
-			group = fontCanvas.getObjects().find(o => o.id == x)
-			for (y of (style.split(","))) {
-				groupAlign(group,y)
+		if (!reloading) {
+			style = $(this).val()
+			for (x of numbers) {
+				group = fontCanvas.getObjects().find(o => o.id == x)
+				for (y of (style.split(","))) {
+					groupAlign(group,y)
+				}
+				fontCanvas.renderAll()
 			}
-			fontCanvas.renderAll()
 		}
 	})
 	
@@ -13426,7 +13435,19 @@
 
 						Object.keys(exportMeta.checkboxes).forEach(function(key){
 							$("#"+key).prop('checked', exportMeta.checkboxes[key].checked)
+							if (exportMeta.checkboxes[key].checked) {
+								$("#"+key).triggerHandler("click")
+							}
 						})	
+
+						if ($("#swashCheck").is(":checked")) {
+							$(".ms-swash-container").each(function() {
+								$(this).find(".ms-dd").removeClass("disabled")
+							})
+							$(".swashSelector").each(function() {
+								$(this).spectrum('enable')
+							})	
+						}
 
 						Object.keys(exportMeta.selects).forEach(function(key){
 							if (!$("#"+key).hasClass("msdd")) {
@@ -13517,11 +13538,6 @@
 						pantsBelow.renderAll()
 						reRenderBG("pants")
 
-/*  						fontCanvas.loadFromJSON(exportMeta.canvases.fontCanvas, fontCanvas.renderAll.bind(fontCanvas), function(o, object) {
-							console.log(object)
-							fontCanvas.add(object)
-						})
-						fontCanvas.renderAll() */
 						fontCanvas.clear()
 						fabric.util.enlivenObjects(exportMeta.canvases.fontCanvas.objects, (objs) => {
 							objs.forEach((item) => {
@@ -13566,12 +13582,20 @@
 						const numberDropdown = document.getElementById("numberDropdown").msDropdown;
 						const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
 						const capDropdown = document.getElementById("capTextSelect").msDropdown;
+						const letterStyle = document.getElementById("letterStyle").msDropdown;
+						const numberStyle = document.getElementById("numberStyle").msDropdown;
+						const warpEffect = document.getElementById("warpEffect").msDropdown;
+						const swashCombo = document.getElementById("swashCombo").msDropdown;
 						sortFontDropdowns()
 
 						letterDropdown.selectedIndex = findIndexByValue(letterDropdown, exportMeta.selects.letterDropdown.val)
 						numberDropdown.selectedIndex = findIndexByValue(numberDropdown, exportMeta.selects.numberDropdown.val)
 						jerseyDropdown.selectedIndex = findIndexByValue(jerseyDropdown, exportMeta.selects.jerseyWordmarkSelect.val)
 						capDropdown.selectedIndex = findIndexByValue(capDropdown, exportMeta.selects.capTextSelect.val)
+						letterStyle.selectedIndex = findIndexByValue(letterStyle, exportMeta.selects.letterStyle.val)
+						numberStyle.selectedIndex = findIndexByValue(numberStyle, exportMeta.selects.numberStyle.val)
+						warpEffect.selectedIndex = findIndexByValue(warpEffect, exportMeta.selects.warpEffect.val)
+						swashCombo.selectedIndex = findIndexByValue(swashCombo, exportMeta.selects.swashCombo.val)
 
 						hideOverlay()
 
@@ -14841,7 +14865,7 @@
 	function findIndexByValue(dropdown, value) {
 		for (child of dropdown.children) {
 			if (child.value == value) {
-				return child.index + 1
+				return child.index
 			}
 		}
 		return -1
