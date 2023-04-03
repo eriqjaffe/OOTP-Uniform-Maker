@@ -9915,6 +9915,7 @@
 		jerseyBelow.add(collarPinstripeColor)
 		
 		loadMakersMark("jersey",$("#jerseyMakersMarkSelect").find(':selected').data('top'),$("#jerseyMakersMarkSelect").find(':selected').data('left'),$("#jerseyMakersMarkSelect").find(':selected').data('angle'),$("#jerseyMakersMarkSelect").find(':selected').data('height'));
+		jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',pantsBelow.renderAll.bind(pantsBelow));	
 
 		jerseyBelow.renderAll()
 		reRenderBG("jersey")
@@ -10917,6 +10918,7 @@
 
 		loadMakersMark("pants",$("#pantsMakersMarkSelect").find(':selected').data('top'),$("#pantsMakersMarkSelect").find(':selected').data('left'),$("#pantsMakersMarkSelect").find(':selected').data('angle'),$("#pantsMakersMarkSelect").find(':selected').data('height'));
 
+		pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));
 		pantsBelow.renderAll()
 
 		elasticObjects.forEach(function(obj) {
@@ -13534,6 +13536,7 @@
 						jerseyLogoCanvas.loadFromJSON(exportMeta.canvases.jerseyLogoCanvas, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), function(o, object) {
 							jerseyLogoCanvas.add(object)
 						})
+						jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
 						jerseyBelow.renderAll()
 						reRenderBG("jersey")
 
@@ -13567,6 +13570,7 @@
 						pantsLogoCanvas.loadFromJSON(exportMeta.canvases.pantsLogoCanvas, pantsLogoCanvas.renderAll.bind(pantsLogoCanvas), function(o, object) {
 							pantsLogoCanvas.add(object)
 						})
+						pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));
 						pantsBelow.renderAll()
 						reRenderBG("pants")
 
