@@ -13436,7 +13436,7 @@
 						Object.keys(exportMeta.checkboxes).forEach(function(key){
 							$("#"+key).prop('checked', exportMeta.checkboxes[key].checked)
 							if (exportMeta.checkboxes[key].checked) {
-								$("#"+key).triggerHandler("click")
+								$("#"+key).triggerHandler("change")
 							}
 						})	
 
@@ -13447,6 +13447,38 @@
 							$(".swashSelector").each(function() {
 								$(this).spectrum('enable')
 							})	
+						}
+
+						if ($("#lettersVisible").is(":checked")) {
+							$(".ms-letter-container").each(function() {
+								$(this).find(".ms-dd").removeClass("disabled")
+							})
+							$("#letterScaling").prop("disabled",false)
+							$("#letter1StrokeInput").prop("disabled",false)
+							$("#letter2StrokeInput").prop("disabled",false)
+						} else {
+							$(".ms-letter-container").each(function() {
+								$(this).find(".ms-dd").addClass("disabled")
+							})
+							$("#letterScaling").prop("disabled",true)
+							$("#letter1StrokeInput").prop("disabled",true)
+							$("#letter2StrokeInput").prop("disabled",true)
+						}
+
+						if ($("#numbersVisible").is(":checked")) {
+							$(".ms-number-container").each(function() {
+								$(this).find(".ms-dd").removeClass("disabled")
+							})
+							$("#numberScaling").prop("disabled",false)
+							$("#number1StrokeInput").prop("disabled",false)
+							$("#number2StrokeInput").prop("disabled",false)
+						} else {
+							$(".ms-number-container").each(function() {
+								$(this).find(".ms-dd").addClass("disabled")
+							})
+							$("#numberScaling").prop("disabled",true)
+							$("#number1StrokeInput").prop("disabled",true)
+							$("#number2StrokeInput").prop("disabled",true)
 						}
 
 						Object.keys(exportMeta.selects).forEach(function(key){
