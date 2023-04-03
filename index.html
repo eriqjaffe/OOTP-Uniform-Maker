@@ -98,6 +98,7 @@
 		var imNeeded = false;
 		var diagNeeded = false;
 		var vertNeeded = false;
+		var reloading = false;
 
 		var activeCanvas = null;
 		var jerseyOverlayActive = true;
@@ -923,7 +924,7 @@
 										<table style="width:482px;" class="ms-jersey-container">
 											<tr>
 												<td colspan="3">
-													<select id="jerseyWordmarkSelect" class="jerseyTextOption" style="width:100%;">
+													<select id="jerseyWordmarkSelect" class="jerseyTextOption msdd" style="width:100%;">
 														<option data-image="./images/Acme.png" value="./fonts/Acme-Regular.ttf">Acme</option>
 														<option data-image="./images/All State.png" value="./fonts/all_state-webfont.ttf">All State</option>
 														<option data-image="./images/Athletic Gothic.png" value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
@@ -1718,7 +1719,7 @@
 										<table style="width:99.9%;">
 											<tr>
 												<td colspan="3" class="ms-cap-container">
-													<select id="capTextSelect" class="textOption" style="width:100%;">
+													<select id="capTextSelect" class="textOption msdd" style="width:100%;">
 													<!--<select id="capTextSelect" class="textOption" style="width:100%;" data-visible-rows="6">-->
 														<option data-image="./images/Acme.png" value="./fonts/Acme-Regular.ttf">Acme</option>
 														<option data-image="./images/All State.png" value="./fonts/all_state-webfont.ttf">All State</option>
@@ -1817,7 +1818,7 @@
 												<td>Font:</td>
 												<td align="right">
 													<!-- <div id="letterDropdown"></div> -->
-													<select id="letterDropdown" class="charStyle letterToggle" style="width:85%;">
+													<select id="letterDropdown" class="charStyle letterToggle msdd" style="width:85%;">
 														<option data-image="./images/Acme.png" value="./fonts/Acme-Regular.ttf">Acme</option>
 														<option data-image="./images/All State.png" value="./fonts/all_state-webfont.ttf">All State</option>
 														<option data-image="./images/Athletic Gothic.png" value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
@@ -1946,7 +1947,7 @@
 												<td>&nbsp;</td>
 												<td>Font:</td>
 												<td align="right">
-													<select id="numberDropdown" class="charStyle numberToggle" style="width:85%;">
+													<select id="numberDropdown" class="charStyle numberToggle msdd" style="width:85%;">
 														<option data-image="./images/Acme.png" value="./fonts/Acme-Regular.ttf">Acme</option>
 														<option data-image="./images/All State.png" value="./fonts/all_state-webfont.ttf">All State</option>
 														<option data-image="./images/Athletic Gothic.png" value="./fonts/athletic_gothic-webfont.ttf">Athletic Gothic</option>
@@ -4100,7 +4101,9 @@
 	})
 
  	$("#jerseyWordmarkSelect").on("change",function(e) {
-		jerseyWordmarkChange($(this).val(),false)
+		if (!reloading) {
+			jerseyWordmarkChange($(this).val(),false)
+		}
 	})
 
 	$("#jerseyMakersMarkSelect").on("change",function(e) {
@@ -6681,7 +6684,9 @@
 	})
 
 	$("#capTextSelect").on("change",function() {
-		capWordmarkChange($(this).val(),false)
+		if (!reloading) {
+			capWordmarkChange($(this).val(),false)
+		}
 	})
 
 	$(".capTextToggle").on("click",function() {
@@ -7387,11 +7392,16 @@
 	})
 
 	$("#letterDropdown").on("change",function(e) {
-		changeFont(letters, $(this).val())
+		if (!reloading) {
+			changeFont(letters, $(this).val())
+		}
+		
 	})
 
 	$("#numberDropdown").on("change",function(e) {
-		changeFont(numbers, $(this).val())
+		if (!reloading) {
+			changeFont(numbers, $(this).val())
+		}
 	})
 
 	$("#letterStyle").on("change",function(e) {
@@ -13375,6 +13385,7 @@
 
 	$("#load").on("click",function(e){	
 		showOverlay("Loading Uniform...")
+		reloading = true;
 		$.ajax({
 			type: "GET",
 			url: "http://127.0.0.1:"+port+"/loadUniform",
@@ -13418,8 +13429,10 @@
 						})	
 
 						Object.keys(exportMeta.selects).forEach(function(key){
-							$("#"+key).prop("disabled",exportMeta.selects[key].disabled)
-							$("#"+key).val(exportMeta.selects[key].val)
+							if (!$("#"+key).hasClass("msdd")) {
+								$("#"+key).prop("disabled",exportMeta.selects[key].disabled)
+								$("#"+key).val(exportMeta.selects[key].val)
+							} 
 						})
 
 						Object.keys(exportMeta.ranges).forEach(function(key){
@@ -13457,6 +13470,10 @@
 							$("#"+key).spectrum("set",exportMeta.swatchSelectors[key].val)
 						})
 
+						Object.keys(exportMeta.fontSelectors).forEach(function(key){
+							if (exportMeta.fontSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+							$("#"+key).spectrum("set",exportMeta.fontSelectors[key].val)
+						})
 
 						jerseyBelow.loadFromJSON(exportMeta.canvases.jerseyBelow, jerseyBelow.renderAll.bind(jerseyBelow), function(o, object) {
 							jerseyBelow.add(object)
@@ -13471,9 +13488,23 @@
 							capBelow.add(object)
 						})
 						capLogoCanvas.loadFromJSON(exportMeta.canvases.capLogoCanvas, capLogoCanvas.renderAll.bind(capLogoCanvas), function(o, object) {
+							if (object.id == "textLogo") {
+								object._objects[0].set("fill", $("#capLogoStroke2Color").spectrum("get").toHexString())
+								object._objects[0].set("stroke", $("#capLogoStroke2Color").spectrum("get").toHexString())
+								object._objects[1].set("fill", $("#capLogoStroke1Color").spectrum("get").toHexString())
+								object._objects[1].set("stroke", $("#capLogoStroke1Color").spectrum("get").toHexString())
+								object._objects[2].set("fill", $("#capLogoTextColor").spectrum("get").toHexString())
+							}
+							if (object.id == "textLogo2") {
+								object._objects[0].set("fill", $("#capLogo2Stroke2Color").spectrum("get").toHexString())
+								object._objects[0].set("stroke", $("#capLogo2Stroke2Color").spectrum("get").toHexString())
+								object._objects[1].set("fill", $("#capLogo2Stroke1Color").spectrum("get").toHexString())
+								object._objects[1].set("stroke", $("#capLogo2Stroke1Color").spectrum("get").toHexString())
+								object._objects[2].set("fill", $("#capLogo2TextColor").spectrum("get").toHexString())
+							}
 							capLogoCanvas.add(object)
 						})
-
+						//capLogoCanvas.renderAll()
 						capBelow.renderAll()
 						reRenderBG("cap")
 
@@ -13486,6 +13517,39 @@
 						pantsBelow.renderAll()
 						reRenderBG("pants")
 
+/*  						fontCanvas.loadFromJSON(exportMeta.canvases.fontCanvas, fontCanvas.renderAll.bind(fontCanvas), function(o, object) {
+							console.log(object)
+							fontCanvas.add(object)
+						})
+						fontCanvas.renderAll() */
+						fontCanvas.clear()
+						fabric.util.enlivenObjects(exportMeta.canvases.fontCanvas.objects, (objs) => {
+							objs.forEach((item) => {
+								fontCanvas.add(item);
+								item.getObjects().forEach(function (o) {
+									if (isNumeric(o.id.charAt(0))) {
+										if(o.id.indexOf("Fill") > -1) {
+											o.set("fill", $("#numbersFill").spectrum('get').toHexString())
+											o.set("stroke", $("#numbersStroke1").spectrum('get').toHexString())
+										} else {
+											o.set("fill", $("#numbersStroke2").spectrum('get').toHexString())
+											o.set("stroke", $("#numbersStroke2").spectrum('get').toHexString())
+										}
+									} else {
+										if(o.id.indexOf("Fill") > -1) {
+											o.set("fill", $("#lettersFill").spectrum('get').toHexString())
+											o.set("stroke", $("#lettersStroke1").spectrum('get').toHexString())
+										} else {
+											o.set("fill", $("#lettersStroke2").spectrum('get').toHexString())
+											o.set("stroke", $("#lettersStroke2").spectrum('get').toHexString())
+										}
+									}
+								})
+							});
+							fontCanvas.set({backgroundColor: "#D8D8D8"})
+							fontCanvas.setBackgroundImage('./images/symbol_grid.png', fontCanvas.renderAll.bind(fontCanvas), {});
+						})
+						
 						if (exportMeta.customFonts != undefined && exportMeta.customFonts != null) {
 							if (exportMeta.customFonts.length > 0) {
 								for (x in exportMeta.customFonts) {
@@ -13503,21 +13567,19 @@
 						const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
 						const capDropdown = document.getElementById("capTextSelect").msDropdown;
 						sortFontDropdowns()
-						//console.log(exportMeta.selects.letterDropdown.val)
-						$("#letterDropdown").val(exportMeta.selects.letterDropdown.val)
-						$("#numberDropdown").val(exportMeta.selects.numberDropdown.val)
-						$("#jerseyWordmarkSelect").val(exportMeta.selects.jerseyWordmarkSelect.val)
-						$("#capTextSelect").val(exportMeta.selects.capTextSelect.val)
-						
-						letterDropdown.refresh()
-						numberDropdown.refresh()
-						//jerseyDropdown.refresh()
-						//capDropdown.refresh()
+
+						letterDropdown.selectedIndex = findIndexByValue(letterDropdown, exportMeta.selects.letterDropdown.val)
+						numberDropdown.selectedIndex = findIndexByValue(numberDropdown, exportMeta.selects.numberDropdown.val)
+						jerseyDropdown.selectedIndex = findIndexByValue(jerseyDropdown, exportMeta.selects.jerseyWordmarkSelect.val)
+						capDropdown.selectedIndex = findIndexByValue(capDropdown, exportMeta.selects.capTextSelect.val)
 
 						hideOverlay()
+
+						reloading = false;
 					}
 				} else {
 					hideOverlay();
+					reloading = false;
 				}
 			}
 		})
@@ -14779,7 +14841,7 @@
 	function findIndexByValue(dropdown, value) {
 		for (child of dropdown.children) {
 			if (child.value == value) {
-				return child.index
+				return child.index + 1
 			}
 		}
 		return -1
