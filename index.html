@@ -17,6 +17,7 @@
     <script type="text/javascript" src="./scripts/skeletabs.js"></script>
 	<script type="text/javascript" src="./scripts/tinycolor-min.js"></script>
 	<script type="text/javascript" src="./scripts/opentype.js"></script>
+	<script src='https://unpkg.com/tesseract.js@4.0.2/dist/tesseract.min.js'></script>
 	<link href='./scripts/uniformmaker.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/spectrum.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/menu.css' rel='stylesheet' type='text/css'>
@@ -14456,6 +14457,15 @@
 								header.click()
 							}
 						}
+					}
+				})
+			} else {
+				console.log("you dropped an image on the font tab!")
+				$.ajax({
+					type: "GET",
+					url: "http://127.0.0.1:"+port+"/dropFontImage",
+					data: {file:file},
+					success: function(data) {
 					}
 				})
 			}

@@ -16,6 +16,7 @@ const { create } = require('xmlbuilder2')
 const increment = require('add-filename-increment');
 const hasbin = require('hasbin');
 const fontname = require('fontname')
+const { createWorker } = require('tesseract.js');
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -113,6 +114,61 @@ app2.get("/dropImage", (req, res) => {
 			})
 		}
 	})
+})
+
+app2.get("/dropFontImage", (req, res) => {
+	recognizeText()
+
+	async function recognizeText() {
+		const worker = await createWorker();
+
+		(async () => {
+			await worker.loadLanguage('eng');
+			await worker.initialize('eng');
+			const { data: { words } } = await worker.recognize('./images/Acme.png');
+			for (let i = 0; i < words.length; i++) {
+				const word = words[i];
+				
+				for (let j = 0; j < word.symbols.length; j++) {
+					const baseImg = await Jimp.read('./images/Acme.png')
+					const chr = word.symbols[j]
+					console.log(chr.text)
+					console.log(chr.bbox.x0)
+					console.log(chr.bbox.y0)
+					console.log(chr.bbox.x1)
+					console.log(chr.bbox.y1)
+					console.log(baseImg.height)
+					console.log(baseImg.width)
+					await baseImg.crop(chr.bbox.x0, chr.bbox.y0, chr.bbox.x1, chr.bbox.y1)
+					await baseImg.write(tempDir+"/"+word.symbols[j].text+".png");
+				}
+				//console.log(foo.bbox.x1)
+				
+				
+/* 				for (let j = 0; j < word.text.length; j++) {
+					const char = word.text.charAt(j);
+					console.log(char)
+				} */
+			}
+			await worker.terminate();
+		})();
+	}
+	
+	/* Jimp.read(req.query.file, (err, image) => {
+		if (err) {
+			res.json({
+				"filename": "error not an image",
+				"image": "error not an image"
+			})
+		} else {
+			image.getBase64(Jimp.AUTO, (err, ret) => {
+				res.json({
+					"filename": path.basename(req.query.file),
+					"image": ret
+				});
+			})
+		}
+	}) */
 })
 
 app2.get("/uploadImage", (req, res) => {
