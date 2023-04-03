@@ -462,30 +462,32 @@ app2.post('/warpText', (req, res)=> {
 })
 
 app2.post('/saveWordmark', (req,res) => {
-	const canvas = Buffer.from(req.body.image.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const buffer = Buffer.from(req.body.image.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 
     const options = {
         defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/wordmark_' + req.body.name+'.png',{fs: true})
 	}
-            
-	prepareImages()
-
-	async function prepareImages() {
-		dialog.showSaveDialog(null, options).then((result) => {
-			if (!result.canceled) {
-				store.set("downloadPath", path.dirname(result.filePath))
-				fs.writeFile(result.filePath, canvas, 'base64', function(err) {
-					console.log(err)
-				})
-				res.json({result: "success"})
-			} else {
-				res.json({result: "success"})
-			}
-		}).catch((err) => {
-			console.log(err);
+	
+	dialog.showSaveDialog(null, options).then((result) => {
+		if (!result.canceled) {
+			store.set("downloadPath", path.dirname(result.filePath))
+			Jimp.read(buffer, (err, image) => {
+				if (err) {
+					console.log(err);
+				} else {
+					image.autocrop();
+					image.write(result.filePath);
+				}
+			})
 			res.json({result: "success"})
-		});
-	}
+		} else {
+			res.json({result: "success"})
+		}
+	}).catch((err) => {
+		console.log(err);
+		res.json({result: "success"})
+	});
+
 })
 
 app2.post('/saveSwatches', (req, res) => {

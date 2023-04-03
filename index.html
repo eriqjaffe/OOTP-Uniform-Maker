@@ -137,7 +137,7 @@
         <div class="section group" style="position:relative;">
             <div class="col span_3_of_5">
                 <div id="hiddenContainer" style="display:none;">
-					<!-- <canvas id="nameCanvas" width="512" height="1024"></canvas> -->
+					<canvas id="nameCanvas" width="512" height="1024"></canvas>
                     <canvas id="jerseyTexture" width="512" height="1024"></canvas>
                     <canvas id="jerseyBelow" width="512" height="1024"></canvas>
                     <canvas id="pantsTexture" width="512" height="512"></canvas>
@@ -148,8 +148,7 @@
 					<img id="heightMapSrc" width="512", height="1024">
 					<canvas id="normalMapCanvas" width="512" height="1024"></canvas>
                 </div>
-				<canvas id="nameCanvas" width="512" height="1024"></canvas>
-                <div id="canvasContainer" style="position:absolute; height:828px; width:768px;">
+				<div id="canvasContainer" style="position:absolute; height:828px; width:768px;">
 					<div id="fontContainer">
 						<canvas id="fontCanvas" width="1024" height="1024" style="position:absolute; top:0; float:left; z-index:1;"></canvas>
 					</div>
@@ -3961,6 +3960,8 @@
 		showOverlay("Exporting Wordmark...")
 
 		var fileName = getFileName()
+
+		var jsonArr = []
 		
 		if (fileName == null) {
 			alert("The start year has to be before the end year!");
@@ -3969,58 +3970,40 @@
 
 		var g = jerseyLogoCanvas.getObjects('group').find(o => o.id == "wordmark")
 		var i = jerseyLogoCanvas.getObjects('image').find(o => o.id == "warpedText")
-		var mark = (g.visible) ? g.toDataURL() : i.toDataURL()
+
+		jsonArr.push(swash1Group.toJSON())
+		jsonArr.push(swash2Group.toJSON())
+		jsonArr.push(swash3Group.toJSON())
+		jsonArr.push(swash4Group.toJSON())
+		jsonArr.push(swash5Group.toJSON())
+		jsonArr.push(swash6Group.toJSON())
+		jsonArr.push(g.toJSON())
+		if (i != undefined) { jsonArr.push(i.toJSON()) }
 
 		nameCanvas.clear()
 
-		if (g.visible) {
-			g.clone(function(cloned) {
-				nameCanvas.add(cloned)
-				nameCanvas.requestRenderAll()
-			})
-		} else {
-			i.clone(function(cloned) {
-				nameCanvas.add(cloned)
-				nameCanvas.requestRenderAll()
-			})
-		}
-
-		/* if (swash1Group.vislble) {
-			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'swash1Group').getObjects().forEach(function (o) {
-				o.clone(function(cloned) {
-    				nameCanvas.add(cloned)
-				});
-			})
-		}
-
-		if (swash2Group.vislble) {
-			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'swash2Group').getObjects().forEach(function (o) {
-				o.clone(function(cloned) {
-    				nameCanvas.add(cloned)
-				});
-			})
-		} */
-		
-		nameCanvas.renderAll()
-		
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/saveWordmark",
-			dataType: "json",
-			data: {
-				name: fileName.toLowerCase(),
-				image: nameCanvas.toDataURL()
-			},
-			success: function(data) {
-				if (data.result == "error") {
-					console.log("ERROR")
+		fabric.util.enlivenObjects(jsonArr, (objs) => {
+    		objs.forEach((item) => {
+				nameCanvas.add(item);
+			});
+   		 	nameCanvas.renderAll(); // Make sure to call once we're ready!
+			$.ajax({
+				type: "POST",
+				url: "http://127.0.0.1:"+port+"/saveWordmark",
+				dataType: "json",
+				data: {image: nameCanvas.toDataURL(), name: fileName},
+				success: function(data) {
+					if (data.result == "error") {
+						console.log("ERROR")
+					}
+					nameCanvas.clear()
+					hideOverlay()
+				},
+				error: function(data) {
+					hideOverlay()
 				}
-				hideOverlay()
-			},
-			error: function(data) {
-				hideOverlay()
-			}
-		})
+			})
+		});
 	})
 
 	$("#jerseyTextureSelect").on("change",function(){
