@@ -2836,14 +2836,22 @@
 				}
 				switch (e.keyCode) {
 					case 107: // plus
-						if (obj.get('type') == "group") {
-							obj.bringToFront();
+						if (obj.get('type') == "group" || obj.get('type') == "image") {
+							if (e.shiftKey) {
+								obj.bringToFront()
+							} else {
+								obj.bringForward();
+							}
 							activeCanvas.renderAll();
 						}
 						return false;
 					case 109: // minus
-						if (obj.get('type') == "group") {
-							obj.sendToBack();
+						if (obj.get('type') == "group" || obj.get('type') == "image") {
+							if (e.shiftKey) {
+								obj.sendToBack()
+							} else {
+								obj.sendBackwards();
+							}
 							activeCanvas.renderAll();
 						}
 						return false;
@@ -14687,23 +14695,27 @@
 	})
 
 	function handleElement(obj) {
-		switch (obj.id) {
-			case "wordmark":
-				$("#tipSpan").html("If you're trying to select an image instead of the text, you have to hide the text first.");
-				break;
-			case "jerseyFrontNumber":
-				$("#jerseyNumberCtl").css("display","inline-block")
-				$(".frontButton").css("display","inline-block")
-				$(".sleeveButton").css("display","none")
-				break;
-			case "jerseySleeveNumber":
-				$("#jerseyNumberCtl").css("display","inline-block")
-				$(".frontButton").css("display","none")
-				$(".sleeveButton").css("display","inline-block")
-				break;
-			default:
-				$("#tipSpan").html("");
-				$("#jerseyNumberCtl").css("display","none")
+		if (obj.type == 'image') {
+			$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
+		} else {
+			switch (obj.id) {
+				case "wordmark":
+					$("#tipSpan").html("If you're trying to select an image instead of the text, you have to hide the text first.<br>Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
+					break;
+				case "jerseyFrontNumber":
+					$("#jerseyNumberCtl").css("display","inline-block")
+					$(".frontButton").css("display","inline-block")
+					$(".sleeveButton").css("display","none")
+					break;
+				case "jerseySleeveNumber":
+					$("#jerseyNumberCtl").css("display","inline-block")
+					$(".frontButton").css("display","none")
+					$(".sleeveButton").css("display","inline-block")
+					break;
+				default:
+					$("#tipSpan").html("");
+					$("#jerseyNumberCtl").css("display","none")
+			}
 		}
 	}
 
