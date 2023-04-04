@@ -17,6 +17,7 @@ const increment = require('add-filename-increment');
 const hasbin = require('hasbin');
 const fontname = require('fontname')
 const { createWorker } = require('tesseract.js');
+const replaceColor = require('replace-color')
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -123,52 +124,93 @@ app2.get("/dropFontImage", (req, res) => {
 		const worker = await createWorker();
 
 		(async () => {
+			const json = {}
 			await worker.loadLanguage('eng');
 			await worker.initialize('eng');
-			const { data: { words } } = await worker.recognize('./images/Acme.png');
+			const { data: { words } } = await worker.recognize(req.query.file);
 			for (let i = 0; i < words.length; i++) {
 				const word = words[i];
-				
 				for (let j = 0; j < word.symbols.length; j++) {
-					const baseImg = await Jimp.read('./images/Acme.png')
+					const baseImg = await Jimp.read(req.query.file)
 					const chr = word.symbols[j]
-					console.log(chr.text)
-					console.log(chr.bbox.x0)
-					console.log(chr.bbox.y0)
-					console.log(chr.bbox.x1)
-					console.log(chr.bbox.y1)
-					console.log(baseImg.height)
-					console.log(baseImg.width)
-					await baseImg.crop(chr.bbox.x0, chr.bbox.y0, chr.bbox.x1, chr.bbox.y1)
+					const x = chr.bbox.x0
+					const y = chr.bbox.y0
+					const w = chr.bbox.x1 - chr.bbox.x0
+					const h = chr.bbox.y1 - chr.bbox.y0
+					await baseImg.crop(x, y, w, h)
 					await baseImg.write(tempDir+"/"+word.symbols[j].text+".png");
+					baseImg.getBase64(Jimp.AUTO, (err, image) => {
+						json[word.symbols[j].text] = image
+					})
+					
 				}
-				//console.log(foo.bbox.x1)
-				
-				
-/* 				for (let j = 0; j < word.text.length; j++) {
-					const char = word.text.charAt(j);
-					console.log(char)
-				} */
 			}
 			await worker.terminate();
+			res.json(json)
+			res.end()
 		})();
 	}
-	
-	/* Jimp.read(req.query.file, (err, image) => {
-		if (err) {
-			res.json({
-				"filename": "error not an image",
-				"image": "error not an image"
-			})
-		} else {
-			image.getBase64(Jimp.AUTO, (err, ret) => {
-				res.json({
-					"filename": path.basename(req.query.file),
-					"image": ret
-				});
-			})
+})
+
+app2.post("/uploadFontImage", (req, res) => {
+	const options = {
+		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
+		properties: ['openFile'],
+		filters: [
+			{ name: 'Images', extensions: ['jpg', 'png'] }
+		]
+	}
+	dialog.showOpenDialog(null, options).then(result => {
+		  if(!result.canceled) {
+			store.set("uploadImagePath", path.dirname(result.filePaths[0]))
+			recognizeText()
+
+			async function recognizeText() {
+				let image = await Jimp.read(result.filePaths[0])
+				let border = image.getPixelColor(1, 1)
+
+				const rgba = Jimp.intToRGBA(border)
+				const hex = rgbToHex(rgba.r, rgba.g, rgba.b)
+
+				const worker = await createWorker();
+
+				const json = {}
+
+				const base = await replaceColor({
+					image: result.filePaths[0],
+					colors: {
+						type: 'hex',
+						targetColor: hex,
+						replaceColor: "#00000000"
+					}
+				})
+				await base.write(tempDir+'/tempTransparent.png')
+				await worker.loadLanguage('eng');
+				await worker.initialize('eng');
+				const { data: { words } } = await worker.recognize(tempDir+'/tempTransparent.png');
+				for (let i = 0; i < words.length; i++) {
+					const word = words[i];
+					for (let j = 0; j < word.symbols.length; j++) {
+						const baseImg = await Jimp.read(tempDir+'/tempTransparent.png')
+						const chr = word.symbols[j]
+						const x = chr.bbox.x0
+						const y = chr.bbox.y0
+						const w = chr.bbox.x1 - chr.bbox.x0
+						const h = chr.bbox.y1 - chr.bbox.y0
+						await baseImg.crop(x, y, w, h)
+						await baseImg.write(tempDir+"/"+word.symbols[j].text+".png");
+						baseImg.getBase64(Jimp.AUTO, (err, image) => {
+							json[word.symbols[j].text] = image
+						})
+						
+					}
+				}
+				await worker.terminate();
+				res.json(json)
+				res.end()
+			}
 		}
-	}) */
+	})
 })
 
 app2.get("/uploadImage", (req, res) => {
@@ -1598,4 +1640,13 @@ function createWindow () {
 function getExtension(filename) {
 	var ext = path.extname(filename||'').split('.');
 	return ext[ext.length - 1];
+}
+
+function rgbToHex(r, g, b) {
+	return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+function componentToHex(c) {
+	var hex = c.toString(16);
+	return hex.length == 1 ? "0" + hex : hex;
 }

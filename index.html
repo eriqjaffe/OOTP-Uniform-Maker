@@ -17,7 +17,6 @@
     <script type="text/javascript" src="./scripts/skeletabs.js"></script>
 	<script type="text/javascript" src="./scripts/tinycolor-min.js"></script>
 	<script type="text/javascript" src="./scripts/opentype.js"></script>
-	<script src='https://unpkg.com/tesseract.js@4.0.2/dist/tesseract.min.js'></script>
 	<link href='./scripts/uniformmaker.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/spectrum.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/menu.css' rel='stylesheet' type='text/css'>
@@ -150,6 +149,7 @@
 					<img id="heightMapSrc" width="512", height="1024">
 					<canvas id="normalMapCanvas" width="512" height="1024"></canvas>
                 </div>
+				<canvas id="tempCanvas" style="border:1px solid blue;"></canvas>
 				<div id="canvasContainer" style="position:absolute; height:828px; width:768px;">
 					<div id="fontContainer">
 						<canvas id="fontCanvas" width="1024" height="1024" style="position:absolute; top:0; float:left; z-index:1;"></canvas>
@@ -2068,6 +2068,10 @@
 									<td style="text-align: center;">
 										<input type="button" class="button" id="customFontFace" value="Choose a Local Font...">
 										<input type="button" class="button" id="customFontLayer" value="Load Overlay Image">
+									</td>
+								</tr>
+								<tr>
+									<td style="text-align: center;">
 										<input type="button" class="button selectChars" id="selectLetters" data-chars="letters" value="Select All Letters">
 										<input type="button" class="button selectChars" id="selectNumbers" data-chars="numbers" value="Select All Numbers">
 										<input type="button" class="button" id="resetFont" value="Reset Font Positions">
@@ -2075,6 +2079,11 @@
 										<input id="customFontLayerUploader" type="file" accept="image/*" style="display:none;"/>
 										<!--<input type="button" class="button" id="uploadTheFont" value="Upload Font" style="display:none;" />-->
 										<!--<input type="button" class="button" id="fitFont" value="temp button">-->
+									</td>
+								</tr>
+								<tr>
+									<td style="text-align: center;">
+										<input type="button" class="button" id="tesseract" value="Optical Character Recognition (Experimental)">
 									</td>
 								</tr>
 							</table>
@@ -7679,6 +7688,29 @@
 		})
 	}
 
+	$("#tesseract").on("click",function() {	
+		$.ajax({
+			type: "POST",
+			url: "http://127.0.0.1:"+port+"/uploadFontImage",
+			success: function(data) {
+				$(".fontToggle").each(function(){
+					$(this).prop("checked",false)
+					$(this).triggerHandler("change")
+				})
+				$("#numbersVisible").prop("checked",false)
+				$.each(data, function(key, value) {
+					var char = chars.find(o => o.char === key)
+					fabric.Image.fromURL(value, function (oImg) {
+						oImg.set({ "top": ((char.bottom*2)-oImg.height)+8 })
+						fontCanvas.add(oImg)
+						fontCanvas.renderAll()
+					},
+					{ "left": (char.left*2)-8 })
+				})
+			}
+		})
+	})
+		
 	function groupAlign(group, direction) {
 		var groupWidth = group.getBoundingRect(true).width,
 			groupHeight = group.getBoundingRect(true).height,
@@ -14460,12 +14492,25 @@
 					}
 				})
 			} else {
-				console.log("you dropped an image on the font tab!")
 				$.ajax({
 					type: "GET",
 					url: "http://127.0.0.1:"+port+"/dropFontImage",
 					data: {file:file},
 					success: function(data) {
+						$(".fontToggle").each(function(){
+							$(this).prop("checked",false)
+							$(this).triggerHandler("change")
+						})
+						$("#numbersVisible").prop("checked",false)
+						$.each(data, function(key, value) {
+							var char = chars.find(o => o.char === key)
+							fabric.Image.fromURL(value, function (oImg) {
+								oImg.set({ "top": ((char.bottom*2)-oImg.height)+8 })
+								fontCanvas.add(oImg)
+								fontCanvas.renderAll()
+							},
+							{ "left": (char.left*2)-8 })
+						})
 					}
 				})
 			}
