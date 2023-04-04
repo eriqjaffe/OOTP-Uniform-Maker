@@ -149,7 +149,7 @@
 					<img id="heightMapSrc" width="512", height="1024">
 					<canvas id="normalMapCanvas" width="512" height="1024"></canvas>
                 </div>
-				<canvas id="tempCanvas" style="border:1px solid blue;"></canvas>
+				<!-- <canvas id="tempCanvas" style="border:1px solid blue;"></canvas> -->
 				<div id="canvasContainer" style="position:absolute; height:828px; width:768px;">
 					<div id="fontContainer">
 						<canvas id="fontCanvas" width="1024" height="1024" style="position:absolute; top:0; float:left; z-index:1;"></canvas>
@@ -7689,6 +7689,7 @@
 	}
 
 	$("#tesseract").on("click",function() {	
+		showOverlay("Detecting Characters...")
 		$.ajax({
 			type: "POST",
 			url: "http://127.0.0.1:"+port+"/uploadFontImage",
@@ -7701,12 +7702,15 @@
 				$.each(data, function(key, value) {
 					var char = chars.find(o => o.char === key)
 					fabric.Image.fromURL(value, function (oImg) {
-						oImg.set({ "top": ((char.bottom*2)-oImg.height)+8 })
+						oImg.set({ "top": ((char.bottom*2)-oImg.height)+8, "left": (char.left*2)-8 })
 						fontCanvas.add(oImg)
 						fontCanvas.renderAll()
-					},
-					{ "left": (char.left*2)-8 })
+					})
 				})
+				hideOverlay()
+			},
+			error: function(data) {
+				hideOverlay()
 			}
 		})
 	})
@@ -14492,6 +14496,7 @@
 					}
 				})
 			} else {
+				showOverlay("Detecting Characters...")
 				$.ajax({
 					type: "GET",
 					url: "http://127.0.0.1:"+port+"/dropFontImage",
@@ -14505,12 +14510,15 @@
 						$.each(data, function(key, value) {
 							var char = chars.find(o => o.char === key)
 							fabric.Image.fromURL(value, function (oImg) {
-								oImg.set({ "top": ((char.bottom*2)-oImg.height)+8 })
+								oImg.set({ "top": ((char.bottom*2)-oImg.height)+8, "left": (char.left*2)-8 })
 								fontCanvas.add(oImg)
 								fontCanvas.renderAll()
-							},
-							{ "left": (char.left*2)-8 })
+							})
 						})
+						hideOverlay()
+					},
+					error: function(data) {
+						hideOverlay()
 					}
 				})
 			}

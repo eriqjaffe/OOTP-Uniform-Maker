@@ -121,6 +121,52 @@ app2.get("/dropFontImage", (req, res) => {
 	recognizeText()
 
 	async function recognizeText() {
+		let image = await Jimp.read(req.query.file)
+		let border = image.getPixelColor(1, 1)
+
+		const rgba = Jimp.intToRGBA(border)
+		const hex = rgbToHex(rgba.r, rgba.g, rgba.b)
+
+		const worker = await createWorker();
+
+		const json = {}
+
+		const base = await replaceColor({
+			image: req.query.file,
+			colors: {
+				type: 'hex',
+				targetColor: hex,
+				replaceColor: "#00000000"
+			}
+		})
+		let buffer = await base.getBufferAsync(Jimp.MIME_PNG)
+		
+		await worker.loadLanguage('eng');
+		await worker.initialize('eng');
+		const { data: { words } } = await worker.recognize(buffer);
+		for (let i = 0; i < words.length; i++) {
+			const word = words[i];
+			for (let j = 0; j < word.symbols.length; j++) {
+				const baseImg = await Jimp.read(buffer)
+				const chr = word.symbols[j]
+				const x = chr.bbox.x0
+				const y = chr.bbox.y0
+				const w = chr.bbox.x1 - chr.bbox.x0
+				const h = chr.bbox.y1 - chr.bbox.y0
+				await baseImg.crop(x, y, w, h)
+				//await baseImg.write(tempDir+"/"+word.symbols[j].text+".png");
+				baseImg.getBase64(Jimp.AUTO, (err, image) => {
+					json[word.symbols[j].text] = image
+				})
+				
+			}
+		}
+		await worker.terminate();
+		res.json(json)
+		res.end()
+	}
+
+	/* async function recognizeText() {
 		const worker = await createWorker();
 
 		(async () => {
@@ -149,7 +195,7 @@ app2.get("/dropFontImage", (req, res) => {
 			res.json(json)
 			res.end()
 		})();
-	}
+	} */
 })
 
 app2.post("/uploadFontImage", (req, res) => {
@@ -184,21 +230,22 @@ app2.post("/uploadFontImage", (req, res) => {
 						replaceColor: "#00000000"
 					}
 				})
-				await base.write(tempDir+'/tempTransparent.png')
+				let buffer = await base.getBufferAsync(Jimp.MIME_PNG)
+				
 				await worker.loadLanguage('eng');
 				await worker.initialize('eng');
-				const { data: { words } } = await worker.recognize(tempDir+'/tempTransparent.png');
+				const { data: { words } } = await worker.recognize(buffer);
 				for (let i = 0; i < words.length; i++) {
 					const word = words[i];
 					for (let j = 0; j < word.symbols.length; j++) {
-						const baseImg = await Jimp.read(tempDir+'/tempTransparent.png')
+						const baseImg = await Jimp.read(buffer)
 						const chr = word.symbols[j]
 						const x = chr.bbox.x0
 						const y = chr.bbox.y0
 						const w = chr.bbox.x1 - chr.bbox.x0
 						const h = chr.bbox.y1 - chr.bbox.y0
 						await baseImg.crop(x, y, w, h)
-						await baseImg.write(tempDir+"/"+word.symbols[j].text+".png");
+						//await baseImg.write(tempDir+"/"+word.symbols[j].text+".png");
 						baseImg.getBase64(Jimp.AUTO, (err, image) => {
 							json[word.symbols[j].text] = image
 						})
