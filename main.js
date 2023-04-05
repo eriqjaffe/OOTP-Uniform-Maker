@@ -16,6 +16,8 @@ const { create } = require('xmlbuilder2')
 const increment = require('add-filename-increment');
 const hasbin = require('hasbin');
 const fontname = require('fontname')
+const { createWorker } = require('tesseract.js');
+const replaceColor = require('replace-color')
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -111,6 +113,149 @@ app2.get("/dropImage", (req, res) => {
 					"image": ret
 				});
 			})
+		}
+	})
+})
+
+app2.get("/dropFontImage", (req, res) => {
+	recognizeText()
+
+	async function recognizeText() {
+		let image = await Jimp.read(req.query.file)
+		let border = image.getPixelColor(1, 1)
+
+		const rgba = Jimp.intToRGBA(border)
+		const hex = rgbToHex(rgba.r, rgba.g, rgba.b)
+
+		const worker = await createWorker();
+
+		const json = {}
+
+		const base = await replaceColor({
+			image: req.query.file,
+			colors: {
+				type: 'hex',
+				targetColor: hex,
+				replaceColor: "#00000000"
+			}
+		})
+		let buffer = await base.getBufferAsync(Jimp.MIME_PNG)
+		
+		await worker.loadLanguage('eng');
+		await worker.initialize('eng');
+		const { data: { words } } = await worker.recognize(buffer);
+		for (let i = 0; i < words.length; i++) {
+			const word = words[i];
+			for (let j = 0; j < word.symbols.length; j++) {
+				const baseImg = await Jimp.read(buffer)
+				const chr = word.symbols[j]
+				const x = chr.bbox.x0
+				const y = chr.bbox.y0
+				const w = chr.bbox.x1 - chr.bbox.x0
+				const h = chr.bbox.y1 - chr.bbox.y0
+				await baseImg.crop(x, y, w, h)
+				//await baseImg.write(tempDir+"/"+word.symbols[j].text+".png");
+				baseImg.getBase64(Jimp.AUTO, (err, image) => {
+					json[word.symbols[j].text] = image
+				})
+				
+			}
+		}
+		await worker.terminate();
+		res.json(json)
+		res.end()
+	}
+
+	/* async function recognizeText() {
+		const worker = await createWorker();
+
+		(async () => {
+			const json = {}
+			await worker.loadLanguage('eng');
+			await worker.initialize('eng');
+			const { data: { words } } = await worker.recognize(req.query.file);
+			for (let i = 0; i < words.length; i++) {
+				const word = words[i];
+				for (let j = 0; j < word.symbols.length; j++) {
+					const baseImg = await Jimp.read(req.query.file)
+					const chr = word.symbols[j]
+					const x = chr.bbox.x0
+					const y = chr.bbox.y0
+					const w = chr.bbox.x1 - chr.bbox.x0
+					const h = chr.bbox.y1 - chr.bbox.y0
+					await baseImg.crop(x, y, w, h)
+					await baseImg.write(tempDir+"/"+word.symbols[j].text+".png");
+					baseImg.getBase64(Jimp.AUTO, (err, image) => {
+						json[word.symbols[j].text] = image
+					})
+					
+				}
+			}
+			await worker.terminate();
+			res.json(json)
+			res.end()
+		})();
+	} */
+})
+
+app2.post("/uploadFontImage", (req, res) => {
+	const options = {
+		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
+		properties: ['openFile'],
+		filters: [
+			{ name: 'Images', extensions: ['jpg', 'png'] }
+		]
+	}
+	dialog.showOpenDialog(null, options).then(result => {
+		  if(!result.canceled) {
+			store.set("uploadImagePath", path.dirname(result.filePaths[0]))
+			recognizeText()
+
+			async function recognizeText() {
+				let image = await Jimp.read(result.filePaths[0])
+				let border = image.getPixelColor(1, 1)
+
+				const rgba = Jimp.intToRGBA(border)
+				const hex = rgbToHex(rgba.r, rgba.g, rgba.b)
+
+				const worker = await createWorker();
+
+				const json = {}
+
+				const base = await replaceColor({
+					image: result.filePaths[0],
+					colors: {
+						type: 'hex',
+						targetColor: hex,
+						replaceColor: "#00000000"
+					}
+				})
+				let buffer = await base.getBufferAsync(Jimp.MIME_PNG)
+				
+				await worker.loadLanguage('eng');
+				await worker.initialize('eng');
+				const { data: { words } } = await worker.recognize(buffer);
+				for (let i = 0; i < words.length; i++) {
+					const word = words[i];
+					for (let j = 0; j < word.symbols.length; j++) {
+						const baseImg = await Jimp.read(buffer)
+						const chr = word.symbols[j]
+						const x = chr.bbox.x0
+						const y = chr.bbox.y0
+						const w = chr.bbox.x1 - chr.bbox.x0
+						const h = chr.bbox.y1 - chr.bbox.y0
+						await baseImg.crop(x, y, w, h)
+						//await baseImg.write(tempDir+"/"+word.symbols[j].text+".png");
+						baseImg.getBase64(Jimp.AUTO, (err, image) => {
+							json[word.symbols[j].text] = image
+						})
+						
+					}
+				}
+				await worker.terminate();
+				res.json(json)
+				res.end()
+			}
 		}
 	})
 })
@@ -1542,4 +1687,13 @@ function createWindow () {
 function getExtension(filename) {
 	var ext = path.extname(filename||'').split('.');
 	return ext[ext.length - 1];
+}
+
+function rgbToHex(r, g, b) {
+	return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+function componentToHex(c) {
+	var hex = c.toString(16);
+	return hex.length == 1 ? "0" + hex : hex;
 }

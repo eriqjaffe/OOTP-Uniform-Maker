@@ -73,6 +73,8 @@
 		const chars = [{"bottom":63,"char":"A","left":7,"size":60,"stroke":4},{"bottom":63,"char":"B","left":47,"size":60,"stroke":4},{"bottom":63,"char":"C","left":86,"size":60,"stroke":4},{"bottom":63,"char":"D","left":125,"size":60,"stroke":4},{"bottom":63,"char":"E","left":164,"size":60,"stroke":4},{"bottom":63,"char":"F","left":203,"size":60,"stroke":4},{"bottom":63,"char":"G","left":243,"size":60,"stroke":4},{"bottom":63,"char":"H","left":282,"size":60,"stroke":4},{"bottom":63,"char":"I","left":322,"size":60,"stroke":4},{"bottom":63,"char":"J","left":360,"size":60,"stroke":4},{"bottom":63,"char":"K","left":400,"size":60,"stroke":4},{"bottom":63,"char":"L","left":439,"size":60,"stroke":4},{"bottom":63,"char":"M","left":478,"size":60,"stroke":4},{"bottom":131,"char":"N","left":7,"size":60,"stroke":4},{"bottom":131,"char":"O","left":47,"size":60,"stroke":4},{"bottom":131,"char":"P","left":86,"size":60,"stroke":4},{"bottom":131,"char":"Q","left":125,"size":60,"stroke":4},{"bottom":131,"char":"R","left":164,"size":60,"stroke":4},{"bottom":131,"char":"S","left":203,"size":60,"stroke":4},{"bottom":131,"char":"T","left":243,"size":60,"stroke":4},{"bottom":131,"char":"U","left":282,"size":60,"stroke":4},{"bottom":131,"char":"V","left":322,"size":60,"stroke":4},{"bottom":131,"char":"W","left":360,"size":60,"stroke":4},{"bottom":131,"char":"X","left":400,"size":60,"stroke":4},{"bottom":131,"char":"Y","left":439,"size":60,"stroke":4},{"bottom":131,"char":"Z","left":478,"size":60,"stroke":4},{"bottom":350,"char":"0","left":10,"size":168,"stroke":6},{"bottom":350,"char":"1","left":112,"size":168,"stroke":6},{"bottom":350,"char":"2","left":215,"size":168,"stroke":6},{"bottom":350,"char":"3","left":317,"size":168,"stroke":6},{"bottom":350,"char":"4","left":419,"size":168,"stroke":6},{"bottom":502,"char":"5","left":10,"size":168,"stroke":6},{"bottom":502,"char":"6","left":112,"size":168,"stroke":6},{"bottom":502,"char":"7","left":215,"size":168,"stroke":6},{"bottom":502,"char":"8","left":317,"size":168,"stroke":6},{"bottom":502,"char":"9","left":419,"size":168,"stroke":6},{"bottom":215,"char":"smallA","left":164,"size":60,"stroke":4,"type":"small"},{"bottom":215,"char":"smallC","left":203,"size":60,"stroke":4,"type":"small"},{"bottom":215,"char":"smallE","left":243,"size":60,"stroke":4,"type":"small"}]
 		const letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","smallA","smallC","smallE"]
 		const numbers = ["0","1","2","3","4","5","6","7","8","9"]
+		const validImageTypes = ["png","jpg","jpeg","bmp","gif","tiff"]
+		const validFontTypes = ["ttf", "otf"]
 		
 		var capMakersMarkColor = initialCapColors['capMakersMarkColor']
 		var jerseyMakersMarkColor = initialJerseyColors['jerseyMakersMarkColor']
@@ -149,6 +151,7 @@
 					<img id="heightMapSrc" width="512", height="1024">
 					<canvas id="normalMapCanvas" width="512" height="1024"></canvas>
                 </div>
+				<!-- <canvas id="tempCanvas" style="border:1px solid blue;"></canvas> -->
 				<div id="canvasContainer" style="position:absolute; height:828px; width:768px;">
 					<div id="fontContainer">
 						<canvas id="fontCanvas" width="1024" height="1024" style="position:absolute; top:0; float:left; z-index:1;"></canvas>
@@ -2067,6 +2070,10 @@
 									<td style="text-align: center;">
 										<input type="button" class="button" id="customFontFace" value="Choose a Local Font...">
 										<input type="button" class="button" id="customFontLayer" value="Load Overlay Image">
+									</td>
+								</tr>
+								<tr>
+									<td style="text-align: center;">
 										<input type="button" class="button selectChars" id="selectLetters" data-chars="letters" value="Select All Letters">
 										<input type="button" class="button selectChars" id="selectNumbers" data-chars="numbers" value="Select All Numbers">
 										<input type="button" class="button" id="resetFont" value="Reset Font Positions">
@@ -2074,6 +2081,11 @@
 										<input id="customFontLayerUploader" type="file" accept="image/*" style="display:none;"/>
 										<!--<input type="button" class="button" id="uploadTheFont" value="Upload Font" style="display:none;" />-->
 										<!--<input type="button" class="button" id="fitFont" value="temp button">-->
+									</td>
+								</tr>
+								<tr>
+									<td style="text-align: center;">
+										<input type="button" class="button" id="tesseract" value="Optical Character Recognition (Experimental)">
 									</td>
 								</tr>
 							</table>
@@ -7686,6 +7698,33 @@
 		})
 	}
 
+	$("#tesseract").on("click",function() {	
+		showOverlay("Detecting Characters...")
+		$.ajax({
+			type: "POST",
+			url: "http://127.0.0.1:"+port+"/uploadFontImage",
+			success: function(data) {
+				$(".fontToggle").each(function(){
+					$(this).prop("checked",false)
+					$(this).triggerHandler("change")
+				})
+				$("#numbersVisible").prop("checked",false)
+				$.each(data, function(key, value) {
+					var char = chars.find(o => o.char === key)
+					fabric.Image.fromURL(value, function (oImg) {
+						oImg.set({ "top": ((char.bottom*2)-oImg.height)+8, "left": (char.left*2)-8 })
+						fontCanvas.add(oImg)
+						fontCanvas.renderAll()
+					})
+				})
+				hideOverlay()
+			},
+			error: function(data) {
+				hideOverlay()
+			}
+		})
+	})
+		
 	function groupAlign(group, direction) {
 		var groupWidth = group.getBoundingRect(true).width,
 			groupHeight = group.getBoundingRect(true).height,
@@ -14059,7 +14098,7 @@
 	}
 
 	function dropImage(dropCanvas, file, tab) {
-		if (getExtension(file).toLowerCase() == "ttf" || getExtension(file).toLowerCase() == "otf") {
+		if ($.inArray(getExtension(file).toLowerCase(), validFontTypes) > -1) {
 			$.ajax({
 				type: "GET",
 				url: "http://127.0.0.1:"+port+"/dropFont",
@@ -14372,100 +14411,133 @@
 				}
 			})
 		} else {
-			if (tab < 3) {
-				$.ajax({
-					type: "GET",
-					url: "http://127.0.0.1:"+port+"/dropImage",
-					data: {file:file},
-					success: function(data) { 
-						if (data.image != "error not an image") {
-							var imgObj = new Image();
-							imgObj.src = data.image;
-							$("#fileName").html(data.filename);
-							imgObj.onload = function () {
-								switch (dropCanvas.id) {
-									case "jerseyLogoCanvas":
-										var canvas = jerseyLogoCanvas
-										var imLeft = 256
-										var imTop = 512
-										var moveBelow = 'buttons'
-										var header = $("#jerseyImagesHeader")
-										break;
-									case "capLogoCanvas":
-										var canvas = capLogoCanvas
-										var imLeft = 256
-										var imTop = 256
-										var moveBelow = 'eyeletGroup'
-										var header = $("#capImagesHeader")
-										break;
-									case "pantsLogoCanvas":
-										var canvas = pantsLogoCanvas
-										var imLeft = 256
-										var imTop = 256
-										var moveBelow = belt
-										var header = $("#pantsImagesHeader")
-										break;
-								} 
-								var image = new fabric.Image(imgObj);
-								image.set({
-									originX: 'center',
-									originY: 'center',
-									perPixelTargetFind: true,
-									centeredScaling: true,
-									centeredRotation: true,
-									name: data.filename,
-									id: data.filename
-								});
-								image.filters.push(new fabric.Image.filters.Resize({
-									resizeType: 'lanczos', // typo fixed
-									lanczosLobes: 2 // typo fixed
-								}));
-								image.on('object:modified',function() {
-									imLeft = image.get('left')
-									imTop = image.get('top');
-								})
-								image.on('selected',function() {
-									switch (activeCanvas.id) {
+			if ($.inArray(getExtension(file).toLowerCase(), validImageTypes) > -1) {
+				if (tab < 3) {
+					$.ajax({
+						type: "GET",
+						url: "http://127.0.0.1:"+port+"/dropImage",
+						data: {file:file},
+						success: function(data) { 
+							if (data.image != "error not an image") {
+								var imgObj = new Image();
+								imgObj.src = data.image;
+								$("#fileName").html(data.filename);
+								imgObj.onload = function () {
+									switch (dropCanvas.id) {
 										case "jerseyLogoCanvas":
-											var canStr = "jersey"
+											var canvas = jerseyLogoCanvas
+											var imLeft = 256
+											var imTop = 512
+											var moveBelow = 'buttons'
+											var header = $("#jerseyImagesHeader")
 											break;
 										case "capLogoCanvas":
-											var canStr = "cap"
+											var canvas = capLogoCanvas
+											var imLeft = 256
+											var imTop = 256
+											var moveBelow = 'eyeletGroup'
+											var header = $("#capImagesHeader")
 											break;
 										case "pantsLogoCanvas":
-											var canStr = "pants"
+											var canvas = pantsLogoCanvas
+											var imLeft = 256
+											var imTop = 256
+											var moveBelow = belt
+											var header = $("#pantsImagesHeader")
 											break;
 									} 
-									$("#"+canStr+"FileName").html(image.get('id'));
-									if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-										$("#"+canStr+"TrimImageDiv").css("display","block");
-										$("#"+canStr+"UploadImageDiv").css("display","none");
-										$("#"+canStr+"SelectedImageDiv").css("display","block");
-									}
-									$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-									$(".copypaste").each(function() {
-										$(this).css("display","inline-block")
+									var image = new fabric.Image(imgObj);
+									image.set({
+										originX: 'center',
+										originY: 'center',
+										perPixelTargetFind: true,
+										centeredScaling: true,
+										centeredRotation: true,
+										name: data.filename,
+										id: data.filename
+									});
+									image.filters.push(new fabric.Image.filters.Resize({
+										resizeType: 'lanczos', // typo fixed
+										lanczosLobes: 2 // typo fixed
+									}));
+									image.on('object:modified',function() {
+										imLeft = image.get('left')
+										imTop = image.get('top');
 									})
-								})
-								var h = image.height;
-								var w = image.width;
-								canvas.add(image);
-								image.set({"left":imLeft,"top":imTop});
-								image.setCoords();
-								if (moveBelow != 'belt') {
-									canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
-								} else {
-									canvas.sendToBack(image)	
+									image.on('selected',function() {
+										switch (activeCanvas.id) {
+											case "jerseyLogoCanvas":
+												var canStr = "jersey"
+												break;
+											case "capLogoCanvas":
+												var canStr = "cap"
+												break;
+											case "pantsLogoCanvas":
+												var canStr = "pants"
+												break;
+										} 
+										$("#"+canStr+"FileName").html(image.get('id'));
+										if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+											$("#"+canStr+"TrimImageDiv").css("display","block");
+											$("#"+canStr+"UploadImageDiv").css("display","none");
+											$("#"+canStr+"SelectedImageDiv").css("display","block");
+										}
+										$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+										$(".copypaste").each(function() {
+											$(this).css("display","inline-block")
+										})
+									})
+									var h = image.height;
+									var w = image.width;
+									canvas.add(image);
+									image.set({"left":imLeft,"top":imTop});
+									image.setCoords();
+									if (moveBelow != 'belt') {
+										canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
+									} else {
+										canvas.sendToBack(image)	
+									}
+									canvas.setActiveObject(image)
+									canvas.requestRenderAll()
+									canvas.renderAll();
+									$("#tabContainer").skeletabs('goTo', tab)
+									header.click()
 								}
-								canvas.setActiveObject(image)
-								canvas.requestRenderAll()
-								canvas.renderAll();
-								$("#tabContainer").skeletabs('goTo', tab)
-								header.click()
 							}
 						}
+					})
+				} else {
+					if (getExtension(file) == "png" || getExtension(file) == "jpg") {
+						showOverlay("Detecting Characters...")
+						$.ajax({
+							type: "GET",
+							url: "http://127.0.0.1:"+port+"/dropFontImage",
+							data: {file:file},
+							success: function(data) {
+								$(".fontToggle").each(function(){
+									$(this).prop("checked",false)
+									$(this).triggerHandler("change")
+								})
+								$("#numbersVisible").prop("checked",false)
+								$.each(data, function(key, value) {
+									var char = chars.find(o => o.char === key)
+									fabric.Image.fromURL(value, function (oImg) {
+										oImg.set({ "top": ((char.bottom*2)-oImg.height)+8, "left": (char.left*2)-8 })
+										fontCanvas.add(oImg)
+										fontCanvas.renderAll()
+									})
+								})
+								hideOverlay()
+							},
+							error: function(data) {
+								hideOverlay()
+							}
+						})
 					}
-				})
+					
+				}
+			} else {
+				alert("Only jpg, png, gif, and tiff images are supported.")
 			}
 		}
 	}
