@@ -2086,6 +2086,7 @@
 								<tr>
 									<td style="text-align: center;">
 										<input type="button" class="button" id="tesseract" value="Optical Character Recognition (Experimental)">
+										<input type="button" class="button" id="clearOCR" value="Delete OCR Characters">
 									</td>
 								</tr>
 							</table>
@@ -7722,6 +7723,17 @@
 			error: function(data) {
 				hideOverlay()
 			}
+		})
+	})
+
+	$("#clearOCR").on("click",function() {
+		fontCanvas.getObjects('image').forEach(function(o) {
+			fontCanvas.remove(o)
+		})
+		fontCanvas.renderAll()
+		$(".fontToggle").each(function(){
+			$(this).prop("checked",true)
+			$(this).triggerHandler("change")
 		})
 	})
 		
