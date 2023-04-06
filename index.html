@@ -2535,13 +2535,26 @@
 </div>
 </body>
 <script>
-	const tippyInstance = tippy(document.getElementById('jerseyContainer'), {
-        content: 'My tooltip!',
+	const jerseyTippy = tippy(document.getElementById('jerseyContainer'), {
+        content: '',
 		trigger: 'manual',
 		placement: 'right',
-		theme: 'light',
 		allowHTML: true,
     });
+
+	const capTippy = tippy(document.getElementById('capContainer'), {
+		content: '',
+		trigger: 'manual',
+		placement: 'left',
+		allowHTML: true,
+	})
+
+	const pantsTippy = tippy(document.getElementById('pantsContainer'), {
+		content: '',
+		trigger: 'manual',
+		placement: 'left',
+		allowHTML: true,
+	})
 
 	require('./renderer.js')
 	const semver = require('semver')
@@ -2850,6 +2863,18 @@
 
 	$(document).keydown(function(e) {   
 		if (activeCanvas != null) {
+			var tippyInstance = null
+			switch (activeCanvas) {
+				case jerseyLogoCanvas:
+					tippyInstance = jerseyTippy;
+					break;
+				case capLogoCanvas:
+					tippyInstance = capTippy;
+					break;
+				case pantsLogoCanvas:
+					tippyInstance = pantsTippy;
+					break;
+			}
 			var obj = activeCanvas.getActiveObject();
 			if(e.key == "c" && e.ctrlKey) {
         		copy()
@@ -4773,6 +4798,7 @@
 	})
 
 	jerseyLogoCanvas.on('selection:cleared', function(e) {
+		jerseyTippy.hide()
 		if ($("#jerseyReplaceColorDiv").css("display") == "block") {
 			$("#jerseyReplaceColorDiv").slideToggle();
 		}
@@ -6169,6 +6195,25 @@
 		pantsLogoCanvas.renderAll();
 	})
 
+	pantsLogoCanvas.on("selection:created",function(e) {
+		console.log("created")
+		activeCanvas = pantsLogoCanvas;
+		pantsTippy.setContent(getStackingOrder())
+		pantsTippy.show()
+	})
+
+	pantsLogoCanvas.on("selection:updated",function(e) {
+		console.log("changed")
+		activeCanvas = pantsLogoCanvas;
+		pantsTippy.setContent(getStackingOrder())
+		pantsTippy.show()
+	})
+
+	pantsLogoCanvas.on("selection:cleared",function(e) {
+		console.log('cleared')
+		pantsTippy.hide()
+	})
+
 	pantsLogoCanvas.on("mouse:down",function(e) {
 		activeCanvas = pantsLogoCanvas;
 		capLogoCanvas.discardActiveObject()
@@ -6469,6 +6514,8 @@
 
     capLogoCanvas.on('selection:created', function(e) {
 		activeCanvas = capLogoCanvas;
+		capTippy.setContent(getStackingOrder())
+		capTippy.show()
 		var obj = e.selected[0];
 		$("#capFileName").html(obj.id);
 		if ($("#capTrimImageDiv").css("display") == "none") {
@@ -6482,7 +6529,14 @@
 		})
 	})
 
+	capLogoCanvas.on('selection:updated', function(e) {
+		activeCanvas = capLogoCanvas;
+		capTippy.setContent(getStackingOrder())
+		capTippy.show()
+	})
+
 	capLogoCanvas.on('selection:cleared', function(e) {
+		capTippy.hide()
 		if ($("#replaceColorDiv").css("display") == "block") {
 			$("#replaceColorDiv").slideToggle();
 		}
@@ -10211,7 +10265,8 @@
 			borderColor: 'red',
 			cornerColor: 'yellow',
 			cornerSize: 12,
-			transparentCorners: false
+			transparentCorners: false,
+			description: 'Swash'
 		});
 		
 		swash2Group = new fabric.Group([swash2Stroke,swash2], {
@@ -10225,7 +10280,8 @@
 			borderColor: 'red',
 			cornerColor: 'yellow',
 			cornerSize: 12,
-			transparentCorners: false
+			transparentCorners: false,
+			description: 'Swash'
 		});
 
 		swash3Group = new fabric.Group([swash3Stroke,swash3], {
@@ -10239,7 +10295,8 @@
 			borderColor: 'red',
 			cornerColor: 'yellow',
 			cornerSize: 12,
-			transparentCorners: false
+			transparentCorners: false,
+			description: 'Swash'
 		});
 
 		swash4Group = new fabric.Group([swash4Stroke,swash4], {
@@ -10253,7 +10310,8 @@
 			borderColor: 'red',
 			cornerColor: 'yellow',
 			cornerSize: 12,
-			transparentCorners: false
+			transparentCorners: false,
+			description: 'Swash'
 		});
 
 		swash5Group = new fabric.Group([swash5Stroke,swash5], {
@@ -10267,7 +10325,8 @@
 			borderColor: 'red',
 			cornerColor: 'yellow',
 			cornerSize: 12,
-			transparentCorners: false
+			transparentCorners: false,
+			description: 'Swash'
 		});
 
 		swash6Group = new fabric.Group([swash6Stroke,swash6], {
@@ -10281,7 +10340,8 @@
 			borderColor: 'red',
 			cornerColor: 'yellow',
 			cornerSize: 12,
-			transparentCorners: false
+			transparentCorners: false,
+			description: 'Swash'
 		});
 
 		swash1Group.scaleToWidth(210)
@@ -10468,6 +10528,7 @@
 				originX: 'center',
 				originY: 'center',
 				visible: false,
+				description: 'Wordmark'
 			})
 
 			wordmark.addWithUpdate(wordmarkTextStroke2)
@@ -11175,7 +11236,8 @@
 				lockUniScaling: true,
 				id: id,
 				fill: fill,
-				visible: visible
+				visible: visible,
+				description: "Manufacturer's Mark"
 			});
 			makersMark.setCoords();
 			canvas.add(makersMark);
@@ -11342,6 +11404,7 @@
 					cornerSize: 12,
 					name: 'warpedText',
 					id: 'warpedText',
+					description: 'Wordmark',
 					transparentCorners: false,
 					scaleX: 0.5,
 					scaleY: 0.5
@@ -11451,6 +11514,11 @@
 						alert("An error occurred - please make sure ImageMagick is installed")
 						hideOverlay()
 					} else {
+						var obj = jerseyLogoCanvas.getObjects('image').forEach(function(o) {
+							if (o.id == "warpedText") {
+								jerseyLogoCanvas.remove(o);
+							}
+						})
 						var imgObj = new Image();
 						imgObj.src = data;
 						imgObj.onload = function () {
@@ -11468,6 +11536,7 @@
 								cornerSize: 12,
 								name: 'warpedText',
 								id: 'warpedText',
+								description: 'Wordmark',
 								transparentCorners: false
 							});
 							
@@ -13976,6 +14045,7 @@
 // UTILITY FUNCTIONS
 
 	function showOverlay(text) {
+		jerseyTippy.hide()
 		jerseyOverlayActive = $("#jerseyOverlay").is(":visible")
 		pantsOverlayActive = $("#pantsOverlay").is(":visible")
 		capOverlayActive = $("#capOverlay").is(":visible")
@@ -14491,7 +14561,7 @@
 										centeredScaling: true,
 										centeredRotation: true,
 										name: data.filename,
-										id: data.filename
+										id: data.filename,
 									});
 									image.filters.push(new fabric.Image.filters.Resize({
 										resizeType: 'lanczos', // typo fixed
@@ -14811,11 +14881,10 @@
 
 	function handleElement(obj) {
 		if (obj.selectable == true) {
-			tippyInstance.setContent(getStackingOrder())
-			tippyInstance.show()
+			jerseyTippy.setContent(getStackingOrder())
+			jerseyTippy.show()
 			$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
 		} else {
-			tippyInstance.hide()
 			$("#tipSpan").html("");
 		}
 		/* if (obj.type == 'image') {
@@ -15106,17 +15175,23 @@
 	function getStackingOrder() {
 		const items = []
 		var zIdx = "<b>Stacking Order:</b><br><hr>"
-		jerseyLogoCanvas.getObjects().forEach(function(o) {
+		activeCanvas.getObjects().forEach(function(o) {
 			if (o.selectable && o.visible) {
 				const item = {}
 				item.z = o.getZIndex()
 				item.id = o.id
+				item.description = (o.description != undefined) ? o.description : o.id
 				items.push(item)
 			}
 		})
 		items.sort((a, b) => b.z - a.z);
 		for (item of items) {
-			zIdx += item.id+" (z-index: "+item.z+")<br>"
+			if (activeCanvas.getActiveObject().id == item.id) {
+				zIdx += "<b>"+item.description+" (z-index: "+item.z+")</b><br>"
+			} else {
+				zIdx += item.description+" (z-index: "+item.z+")<br>"
+			}
+				
 		}
 		return zIdx
 	}
