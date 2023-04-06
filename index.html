@@ -2866,8 +2866,12 @@
 						if (obj.get('type') == "group" || obj.get('type') == "image") {
 							if (e.shiftKey) {
 								obj.bringToFront()
+								tippyInstance.setContent(getStackingOrder())
+								tippyInstance.show()
 							} else {
 								obj.bringForward();
+								tippyInstance.setContent(getStackingOrder())
+								tippyInstance.show()	
 							}
 							activeCanvas.renderAll();
 						}
@@ -2876,8 +2880,12 @@
 						if (obj.get('type') == "group" || obj.get('type') == "image") {
 							if (e.shiftKey) {
 								obj.sendToBack()
+								tippyInstance.setContent(getStackingOrder())
+								tippyInstance.show()
 							} else {
 								obj.sendBackwards();
+								tippyInstance.setContent(getStackingOrder())
+								tippyInstance.show()
 							}
 							activeCanvas.renderAll();
 						}
@@ -14803,13 +14811,7 @@
 
 	function handleElement(obj) {
 		if (obj.selectable == true) {
-			var zIdx = "<b>Stacking Order:</b><br><hr>"
-			jerseyLogoCanvas.getObjects().forEach(function(o) {
-				if (o.selectable && o.visible) {
-					zIdx += o.id + ": "+o.getZIndex()+"<br>"
-				}
-			})
-			tippyInstance.setContent(zIdx)
+			tippyInstance.setContent(getStackingOrder())
 			tippyInstance.show()
 			$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
 		} else {
@@ -15099,6 +15101,24 @@
 			var fileName = teamName+yearRange;
 		}
 		return fileName
+	}
+
+	function getStackingOrder() {
+		const items = []
+		var zIdx = "<b>Stacking Order:</b><br><hr>"
+		jerseyLogoCanvas.getObjects().forEach(function(o) {
+			if (o.selectable && o.visible) {
+				const item = {}
+				item.z = o.getZIndex()
+				item.id = o.id
+				items.push(item)
+			}
+		})
+		items.sort((a, b) => b.z - a.z);
+		for (item of items) {
+			zIdx += item.id+" (z-index: "+item.z+")<br>"
+		}
+		return zIdx
 	}
 
 </script>
