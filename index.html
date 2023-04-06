@@ -17,6 +17,8 @@
     <script type="text/javascript" src="./scripts/skeletabs.js"></script>
 	<script type="text/javascript" src="./scripts/tinycolor-min.js"></script>
 	<script type="text/javascript" src="./scripts/opentype.js"></script>
+	<script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+	<script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
 	<link href='./scripts/uniformmaker.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/spectrum.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/menu.css' rel='stylesheet' type='text/css'>
@@ -2533,6 +2535,14 @@
 </div>
 </body>
 <script>
+	const tippyInstance = tippy(document.getElementById('jerseyContainer'), {
+        content: 'My tooltip!',
+		trigger: 'manual',
+		placement: 'right',
+		theme: 'light',
+		allowHTML: true,
+    });
+
 	require('./renderer.js')
 	const semver = require('semver')
 	const { clipboard } = require('electron')
@@ -2559,6 +2569,10 @@
 		cornerSize: 12,
 		transparentCorners: true
 	});
+
+	fabric.Object.prototype.getZIndex = function() {
+    	return this.canvas.getObjects().indexOf(this);
+	}
 
     var jerseyBelow = new fabric.StaticCanvas('jerseyBelow',{
 		enableRetinaScaling: false,
@@ -9867,17 +9881,20 @@
 
 		thickVNeck3 = new fabric.Group([vNeckThickOuterColor, vNeckThickMiddleColor, vNeckThickInnerColor],{
 			id: 'thickVNeck3',
-			visible: false
+			visible: false,
+			selectable: false
 		})
 
 		thickVNeck2 = new fabric.Group([vNeck2OuterColor, vNeck2InnerColor],{
 			id: 'thickVNeck2',
-			visible: false
+			visible: false,
+			selectable: false
 		})
 
 		offsetVNeck = new fabric.Group([vNeckOffsetOuterColor, vNeckOffsetMiddleColor, vNeckOffsetInnerColor],{
 			id: 'offsetVNeck',
-			visible: false
+			visible: false,
+			selectable: false
 		})
 
 		cadetCollarColor = new fabric.Path("M 2.546875 182.25781 C 0.94568231 182.26181 0 182.28711 0 182.28711 L 0 198.98828 L 11.246094 198.81641 L 24.027344 200.17969 C 24.027344 200.17969 35.954454 207.16545 42.429688 215.00391 C 42.675056 215.3009 42.908008 215.6105 43.144531 215.91602 C 45.709908 220.77809 52.3125 233.91992 52.3125 233.91992 C 52.3125 233.91992 54.331956 234.49037 56.333984 234.70312 L 66.285156 236.64648 L 52.988281 239.08594 L 46.119141 245.95508 L 42.144531 253.78711 L 32.142578 264.99219 C 32.142578 264.99219 17.442909 273.06518 0.93554688 271.25781 L 0.93554688 287.88477 C 0.93554688 287.88477 23.708891 286.56126 28.769531 284.75391 C 33.830172 282.94653 39.734375 279.57227 39.734375 279.57227 L 56.722656 260.29297 C 56.722656 260.29297 66.161785 241.8379 70.482422 238.66211 L 70.482422 232.55859 L 68.888672 230.98242 C 65.603631 227.49448 59.400933 219.73231 53.847656 206.14453 C 53.793285 206.01141 53.741271 205.88891 53.6875 205.75781 C 53.614739 205.70124 53.544214 205.64764 53.470703 205.58984 C 33.760107 190.08826 28.090203 185.20994 26.830078 184.09375 C 18.055176 182.43027 7.350503 182.24581 2.546875 182.25781 z",{
@@ -14510,6 +14527,12 @@
 										canvas.sendToBack(image)	
 									}
 									canvas.setActiveObject(image)
+									//console.log(image.getZIndex())
+									jerseyLogoCanvas.getObjects().forEach(function(o) {
+										if (o.selectable) {
+											console.log(o.id)
+										}
+									})
 									canvas.requestRenderAll()
 									canvas.renderAll();
 									$("#tabContainer").skeletabs('goTo', tab)
@@ -14779,7 +14802,21 @@
 	})
 
 	function handleElement(obj) {
-		if (obj.type == 'image') {
+		if (obj.selectable == true) {
+			var zIdx = "<b>Stacking Order:</b><br><hr>"
+			jerseyLogoCanvas.getObjects().forEach(function(o) {
+				if (o.selectable && o.visible) {
+					zIdx += o.id + ": "+o.getZIndex()+"<br>"
+				}
+			})
+			tippyInstance.setContent(zIdx)
+			tippyInstance.show()
+			$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
+		} else {
+			tippyInstance.hide()
+			$("#tipSpan").html("");
+		}
+		/* if (obj.type == 'image') {
 			$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
 		} else {
 			console.log(obj.id)
@@ -14809,7 +14846,7 @@
 					$("#tipSpan").html("");
 					$("#jerseyNumberCtl").css("display","none")
 			}
-		}
+		} */
 	}
 
 	function height2normal( canvas ) {
