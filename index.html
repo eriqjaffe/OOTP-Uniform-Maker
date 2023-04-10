@@ -14632,6 +14632,11 @@
 	}
 
 	function placeOCR(data) {
+		const nArr = []
+		const lArr = []
+		const maxNumWidth = 170
+		const maxLetWidth = 56
+
 		fontCanvas.getObjects('image').forEach(function(o) {
 			fontCanvas.remove(o)
 		})
@@ -14641,13 +14646,33 @@
 		})
 		$("#numbersVisible").prop("checked",false)
 		for (obj of data) {
+			if (isNumeric(obj.char)) {
+				nArr.push(obj.width)
+			} else {
+				lArr.push(obj.width)
+			}
+		}
+
+		var numMax = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
+		var numScaleMod = (numMax > maxNumWidth) ? maxNumWidth / numMax : 1
+		var numScale = ($("#numberScaling").is(":checked")) ? 1.0 * numScaleMod : 1.0
+
+		var letMax = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
+		var letScaleMod = (letMax > maxLetWidth) ? maxLetWidth / letMax : 1
+		var letScale = ($("#numberScaling").is(":checked")) ? 1.0 * letScaleMod : 1.0
+		
+		for (obj of data) {
 			const char = chars.find(o => o.char === obj.char)
 			const src = obj
 			if (char) {
-				//console.log(src.char)
 				fabric.Image.fromURL(src.image, function (oImg) {
 					//console.log(src.char)
-					oImg.set({ "top": ((char.bottom*2)-oImg.height)+8, "left": (char.left*2)-8 })
+					oImg.set({ 
+						"top": ((char.bottom*2)-oImg.height)+8, 
+						"left": (char.left*2)-8,
+						"scaleX": (isNumeric(char)) ? numScale : letScale,
+						"scaleY": (isNumeric(char)) ? numScale : letScale
+					})
 					fontCanvas.add(oImg)
 					fontCanvas.renderAll()
 				})
