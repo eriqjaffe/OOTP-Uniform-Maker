@@ -7781,20 +7781,7 @@
 			type: "POST",
 			url: "http://127.0.0.1:"+port+"/uploadFontImage",
 			success: function(data) {
-				$(".fontToggle").each(function(){
-					$(this).prop("checked",false)
-					$(this).triggerHandler("change")
-				})
-				$("#numbersVisible").prop("checked",false)
-				$.each(data, function(key, value) {
-					var char = chars.find(o => o.char === key)
-					fabric.Image.fromURL(value, function (oImg) {
-						oImg.set({ "top": ((char.bottom*2)-oImg.height)+8, "left": (char.left*2)-8 })
-						fontCanvas.add(oImg)
-						fontCanvas.renderAll()
-					})
-				})
-				hideOverlay()
+				placeOCR(data)
 			},
 			error: function(data) {
 				hideOverlay()
@@ -14629,20 +14616,7 @@
 							url: "http://127.0.0.1:"+port+"/dropFontImage",
 							data: {file:file},
 							success: function(data) {
-								$(".fontToggle").each(function(){
-									$(this).prop("checked",false)
-									$(this).triggerHandler("change")
-								})
-								$("#numbersVisible").prop("checked",false)
-								$.each(data, function(key, value) {
-									var char = chars.find(o => o.char === key)
-									fabric.Image.fromURL(value, function (oImg) {
-										oImg.set({ "top": ((char.bottom*2)-oImg.height)+8, "left": (char.left*2)-8 })
-										fontCanvas.add(oImg)
-										fontCanvas.renderAll()
-									})
-								})
-								hideOverlay()
+								placeOCR(data)
 							},
 							error: function(data) {
 								hideOverlay()
@@ -14657,6 +14631,30 @@
 		}
 	}
 
+	function placeOCR(data) {
+		fontCanvas.getObjects('image').forEach(function(o) {
+			fontCanvas.remove(o)
+		})
+		$(".fontToggle").each(function(){
+			$(this).prop("checked",false)
+			$(this).triggerHandler("change")
+		})
+		$("#numbersVisible").prop("checked",false)
+		for (obj of data) {
+			const char = chars.find(o => o.char === obj.char)
+			const src = obj
+			if (char) {
+				//console.log(src.char)
+				fabric.Image.fromURL(src.image, function (oImg) {
+					//console.log(src.char)
+					oImg.set({ "top": ((char.bottom*2)-oImg.height)+8, "left": (char.left*2)-8 })
+					fontCanvas.add(oImg)
+					fontCanvas.renderAll()
+				})
+			}
+		}
+		hideOverlay()
+	}
 	function getNumberAtEnd(str) {
 		if (endsWithNumber(str)) {
 			return Number(str.match(/[0-9]+$/)[0]);

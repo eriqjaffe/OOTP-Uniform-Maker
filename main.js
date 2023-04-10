@@ -129,7 +129,7 @@ app2.get("/dropFontImage", (req, res) => {
 
 		const worker = await createWorker();
 
-		const json = {}
+		const jsonOBJ = []
 
 		const base = await replaceColor({
 			image: req.query.file,
@@ -147,6 +147,7 @@ app2.get("/dropFontImage", (req, res) => {
 		for (let i = 0; i < words.length; i++) {
 			const word = words[i];
 			for (let j = 0; j < word.symbols.length; j++) {
+				const json = {}
 				const baseImg = await Jimp.read(buffer)
 				const chr = word.symbols[j]
 				const x = chr.bbox.x0
@@ -156,46 +157,39 @@ app2.get("/dropFontImage", (req, res) => {
 				await baseImg.crop(x, y, w, h)
 				//await baseImg.write(tempDir+"/"+word.symbols[j].text+".png");
 				baseImg.getBase64(Jimp.AUTO, (err, image) => {
-					json[word.symbols[j].text] = image
+					json.char = word.symbols[j].text
+					json.image = image
+					json.height = baseImg.bitmap.height
+					json.width = baseImg.bitmap.width
+					json.confidence = word.symbols[j].confidence
+					jsonOBJ.push(json)
 				})
 				
 			}
 		}
 		await worker.terminate();
-		res.json(json)
+		
+		const resultObj = []; // array to store the filtered result
+		const temp = {}; // object to store the seen "char" values
+
+		jsonOBJ.forEach(obj => {
+			if (temp[obj.char]) {
+				// if the "char" value is already seen, compare the "confidence" values
+				if (obj.confidence > temp[obj.char].confidence) {
+				temp[obj.char] = obj; // replace the lower "confidence" value with the new one
+				}
+			} else {
+				temp[obj.char] = obj; // add the new "char" value to the object
+			}
+		});
+
+		Object.keys(temp).forEach(char => {
+			resultObj.push(temp[char]);
+		});
+
+		res.json(resultObj)
 		res.end()
 	}
-
-	/* async function recognizeText() {
-		const worker = await createWorker();
-
-		(async () => {
-			const json = {}
-			await worker.loadLanguage('eng');
-			await worker.initialize('eng');
-			const { data: { words } } = await worker.recognize(req.query.file);
-			for (let i = 0; i < words.length; i++) {
-				const word = words[i];
-				for (let j = 0; j < word.symbols.length; j++) {
-					const baseImg = await Jimp.read(req.query.file)
-					const chr = word.symbols[j]
-					const x = chr.bbox.x0
-					const y = chr.bbox.y0
-					const w = chr.bbox.x1 - chr.bbox.x0
-					const h = chr.bbox.y1 - chr.bbox.y0
-					await baseImg.crop(x, y, w, h)
-					await baseImg.write(tempDir+"/"+word.symbols[j].text+".png");
-					baseImg.getBase64(Jimp.AUTO, (err, image) => {
-						json[word.symbols[j].text] = image
-					})
-					
-				}
-			}
-			await worker.terminate();
-			res.json(json)
-			res.end()
-		})();
-	} */
 })
 
 app2.post("/uploadFontImage", (req, res) => {
@@ -220,7 +214,7 @@ app2.post("/uploadFontImage", (req, res) => {
 
 				const worker = await createWorker();
 
-				const json = {}
+				const jsonOBJ = []
 
 				const base = await replaceColor({
 					image: result.filePaths[0],
@@ -238,6 +232,7 @@ app2.post("/uploadFontImage", (req, res) => {
 				for (let i = 0; i < words.length; i++) {
 					const word = words[i];
 					for (let j = 0; j < word.symbols.length; j++) {
+						const json = {}
 						const baseImg = await Jimp.read(buffer)
 						const chr = word.symbols[j]
 						const x = chr.bbox.x0
@@ -247,13 +242,37 @@ app2.post("/uploadFontImage", (req, res) => {
 						await baseImg.crop(x, y, w, h)
 						//await baseImg.write(tempDir+"/"+word.symbols[j].text+".png");
 						baseImg.getBase64(Jimp.AUTO, (err, image) => {
-							json[word.symbols[j].text] = image
+							json.char = word.symbols[j].text
+							json.image = image
+							json.height = baseImg.bitmap.height
+							json.width = baseImg.bitmap.width
+							json.confidence = word.symbols[j].confidence
+							jsonOBJ.push(json)
 						})
 						
 					}
 				}
 				await worker.terminate();
-				res.json(json)
+				
+				const resultObj = []; // array to store the filtered result
+				const temp = {}; // object to store the seen "char" values
+
+				jsonOBJ.forEach(obj => {
+					if (temp[obj.char]) {
+						// if the "char" value is already seen, compare the "confidence" values
+						if (obj.confidence > temp[obj.char].confidence) {
+						temp[obj.char] = obj; // replace the lower "confidence" value with the new one
+						}
+					} else {
+						temp[obj.char] = obj; // add the new "char" value to the object
+					}
+				});
+
+				Object.keys(temp).forEach(char => {
+					resultObj.push(temp[char]);
+				});
+
+				res.json(resultObj)
 				res.end()
 			}
 		}
