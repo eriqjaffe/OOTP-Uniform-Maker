@@ -14634,8 +14634,8 @@
 	function placeOCR(data) {
 		const nArr = []
 		const lArr = []
-		const maxNumWidth = 170
-		const maxLetWidth = 56
+		const maxNumWidth = 220
+		const maxLetWidth = 58
 
 		fontCanvas.getObjects('image').forEach(function(o) {
 			fontCanvas.remove(o)
@@ -14653,26 +14653,52 @@
 			}
 		}
 
-		var numMax = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
+/* 		var numMax = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
 		var numScaleMod = (numMax > maxNumWidth) ? maxNumWidth / numMax : 1
 		var numScale = ($("#numberScaling").is(":checked")) ? 1.0 * numScaleMod : 1.0
 
 		var letMax = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
 		var letScaleMod = (letMax > maxLetWidth) ? maxLetWidth / letMax : 1
-		var letScale = ($("#numberScaling").is(":checked")) ? 1.0 * letScaleMod : 1.0
+		var letScale = ($("#numberScaling").is(":checked")) ? 1.0 * letScaleMod : 1.0 */
 		
+
+
 		for (obj of data) {
 			const char = chars.find(o => o.char === obj.char)
 			const src = obj
 			if (char) {
 				fabric.Image.fromURL(src.image, function (oImg) {
-					//console.log(src.char)
+					var iw = src.width
+					var ih = src.height
+					var ratio = maxNumWidth / iw
+					var width = iw * ratio
+					var height = ih * width/iw
+					if (isNumeric(src.char)) {
+						//console.log(src.char)
+						//console.log(src.width)
+						if (src.width < maxNumWidth) {
+							//console.log(maxNumWidth / src.width)
+							imgWidth = src.width * (maxNumWidth / src.width)
+						}
+					}
+					console.log(src.char+": "+width+"x"+height)
 					oImg.set({ 
-						"top": ((char.bottom*2)-oImg.height)+8, 
-						"left": (char.left*2)-8,
-						"scaleX": (isNumeric(char)) ? numScale : letScale,
-						"scaleY": (isNumeric(char)) ? numScale : letScale
+						"top": ((char.bottom*2)-src.height)+8, 
+						"left": (char.left*2)-8
+						//"scaleX": (isNumeric(char)) ? numScale : letScale,
+						//"scaleY": (isNumeric(char)) ? numScale : letScale
 					})
+					//console.log(src.char)
+					//console.log(imgHeight)
+					if (isNumeric(src.char)) {
+						oImg.scaleToWidth(maxNumWidth)
+						oImg.scaleToHeight(maxNumWidth)
+					} else {
+						oImg.scaleToWidth(maxLetWidth)
+						oImg.scaleToHeight(maxLetWidth)
+					}
+					
+ 					//oImg.setCoords()
 					fontCanvas.add(oImg)
 					fontCanvas.renderAll()
 				})
@@ -14680,6 +14706,7 @@
 		}
 		hideOverlay()
 	}
+
 	function getNumberAtEnd(str) {
 		if (endsWithNumber(str)) {
 			return Number(str.match(/[0-9]+$/)[0]);
