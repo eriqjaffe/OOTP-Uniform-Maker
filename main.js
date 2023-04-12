@@ -275,6 +275,9 @@ app2.post("/uploadFontImage", (req, res) => {
 				res.json(resultObj)
 				res.end()
 			}
+		} else {
+			res.json({"status":"cancelled"})
+			res.end()
 		}
 	})
 })
