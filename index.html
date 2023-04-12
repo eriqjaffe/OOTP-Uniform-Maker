@@ -17,6 +17,8 @@
     <script type="text/javascript" src="./scripts/skeletabs.js"></script>
 	<script type="text/javascript" src="./scripts/tinycolor-min.js"></script>
 	<script type="text/javascript" src="./scripts/opentype.js"></script>
+	<script type="text/javascript" src="./scripts/vex.combined.min.js"></script>
+	<script>vex.defaultOptions.className = 'vex-theme-os'</script>
 	<script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
 	<script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
 	<link href='./scripts/uniformmaker.css' rel='stylesheet' type='text/css'>
@@ -26,6 +28,8 @@
 	<link href='./scripts/dd.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/jquery.range.css' rel='stylesheet' type='text/css'>
     <link href='./scripts/skeletabs.css' rel='stylesheet' type='text/css'>
+	<link href="./scripts/vex.css" rel="stylesheet" type='text/css'>
+	<link href="./scripts/vex-theme-os.css" rel="stylesheet" type='text/css'>
     <script>
 		const params = new URLSearchParams(window.location.search)
 		const port = params.get('port')
@@ -7781,7 +7785,11 @@
 			type: "POST",
 			url: "http://127.0.0.1:"+port+"/uploadFontImage",
 			success: function(data) {
-				placeOCR(data)
+				if (data.status != "cancelled") {
+					placeOCR(data)
+				} else {
+					hideOverlay()
+				}
 			},
 			error: function(data) {
 				hideOverlay()
@@ -14634,8 +14642,8 @@
 	function placeOCR(data) {
 		const nArr = []
 		const lArr = []
-		const maxNumWidth = 220
-		const maxLetWidth = 58
+		const maxNumWidth = 185
+		const maxLetWidth = 70
 
 		fontCanvas.getObjects('image').forEach(function(o) {
 			fontCanvas.remove(o)
@@ -14653,58 +14661,81 @@
 			}
 		}
 
-/* 		var numMax = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
-		var numScaleMod = (numMax > maxNumWidth) ? maxNumWidth / numMax : 1
-		var numScale = ($("#numberScaling").is(":checked")) ? 1.0 * numScaleMod : 1.0
-
+ 		var numMax = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
+		var numScaleMod = (numMax != maxNumWidth) ? maxNumWidth / numMax :  1
 		var letMax = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
-		var letScaleMod = (letMax > maxLetWidth) ? maxLetWidth / letMax : 1
-		var letScale = ($("#numberScaling").is(":checked")) ? 1.0 * letScaleMod : 1.0 */
-		
+		var letScaleMod = (letMax != maxLetWidth) ? maxLetWidth / letMax : 1
+			
+		vex.dialog.open({
+			message: 'Do you want to resize characters to fit?  This may result in some poor quality results.',
+			buttons: [
+				$.extend({}, vex.dialog.buttons.YES, { text: 'Yes' }),
+        		$.extend({}, vex.dialog.buttons.NO, { text: 'No' })
+    		],
+			callback: function (response) {
+				for (obj of data) {
+					const char = chars.find(o => o.char === obj.char)
+					const src = obj
+					if (char) {
+						fabric.Image.fromURL(src.image, function (oImg) {
+							if (response == true) {
+								if (isNumeric(src.char)) {
+									oImg.set({
+										"top": ((char.bottom*2)-(src.height*numScaleMod))+12, 
+										"left": (char.left*2)-10,
+										"scaleX": numScaleMod,
+										"scaleY": numScaleMod
+									})
+								} else {
+									oImg.set({
+										"top": ((char.bottom*2)-(src.height*letScaleMod))+8, 
+										"left": (char.left*2)-8,
+										"scaleX": letScaleMod,
+										"scaleY": letScaleMod
+									})
+								}
+								fontCanvas.add(oImg)
+							} else {
+								oImg.set({ 
+									"top": ((char.bottom*2)-oImg.height)+8, 
+									"left": (char.left*2)-8 
+								})
+								fontCanvas.add(oImg)
+							}
+							fontCanvas.renderAll()
+						})
+					}
+				}
+				hideOverlay()
+			}
+		})
 
-
-		for (obj of data) {
+		/* for (obj of data) {
 			const char = chars.find(o => o.char === obj.char)
 			const src = obj
 			if (char) {
 				fabric.Image.fromURL(src.image, function (oImg) {
-					var iw = src.width
-					var ih = src.height
-					var ratio = maxNumWidth / iw
-					var width = iw * ratio
-					var height = ih * width/iw
 					if (isNumeric(src.char)) {
-						//console.log(src.char)
-						//console.log(src.width)
-						if (src.width < maxNumWidth) {
-							//console.log(maxNumWidth / src.width)
-							imgWidth = src.width * (maxNumWidth / src.width)
-						}
-					}
-					console.log(src.char+": "+width+"x"+height)
-					oImg.set({ 
-						"top": ((char.bottom*2)-src.height)+8, 
-						"left": (char.left*2)-8
-						//"scaleX": (isNumeric(char)) ? numScale : letScale,
-						//"scaleY": (isNumeric(char)) ? numScale : letScale
-					})
-					//console.log(src.char)
-					//console.log(imgHeight)
-					if (isNumeric(src.char)) {
-						oImg.scaleToWidth(maxNumWidth)
-						oImg.scaleToHeight(maxNumWidth)
+						oImg.set({
+							"top": ((char.bottom*2)-(src.height*numScaleMod))+12, 
+							"left": (char.left*2)-10,
+							"scaleX": numScaleMod,
+							"scaleY": numScaleMod
+						})
 					} else {
-						oImg.scaleToWidth(maxLetWidth)
-						oImg.scaleToHeight(maxLetWidth)
+						oImg.set({
+							"top": ((char.bottom*2)-(src.height*letScaleMod))+8, 
+							"left": (char.left*2)-8,
+							"scaleX": letScaleMod,
+							"scaleY": letScaleMod
+						})
 					}
-					
- 					//oImg.setCoords()
 					fontCanvas.add(oImg)
 					fontCanvas.renderAll()
 				})
 			}
 		}
-		hideOverlay()
+		hideOverlay() */
 	}
 
 	function getNumberAtEnd(str) {
