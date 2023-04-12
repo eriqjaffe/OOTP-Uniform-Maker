@@ -18,6 +18,7 @@ const hasbin = require('hasbin');
 const fontname = require('fontname')
 const { createWorker } = require('tesseract.js');
 const replaceColor = require('replace-color')
+console.log("hello")
 
 const { log } = console;
 function proxiedLog(...args) {
