@@ -475,6 +475,18 @@ legend {
 	box-shadow: 0 0 20px blue;
 }
 
+.tippy-box {
+	border: #0C2340 solid 2px;
+	background-color: #FFFFFF;
+	color: #0C2340;
+	font-size: 1.2em;
+  }
+  
+  .tippy-arrow {
+	border-color: #0C2340;
+	color: #FFFFFF;
+  }
+
 /*  SECTIONS  */
 .section {
 	clear: both;

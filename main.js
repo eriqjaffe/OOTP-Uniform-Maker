@@ -33,7 +33,7 @@ const isMac = process.platform === 'darwin'
 const tempDir = os.tmpdir()
 const app2 = express();
 const store = new Store();
-const userFontsFolder = app.getPath('userData')+"\\fonts"
+const userFontsFolder = path.join(app.getPath('userData'),"fonts")
 
 const server = app2.listen(0, () => {
 	console.log(`Server running on port ${server.address().port}`);
@@ -129,7 +129,7 @@ app2.get("/dropFontImage", (req, res) => {
 
 		const worker = await createWorker();
 
-		const json = {}
+		const jsonOBJ = []
 
 		const base = await replaceColor({
 			image: req.query.file,
@@ -147,6 +147,7 @@ app2.get("/dropFontImage", (req, res) => {
 		for (let i = 0; i < words.length; i++) {
 			const word = words[i];
 			for (let j = 0; j < word.symbols.length; j++) {
+				const json = {}
 				const baseImg = await Jimp.read(buffer)
 				const chr = word.symbols[j]
 				const x = chr.bbox.x0
@@ -156,46 +157,39 @@ app2.get("/dropFontImage", (req, res) => {
 				await baseImg.crop(x, y, w, h)
 				//await baseImg.write(tempDir+"/"+word.symbols[j].text+".png");
 				baseImg.getBase64(Jimp.AUTO, (err, image) => {
-					json[word.symbols[j].text] = image
+					json.char = word.symbols[j].text
+					json.image = image
+					json.height = baseImg.bitmap.height
+					json.width = baseImg.bitmap.width
+					json.confidence = word.symbols[j].confidence
+					jsonOBJ.push(json)
 				})
 				
 			}
 		}
 		await worker.terminate();
-		res.json(json)
+		
+		const resultObj = []; // array to store the filtered result
+		const temp = {}; // object to store the seen "char" values
+
+		jsonOBJ.forEach(obj => {
+			if (temp[obj.char]) {
+				// if the "char" value is already seen, compare the "confidence" values
+				if (obj.confidence > temp[obj.char].confidence) {
+				temp[obj.char] = obj; // replace the lower "confidence" value with the new one
+				}
+			} else {
+				temp[obj.char] = obj; // add the new "char" value to the object
+			}
+		});
+
+		Object.keys(temp).forEach(char => {
+			resultObj.push(temp[char]);
+		});
+
+		res.json(resultObj)
 		res.end()
 	}
-
-	/* async function recognizeText() {
-		const worker = await createWorker();
-
-		(async () => {
-			const json = {}
-			await worker.loadLanguage('eng');
-			await worker.initialize('eng');
-			const { data: { words } } = await worker.recognize(req.query.file);
-			for (let i = 0; i < words.length; i++) {
-				const word = words[i];
-				for (let j = 0; j < word.symbols.length; j++) {
-					const baseImg = await Jimp.read(req.query.file)
-					const chr = word.symbols[j]
-					const x = chr.bbox.x0
-					const y = chr.bbox.y0
-					const w = chr.bbox.x1 - chr.bbox.x0
-					const h = chr.bbox.y1 - chr.bbox.y0
-					await baseImg.crop(x, y, w, h)
-					await baseImg.write(tempDir+"/"+word.symbols[j].text+".png");
-					baseImg.getBase64(Jimp.AUTO, (err, image) => {
-						json[word.symbols[j].text] = image
-					})
-					
-				}
-			}
-			await worker.terminate();
-			res.json(json)
-			res.end()
-		})();
-	} */
 })
 
 app2.post("/uploadFontImage", (req, res) => {
@@ -220,7 +214,7 @@ app2.post("/uploadFontImage", (req, res) => {
 
 				const worker = await createWorker();
 
-				const json = {}
+				const jsonOBJ = []
 
 				const base = await replaceColor({
 					image: result.filePaths[0],
@@ -238,6 +232,7 @@ app2.post("/uploadFontImage", (req, res) => {
 				for (let i = 0; i < words.length; i++) {
 					const word = words[i];
 					for (let j = 0; j < word.symbols.length; j++) {
+						const json = {}
 						const baseImg = await Jimp.read(buffer)
 						const chr = word.symbols[j]
 						const x = chr.bbox.x0
@@ -247,15 +242,42 @@ app2.post("/uploadFontImage", (req, res) => {
 						await baseImg.crop(x, y, w, h)
 						//await baseImg.write(tempDir+"/"+word.symbols[j].text+".png");
 						baseImg.getBase64(Jimp.AUTO, (err, image) => {
-							json[word.symbols[j].text] = image
+							json.char = word.symbols[j].text
+							json.image = image
+							json.height = baseImg.bitmap.height
+							json.width = baseImg.bitmap.width
+							json.confidence = word.symbols[j].confidence
+							jsonOBJ.push(json)
 						})
 						
 					}
 				}
 				await worker.terminate();
-				res.json(json)
+				
+				const resultObj = []; // array to store the filtered result
+				const temp = {}; // object to store the seen "char" values
+
+				jsonOBJ.forEach(obj => {
+					if (temp[obj.char]) {
+						// if the "char" value is already seen, compare the "confidence" values
+						if (obj.confidence > temp[obj.char].confidence) {
+						temp[obj.char] = obj; // replace the lower "confidence" value with the new one
+						}
+					} else {
+						temp[obj.char] = obj; // add the new "char" value to the object
+					}
+				});
+
+				Object.keys(temp).forEach(char => {
+					resultObj.push(temp[char]);
+				});
+
+				res.json(resultObj)
 				res.end()
 			}
+		} else {
+			res.json({"status":"cancelled"})
+			res.end()
 		}
 	})
 })
@@ -431,6 +453,7 @@ app2.get("/customFont", (req, res) => {
 	dialog.showOpenDialog(null, options).then(result => {
 		if(!result.canceled) {
 			store.set("uploadFontPath", path.dirname(result.filePaths[0]))
+			const filePath = path.join(userFontsFolder,path.basename(result.filePaths[0]))
 			try {
 				const fontMeta = fontname.parse(fs.readFileSync(result.filePaths[0]))[0];
 				var ext = getExtension(result.filePaths[0])
@@ -443,9 +466,9 @@ app2.get("/customFont", (req, res) => {
 					"fontFormat": ext,
 					"fontMimetype": 'font/' + ext,
 					"fontData": fontPath.href,
-					"fontPath": userFontsFolder+"\\"+path.basename(result.filePaths[0])
+					"fontPath": filePath
 				};
-				fs.copyFileSync(result.filePaths[0], userFontsFolder+"/"+path.basename(result.filePaths[0]))
+				fs.copyFileSync(result.filePaths[0], filePath)
 				res.json(json)
 				res.end()
 			} catch (err) {
@@ -476,6 +499,7 @@ app2.get("/customFont", (req, res) => {
 
 app2.get("/dropFont", (req, res) => {
 	try {
+		const filePath = path.join(userFontsFolder,path.basename(req.query.file))
 		const fontMeta = fontname.parse(fs.readFileSync(req.query.file))[0];
 		var ext = getExtension(req.query.file)
 		var fontPath = url.pathToFileURL(req.query.file)
@@ -487,9 +511,9 @@ app2.get("/dropFont", (req, res) => {
 			"fontFormat": ext,
 			"fontMimetype": 'font/' + ext,
 			"fontData": fontPath.href,
-			"fontPath": userFontsFolder+"\\"+path.basename(req.query.file)
+			"fontPath": filePath
 		};
-		fs.copyFileSync(req.query.file, userFontsFolder+"/"+path.basename(req.query.file))
+		fs.copyFileSync(req.query.file, filePath)
 		res.json(json)
 		res.end()
 	} catch (err) {
@@ -1440,11 +1464,12 @@ app2.get("/localFontFolder", (req, res) => {
 	filenames = fs.readdirSync(userFontsFolder);
 	for (i=0; i<filenames.length; i++) {
 		if (path.extname(filenames[i]).toLowerCase() == ".ttf" || path.extname(filenames[i]).toLowerCase() == ".otf") {
+			const filePath = path.join(userFontsFolder,filenames[i])
 			try {
-				const fontMeta = fontname.parse(fs.readFileSync(userFontsFolder+"\\"+filenames[i]))[0];
-				var ext = getExtension(userFontsFolder+"\\"+filenames[i])
-				const dataUrl = font2base64.encodeToDataUrlSync(userFontsFolder+"\\"+filenames[i])
-				var fontPath = url.pathToFileURL(userFontsFolder+"\\"+filenames[i])
+				const fontMeta = fontname.parse(fs.readFileSync(filePath))[0];
+				var ext = getExtension(filePath)
+				const dataUrl = font2base64.encodeToDataUrlSync(filePath)
+				var fontPath = url.pathToFileURL(filePath)
 				var json = {
 					"status": "ok",
 					"fontName": fontMeta.fullName,
@@ -1454,18 +1479,18 @@ app2.get("/localFontFolder", (req, res) => {
 					"fontMimetype": 'font/' + ext,
 					"fontData": fontPath.href,
 					"fontBase64": dataUrl,
-					"fontPath": userFontsFolder+"\\"+filenames[i],
+					"fontPath": filePath,
 				};
 				jsonArr.push(json)
 			} catch (err) {
 				const json = {
 					"status": "error",
-					"fontName": path.basename(userFontsFolder+"\\"+filenames[i]),
-					"fontPath": userFontsFolder+"\\"+filenames[i],
+					"fontName": path.basename(filePath),
+					"fontPath": filePath,
 					"message": err
 				}
 				jsonArr.push(json)
-				fs.unlinkSync(userFontsFolder+"\\"+filenames[i])
+				fs.unlinkSync(filePath)
 			}
 		}
 	}
