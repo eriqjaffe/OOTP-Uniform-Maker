@@ -868,7 +868,12 @@
 										<table style="width:482px;">
 											<tr>
 												<td class="checkCell"><input type="checkbox" id="wordmarkCheck" class="wordmarkToggle" data-id="wordmark"></td>
-												<td colspan="2"><label>Text: </label><input class="jerseyTextOption" type="text" id="wordmarkTextBox" value="Bulldogs" style="width:79%; text-align:center;"/></td>
+												<td>
+													<label>&nbsp;Text: </label><input class="jerseyTextOption" type="text" id="wordmarkTextBox" value="Bulldogs" style="width:325px; text-align:center;"/>
+												</td>
+												<td>
+													<label>Spacing: </label><input type="number" id="wordmarkSpacing" class="jerseyTextOption" style="text-align:center;" value="0" min="-50" max="50">
+												</td>
 											</tr>
 										</table>
 										<table style="width:482px;">
@@ -4178,6 +4183,12 @@
 		}
 	})
 
+	$("#wordmarkSpacing").on("change",function(e) {
+		if (!reloading) {
+			jerseyWordmarkChange($("#jerseyWordmarkSelect").val(),false)
+		}
+	})
+
 	$("#jerseyMakersMarkSelect").on("change",function(e) {
 		loadMakersMark("jersey",$("#jerseyMakersMarkSelect").find(':selected').data('top'),$("#jerseyMakersMarkSelect").find(':selected').data('left'),$("#jerseyMakersMarkSelect").find(':selected').data('angle'),$("#jerseyMakersMarkSelect").find(':selected').data('height'));
 	})
@@ -5274,7 +5285,7 @@
 				return;
 			}
 
-			const path = font.getPath($("#wordmarkTextBox").val(),256,681,50)
+			const path = font.getPath($("#wordmarkTextBox").val(),256,681,50,{letterSpacing:$("#wordmarkSpacing").val()/100})
 			const svgPath = path.toPathData(5)
 
 			var grp = jerseyLogoCanvas.getObjects("group").find(o => o.id === "wordmark")
