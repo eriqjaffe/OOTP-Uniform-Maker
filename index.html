@@ -6972,16 +6972,11 @@
 	})
 
 	$("#eyeletGroupCheck").on("change",function(e) {
-		const checked = $(this).is(":checked")
-		const active = $("#eyeletGrouping").val()
-		if (checked) {
-			var g = capLogoCanvas.getObjects('group').find(o => o.id == active)
-			g.set("visible",true)
+		if ($(this).is(":checked")) {
+			capLogoCanvas.getObjects('group').find(o => o.id == $("#eyeletGrouping").val()).set("visible",true)
 		} else {
-			const grouped = capLogoCanvas.getObjects('group').find(o => o.id == "groupedEyelets")
-			const invididual = capLogoCanvas.getObjects('group').find(o => o.id == "individualEyelets")
-			grouped.set("visible",false)
-			invididual.set("visible",false)
+			capLogoCanvas.getObjects('group').find(o => o.id == "groupedEyelets").set("visible",false)
+			capLogoCanvas.getObjects('group').find(o => o.id == "individualEyelets").set("visible",false)
 		}
 		capLogoCanvas.renderAll()
 	})
