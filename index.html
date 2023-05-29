@@ -6971,6 +6971,21 @@
 		capLogoCanvas.renderAll()
 	})
 
+	$("#eyeletGroupCheck").on("change",function(e) {
+		const checked = $(this).is(":checked")
+		const active = $("#eyeletGrouping").val()
+		if (checked) {
+			var g = capLogoCanvas.getObjects('group').find(o => o.id == active)
+			g.set("visible",true)
+		} else {
+			const grouped = capLogoCanvas.getObjects('group').find(o => o.id == "groupedEyelets")
+			const invididual = capLogoCanvas.getObjects('group').find(o => o.id == "individualEyelets")
+			grouped.set("visible",false)
+			invididual.set("visible",false)
+		}
+		capLogoCanvas.renderAll()
+	})
+
 	$("#eyeletGrouping").on("change",function(e) {
 		if ($(this).val() == "groupedEyelets") {
 			$("#groupedEyelets").css("display","inline-block")
