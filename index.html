@@ -13809,7 +13809,9 @@
 						reloading = false;
 					}
 				} else {
-					alert(response.message)
+					if (response.result == "error") {
+						alert(response.message)
+					}
 					hideOverlay();
 					reloading = false;
 				}
@@ -14976,6 +14978,9 @@
 						jerseyLogoCanvas.renderAll()
 						hideOverlay()
 					} else {
+						if (response.result == "error") {
+							alert(response.message)
+						}
 						hideOverlay()
 					}
 				},
