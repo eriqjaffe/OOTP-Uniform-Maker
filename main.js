@@ -17,7 +17,8 @@ const increment = require('add-filename-increment');
 const hasbin = require('hasbin');
 const fontname = require('fontname')
 const { createWorker } = require('tesseract.js');
-const replaceColor = require('replace-color')
+const replaceColor = require('replace-color');
+const admzip = require('adm-zip');
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -1430,27 +1431,58 @@ app2.get("/loadUniform", (req, res) => {
 		defaultPath: store.get("uploadUniformPath", app.getPath('downloads')),
 		properties: ['openFile'],
 		filters: [
-			{ name: 'Uniform Files', extensions: ['uni'] }
+			{ name: 'Uniform Files', extensions: ['uni', 'zip'] }
 		]
 	}
 	dialog.showOpenDialog(null, options).then(result => {
 		if(!result.canceled) {
 			store.set("uploadUniformPath", path.dirname(result.filePaths[0]))
-			res.json({
-				"result": "success",
-				"json": JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
-			})
+			console.log(path.basename(result.filePaths[0]))
+			switch (getExtension(result.filePaths[0])) {
+				case "uni":
+					res.json({
+						"result": "success",
+						"json": JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
+					})
+					break;
+				case "zip":
+					var uniFile = null;
+					var zip = new admzip(result.filePaths[0]);
+					var zipEntries = zip.getEntries()
+					zipEntries.forEach(function (zipEntry) {
+						if (zipEntry.entryName.slice(-4).toLowerCase() == '.uni') {
+							uniFile = zipEntry
+						}
+					});
+					if (uniFile != null) {
+						res.json({
+							"result": "success",
+							"json": JSON.stringify(JSON.parse(uniFile.getData().toString("utf8")))
+						})
+					} else {
+						res.json({
+							"result": "error",
+							"message": "No valid .uni file was found in "+path.basename(result.filePaths[0])
+						})
+					}
+					break;
+				default:
+					res.json({
+						"result": "error",
+						"message": "Invalid file type: "+path.basename(result.filePaths[0])
+					})
+			}
 			res.end()
 		} else {
 			res.json({
 				"result": "cancelled"
 			})
 			res.end()
-			console.log("cancelled")
 		}
 	}).catch(err => {
 		res.json({
-			"result": "error"
+			"result": "error",
+			"message": err
 		})
 		console.log(err)
 		res.end()
