@@ -687,7 +687,7 @@ app2.get("/loadSwatches", (req, res) => {
 		defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')),
 		properties: ['openFile'],
 		filters: [
-			{ name: 'Palette Files', extensions: ['pal', 'zip'] }
+			{ name: 'Palette Files', extensions: ['pal', 'uni', 'zip'] }
 		]
 	}
 	dialog.showOpenDialog(null, options).then(result => {
@@ -698,6 +698,26 @@ app2.get("/loadSwatches", (req, res) => {
 					res.json({
 						"result": "success",
 						"json": JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
+					})
+					break;
+				case "uni":
+					var json = JSON.parse(fs.readFileSync(result.filePaths[0]))
+					console.log(json.swatchSelectors)
+					var palette = {};
+					var commonPalette = []
+					palette.name = json.team.replace(/ /g, "_");
+					palette.swatch1 = json.swatchSelectors.swatch1Color.val
+					palette.swatch2 = json.swatchSelectors.swatch2Color.val
+					palette.swatch3 = json.swatchSelectors.swatch3Color.val
+					palette.swatch4 = json.swatchSelectors.swatch4Color.val
+					commonPalette.push(json.swatchSelectors.swatch1Color.val)
+					commonPalette.push(json.swatchSelectors.swatch2Color.val)
+					commonPalette.push(json.swatchSelectors.swatch3Color.val)
+					commonPalette.push(json.swatchSelectors.swatch4Color.val)
+					palette.commonPalette = commonPalette
+					res.json({
+						"result": "success",
+						"json": JSON.stringify(palette)	
 					})
 					break;
 				case "zip":
@@ -717,7 +737,7 @@ app2.get("/loadSwatches", (req, res) => {
 					} else {
 						res.json({
 							"result": "error",
-							"message": "No valid .pal file was found in "+path.basename(result.filePaths[0])
+							"message": "No valid palette file was found in "+path.basename(result.filePaths[0])
 						})
 					}
 					break;
@@ -1498,7 +1518,7 @@ app2.get("/loadUniform", (req, res) => {
 					} else {
 						res.json({
 							"result": "error",
-							"message": "No valid .uni file was found in "+path.basename(result.filePaths[0])
+							"message": "No valid uniform file was found in "+path.basename(result.filePaths[0])
 						})
 					}
 					break;
