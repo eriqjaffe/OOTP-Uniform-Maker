@@ -18,7 +18,7 @@
   "license": "MIT",
   "devDependencies": {
     "electron": "^18.0.1",
-    "electron-builder": "^23.0.3"
+    "electron-builder": "^24.4.0"
   },
   "dependencies": {
     "add-filename-increment": "^1.0.0",
