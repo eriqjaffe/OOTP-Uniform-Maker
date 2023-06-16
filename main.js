@@ -17,7 +17,8 @@ const increment = require('add-filename-increment');
 const hasbin = require('hasbin');
 const fontname = require('fontname')
 const { createWorker } = require('tesseract.js');
-const replaceColor = require('replace-color')
+const replaceColor = require('replace-color');
+const admzip = require('adm-zip');
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -686,16 +687,73 @@ app2.get("/loadSwatches", (req, res) => {
 		defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')),
 		properties: ['openFile'],
 		filters: [
-			{ name: 'Palette Files', extensions: ['pal'] }
+			{ name: 'Palette Files', extensions: ['pal', 'uni', 'zip'] }
 		]
 	}
 	dialog.showOpenDialog(null, options).then(result => {
 		if(!result.canceled) {
+			store.set("downloadSwatchPath", path.dirname(result.filePaths[0]))
+			switch (getExtension(result.filePaths[0])) {
+				case "pal":
+					res.json({
+						"result": "success",
+						"json": JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
+					})
+					break;
+				case "uni":
+					var json = JSON.parse(fs.readFileSync(result.filePaths[0]))
+					console.log(json.swatchSelectors)
+					var palette = {};
+					var commonPalette = []
+					palette.name = json.team.replace(/ /g, "_");
+					palette.swatch1 = json.swatchSelectors.swatch1Color.val
+					palette.swatch2 = json.swatchSelectors.swatch2Color.val
+					palette.swatch3 = json.swatchSelectors.swatch3Color.val
+					palette.swatch4 = json.swatchSelectors.swatch4Color.val
+					commonPalette.push(json.swatchSelectors.swatch1Color.val)
+					commonPalette.push(json.swatchSelectors.swatch2Color.val)
+					commonPalette.push(json.swatchSelectors.swatch3Color.val)
+					commonPalette.push(json.swatchSelectors.swatch4Color.val)
+					palette.commonPalette = commonPalette
+					res.json({
+						"result": "success",
+						"json": JSON.stringify(palette)	
+					})
+					break;
+				case "zip":
+					var palFile = null;
+					var zip = new admzip(result.filePaths[0]);
+					var zipEntries = zip.getEntries()
+					zipEntries.forEach(function (zipEntry) {
+						if (zipEntry.entryName.slice(-4).toLowerCase() == '.pal') {
+							palFile = zipEntry
+						}
+					});
+					if (palFile != null) {
+						res.json({
+							"result": "success",
+							"json": JSON.stringify(JSON.parse(palFile.getData().toString("utf8")))
+						})
+					} else {
+						res.json({
+							"result": "error",
+							"message": "No valid palette file was found in "+path.basename(result.filePaths[0])
+						})
+					}
+					break;
+				default:
+					res.json({
+						"result": "error",
+						"message": "Invalid file type: "+path.basename(result.filePaths[0])
+					})
+			}
+			res.end()
+		/* if(!result.canceled) {
 			res.json({
 				"result": "success",
 				"json": JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
 			})
-			res.end()
+			res.end() */
 		} else {
 			res.json({
 				"result": "cancelled"
@@ -1430,27 +1488,57 @@ app2.get("/loadUniform", (req, res) => {
 		defaultPath: store.get("uploadUniformPath", app.getPath('downloads')),
 		properties: ['openFile'],
 		filters: [
-			{ name: 'Uniform Files', extensions: ['uni'] }
+			{ name: 'Uniform Files', extensions: ['uni', 'zip'] }
 		]
 	}
 	dialog.showOpenDialog(null, options).then(result => {
 		if(!result.canceled) {
 			store.set("uploadUniformPath", path.dirname(result.filePaths[0]))
-			res.json({
-				"result": "success",
-				"json": JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
-			})
+			switch (getExtension(result.filePaths[0])) {
+				case "uni":
+					res.json({
+						"result": "success",
+						"json": JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
+					})
+					break;
+				case "zip":
+					var uniFile = null;
+					var zip = new admzip(result.filePaths[0]);
+					var zipEntries = zip.getEntries()
+					zipEntries.forEach(function (zipEntry) {
+						if (zipEntry.entryName.slice(-4).toLowerCase() == '.uni') {
+							uniFile = zipEntry
+						}
+					});
+					if (uniFile != null) {
+						res.json({
+							"result": "success",
+							"json": JSON.stringify(JSON.parse(uniFile.getData().toString("utf8")))
+						})
+					} else {
+						res.json({
+							"result": "error",
+							"message": "No valid uniform file was found in "+path.basename(result.filePaths[0])
+						})
+					}
+					break;
+				default:
+					res.json({
+						"result": "error",
+						"message": "Invalid file type: "+path.basename(result.filePaths[0])
+					})
+			}
 			res.end()
 		} else {
 			res.json({
 				"result": "cancelled"
 			})
 			res.end()
-			console.log("cancelled")
 		}
 	}).catch(err => {
 		res.json({
-			"result": "error"
+			"result": "error",
+			"message": err
 		})
 		console.log(err)
 		res.end()
