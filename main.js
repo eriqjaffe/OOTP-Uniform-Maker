@@ -328,8 +328,6 @@ ipcMain.on('upload-image', (event, arg) => {
 })
 
 ipcMain.on('upload-layer', (event, arg) => {
-	console.log("Got here")
-	// canvas, imLeft, imTop, options, canvasHeight, canvasWidth, span.attr("id"), id, loadButton.attr("id"), delButton.attr("id")
 	let canvas = arg[0]
 	let imLeft = arg[1]
 	let imTop = arg[2]
@@ -372,7 +370,8 @@ ipcMain.on('upload-layer', (event, arg) => {
 	  })
 })
 
-app2.get("/uploadImage", (req, res) => {
+ipcMain.on('upload-texture', (event, arg) => {
+	let json = {}
 	const options = {
 		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
 		properties: ['openFile'],
@@ -387,28 +386,30 @@ app2.get("/uploadImage", (req, res) => {
 				if (err) {
 					console.log(err);
 				} else {
-					if (req.query.type == "jersey") {
+					if (arg == "jersey") {
 						Jimp.read(__dirname+"/images/mask.png", (err, mask) => {
+							if (err) { console.log(err) }
 							image.mask(mask,0,0)
 							image.getBase64(Jimp.AUTO, (err, ret) => {
-								res.json({
-									"filename": path.basename(result.filePaths[0]),
-									"image": ret
-								});
+								json.type = arg
+								json.filename = path.basename(result.filePaths[0])
+								json.image = ret
+								event.sender.send('upload-texture-response', json)
 							})
+							
 						})
 					} else {
 						image.getBase64(Jimp.AUTO, (err, ret) => {
-							res.json({
-								"filename": path.basename(result.filePaths[0]),
-								"image": ret
-							});
+							json.type = arg
+							json.filename = path.basename(result.filePaths[0])
+							json.image = ret
+							event.sender.send('upload-texture-response', json)
 						})
 					}
+					
 				}
 			});
 		  } else {
-			  res.end()
 			  console.log("cancelled")
 		  }
 	  }).catch(err => {

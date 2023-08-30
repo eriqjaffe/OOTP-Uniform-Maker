@@ -11258,61 +11258,57 @@
 
 	function uploadCustomTexture(type) {
 		showOverlay("Processing Image...")
-		$.ajax({
-			type: "GET",
-			url: "http://127.0.0.1:"+port+"/uploadImage",
-			data: {type:type},
-			success: function(data) { 
-				if (data.image != undefined) {
-					var imgObj = new Image();
-					imgObj.src = data.image;
-					imgObj.onload = function () {
-						switch (type) {
-							case "jersey":
-								customJerseyTexture = data.image;
-								$("#resetJerseyTexture").prop("disabled",false)
-								break;
-							case "pants":
-								customPantsTexture = data.image;
-								$("#resetPantsTexture").prop("disabled",false)
-								break;
-							case "cap":
-								customCapTexture = data.image;
-								$("#resetCapTexture").prop("disabled",false)
-								break;
-						}
-						hideOverlay()
-						reRenderBG(type)
-					}	
-				} else {
-					switch (type) {
-						case "jersey":
-							customJerseyTexture = null;
-							$("#jerseyTextureSelect").val(defaultJerseyTexture)
-							$("#jerseyTextureSelect").trigger("change")
-							$("#resetJerseyTexture").prop("disabled",true)
-							break;
-						case "pants":
-							customPantsTexture = null;
-							$("#pantsTextureSelect").val(defaultPantsTexture)
-							$("#pantsTextureSelect").trigger("change")
-							$("#resetPantsTexture").prop("disabled",true)
-							break;
-						case "cap":
-							customCapTexture = null;
-							$("#capTextureSelect").val(defaultCapTexture)
-							$("#capTextureSelect").trigger("change")
-							$("#resetCapTexture").prop("disabled",true)
-							break;
-					}
-					hideOverlay()
-				}
-			},
-			error: function(data) {
-				hideOverlay()
-			}
-		});
+		ipcRenderer.send('upload-texture', type)
 	}
+
+	ipcRenderer.on('upload-texture-response', (event, response) => {
+		let type = response.type
+		let data = response
+		if (data.image != undefined) {
+			var imgObj = new Image();
+			imgObj.src = data.image;
+			imgObj.onload = function () {
+				switch (type) {
+					case "jersey":
+						customJerseyTexture = data.image;
+						$("#resetJerseyTexture").prop("disabled",false)
+						break;
+					case "pants":
+						customPantsTexture = data.image;
+						$("#resetPantsTexture").prop("disabled",false)
+						break;
+					case "cap":
+						customCapTexture = data.image;
+						$("#resetCapTexture").prop("disabled",false)
+						break;
+				}
+				hideOverlay()
+				reRenderBG(type)
+			}	
+		} else {
+			switch (type) {
+				case "jersey":
+					customJerseyTexture = null;
+					$("#jerseyTextureSelect").val(defaultJerseyTexture)
+					$("#jerseyTextureSelect").trigger("change")
+					$("#resetJerseyTexture").prop("disabled",true)
+					break;
+				case "pants":
+					customPantsTexture = null;
+					$("#pantsTextureSelect").val(defaultPantsTexture)
+					$("#pantsTextureSelect").trigger("change")
+					$("#resetPantsTexture").prop("disabled",true)
+					break;
+				case "cap":
+					customCapTexture = null;
+					$("#capTextureSelect").val(defaultCapTexture)
+					$("#capTextureSelect").trigger("change")
+					$("#resetCapTexture").prop("disabled",true)
+					break;
+			}
+			hideOverlay()
+		}
+	})
 
 	function diagonalText(type) {
 		const h = (type == "diag") ? parseInt($("#hSpacing").val()) : 0
