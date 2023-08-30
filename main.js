@@ -103,29 +103,30 @@ ipcMain.on('check-for-update', (event, arg) => {
 	});
 })
 
-app2.get("/dropImage", (req, res) => {
-	Jimp.read(req.query.file, (err, image) => {
+ipcMain.on('drop-image', (event, arg) => {
+	let dropCanvas = arg[0]
+	let file = arg[1]
+	let tab = arg[2]
+	let json = {}
+	Jimp.read(file, (err, image) => {
 		if (err) {
-			res.json({
-				"filename": "error not an image",
-				"image": "error not an image"
-			})
+			json.filename = "error not an image"
+			json.image = "error not an image"
 		} else {
 			image.getBase64(Jimp.AUTO, (err, ret) => {
-				res.json({
-					"filename": path.basename(req.query.file),
-					"image": ret
-				});
+				json.filename = path.basename(file)
+				json.image = ret
 			})
 		}
+		event.sender.send('drop-image-response', [dropCanvas, json, tab])
 	})
 })
 
-app2.get("/dropFontImage", (req, res) => {
+ipcMain.on('drop-font-image', (event, file) => {
 	recognizeText()
 
 	async function recognizeText() {
-		let image = await Jimp.read(req.query.file)
+		let image = await Jimp.read(file)
 		let border = image.getPixelColor(1, 1)
 
 		const rgba = Jimp.intToRGBA(border)
@@ -136,7 +137,7 @@ app2.get("/dropFontImage", (req, res) => {
 		const jsonOBJ = []
 
 		const base = await replaceColor({
-			image: req.query.file,
+			image: file,
 			colors: {
 				type: 'hex',
 				targetColor: hex,
@@ -191,8 +192,7 @@ app2.get("/dropFontImage", (req, res) => {
 			resultObj.push(temp[char]);
 		});
 
-		res.json(resultObj)
-		res.end()
+		event.sender.send('drop-font-image-response', resultObj)
 	}
 })
 
@@ -501,35 +501,33 @@ app2.get("/customFont", (req, res) => {
 	})
 })
 
-app2.get("/dropFont", (req, res) => {
+ipcMain.on('drop-font', (event, arg) => {
+	let file = arg[0]
+	let tab = arg[1]
+	let json = {}
 	try {
-		const filePath = path.join(userFontsFolder,path.basename(req.query.file))
-		const fontMeta = fontname.parse(fs.readFileSync(req.query.file))[0];
-		var ext = getExtension(req.query.file)
-		var fontPath = url.pathToFileURL(req.query.file)
-		var json = {
-			"status": "ok",
-			"fontName": fontMeta.fullName,
-			"fontStyle": fontMeta.fontSubfamily,
-			"familyName": fontMeta.fontFamily,
-			"fontFormat": ext,
-			"fontMimetype": 'font/' + ext,
-			"fontData": fontPath.href,
-			"fontPath": filePath
-		};
-		fs.copyFileSync(req.query.file, filePath)
-		res.json(json)
-		res.end()
+	    const filePath = path.join(userFontsFolder,path.basename(file))
+		const fontMeta = fontname.parse(fs.readFileSync(file))[0];
+		var ext = getExtension(file)
+		var fontPath = url.pathToFileURL(file)
+		json.status = "ok"
+		json.fontName = fontMeta.fullName
+		json.fontStyle = fontMeta.fontSubfamily
+		json.familyName = fontMeta.fontFamily
+		json.fontFormat = ext
+		json.fontMimetype = 'font/' + ext
+		json.fontData = fontPath.href
+		json.fontPath = filePath
+		json.tab = tab
+		fs.copyFileSync(file, filePath)
+		event.sender.send('drop-font-response', json)
 	} catch (err) {
-		const json = {
-			"status": "error",
-			"fontName": path.basename(req.query.file),
-			"fontPath": req.query.file,
-			"message": err
-		}
-		res.json(json)
-		res.end()
-		fs.unlinkSync(req.query.file)
+		json.status = "error"
+		json.fontName = path.basename(file)
+		json.fontPath = file
+		json.message = err
+		fs.unlinkSync(file)
+		event.sender.send('drop-font-response', json)
 	}
 })
 
