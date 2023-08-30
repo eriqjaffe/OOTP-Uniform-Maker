@@ -11158,8 +11158,7 @@
 	// GENERAL PURPOSE RENDERING FUNCTIONS
 
     function reRenderBG(target) {
-		console.log(target)
-        switch (target) {
+		switch (target) {
             case "jersey":
 				var canvas = jerseyBelow
                 var textureCanvas = jerseyTextureContext
@@ -13816,7 +13815,6 @@
 
 	$(".fakeLayerButton").on("click",function(e){
 		showOverlay("Loading Custom Layer...")
-		console.log("got this far")
 		const target = $(this).data("canvas")
 		const renderTarget = $(this).data("canvas")
 		switch (target) {
@@ -13824,13 +13822,12 @@
 				var canvas = "capBelow"
 				var imLeft = 256
 				var imTop = 256
-				var options = {"left":256,"top":256}
 				var canvasHeight = 512
 				var canvasWidth = 512
-				var span = $("#customCapLayerName")
+				var span = "customCapLayerName"
 				var id = "customCapLayer"
-				var loadButton = $("#customCapLayerButton")
-				var delButton = $("#customCapLayerDelete")
+				var loadButton = "customCapLayerButton"
+				var delButton = "customCapLayerDelete"
 				break;
 		 	case "jersey":
 				var canvas = "jerseyBelow"
@@ -13838,46 +13835,27 @@
 				var imTop = 512
 				var canvasHeight = 1024
 				var canvasWidth = 512
-				var span = $("#customJerseyLayerName")
+				var span = "customJerseyLayerName"
 				var id = "customJerseyLayer"
-				var loadButton = $("#customJerseyLayerButton")
-				var delButton = $("#customJerseyLayerDelete")
-				switch ($("#jerseyCustomLayerMask").val()) {
-					case "full":
-						var options = {"left":256,"top":512,"clipPath":clippingPath}
-						break;
-					case "vest":
-						var options = {"left":256,"top":512,"clipPath":($("#sleeveType").val() == "standard") ? clippingPathStandardSleeves : clippingPathRaglanSleeves}
-						break;
-					case "front":
-						var options = {"left":256,"top":512,"clipPath":clippingPathJerseyFront}
-						break;
-					case "back":
-						var options = {"left":256,"top":512,"clipPath":clippingPathJerseyBack}
-						break;
-					case "sleeves":
-						var options = {"left":256,"top":512,"clipPath":($("#sleeveType").val() == "standard") ? vestSleeveClippingPath : raglanSleeveClippingPath}
-						break;
-				}
+				var loadButton = "customJerseyLayerButton"
+				var delButton = "customJerseyLayerDelete"
 				break;
 			case "pants":
 				var canvas = "pantsBelow"
 				var imLeft = 256
 				var imTop = 256
-				var options = {"left":256,"top":256}
 				var canvasHeight = 512
 				var canvasWidth = 512
-				var span = $("#customPantsLayerName")
+				var span = "customPantsLayerName"
 				var id = "customPantsLayer"
-				var loadButton = $("#customPantsLayerButton")
-				var delButton = $("#customPantsLayerDelete")
+				var loadButton = "customPantsLayerButton"
+				var delButton = "customPantsLayerDelete"
 				break;
 		}
-		ipcRenderer.send('upload-layer', [canvas, imLeft, imTop, options, canvasHeight, canvasWidth, span.attr("id"), id, loadButton.attr("id"), delButton.attr("id"), renderTarget])
+		ipcRenderer.send('upload-layer', [canvas, imLeft, imTop, canvasHeight, canvasWidth, span, id, loadButton, delButton, renderTarget])
 	})
 
 	ipcRenderer.on('upload-layer-response', (event, response) => {
-		console.log(response)
 		let canvas = null
 		switch (response[0]) {
 			case "jerseyBelow":
@@ -13890,14 +13868,15 @@
 				canvas = pantsBelow;
 				break;
 		}
-		console.log(canvas)
-		let options = response[3]
-		let span = $("#"+response[6])
-		let id = response[7]
-		let loadButton = $("#"+response[8])
-		let delButton = $("#"+response[9])
-		let renderTarget = response[10]
-		let data = response[11]
+		let imLeft = response[1]
+		let imTop = response[2]
+		//let options = response[3]
+		let span = $("#"+response[5])
+		let id = response[6]
+		let loadButton = $("#"+response[7])
+		let delButton = $("#"+response[8])
+		let renderTarget = response[9]
+		let data = response[10]
 		var imgObj = new Image();
 		imgObj.src = data.image;
 		imgObj.onload = function () {
@@ -13913,11 +13892,13 @@
 			var h = image.height;
 			var w = image.width;
 			canvas.add(image);
-			image.set(options);
-			image.set({ clipPath: null })
+			image.set({ 
+				left: imLeft,
+				top: imTop,
+				clipPath: null 
+			})
 			image.sendToBack();
 			image.setCoords();
-			console.log(image)
 			if (response[0] == "jerseyBelow") {
 				$("#jerseyCustomLayerMask").trigger("change")
 			}

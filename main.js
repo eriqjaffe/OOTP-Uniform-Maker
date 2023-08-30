@@ -333,14 +333,13 @@ ipcMain.on('upload-layer', (event, arg) => {
 	let canvas = arg[0]
 	let imLeft = arg[1]
 	let imTop = arg[2]
-	let opt = arg[3]
-	let canvasHeight = arg[4]
-	let canvasWidth = arg[5]
-	let span = arg[6]
-	let id = arg[7]
-	let loadButton = arg[8]
-	let delButton = arg[9]
-	let renderTarget = arg[10]
+	let canvasHeight = arg[3]
+	let canvasWidth = arg[4]
+	let span = arg[5]
+	let id = arg[6]
+	let loadButton = arg[7]
+	let delButton = arg[8]
+	let renderTarget = arg[9]
 	let json = {}
 
 	const options = {
@@ -360,7 +359,7 @@ ipcMain.on('upload-layer', (event, arg) => {
 					image.getBase64(Jimp.AUTO, (err, ret) => {
 						json.filename = path.basename(result.filePaths[0])
 						json.image = ret
-						event.sender.send('upload-layer-response', [canvas, imLeft, imTop, opt, canvasHeight, canvasWidth, span, id, loadButton, delButton, renderTarget, json])
+						event.sender.send('upload-layer-response', [canvas, imLeft, imTop, canvasHeight, canvasWidth, span, id, loadButton, delButton, renderTarget, json])
 					})
 				}
 			});
