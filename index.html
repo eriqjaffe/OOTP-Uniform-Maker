@@ -7805,20 +7805,6 @@
 	$("#tesseract").on("click",function() {	
 		showOverlay("Detecting Characters...")
 		ipcRenderer.send('upload-font-image', null)
-		/* $.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/uploadFontImage",
-			success: function(data) {
-				if (data.status != "cancelled") {
-					placeOCR(data)
-				} else {
-					hideOverlay()
-				}
-			},
-			error: function(data) {
-				hideOverlay()
-			}
-		}) */
 	})
 
 	ipcRenderer.on('upload-font-image-response', (event, data) => {
@@ -11172,6 +11158,7 @@
 	// GENERAL PURPOSE RENDERING FUNCTIONS
 
     function reRenderBG(target) {
+		console.log(target)
         switch (target) {
             case "jersey":
 				var canvas = jerseyBelow
@@ -11803,98 +11790,99 @@
 			var imLeft = 256
 			var imTop = 256
 			var moveBelow = 'eyeletGroup'
-			//var canStr = "jersey"
+
 		}
 		if ($(this).data("canvas") == "jersey") {
 			var canvas = jerseyLogoCanvas
 			var imLeft = 256
 			var imTop = 512
 			var moveBelow = 'buttons'
-			//var canStr = "cap"
 		}
 		if ($(this).data("canvas") == "pants") {
 			var canvas = pantsLogoCanvas
 			var imLeft = 256
 			var imTop = 256
 			var moveBelow = 'belt'
-			//var canStr = "pants"
 		}
-		/* switch (activeCanvas.id) {
+		ipcRenderer.send('upload-image', [null, canvas.id, imLeft, imTop, moveBelow])
+	})
+
+	ipcRenderer.on('upload-image-response', (event, response) => {
+		let canvas = null;
+		switch (response[1]) {
 			case "jerseyLogoCanvas":
-				var canStr = "jersey"
+				canvas = jerseyLogoCanvas
 				break;
 			case "capLogoCanvas":
-				var canStr = "cap"
+				canvas = capLogoCanvas
 				break;
 			case "pantsLogoCanvas":
-				var canStr = "pants"
+				canvas = pantsLogoCanvas
 				break;
-		} */
-		$.ajax({
-			type: "GET",
-			url: "http://127.0.0.1:"+port+"/uploadImage",
-			success: function(data) {
-				var imgObj = new Image();
-				imgObj.src = data.image;
-				$("#fileName").html(data.filename);
-				imgObj.onload = function () {
-					var image = new fabric.Image(imgObj);
-					image.set({
-						originX: 'center',
-						originY: 'center',
-						perPixelTargetFind: true,
-						centeredScaling: true,
-						centeredRotation: true,
-						name: data.filename,
-						id: data.filename
-					});
-					image.filters.push(new fabric.Image.filters.Resize({
-						resizeType: 'lanczos', // typo fixed
-						lanczosLobes: 2 // typo fixed
-					}));
-					image.on('object:modified',function() {
-						imLeft = image.get('left')
-						imTop = image.get('top');
-					})
-					image.on('selected',function() {
-						switch (image.canvas.id) {
-							case "jerseyLogoCanvas":
-								var canStr = "jersey"
-								break;
-							case "capLogoCanvas":
-								var canStr = "cap"
-								break;
-							case "pantsLogoCanvas":
-								var canStr = "pants"
-								break;
-						} 
-						$("#"+canStr+"FileName").html(image.get('id'));
-						if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-							$("#"+canStr+"TrimImageDiv").css("display","block");
-							$("#"+canStr+"UploadImageDiv").css("display","none");
-							$("#"+canStr+"SelectedImageDiv").css("display","block");
-						}
-						$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-						$(".copypaste").each(function() {
-							$(this).css("display","inline-block")
-						})
-					})
-					var h = image.height;
-					var w = image.width;
-					canvas.add(image);
-					image.set({"left":imLeft,"top":imTop});
-					image.setCoords();
-					if (moveBelow != 'belt') {
-						canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
-					} else {
-						canvas.sendToBack(image)	
-					}
-					canvas.setActiveObject(image)
-					canvas.requestRenderAll()
-					canvas.renderAll();
+		}
+		let imTop = response[2]
+		let imLeft = response[3]
+		let moveBelow = response[4]
+		let data = response[5]
+		var imgObj = new Image();
+		imgObj.src = data.image;
+		$("#fileName").html(data.filename);
+		imgObj.onload = function () {
+			var image = new fabric.Image(imgObj);
+			image.set({
+				originX: 'center',
+				originY: 'center',
+				perPixelTargetFind: true,
+				centeredScaling: true,
+				centeredRotation: true,
+				name: data.filename,
+				id: data.filename
+			});
+			image.filters.push(new fabric.Image.filters.Resize({
+				resizeType: 'lanczos', // typo fixed
+				lanczosLobes: 2 // typo fixed
+			}));
+			image.on('object:modified',function() {
+				imLeft = image.get('left')
+				imTop = image.get('top');
+			})
+			image.on('selected',function() {
+				switch (image.canvas.id) {
+					case "jerseyLogoCanvas":
+						var canStr = "jersey"
+						break;
+					case "capLogoCanvas":
+						var canStr = "cap"
+						break;
+					case "pantsLogoCanvas":
+						var canStr = "pants"
+						break;
+				} 
+				$("#"+canStr+"FileName").html(image.get('id'));
+				if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+					$("#"+canStr+"TrimImageDiv").css("display","block");
+					$("#"+canStr+"UploadImageDiv").css("display","none");
+					$("#"+canStr+"SelectedImageDiv").css("display","block");
 				}
+				$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+				$(".copypaste").each(function() {
+					$(this).css("display","inline-block")
+				})
+			})
+			var h = image.height;
+			var w = image.width;
+			canvas.add(image);
+			image.set({"left":imLeft,"top":imTop});
+			image.setCoords();
+			if (moveBelow != 'belt') {
+				canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
+			} else {
+				canvas.sendToBack(image)	
 			}
-		});
+			canvas.setActiveObject(image)
+			canvas.requestRenderAll()
+			canvas.renderAll();
+		}
 	})
 
 	$(".localFontButton").on("click",function() {
@@ -13828,11 +13816,12 @@
 
 	$(".fakeLayerButton").on("click",function(e){
 		showOverlay("Loading Custom Layer...")
+		console.log("got this far")
 		const target = $(this).data("canvas")
 		const renderTarget = $(this).data("canvas")
 		switch (target) {
 			case "cap":
-				var canvas = capBelow
+				var canvas = "capBelow"
 				var imLeft = 256
 				var imTop = 256
 				var options = {"left":256,"top":256}
@@ -13844,7 +13833,7 @@
 				var delButton = $("#customCapLayerDelete")
 				break;
 		 	case "jersey":
-				var canvas = jerseyBelow
+				var canvas = "jerseyBelow"
 				var imLeft = 256
 				var imTop = 512
 				var canvasHeight = 1024
@@ -13872,7 +13861,7 @@
 				}
 				break;
 			case "pants":
-				var canvas = pantsBelow
+				var canvas = "pantsBelow"
 				var imLeft = 256
 				var imTop = 256
 				var options = {"left":256,"top":256}
@@ -13884,43 +13873,61 @@
 				var delButton = $("#customPantsLayerDelete")
 				break;
 		}
-		$.ajax({
-			type: "GET",
-			url: "http://127.0.0.1:"+port+"/uploadImage",
-			success: function(data) {
-				var imgObj = new Image();
-				imgObj.src = data.image;
-				imgObj.onload = function () {
-					var image = new fabric.Image(imgObj);
-					image.set({
-						originX: 'center',
-						originY: 'center',
-						perPixelTargetFind: true,
-						centeredScaling: true,
-						centeredRotation: true,
-						id: id
-					});
-					var h = image.height;
-					var w = image.width;
-/* 					if (image.width > image.height) {
-						image.scaleToHeight(canvasWidth)
-					} else {
-						image.scaleToWidth(canvasHeight)
-					} */
-					canvas.add(image);
-					image.set(options);
-					image.sendToBack();
-					image.setCoords();
-					canvas.renderAll();
-					span.html(data.filename)
-					reRenderBG(renderTarget)
-					loadButton.css("display","none")
-					delButton.css("display","inline-block")
-					hideOverlay()
-				}
-				hideOverlay()
+		ipcRenderer.send('upload-layer', [canvas, imLeft, imTop, options, canvasHeight, canvasWidth, span.attr("id"), id, loadButton.attr("id"), delButton.attr("id"), renderTarget])
+	})
+
+	ipcRenderer.on('upload-layer-response', (event, response) => {
+		console.log(response)
+		let canvas = null
+		switch (response[0]) {
+			case "jerseyBelow":
+				canvas = jerseyBelow;
+				break;
+			case "capBelow":
+				canvas = capBelow;
+				break;
+			case "pantsBelow":
+				canvas = pantsBelow;
+				break;
+		}
+		console.log(canvas)
+		let options = response[3]
+		let span = $("#"+response[6])
+		let id = response[7]
+		let loadButton = $("#"+response[8])
+		let delButton = $("#"+response[9])
+		let renderTarget = response[10]
+		let data = response[11]
+		var imgObj = new Image();
+		imgObj.src = data.image;
+		imgObj.onload = function () {
+			var image = new fabric.Image(imgObj);
+			image.set({
+				originX: 'center',
+				originY: 'center',
+				perPixelTargetFind: true,
+				centeredScaling: true,
+				centeredRotation: true,
+				id: id
+			});
+			var h = image.height;
+			var w = image.width;
+			canvas.add(image);
+			image.set(options);
+			image.set({ clipPath: null })
+			image.sendToBack();
+			image.setCoords();
+			console.log(image)
+			if (response[0] == "jerseyBelow") {
+				$("#jerseyCustomLayerMask").trigger("change")
 			}
-		});
+			canvas.renderAll();
+			span.html(data.filename)
+			reRenderBG(renderTarget)
+			loadButton.css("display","none")
+			delButton.css("display","inline-block")
+			hideOverlay()
+		}
 	})
 
 	$(".fakeLayerDelete").on("click",function() {

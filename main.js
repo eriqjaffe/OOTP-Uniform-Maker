@@ -279,6 +279,100 @@ ipcMain.on('upload-font-image', (event, arg) => {
 	})
 })
 
+ipcMain.on('upload-image', (event, arg) => {
+	let type = arg[0]
+	let canvas = arg[1]
+	let imLeft = arg[2]
+	let imTop = arg[3]
+	let moveBelow = arg[4]
+	let json = {}
+
+	const options = {
+		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
+		properties: ['openFile'],
+		filters: [
+			{ name: 'Images', extensions: ['jpg', 'png'] }
+		]
+	}
+	dialog.showOpenDialog(null, options).then(result => {
+		  if(!result.canceled) {
+			store.set("uploadImagePath", path.dirname(result.filePaths[0]))
+			Jimp.read(result.filePaths[0], (err, image) => {
+				if (err) {
+					console.log(err);
+				} else {
+					if (type == "jersey") {
+						Jimp.read(__dirname+"/images/mask.png", (err, mask) => {
+							image.mask(mask,0,0)
+							image.getBase64(Jimp.AUTO, (err, ret) => {
+								json.filename = path.basename(result.filePaths[0])
+								json.image = ret
+							})
+						})
+					} else {
+						image.getBase64(Jimp.AUTO, (err, ret) => {
+							json.filename = path.basename(result.filePaths[0])
+							json.image = ret
+						})
+					}
+					event.sender.send('upload-image-response', [type, canvas, imTop, imLeft, moveBelow, json])
+				}
+			});
+		  } else {
+			  //res.end()
+			  console.log("cancelled")
+		  }
+	  }).catch(err => {
+		  console.log(err)
+	  })
+})
+
+ipcMain.on('upload-layer', (event, arg) => {
+	console.log("Got here")
+	// canvas, imLeft, imTop, options, canvasHeight, canvasWidth, span.attr("id"), id, loadButton.attr("id"), delButton.attr("id")
+	let canvas = arg[0]
+	let imLeft = arg[1]
+	let imTop = arg[2]
+	let opt = arg[3]
+	let canvasHeight = arg[4]
+	let canvasWidth = arg[5]
+	let span = arg[6]
+	let id = arg[7]
+	let loadButton = arg[8]
+	let delButton = arg[9]
+	let renderTarget = arg[10]
+	let json = {}
+
+	const options = {
+		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
+		properties: ['openFile'],
+		filters: [
+			{ name: 'Images', extensions: ['jpg', 'png'] }
+		]
+	}
+	dialog.showOpenDialog(null, options).then(result => {
+		  if(!result.canceled) {
+			store.set("uploadImagePath", path.dirname(result.filePaths[0]))
+			Jimp.read(result.filePaths[0], (err, image) => {
+				if (err) {
+					console.log(err);
+				} else {
+					image.getBase64(Jimp.AUTO, (err, ret) => {
+						json.filename = path.basename(result.filePaths[0])
+						json.image = ret
+						event.sender.send('upload-layer-response', [canvas, imLeft, imTop, opt, canvasHeight, canvasWidth, span, id, loadButton, delButton, renderTarget, json])
+					})
+				}
+			});
+		  } else {
+			  res.end()
+			  console.log("cancelled")
+		  }
+	  }).catch(err => {
+		  console.log(err)
+	  })
+})
+
 app2.get("/uploadImage", (req, res) => {
 	const options = {
 		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
