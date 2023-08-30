@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog, Menu, shell } = require('electron')
+const { app, BrowserWindow, dialog, Menu, shell, ipcMain } = require('electron')
 const path = require('path')
 const os = require('os');
 const fs = require('fs')
@@ -77,26 +77,29 @@ const options = {
 	currentVersion: pkg.version
 };
 
+ipcMain.on('ipc-test', (event, arg) => {
+	console.log(arg)
+	event.sender.send('ipc-response', 'and hello to you too')
+})
+
 const imInstalled = hasbin.sync('magick');
 
 app2.use(express.urlencoded({limit: '200mb', extended: true, parameterLimit: 500000}));
 
-app2.get("/checkForUpdate", (req,res) => {
+ipcMain.on('check-for-update', (event, arg) => {
+	const res = {}
 	versionCheck(options, function (error, update) { // callback function
 		if (error) throw error;
 		if (update) { // print some update info if an update is available
-			res.json({
-				"update": true,
-				"currentVersion": pkg.version,
-				"name": update.name,
-				"url": update.url
-			})
+			res.update = true,
+			res.currentVersion = pkg.version,
+			res.name = update.name,
+			res.url = update.url
 		} else {
-			res.json({
-				"update": false,
-				"currentVersion": pkg.version,
-			})
+			res.update = false,
+			res.currentVersion = pkg.version
 		}
+		event.sender.send('check-for-update-response', res)
 	});
 })
 

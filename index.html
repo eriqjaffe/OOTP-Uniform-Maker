@@ -31,6 +31,7 @@
 	<link href="./scripts/vex.css" rel="stylesheet" type='text/css'>
 	<link href="./scripts/vex-theme-os.css" rel="stylesheet" type='text/css'>
     <script>
+		const { ipcRenderer } = require('electron');
 		const params = new URLSearchParams(window.location.search)
 		const port = params.get('port')
 		const appVersion = params.get('appVersion')
@@ -138,6 +139,7 @@
 <body>
 <div class="title">
 	<span class="header">Welcome To The OOTP Uniform Maker!</span>
+	<input type="button" id="ipctest" value="click me">
 </div>
 <div style="font-family:'MLBBlock';">&nbsp;</div>
 <div id="capFontPreInit">&nbsp;</div>
@@ -2544,6 +2546,15 @@
 </div>
 </body>
 <script>
+
+	$("#ipctest").on("click", function(e) {
+		ipcRenderer.send('ipc-test', "hello world")
+	})
+
+	ipcRenderer.on('ipc-response', (event, data) => {
+		alert(data)
+	})
+
 	const jerseyTippy = tippy(document.getElementById('jerseyContainer'), {
         content: '',
 		trigger: 'manual',
@@ -14782,24 +14793,22 @@
 	}
 	
 	$("#checkForUpdates").on("click", function() {
-		$.ajax({
-			type: "GET",
-			url: "http://127.0.0.1:"+port+"/checkForUpdate",
-			success: function(data) { 
-				if (data.update == true) {
-					if (confirm("Current version: "+data.currentVersion+"\r\n\r\nVersion "+data.name+" is now availble.  Click 'OK' to go to the releases page.")) {
-						window.open(
-      						data.url, 
-      						'_blank'
-    					);
-					}
-				} else if (data.update == false) {
-					alert("Current version: "+data.currentVersion+"\r\n\r\nThere is no update available at this time")
-				} else {
-					alert("Something went wrong, the update check failed.")
-				}
+		ipcRenderer.send('check-for-update', null)
+	})
+
+	ipcRenderer.on('check-for-update-response', (event, data) => {
+		if (data.update == true) {
+			if (confirm("Current version: "+data.currentVersion+"\r\n\r\nVersion "+data.name+" is now availble.  Click 'OK' to go to the releases page.")) {
+				window.open(
+					data.url, 
+					'_blank'
+				);
 			}
-		})
+		} else if (data.update == false) {
+			alert("Current version: "+data.currentVersion+"\r\n\r\nThere is no update available at this time")
+		} else {
+			alert("Something went wrong, the update check failed.")
+		}
 	})
 
 	$("#aboutUniformMaker").magnificPopup({
