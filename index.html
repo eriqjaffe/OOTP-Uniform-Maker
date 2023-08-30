@@ -11996,14 +11996,17 @@
 	$(".border").on("click",function(e) {
 		if ($(this).data("canvas") == "capLogoCanvas") {
 			var canvas = capLogoCanvas
+			var canvasName = "capLogoCanvas"
 			var fuzz = parseInt($("#capColorFuzz").val());
 		}
 		if ($(this).data("canvas") == "jerseyLogoCanvas") {
 			var canvas = jerseyLogoCanvas
+			var canvasName = "jerseyLogoCanvas"
 			var fuzz = parseInt($("#jerseyColorFuzz").val());
 		}
 		if ($(this).data("canvas") == "pantsLogoCanvas") {
 			var canvas = pantsLogoCanvas
+			var canvasName = "pantsLogoCanvas"
 			var fuzz = parseInt($("#pantsColorFuzz").val());
 		}
 		var action = $(this).data("action");
@@ -12018,7 +12021,8 @@
 				$("#colorSquare").removeClass("colorSquareActive").removeClass("colorSquareSelected");
 				var theImage = object._originalElement.currentSrc;	
 				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
-				$.ajax({
+				ipcRenderer.send('remove-border', [theImage, 1, 1, "removeBorder", null, null, fuzz, pictureName, canvasName, imLeft, imTop])
+				/* $.ajax({
 					type: "POST",
 					url: "http://127.0.0.1:"+port+"/removeBorder",
 					data: {imgdata: theImage, x: "1", y: "1", action: "removeBorder", color: "null", newcolor: "null", fuzz: fuzz, filename: pictureName},
@@ -12086,10 +12090,83 @@
 							}
 						}
 					}
-				})
+				}) */
 				return false;
 			}
 		}	
+	})
+
+	ipcRenderer.on('remove-border-response', (event, response) => {
+		console.log(response)
+		let canvas = null
+		switch (canvas) {
+			case "jerseyLogoCanvas" {
+				canvas = jerseyLogoCanvas
+				break;
+			}
+		}
+		if (response.status != "success") {
+			alert(response.message)
+			hideOverlay()
+		} else {
+			var imgObj = new Image();
+			imgObj.src = data;
+			imgObj.onload = function () {
+				var image = new fabric.Image(imgObj);
+				image.set({
+					originX: 'center',
+					originY: 'center',
+					left: imLeft,
+					top: imTop,
+					perPixelTargetFind: true,
+					centeredScaling: true,
+					centeredRotation: true,
+					name: pictureName,
+					id: pictureName
+				});
+				
+				image.filters.push(new fabric.Image.filters.Resize({
+					resizeType: 'lanczos', // typo fixed
+					lanczosLobes: 2 // typo fixed
+				}));
+				
+				image.on('object:modified',function() {
+					imLeft = image.get('left')
+					imTop = image.get('top');
+				});
+
+				image.on('selected',function() {
+					switch (activeCanvas.id) {
+						case "jerseyLogoCanvas":
+							var canStr = "jersey"
+							break;
+						case "capLogoCanvas":
+							var canStr = "cap"
+							break;
+						case "pantsLogoCanvas":
+							var canStr = "pants"
+							break;
+					} 
+					$("#"+canStr+"FileName").html(image.get('id'));
+					if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+						$("#"+canStr+"TrimImageDiv").css("display","block");
+						$("#"+canStr+"UploadImageDiv").css("display","none");
+						$("#"+canStr+"SelectedImageDiv").css("display","block");
+					}
+					$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+					$(".copypaste").each(function() {
+						$(this).css("display","inline-block")
+					})
+				})
+				
+				canvas.remove(object);
+				canvas.add(image);
+				image.moveTo(idx);
+				canvas.renderAll();
+				imLeft = image.get('left')
+				imTop = image.get('top');
+			}
+		}
 	})
 
 	$(".rangeButton").on("click",function(e) {

@@ -417,6 +417,53 @@ ipcMain.on('upload-texture', (event, arg) => {
 	  })
 })
 
+ipcMain.on('remove-border', (event, arg) => {
+	//[theImage, 1, 1, "removeBorder", null, null, fuzz, pictureName]
+	let imgdata = arg[0]
+	let fuzz = parseInt(arg[6]);
+	let pictureName = arg[7]
+	let canvas = arg[8]
+	let imgLeft = arg[9]
+	let imgTop = arg[10]
+	let json = {}
+	let buffer = Buffer.from(imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	
+	Jimp.read(buffer, (err, image) => {
+		if (err) {
+			console.log(err);
+		} else {
+			try {
+				image.write(tempDir+"/temp.png");
+				imagemagickCli.exec('magick convert -trim -fuzz '+fuzz+'% '+tempDir+'/temp.png '+tempDir+'/temp.png').then(({ stdout, stderr }) => {
+					Jimp.read(tempDir+"/temp.png", (err, image) => {
+						if (err) {
+							json.status = 'error'
+							json.message = err
+							console.log(err);
+							event.sender.send('remove-border-response', json)
+						} else {
+							image.getBase64(Jimp.AUTO, (err, ret) => {
+								json.status = 'success'
+								json.image = ret
+								json.canvas = canvas
+								json.imgTop = imgTop
+								json.imgLeft = imgLeft
+								json.pictureName = pictureName
+								event.sender.send('remove-border-response', json)
+							})
+						}
+					})
+				})
+			} catch (error) {
+				json.status = 'error'
+				json.message = "An error occurred - please make sure ImageMagick is installed"
+				console.log(err);
+				event.sender.send('remove-border-response', json)
+			}
+		}
+	})
+})
+
 app2.post("/removeBorder", (req, res) => {
 	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	var fuzz = parseInt(req.body.fuzz);
