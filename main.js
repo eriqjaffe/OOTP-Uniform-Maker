@@ -77,11 +77,6 @@ const options = {
 	currentVersion: pkg.version
 };
 
-ipcMain.on('ipc-test', (event, arg) => {
-	console.log(arg)
-	event.sender.send('ipc-response', 'and hello to you too')
-})
-
 const imInstalled = hasbin.sync('magick');
 
 app2.use(express.urlencoded({limit: '200mb', extended: true, parameterLimit: 500000}));
@@ -192,11 +187,11 @@ ipcMain.on('drop-font-image', (event, file) => {
 			resultObj.push(temp[char]);
 		});
 
-		event.sender.send('drop-font-image-response', resultObj)
+		event.sender.send('font-image-response', resultObj)
 	}
 })
 
-app2.post("/uploadFontImage", (req, res) => {
+ipcMain.on('upload-font-image', (event, arg) => {
 	const options = {
 		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
 		properties: ['openFile'],
@@ -276,12 +271,10 @@ app2.post("/uploadFontImage", (req, res) => {
 					resultObj.push(temp[char]);
 				});
 
-				res.json(resultObj)
-				res.end()
+				event.sender.send('font-image-response', resultObj)
 			}
 		} else {
-			res.json({"status":"cancelled"})
-			res.end()
+			event.sender.send('font-image-response', {"status":"cancelled"})
 		}
 	})
 })

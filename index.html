@@ -139,7 +139,6 @@
 <body>
 <div class="title">
 	<span class="header">Welcome To The OOTP Uniform Maker!</span>
-	<input type="button" id="ipctest" value="click me">
 </div>
 <div style="font-family:'MLBBlock';">&nbsp;</div>
 <div id="capFontPreInit">&nbsp;</div>
@@ -2546,14 +2545,6 @@
 </div>
 </body>
 <script>
-
-	$("#ipctest").on("click", function(e) {
-		ipcRenderer.send('ipc-test', "hello world")
-	})
-
-	ipcRenderer.on('ipc-response', (event, data) => {
-		alert(data)
-	})
 
 	const jerseyTippy = tippy(document.getElementById('jerseyContainer'), {
         content: '',
@@ -7813,7 +7804,8 @@
 
 	$("#tesseract").on("click",function() {	
 		showOverlay("Detecting Characters...")
-		$.ajax({
+		ipcRenderer.send('upload-font-image', null)
+		/* $.ajax({
 			type: "POST",
 			url: "http://127.0.0.1:"+port+"/uploadFontImage",
 			success: function(data) {
@@ -7826,7 +7818,11 @@
 			error: function(data) {
 				hideOverlay()
 			}
-		})
+		}) */
+	})
+
+	ipcRenderer.on('upload-font-image-response', (event, data) => {
+		console.log(data)
 	})
 
 	$("#clearOCR").on("click",function() {
@@ -14662,8 +14658,12 @@
 		}
 	})
 
-	ipcRenderer.on('drop-font-image-response', (event, data) => {
-		placeOCR(data)
+	ipcRenderer.on('font-image-response', (event, data) => {
+		if (data.status != "cancelled") {
+			placeOCR(data)
+		} else {
+			hideOverlay()
+		}
 	})
 
 	function placeOCR(data) {
