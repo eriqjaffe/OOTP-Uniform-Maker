@@ -652,7 +652,8 @@ ipcMain.on('remove-all-color', (event, arg) => {
  	})
 })
 
-app2.get("/customFont", (req, res) => {
+ipcMain.on('custom-font', (event, arg) => {
+	let json = {}
 	const options = {
 		defaultPath: store.get("uploadFontPath", app.getPath('desktop')),
 		properties: ['openFile'],
@@ -668,42 +669,83 @@ app2.get("/customFont", (req, res) => {
 				const fontMeta = fontname.parse(fs.readFileSync(result.filePaths[0]))[0];
 				var ext = getExtension(result.filePaths[0])
 				var fontPath = url.pathToFileURL(result.filePaths[0])
-				var json = {
-					"status": "ok",
-					"fontName": fontMeta.fullName,
-					"fontStyle": fontMeta.fontSubfamily,
-					"familyName": fontMeta.fontFamily,
-					"fontFormat": ext,
-					"fontMimetype": 'font/' + ext,
-					"fontData": fontPath.href,
-					"fontPath": filePath
-				};
+				json.status = "ok"
+				json.fontName = fontMeta.fullName
+				json.fontStyle = fontMeta.fontSubfamily
+				json.familyName = fontMeta.fontFamily
+				json.fontFormat = ext
+				json.fontMimetype = 'font/' + ext
+				json.fontData = fontPath.href
+				json.fontPath = filePath
 				fs.copyFileSync(result.filePaths[0], filePath)
-				res.json(json)
-				res.end()
+				event.sender.send('custom-font-response', json)
 			} catch (err) {
-				const json = {
-					"status": "error",
-					"fontName": path.basename(result.filePaths[0]),
-					"fontPath": result.filePaths[0],
-					"message": err
-				}
-				res.json(json)
-				res.end()
+				json.status = "error"
+				json.fontName = path.basename(result.filePaths[0])
+				json.fontPath = result.filePaths[0]
+				json.message = err
+				event.sender.send('custom-font-response', json)
 				fs.unlinkSync(result.filePaths[0])
 			}
 		} else {
-			res.json({"status":"cancelled"})
-			res.end()
+			json.status = "cancelled"
+			event.sender.send('custom-font-response', json)
 			console.log("cancelled")
 		}
 	}).catch(err => {
 		console.log(err)
-		res.json({
-			"status":"error",
-			"message": err
-		})
-		res.end()
+		json.status = "error",
+		json.message = err
+		event.sender.send('custom-font-response', json)
+	})
+})
+
+ipcMain.on('local-font', (event, arg) => {
+	let json = {}
+	const options = {
+		defaultPath: store.get("uploadFontPath", app.getPath('desktop')),
+		properties: ['openFile'],
+		filters: [
+			{ name: 'Fonts', extensions: ['ttf', 'otf'] }
+		]
+	}
+	dialog.showOpenDialog(null, options).then(result => {
+		if(!result.canceled) {
+			store.set("uploadFontPath", path.dirname(result.filePaths[0]))
+			const filePath = path.join(userFontsFolder,path.basename(result.filePaths[0]))
+			try {
+				const fontMeta = fontname.parse(fs.readFileSync(result.filePaths[0]))[0];
+				var ext = getExtension(result.filePaths[0])
+				var fontPath = url.pathToFileURL(result.filePaths[0])
+				json.status = "ok"
+				json.fontName = fontMeta.fullName
+				json.fontStyle = fontMeta.fontSubfamily
+				json.familyName = fontMeta.fontFamily
+				json.fontFormat = ext
+				json.fontMimetype = 'font/' + ext
+				json.fontData = fontPath.href
+				json.fontPath = filePath
+				json.type = arg
+				fs.copyFileSync(result.filePaths[0], filePath)
+				event.sender.send('local-font-response', json)
+			} catch (err) {
+				json.status = "error"
+				json.fontName = path.basename(result.filePaths[0])
+				json.fontPath = result.filePaths[0]
+				json.message = err
+				event.sender.send('local-font-response', json)
+				fs.unlinkSync(result.filePaths[0])
+			}
+		} else {
+			json.status = "cancelled"
+			event.sender.send('local-font-response', json)
+			console.log("cancelled")
+		}
+	}).catch(err => {
+		console.log(err)
+		json.status = "error",
+		json.message = err
+		event.sender.send('local-font-response', json)
 	})
 })
 

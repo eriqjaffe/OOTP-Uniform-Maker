@@ -7862,7 +7862,8 @@
 	}
 
 	$("#customFontFace").on("click",function(e) {
-		$.ajax({
+		ipcRenderer.send('custom-font', null)
+/* 		$.ajax({
 			type: "GET",
 			url: "http://127.0.0.1:"+port+"/customFont",
 			success: function(data) {
@@ -8142,141 +8143,289 @@
 							})
 						}
 					}
-					/* if (data.status == "error") {
-						alert("An error occurred:\r\n\r\n"+data.message)
-					} else {
-						fontList.push(data.fontName)
-						opentype.load(data.fontPath, (err,font) => {
-							if (err || !font) {
-								console.log(err)
-								return;
-							}
-
-							const maxNumWidth = 170
-							const maxLetWidth = 56
-
-							var nArr = []
-							var lArr = []
-
-							const arr = letters.concat(numbers)
-
-							arr.forEach((chr) => {
-								var char = chars.find(o => o.char === chr)
-								var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
-								const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
-								const svgPath = paths.toPathData(5)
-								var tmp = new fabric.Path(svgPath, {
-									fill: initialTextColors['fillColor'], 
-								});
-								if (isNumeric(chr)) {
-									nArr.push(tmp.width)
-								} else {
-									lArr.push(tmp.width)
-								}
-							})
-
-							if (arr == numbers) {
-								var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
-								var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
-							} else {
-								var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
-								var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
-							}
-
-							arr.forEach((chr) => {
-								var char = chars.find(o => o.char === chr)
-								var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
-								var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
-								const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
-								const svgPath = paths.toPathData(5)
-								var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
-								grp.getObjects('path').forEach(function(o) {
-									grp.removeWithUpdate(o)
-								})
-								fontCanvas.renderAll()
-
-								var tmp = new fabric.Path(svgPath, {
-									fill: initialTextColors['fillColor'], 
-								});
-
-								
-								if (isNumeric(chr)) {
-									var scaleX = 1.0 * scaleMod
-									scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
-									var strokeWidth1 = strokeWidth["numbers1"]
-									var strokeWidth2 = strokeWidth["numbers2"]
-									var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
-									var stroke1Color = $("#numbersStroke1").spectrum("get")
-									var stroke2Color = $("#numbersStroke2").spectrum("get")
-								} else {
-									var scaleX = 1.0 * scaleMod
-									scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
-									var strokeWidth1 = strokeWidth["letters1"]
-									var strokeWidth2 = strokeWidth["letters2"]
-									var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
-									var stroke1Color = $("#lettersStroke1").spectrum("get")
-									var stroke2Color = $("#lettersStroke2").spectrum("get")
-								}
-
-								var strokePath = new fabric.Path(svgPath, {
-									id: char.char.toLowerCase()+"Stroke",
-									fill: stroke2Color, 
-									stroke: stroke2Color, 
-									strokeWidth: strokeWidth2, 
-									strokeLineCap: "round",
-									paintFirst: "stroke",
-									visible: true,
-									originX: "center",
-    								originY: "center",
-									scaleX: scaleX,
-									scaleY: scaleY
-								})
-
-								var newTextPath = new fabric.Path(svgPath, {
-									id: char.char.toLowerCase()+"Fill",
-									fill: fillColor, 
-									stroke: stroke1Color, 
-									strokeWidth: strokeWidth1, 
-									strokeLineCap: "round",
-									paintFirst: "stroke",
-									visible: true,
-									originX: "center",
-    								originY: "center",
-									scaleX: scaleX,
-									scaleY: scaleY
-								});
-								
-								grp.addWithUpdate(strokePath)
-								grp.addWithUpdate(newTextPath)
-
-								if (isNumeric(chr)) {
-									for (y of numberStyle.split(",")) {
-										groupAlign(grp,y)
-									}
-								} else {
-									for (y of letterStyle.split(",")) {
-										groupAlign(grp,y)
-									}
-								}
-							})
-
-							var thumbText = font.getPath("ABC 123", 0, 0, 96)
-							var outPath = thumbText.toPathData(5)
-
-							var foo = new fabric.Path(outPath, {
-								fill: 'black',
-								top: 0,
-								left: 0
-							})
-
-							fontCanvas.renderAll()
-
-							refreshDropdowns("font",data,foo)
-						})
-					} */
 				} 
 			}
-		})
+		}) */
+	})
+
+	ipcRenderer.on('custom-font-response', (event, data) => {
+		if (data.status != "cancelled") {
+			if (data.result == "error") {
+				alert("An error occurred:\r\n\r\n"+data.message)
+				return false;
+			} else if (data.status == "error") {
+				alert("The font '"+data.fontName+"' could not be loaded.")
+				return false;
+			} else {
+				if (fontList.includes(data.fontName)) {
+					const letterDropdown = document.getElementById("letterDropdown").msDropdown;
+					const numberDropdown = document.getElementById("numberDropdown").msDropdown;
+					const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
+					const capDropdown = document.getElementById("capTextSelect").msDropdown;
+							
+					opentype.load(data.fontPath, (err,font) => {
+						if (err || !font) {
+							console.log(err)
+							return;
+						}
+
+						const maxNumWidth = 170
+						const maxLetWidth = 56
+
+						var nArr = []
+						var lArr = []
+
+						const arr = letters.concat(numbers)
+
+						arr.forEach((chr) => {
+							var char = chars.find(o => o.char === chr)
+							var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+							const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+							const svgPath = paths.toPathData(5)
+							var tmp = new fabric.Path(svgPath, {
+								fill: initialTextColors['fillColor'], 
+							});
+							if (isNumeric(chr)) {
+								nArr.push(tmp.width)
+							} else {
+								lArr.push(tmp.width)
+							}
+						})
+
+						if (arr == numbers) {
+							var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
+							var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
+						} else {
+							var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
+							var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
+						}
+
+						arr.forEach((chr) => {
+							var char = chars.find(o => o.char === chr)
+							var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
+							var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+							const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+							const svgPath = paths.toPathData(5)
+							var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
+							grp.getObjects('path').forEach(function(o) {
+								grp.removeWithUpdate(o)
+							})
+							fontCanvas.renderAll()
+
+							var tmp = new fabric.Path(svgPath, {
+								fill: initialTextColors['fillColor'], 
+							});
+
+							
+							if (isNumeric(chr)) {
+								var scaleX = 1.0 * scaleMod
+								scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
+								var strokeWidth1 = strokeWidth["numbers1"]
+								var strokeWidth2 = strokeWidth["numbers2"]
+								var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
+								var stroke1Color = $("#numbersStroke1").spectrum("get")
+								var stroke2Color = $("#numbersStroke2").spectrum("get")
+							} else {
+								var scaleX = 1.0 * scaleMod
+								scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
+								var strokeWidth1 = strokeWidth["letters1"]
+								var strokeWidth2 = strokeWidth["letters2"]
+								var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
+								var stroke1Color = $("#lettersStroke1").spectrum("get")
+								var stroke2Color = $("#lettersStroke2").spectrum("get")
+							}
+
+							var strokePath = new fabric.Path(svgPath, {
+								id: char.char.toLowerCase()+"Stroke",
+								fill: stroke2Color, 
+								stroke: stroke2Color, 
+								strokeWidth: strokeWidth2, 
+								strokeLineCap: "round",
+								paintFirst: "stroke",
+								visible: true,
+								originX: "center",
+								originY: "center",
+								scaleX: scaleX,
+								scaleY: scaleY
+							})
+
+							var newTextPath = new fabric.Path(svgPath, {
+								id: char.char.toLowerCase()+"Fill",
+								fill: fillColor, 
+								stroke: stroke1Color, 
+								strokeWidth: strokeWidth1, 
+								strokeLineCap: "round",
+								paintFirst: "stroke",
+								visible: true,
+								originX: "center",
+								originY: "center",
+								scaleX: scaleX,
+								scaleY: scaleY
+							});
+							
+							grp.addWithUpdate(strokePath)
+							grp.addWithUpdate(newTextPath)
+
+							if (isNumeric(chr)) {
+								for (y of numberStyle.split(",")) {
+									groupAlign(grp,y)
+								}
+							} else {
+								for (y of letterStyle.split(",")) {
+									groupAlign(grp,y)
+								}
+							}
+						})
+
+						var thumbText = font.getPath("ABC 123", 0, 0, 96)
+						var outPath = thumbText.toPathData(5)
+
+						var foo = new fabric.Path(outPath, {
+							fill: 'black',
+							top: 0,
+							left: 0
+						})
+
+						fontCanvas.renderAll()
+
+						var foo = findIndexByText(letterDropdown, data.fontName)
+						letterDropdown.selectedIndex = foo
+						letterDropdown.refresh()
+						numberDropdown.selectedIndex = foo
+						numberDropdown.refresh()
+					})
+				} else {
+					fontList.push(data.fontName)
+					opentype.load(data.fontPath, (err,font) => {
+						if (err || !font) {
+							console.log(err)
+							return;
+						}
+
+						const maxNumWidth = 170
+						const maxLetWidth = 56
+
+						var nArr = []
+						var lArr = []
+
+						const arr = letters.concat(numbers)
+
+						arr.forEach((chr) => {
+							var char = chars.find(o => o.char === chr)
+							var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+							const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+							const svgPath = paths.toPathData(5)
+							var tmp = new fabric.Path(svgPath, {
+								fill: initialTextColors['fillColor'], 
+							});
+							if (isNumeric(chr)) {
+								nArr.push(tmp.width)
+							} else {
+								lArr.push(tmp.width)
+							}
+						})
+
+						if (arr == numbers) {
+							var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
+							var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
+						} else {
+							var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
+							var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
+						}
+
+						arr.forEach((chr) => {
+							var char = chars.find(o => o.char === chr)
+							var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
+							var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+							const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+							const svgPath = paths.toPathData(5)
+							var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
+							grp.getObjects('path').forEach(function(o) {
+								grp.removeWithUpdate(o)
+							})
+							fontCanvas.renderAll()
+
+							var tmp = new fabric.Path(svgPath, {
+								fill: initialTextColors['fillColor'], 
+							});
+
+							
+							if (isNumeric(chr)) {
+								var scaleX = 1.0 * scaleMod
+								scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
+								var strokeWidth1 = strokeWidth["numbers1"]
+								var strokeWidth2 = strokeWidth["numbers2"]
+								var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
+								var stroke1Color = $("#numbersStroke1").spectrum("get")
+								var stroke2Color = $("#numbersStroke2").spectrum("get")
+							} else {
+								var scaleX = 1.0 * scaleMod
+								scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
+								var strokeWidth1 = strokeWidth["letters1"]
+								var strokeWidth2 = strokeWidth["letters2"]
+								var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
+								var stroke1Color = $("#lettersStroke1").spectrum("get")
+								var stroke2Color = $("#lettersStroke2").spectrum("get")
+							}
+
+							var strokePath = new fabric.Path(svgPath, {
+								id: char.char.toLowerCase()+"Stroke",
+								fill: stroke2Color, 
+								stroke: stroke2Color, 
+								strokeWidth: strokeWidth2, 
+								strokeLineCap: "round",
+								paintFirst: "stroke",
+								visible: true,
+								originX: "center",
+								originY: "center",
+								scaleX: scaleX,
+								scaleY: scaleY
+							})
+
+							var newTextPath = new fabric.Path(svgPath, {
+								id: char.char.toLowerCase()+"Fill",
+								fill: fillColor, 
+								stroke: stroke1Color, 
+								strokeWidth: strokeWidth1, 
+								strokeLineCap: "round",
+								paintFirst: "stroke",
+								visible: true,
+								originX: "center",
+								originY: "center",
+								scaleX: scaleX,
+								scaleY: scaleY
+							});
+							
+							grp.addWithUpdate(strokePath)
+							grp.addWithUpdate(newTextPath)
+
+							if (isNumeric(chr)) {
+								for (y of numberStyle.split(",")) {
+									groupAlign(grp,y)
+								}
+							} else {
+								for (y of letterStyle.split(",")) {
+									groupAlign(grp,y)
+								}
+							}
+						})
+
+						var thumbText = font.getPath("ABC 123", 0, 0, 96)
+						var outPath = thumbText.toPathData(5)
+
+						var foo = new fabric.Path(outPath, {
+							fill: 'black',
+							top: 0,
+							left: 0
+						})
+
+						fontCanvas.renderAll()
+
+						refreshDropdowns("font",data,foo)
+					})
+				}
+			}
+		}
 	})
 
 	$("#customFontLayer").on("click",function(e) {
@@ -11902,54 +12051,52 @@
 				var type = "pantsNumber"		
 				break;
 			} 
-		$.ajax({
-			type: "GET",
-			url: "http://127.0.0.1:"+port+"/customFont",
-			success: function(data) {
-				if (data.status != "cancelled") {
-					if (data.result == "error") {
-						alert("An error occurred:\r\n\r\n"+data.message)
-						return false;
-					} else if (data.status == "error") {
-						alert("The font '"+data.fontName+"' could not be loaded.")
-						return false;
-					} else {
-						if (fontList.includes(data.fontName)) {
-							switch (type) {
-							case "jersey":
-								const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
-								jerseyWordmarkChange(data,true)
-								var foo = findIndexByText(jerseyDropdown, data.fontName)
-								jerseyDropdown.selectedIndex = foo
-								jerseyDropdown.refresh()
-								break;
-							case "cap":
-								const capDropdown = document.getElementById("capTextSelect").msDropdown;
-								capWordmarkChange(data,true)
-								var foo = findIndexByText(capDropdown, data.fontName)
-								capDropdown.selectedIndex = foo
-								capDropdown.refresh()
-								break;
-							}
-						} else {
-							fontList.push(data.fontName)
-							switch (type) {
-							case "jersey":
-								jerseyWordmarkChange(data,true)
-								break;
-							case "cap":
-								capWordmarkChange(data,true)
-								break;
-							}
-						}
-						
-						
+		ipcRenderer.send('local-font', type)
+	})
+
+	ipcRenderer.on('local-font-response', (event, data) => {
+		if (data.status != "cancelled") {
+			if (data.result == "error") {
+				alert("An error occurred:\r\n\r\n"+data.message)
+				return false;
+			} else if (data.status == "error") {
+				alert("The font '"+data.fontName+"' could not be loaded.")
+				return false;
+			} else {
+				if (fontList.includes(data.fontName)) {
+					switch (data.type) {
+					case "jersey":
+						const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
+						jerseyWordmarkChange(data,true)
+						var foo = findIndexByText(jerseyDropdown, data.fontName)
+						jerseyDropdown.selectedIndex = foo
+						jerseyDropdown.refresh()
+						break;
+					case "cap":
+						const capDropdown = document.getElementById("capTextSelect").msDropdown;
+						capWordmarkChange(data,true)
+						var foo = findIndexByText(capDropdown, data.fontName)
+						capDropdown.selectedIndex = foo
+						capDropdown.refresh()
+						break;
 					}
 				} else {
-					hideOverlay();
+					fontList.push(data.fontName)
+					switch (type) {
+					case "jersey":
+						jerseyWordmarkChange(data,true)
+						break;
+					case "cap":
+						capWordmarkChange(data,true)
+						break;
+					}
 				}
+				
+				
 			}
-		})
+		} else {
+			hideOverlay();
+				}
 	})
 	
 	$(".colorSquare").on("click",function(e) {
