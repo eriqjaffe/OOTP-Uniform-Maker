@@ -591,33 +591,66 @@ ipcMain.on('remove-color-range', (event, arg) => {
  	})
 })
 
-app2.post('/removeAllColor', (req, res) => {
-	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	var x = parseInt(req.body.x);
-	var y = parseInt(req.body.y);
-	var color = req.body.color;
-	var fuzz = parseInt(req.body.fuzz);
+ipcMain.on('remove-all-color', (event, arg) => {
+	let buffer = Buffer.from(arg.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	let x = parseInt(arg.x);
+	let y = parseInt(arg.y);
+	let pTop = arg.pTop
+	let pLeft = arg.pLeft
+	let pScaleX = arg.pScaleX
+	let pScaleY = arg.pScaleY
+	let pictureName = arg.pictureName
+	let colorSquare = arg.colorSquare
+	let fuzz = parseInt(arg.fuzz);
+	let canvas = arg.canvas
+	let color = arg.color
+	let json = {}
 	Jimp.read(buffer, (err, image) => {
 		if (err) {
-			console.log(err);		
+			json.status = 'error'
+			json.message = err
+			console.log(err);
+			event.sender.send('remove-all-color-response', json)
 		} else {
 			image.write(tempDir+"/temp.png", (err) => {
-				var cmdString = 'magick convert '+tempDir+'/temp.png -fuzz '+fuzz+'% -transparent '+color+' '+tempDir+'/temp.png';
-				imagemagickCli.exec(cmdString).then(({ stdout, stderr }) => {
-					Jimp.read(tempDir+"/temp.png", (err, image) => {
-						if (err) {
-							console.log(err);
-						} else {
-							image.getBase64(Jimp.AUTO, (err, ret) => {
-								res.end(ret);
-							})
-						}
+				try {
+					imagemagickCli.exec('magick convert '+tempDir+'/temp.png -fuzz '+fuzz+'% -transparent '+color+' '+tempDir+'/temp.png')
+					.then(({ stdout, stderr }) => {
+						Jimp.read(tempDir+"/temp.png", (err, image) => {
+							if (err) {
+								json.status = 'error'
+								json.message = err
+								console.log(err);
+								event.sender.send('remove-all-color-response', json)
+							} else {
+								image.getBase64(Jimp.AUTO, (err, ret) => {
+									json.status = 'success'
+									json.data = ret
+									json.canvas = canvas
+									json.x = x
+									json.y = y
+									json.pTop = pTop
+									json.pLeft = pLeft
+									json.pScaleX = pScaleX
+									json.pScaleY = pScaleY
+									json.pictureName = pictureName
+									json.colorSquare = colorSquare
+									event.sender.send('remove-all-color-response', json)
+								})
+							}
+						})
 					})
-				})
+				} catch (error) {
+					json.status = 'error'
+					json.message = "An error occurred - please make sure ImageMagick is installed"
+					console.log(err);
+					event.sender.send('remove-all-color-response', json)
+				}
+				
 			})
 		}
-	})
-});
+ 	})
+})
 
 app2.get("/customFont", (req, res) => {
 	const options = {
