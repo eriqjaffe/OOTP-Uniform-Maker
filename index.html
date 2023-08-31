@@ -12205,18 +12205,21 @@
 	$(".removeColorRange").on("click",function(e) {
 		if ($(this).data("canvas") == "capLogoCanvas") {
 			var canvas = capLogoCanvas
+			var canvasName = "capLogoCanvas"
 			var fuzz = parseInt($("#capColorFuzz").val());
-			var colorSquare = $("#capColorSquare")
+			var colorSquare = "#capColorSquare"
 		}
 		if ($(this).data("canvas") == "jerseyLogoCanvas") {
 			var canvas = jerseyLogoCanvas
+			var canvasName = "jerseyLogoCanvas"
 			var fuzz = parseInt($("#jerseyColorFuzz").val());
-			var colorSquare = $("#jerseyColorSquare")
+			var colorSquare = "#jerseyColorSquare"
 		}
 		if ($(this).data("canvas") == "pantsLogoCanvas") {
 			var canvas = pantsLogoCanvas
+			var canvasName = "jerseyLogoCanvas"
 			var fuzz = parseInt($("#pantsColorFuzz").val());
-			var colorSquare = $("#jerseyColorSquare")
+			var colorSquare = "#jerseyColorSquare"
 		}
 		var x = $(this).data("x");
 		var y = $(this).data("y");
@@ -12234,89 +12237,109 @@
 				var pScaleY = object.get('scaleY')
 				var pX = x / pScaleX
 				var pY = y / pScaleY
-				colorSquare.removeClass("colorSquareActive").removeClass("colorSquareSelected");
+				$(colorSquare).removeClass("colorSquareActive").removeClass("colorSquareSelected");
 				var theImage = object._originalElement.currentSrc;
-				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();			
-				$.ajax({
-					type: "POST",
-					url: "http://127.0.0.1:"+port+"/removeColorRange",
-					data: {imgdata: theImage, x: pX, y: pY, color: color, action: action, fuzz: fuzz, filename: pictureName},
-					success: function(data) {
-						if (data == "NOT INSTALLED") {
-							alert("An error occurred - please make sure ImageMagick is installed")
-							hideOverlay()
-						} else {
-							var imgObj = new Image();
-							imgObj.src = data;
-							imgObj.onload = function () {
-								var image = new fabric.Image(imgObj);
-								image.set({
-									originX: 'center',
-									originY: 'center',
-									left: pLeft,
-									top: pTop,
-									scaleX: pScaleX,
-									scaleY: pScaleY,
-									perPixelTargetFind: true,
-									centeredScaling: true,
-									centeredRotation: true,
-									name: pictureName,
-									id: pictureName
-								});
-								
-								image.filters.push(new fabric.Image.filters.Resize({
-									resizeType: 'lanczos', // typo fixed
-									lanczosLobes: 2 // typo fixed
-								}));	
-								
-								image.on('object:modified',function() {
-									imLeft = image.get('left');
-									imTop = image.get('top');
-								});
-
-								image.on('selected',function() {
-									switch (activeCanvas.id) {
-										case "jerseyLogoCanvas":
-											var canStr = "jersey"
-											break;
-										case "capLogoCanvas":
-											var canStr = "cap"
-											break;
-										case "pantsLogoCanvas":
-											var canStr = "pants"
-											break;
-									} 
-									$("#"+canStr+"FileName").html(image.get('id'));
-									if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-										$("#"+canStr+"TrimImageDiv").css("display","block");
-										$("#"+canStr+"UploadImageDiv").css("display","none");
-										$("#"+canStr+"SelectedImageDiv").css("display","block");
-									}
-									$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-									$(".copypaste").each(function() {
-										$(this).css("display","inline-block")
-									})
-								})
-								
-								canvas.remove(object);
-								canvas.add(image);
-								image.moveTo(idx);
-								canvas.renderAll();
-								imLeft = image.get('left');
-								imTop = image.get('top');
-								colorSquare.val("Select Color");
-								colorSquare.css("background","#FFFFFF");
-								colorSquare.css("color","#000000");
-								hideOverlay()
-							}
-						}
-					}
-				})
+				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();	
+				ipcRenderer.send('remove-color-range', {imgdata: theImage, x: pX, y: pY, color: color, action: action, fuzz: fuzz, filename: pictureName, canvas: canvasName, pLeft: pLeft, pTop: pTop, pScaleX: pScaleX, pScaleY: pScaleY, pictureName: pictureName, colorSquare: colorSquare})		
 				return false;
 			}
 		}
 	})
 
+	ipcRenderer.on('remove-color-range-response', (event, response) => {
+		if (response.status != "success") {
+			alert(response.message)
+			hideOverlay()
+		} else {
+			let canvas = null
+			switch (response.canvas) {
+				case "jerseyLogoCanvas":
+					canvas = jerseyLogoCanvas
+					break;
+				case "capLogoCanvas":
+					canvas = capLogoCanvas
+					break;
+				case "pantsLogoCanvas":
+					canvas = pantsLogoCanvas
+					break;
+			}
+			let data = response.data
+			let x = response.x
+			let y = response.y
+			let pTop = response.pTop
+			let pLeft = response.pLeft
+			let pScaleX = response.pScaleX
+			let pScaleY = response.pScaleY
+			let pictureName = response.pictureName
+			let colorSquare = response.colorSquare
+			let object = canvas.getActiveObject()
+			let idx = canvas.getObjects().indexOf(object)
+			var imgObj = new Image();
+			imgObj.src = data;
+			imgObj.onload = function () {
+				var image = new fabric.Image(imgObj);
+				image.set({
+					originX: 'center',
+					originY: 'center',
+					left: pLeft,
+					top: pTop,
+					scaleX: pScaleX,
+					scaleY: pScaleY,
+					perPixelTargetFind: true,
+					centeredScaling: true,
+					centeredRotation: true,
+					name: pictureName,
+					id: pictureName
+				});
+				
+				image.filters.push(new fabric.Image.filters.Resize({
+					resizeType: 'lanczos', // typo fixed
+					lanczosLobes: 2 // typo fixed
+				}));	
+				
+				image.on('object:modified',function() {
+					imLeft = image.get('left');
+					imTop = image.get('top');
+				});
+
+				image.on('selected',function() {
+					switch (activeCanvas.id) {
+						case "jerseyLogoCanvas":
+							var canStr = "jersey"
+							break;
+						case "capLogoCanvas":
+							var canStr = "cap"
+							break;
+						case "pantsLogoCanvas":
+							var canStr = "pants"
+							break;
+					} 
+					$("#"+canStr+"FileName").html(image.get('id'));
+					if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+						$("#"+canStr+"TrimImageDiv").css("display","block");
+						$("#"+canStr+"UploadImageDiv").css("display","none");
+						$("#"+canStr+"SelectedImageDiv").css("display","block");
+					}
+					$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+					$(".copypaste").each(function() {
+						$(this).css("display","inline-block")
+					})
+				})
+				
+				canvas.remove(object);
+				canvas.add(image);
+				image.moveTo(idx);
+				canvas.renderAll();
+				imLeft = image.get('left');
+				imTop = image.get('top');
+				$(colorSquare).val("Select Color");
+				$(colorSquare).css("background","#FFFFFF");
+				$(colorSquare).css("color","#000000");
+				hideOverlay()
+			}
+		}
+	})
+	
 	$(".removeAllColor").on("click",function(e) {
 		if ($(this).data("canvas") == "capLogoCanvas") {
 			var canvas = capLogoCanvas
