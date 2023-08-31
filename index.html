@@ -12022,93 +12022,37 @@
 				var theImage = object._originalElement.currentSrc;	
 				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
 				ipcRenderer.send('remove-border', [theImage, 1, 1, "removeBorder", null, null, fuzz, pictureName, canvasName, imLeft, imTop])
-				/* $.ajax({
-					type: "POST",
-					url: "http://127.0.0.1:"+port+"/removeBorder",
-					data: {imgdata: theImage, x: "1", y: "1", action: "removeBorder", color: "null", newcolor: "null", fuzz: fuzz, filename: pictureName},
-					success: function(data) {
-						if (data == "NOT INSTALLED") {
-							alert("An error occurred - please make sure ImageMagick is installed")
-							hideOverlay()
-						} else {
-							var imgObj = new Image();
-							imgObj.src = data;
-							imgObj.onload = function () {
-								var image = new fabric.Image(imgObj);
-								image.set({
-									originX: 'center',
-									originY: 'center',
-									left: imLeft,
-									top: imTop,
-									perPixelTargetFind: true,
-									centeredScaling: true,
-									centeredRotation: true,
-									name: pictureName,
-									id: pictureName
-								});
-								
-								image.filters.push(new fabric.Image.filters.Resize({
-									resizeType: 'lanczos', // typo fixed
-									lanczosLobes: 2 // typo fixed
-								}));
-								
-								image.on('object:modified',function() {
-									imLeft = image.get('left')
-									imTop = image.get('top');
-								});
-
-								image.on('selected',function() {
-									switch (activeCanvas.id) {
-										case "jerseyLogoCanvas":
-											var canStr = "jersey"
-											break;
-										case "capLogoCanvas":
-											var canStr = "cap"
-											break;
-										case "pantsLogoCanvas":
-											var canStr = "pants"
-											break;
-									} 
-									$("#"+canStr+"FileName").html(image.get('id'));
-									if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-										$("#"+canStr+"TrimImageDiv").css("display","block");
-										$("#"+canStr+"UploadImageDiv").css("display","none");
-										$("#"+canStr+"SelectedImageDiv").css("display","block");
-									}
-									$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-									$(".copypaste").each(function() {
-										$(this).css("display","inline-block")
-									})
-								})
-								
-								canvas.remove(object);
-								canvas.add(image);
-								image.moveTo(idx);
-								canvas.renderAll();
-								imLeft = image.get('left')
-								imTop = image.get('top');
-							}
-						}
-					}
-				}) */
 				return false;
 			}
 		}	
 	})
 
 	ipcRenderer.on('remove-border-response', (event, response) => {
-		console.log(response)
-		let canvas = null
-		switch (canvas) {
-			case "jerseyLogoCanvas" {
-				canvas = jerseyLogoCanvas
-				break;
-			}
-		}
 		if (response.status != "success") {
 			alert(response.message)
 			hideOverlay()
 		} else {
+			let canvas = null
+			switch (response.canvas) {
+				case "jerseyLogoCanvas":
+					canvas = jerseyLogoCanvas
+					break;
+				case "capLogoCanvas":
+					canvas = capLogoCanvas
+					break;
+				case "pantsLogoCanvas":
+					canvas = pantsLogoCanvas
+					break;
+			}
+			console.log(canvas)
+			let data = response.image
+			let imLeft = response.imgLeft
+			let imTop = response.imgTop
+			let pictureName = response.pictureName
+		
+			var object = canvas.getActiveObject()
+			var idx = canvas.getObjects().indexOf(object)
+
 			var imgObj = new Image();
 			imgObj.src = data;
 			imgObj.onload = function () {
@@ -12525,27 +12469,30 @@
 	$(".replaceColorSubmit").on("click",function(e) {
 		if ($(this).data("canvas") == "capLogoCanvas") {
 			var canvas = capLogoCanvas
+			var canvasName = "capLogoCanvas"
 			var fuzz = parseInt($("#capColorFuzz").val());
 			var color = $("#capColorSquare").val();
 			var newcolor = $("#capReplacementColor").spectrum("get").toHexString();
-			var colorSquare = $("#capColorSquare")
-			var newColorSquare = $("#capReplacemenColor")
+			var colorSquare = "#capColorSquare"
+			var newColorSquare = "#capReplacemenColor"
 		}
 		if ($(this).data("canvas") == "jerseyLogoCanvas") {
 			var canvas = jerseyLogoCanvas
+			var canvasName = "jerseyLogoCanvas"
 			var fuzz = parseInt($("#jerseyColorFuzz").val());
 			var color = $("#jerseyColorSquare").val();
 			var newcolor = $("#jerseyReplacementColor").spectrum("get").toHexString();
-			var colorSquare = $("#jerseyuColorSquare")
-			var newColorSquare = $("#jerseyReplacemenColor")
+			var colorSquare = "#jerseyuColorSquare"
+			var newColorSquare = "#jerseyReplacemenColor"
 		}
 		if ($(this).data("canvas") == "pantsLogoCanvas") {
 			var canvas = pantsLogoCanvas
+			var canvasName = "pantsLogoCanvas"
 			var fuzz = parseInt($("#pantsColorFuzz").val());
 			var color = $("#pantsColorSquare").val();
 			var newcolor = $("#pantsReplacementColor").spectrum("get").toHexString();
-			var colorSquare = $("#pantsColorSquare")
-			var newColorSquare = $("#pantsReplacemenColor")
+			var colorSquare = "#pantsColorSquare"
+			var newColorSquare = "#pantsReplacemenColor"
 		}
 		var action = $(this).data("action");
 		var x = $(this).data("x");
@@ -12556,7 +12503,7 @@
 			if (object.get('type') == "image") {
 				showOverlay("Processing Image...")
 				var pictureName = object.get('name');
-				colorSquare.removeClass("colorSquareActive").removeClass("colorSquareSelected");
+				$(colorSquare).removeClass("colorSquareActive").removeClass("colorSquareSelected");
 				
 				var theImage = object._originalElement.currentSrc;
 
@@ -12569,7 +12516,8 @@
 
 				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
 				
-				$.ajax({
+				ipcRenderer.send('replace-color', [theImage, pLeft, pTop, pScaleX, pScaleY, action, color, newcolor, fuzz, pictureName, canvasName, x, y, colorSquare, newColorSquare ])
+				/* $.ajax({
 					type: "POST",
 					url: "http://127.0.0.1:"+port+"/replaceColor",
 					data: {imgdata: theImage, x: pX, y: pY, action: action, color: color, newcolor: newcolor, fuzz: fuzz, filename: pictureName},
@@ -12649,10 +12597,109 @@
 							}
 						}
 					}
-				})
+				}) */
 				return false;
 			}
 		}	
+	})
+
+	ipcRenderer.on('replace-color-response', (event, response) => {
+		console.log(response)
+		if (response.result != "success") {
+			alert(response.message)
+			return false;
+		}
+		let canvas = null
+		switch (response.canvas) {
+			case "jerseyLogoCanvas":
+				canvas = jerseyLogoCanvas;
+				break;
+			case "capLogoCanvas":
+				canvas = capLogoCanvas;
+				break;
+			case "pantsLogoCanvas":
+				canvas = pantsLogoCanvas;
+				break;
+		}
+		let data = response.data
+		let pictureName = response.pictureName
+		let pTop = parseInt(response.pTop)
+		let pLeft = parseInt(response.pLeft)
+		let pScaleX = response.pScaleX
+		let pScaleY = response.pScaleY
+		let colorSquare = response.colorSquare
+		let newColorSquare = response.newColorSquare
+		let object = canvas.getActiveObject()
+		console.log(object)
+		let idx = canvas.getObjects().indexOf(object)
+		var imgObj = new Image();
+		imgObj.src = data;
+		imgObj.onload = function () {
+			var image = new fabric.Image(imgObj);
+			image.set({
+				originX: 'center',
+				originY: 'center',
+				left: pLeft,
+				top: pTop,
+				//scaleX: pScaleX,
+				//scaleY: pScaleY,
+				perPixelTargetFind: true,
+				centeredScaling: true,
+				centeredRotation: true,
+				name: pictureName,
+				id: pictureName
+			});
+			
+			image.filters.push(new fabric.Image.filters.Resize({
+				resizeType: 'lanczos',
+				lanczosLobes: 2
+			}));
+			
+			image.on('object:modified',function() {
+				imLeft = image.get('left')
+				imTop = image.get('top');
+				//$("#infoWTF").html("imLeft: "+imLeft+"<br>imTop: "+imTop);
+			});
+
+			image.on('selected',function() {
+				switch (activeCanvas.id) {
+					case "jerseyLogoCanvas":
+						var canStr = "jersey"
+						break;
+					case "capLogoCanvas":
+						var canStr = "cap"
+						break;
+					case "pantsLogoCanvas":
+						var canStr = "pants"
+						break;
+				} 
+				$("#"+canStr+"FileName").html(image.get('id'));
+				if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+					$("#"+canStr+"TrimImageDiv").css("display","block");
+					$("#"+canStr+"UploadImageDiv").css("display","none");
+					$("#"+canStr+"SelectedImageDiv").css("display","block");
+				}
+				$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+				$(".copypaste").each(function() {
+					$(this).css("display","inline-block")
+				})
+			})
+			
+			console.log(image)
+			canvas.remove(object);
+			canvas.add(image);
+			image.moveTo(idx);
+			canvas.renderAll();
+			imLeft = image.get('left')
+			imTop = image.get('top');
+			$(colorSquare).val("Select Color");
+			$(colorSquare).css("background","#FFFFFF");
+			$(colorSquare).css("color","#000000");
+			$(newColorSquare).val("Select Color");
+			$(newColorSquare).css("background","#FF0000");
+			$(newColorSquare).css("color","#000000");
+			hideOverlay()
+		}
 	})
 
 // LOADING AND SAVING FUNCTIONS
@@ -14313,7 +14360,6 @@
 	}
 
 	ipcRenderer.on('drop-image-response', (event, response) => {
-		console.log(response)
 		let dropCanvas = response[0]
 		let data = response[1]
 		let tab = response[2]
@@ -14400,7 +14446,7 @@
 				//console.log(image.getZIndex())
 				jerseyLogoCanvas.getObjects().forEach(function(o) {
 					if (o.selectable) {
-						console.log(o.id)
+						//console.log(o.id)
 					}
 				})
 				canvas.requestRenderAll()

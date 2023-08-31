@@ -464,45 +464,29 @@ ipcMain.on('remove-border', (event, arg) => {
 	})
 })
 
-app2.post("/removeBorder", (req, res) => {
-	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	var fuzz = parseInt(req.body.fuzz);
+ipcMain.on('replace-color', (event, arg) => {
+	let imgdata = arg[0]
+	let pLeft = arg[1]
+	let pTop = arg[2]
+	let pScaleX = arg[3]
+	let pScaleY = arg[4]
+	let action = arg[5]
+	let color = arg[6]
+	let newcolor = arg[7]
+	let fuzz = arg[8]
+	let pictureName = arg[9]
+	let canvas = arg[10]
+	let x = arg[11]
+	let y = arg[12]
+	let colorSquare = arg[13]
+	let newColorSquare = arg[14]
+	let json = {}
+	var buffer = Buffer.from(imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	Jimp.read(buffer, (err, image) => {
 		if (err) {
-			console.log(err);
-		} else {
-			try {
-				image.write(tempDir+"/temp.png");
-				imagemagickCli.exec('magick convert -trim -fuzz '+fuzz+'% '+tempDir+'/temp.png '+tempDir+'/temp.png').then(({ stdout, stderr }) => {
-					Jimp.read(tempDir+"/temp.png", (err, image) => {
-						if (err) {
-							console.log(err);
-						} else {
-							image.getBase64(Jimp.AUTO, (err, ret) => {
-								res.end(ret);
-							})
-						}
-					})
-				})
-			} catch (error) {
-				res.end("NOT INSTALLED")
-			}
-		}
-	})
-})
-
-app2.post("/replaceColor", (req, res) => {
-	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	var x = parseInt(req.body.x);
-	var y = parseInt(req.body.y);
-	var color = req.body.color;
-	var newcolor = req.body.newcolor;
-	var action = req.body.action;
-	var fuzz = parseInt(req.body.fuzz);
-	var cmdString;
-	Jimp.read(buffer, (err, image) => {
-		if (err) {
-			console.log(err);
+			json.result = "error"
+			json.message = err
+			event.sender.send('replace-color-response', json)
 		} else {
 			image.write(tempDir+"/temp.png");
       if (action.slice(-17) == "ReplaceColorRange") {
@@ -510,17 +494,39 @@ app2.post("/replaceColor", (req, res) => {
 			} else {
 				cmdString = 'magick convert '+tempDir+'/temp.png -fuzz '+fuzz+'% -fill '+newcolor+' -opaque '+color+' '+tempDir+'/temp.png';	
 			}
-			imagemagickCli.exec(cmdString).then(({ stdout, stderr }) => {
-				Jimp.read(tempDir+"/temp.png", (err, image) => {
-					if (err) {
-						console.log(err);
-					} else {
-						image.getBase64(Jimp.AUTO, (err, ret) => {
-							res.end(ret);
-						})
-					}
+			console.log(cmdString)
+			try {
+				imagemagickCli.exec(cmdString).then(({ stdout, stderr }) => {
+					Jimp.read(tempDir+"/temp.png", (err, image) => {
+						if (err) {
+							json.result = "error"
+							json.message = err
+							event.sender.send('replace-color-response', json)
+						} else {
+							image.getBase64(Jimp.AUTO, (err, ret) => {
+								json.result = "success"
+								json.data = ret
+								json.pTop = pTop
+								json.pLeft = pLeft
+								json.x = pScaleX
+								json.y = pScaleY
+								json.pictureName = pictureName
+								json.canvas = canvas
+								json.colorSquare = colorSquare
+								json.newColorSquare = newColorSquare
+								json.pScaleX = pScaleX
+								json.pScaleY = pScaleY
+								event.sender.send('replace-color-response', json)
+							})
+						}
+					})
 				})
-			})
+			} catch (error) {
+				json.status = 'error'
+				json.message = "An error occurred - please make sure ImageMagick is installed"
+				console.log(err);
+				event.sender.send('remove-border-response', json)
+			}
 		}
 	})
 })
