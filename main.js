@@ -951,35 +951,6 @@ ipcMain.on('save-wordmark', (event, arg) => {
 	});
 })
 
-app2.post('/saveWordmark', (req,res) => {
-	const buffer = Buffer.from(req.body.image.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-
-    const options = {
-        defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/wordmark_' + req.body.name+'.png',{fs: true})
-	}
-	
-	dialog.showSaveDialog(null, options).then((result) => {
-		if (!result.canceled) {
-			store.set("downloadPath", path.dirname(result.filePath))
-			Jimp.read(buffer, (err, image) => {
-				if (err) {
-					console.log(err);
-				} else {
-					image.autocrop();
-					image.write(result.filePath);
-				}
-			})
-			res.json({result: "success"})
-		} else {
-			res.json({result: "success"})
-		}
-	}).catch((err) => {
-		console.log(err);
-		res.json({result: "success"})
-	});
-
-})
-
 app2.post('/saveSwatches', (req, res) => {
 	const options = {
 		//defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')) + '/' + req.body.name+'.pal'
