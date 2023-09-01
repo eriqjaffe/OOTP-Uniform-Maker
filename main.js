@@ -1759,7 +1759,8 @@ app2.post('/saveUniform', (req, res) => {
 	}
 })
 
-app2.get("/loadUniform", (req, res) => {
+ipcMain.on('load-uniform', (event, arg) => {
+	let json = {}
 	const options = {
 		defaultPath: store.get("uploadUniformPath", app.getPath('downloads')),
 		properties: ['openFile'],
@@ -1772,10 +1773,9 @@ app2.get("/loadUniform", (req, res) => {
 			store.set("uploadUniformPath", path.dirname(result.filePaths[0]))
 			switch (getExtension(result.filePaths[0])) {
 				case "uni":
-					res.json({
-						"result": "success",
-						"json": JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
-					})
+					json.result = "success",
+					json.json = JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
+					event.sender.send('load-uniform-response', json)
 					break;
 				case "zip":
 					var uniFile = null;
@@ -1787,37 +1787,29 @@ app2.get("/loadUniform", (req, res) => {
 						}
 					});
 					if (uniFile != null) {
-						res.json({
-							"result": "success",
-							"json": JSON.stringify(JSON.parse(uniFile.getData().toString("utf8")))
-						})
+						json.result = "success"
+						json.json = JSON.stringify(JSON.parse(uniFile.getData().toString("utf8")))
+						event.sender.send('load-uniform-response', json)
 					} else {
-						res.json({
-							"result": "error",
-							"message": "No valid uniform file was found in "+path.basename(result.filePaths[0])
-						})
+						json.result = "error",
+						json.message = "No valid uniform file was found in "+path.basename(result.filePaths[0])
+						event.sender.send('load-uniform-response', json)
 					}
 					break;
 				default:
-					res.json({
-						"result": "error",
-						"message": "Invalid file type: "+path.basename(result.filePaths[0])
-					})
+					json.result = "error",
+					json.message = "Invalid file type: "+path.basename(result.filePaths[0])
+					event.sender.send('load-uniform-response', json)
 			}
-			res.end()
+			event.sender.send('hide-overlay', null)
 		} else {
-			res.json({
-				"result": "cancelled"
-			})
-			res.end()
+			event.sender.send('hide-overlay', null)
 		}
 	}).catch(err => {
-		res.json({
-			"result": "error",
-			"message": err
-		})
+		json.result = "error",
+		json.message = err
+		event.sender.send('load-uniform-response', json)
 		console.log(err)
-		res.end()
 	})
 })
 
