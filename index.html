@@ -12932,40 +12932,27 @@
 			textLine += yearRange.split('_').join(' ')
 		}
 
-		$.ajax({
-		 	type: "POST",
-			url: "http://127.0.0.1:"+port+"/saveCap",
-			dataType: "json",
-			data: {
-				text: textLine,
-				capLogoCanvas: capLogoCanvas.toDataURL(),
-				capBelow: capBelow.toDataURL(),
-				name: fileName.split(' ').join('_').toLowerCase(),
-				capWatermarkColor: idealTextColor(capBelow.backgroundColor),
-				capTexture: ($("#capTextureSelect").val() == "custom") ? customCapTexture : $("#capTextureSelect").val(),
-			},
-			success: function(data) {
-				if (data.result == "error") {
-					if (data.errno == -4082) {
-						alert("An error occurred saving the file, it appears to already be open.\n\nClose the file and try again!")
-					} else {
-						alert("An error occurred saving the file.")
-					}
-				}
-
-				capBelow.setDimensions({ width: capBelow.getWidth() * 0.75, height: capBelow.getHeight() * 0.75 });
-				capBelow.setZoom(scaleRatio)
-				capLogoCanvas.setDimensions({ width: capLogoCanvas.getWidth() * 0.75, height: capLogoCanvas.getHeight() * 0.75 });
-				capLogoCanvas.setZoom(scaleRatio)
-
-				if ($("#toggleCapGuides").is(":checked")) {
-					capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
-				}
-
-				hideOverlay()
-			}
+		ipcRenderer.send('save-cap', {
+			text: textLine,
+			capLogoCanvas: capLogoCanvas.toDataURL(),
+			capBelow: capBelow.toDataURL(),
+			name: fileName.split(' ').join('_').toLowerCase(),
+			capWatermarkColor: idealTextColor(capBelow.backgroundColor),
+			capTexture: ($("#capTextureSelect").val() == "custom") ? customCapTexture : $("#capTextureSelect").val(),
 		})
+	})
 
+	ipcRenderer.on('save-cap-response', (event, response) => {
+		capBelow.setDimensions({ width: capBelow.getWidth() * 0.75, height: capBelow.getHeight() * 0.75 });
+		capBelow.setZoom(scaleRatio)
+		capLogoCanvas.setDimensions({ width: capLogoCanvas.getWidth() * 0.75, height: capLogoCanvas.getHeight() * 0.75 });
+		capLogoCanvas.setZoom(scaleRatio)
+
+		if ($("#toggleCapGuides").is(":checked")) {
+			capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
+		}
+
+		hideOverlay()
 	})
 
 	$("#savePants").on("click",function(e){

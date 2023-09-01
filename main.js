@@ -1100,14 +1100,14 @@ ipcMain.on('save-pants', (event, arg) => {
 	}
 })
 
-app2.post('/saveCap', (req, res) => {
-	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const text = req.body.text
-	const tmpCapTexture = req.body.capTexture
+ipcMain.on('save-cap', (event, arg) => {
+	const capLogoCanvas = Buffer.from(arg.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const capBelow = Buffer.from(arg.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const text = arg.text
+	const tmpCapTexture = arg.capTexture
 
 	const options = {
-		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png',{fs: true})
+		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.png',{fs: true})
 	}
 
 	if (tmpCapTexture.startsWith("data:image")) {
@@ -1128,9 +1128,9 @@ app2.post('/saveCap', (req, res) => {
 		await blankImage.print(font, 10, 10, text)
 		await blankImage.autocrop()
 		await blankImage.scaleToFit(290,15)
-		await blankImage.color([{ apply: "mix", params: [req.body.capWatermarkColor, 100] }]);
+		await blankImage.color([{ apply: "mix", params: [arg.capWatermarkColor, 100] }]);
 		let capWM = await Jimp.read(__dirname+"/images/cap_watermark.png")
-		await capWM.color([{ apply: "mix", params: [req.body.capWatermarkColor, 100] }]);
+		await capWM.color([{ apply: "mix", params: [arg.capWatermarkColor, 100] }]);
 		await capBase.composite(capTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await capBase.composite(capOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await capBase.composite(capWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
@@ -1142,13 +1142,13 @@ app2.post('/saveCap', (req, res) => {
 				fs.writeFile(result.filePath, finalImage, 'base64', function(err) {
 					console.log(err)
 				})
-				res.json({result: "success"})
+				event.sender.send('save-cap-response', null)
 			} else {
-				res.json({result: "success"})
+				event.sender.send('save-cap-response', null)
 			}
 		}).catch((err) => {
 			console.log(err);
-			res.json({result: "success"})
+			event.sender.send('save-cap-response', null)
 		});
 	}
 })
