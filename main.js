@@ -1047,15 +1047,14 @@ ipcMain.on('load-swatches', (event, arg) => {
 	})
 })
 
-app2.post('/savePants', (req, res) => {
-	const pantsLogoCanvas = Buffer.from(req.body.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const pantsBelow = Buffer.from(req.body.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const text = req.body.text
-	const tmpPantsTexture = req.body.pantsTexture
+ipcMain.on('save-pants', (event, arg) => {
+	const pantsLogoCanvas = Buffer.from(arg.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const pantsBelow = Buffer.from(arg.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const text = arg.text
+	const tmpPantsTexture = arg.pantsTexture
 
 	const options = {
-		//defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png'
-		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png',{fs: true})
+		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.png',{fs: true})
 	}
 
 	if (tmpPantsTexture.startsWith("data:image")) {
@@ -1076,11 +1075,11 @@ app2.post('/savePants', (req, res) => {
 		await blankImage.print(font, 10, 10, text)
 		await blankImage.autocrop()
 		await blankImage.scaleToFit(500,15)
-		await blankImage.color([{ apply: "mix", params: [req.body.pantsWatermarkColor, 100] }]);
+		await blankImage.color([{ apply: "mix", params: [arg.pantsWatermarkColor, 100] }]);
 		await pantsBase.composite(pantsTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await pantsBase.composite(pantsOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let pantsWM = await Jimp.read(__dirname+"/images/pants_watermark.png")
-		await pantsWM.color([{ apply: "mix", params: [req.body.pantsWatermarkColor, 100] }]);
+		await pantsWM.color([{ apply: "mix", params: [arg.pantsWatermarkColor, 100] }]);
 		await pantsBase.composite(pantsWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await pantsBase.blit(blankImage, 256-(blankImage.bitmap.width/2), 12.5-(blankImage.bitmap.height/2))
 		let pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
@@ -1090,13 +1089,13 @@ app2.post('/savePants', (req, res) => {
 				fs.writeFile(result.filePath, finalImage, 'base64', function(err) {
 					console.log(err)
 				})
-				res.json({result: "success"})
+				event.sender.send('save-pants-response', null)
 			} else {
-				res.json({result: "success"})
+				event.sender.send('save-pants-response', null)
 			}
 		}).catch((err) => {
 			console.log(err);
-			res.json({result: "success"})
+			event.sender.send('save-pants-response', null)
 		});
 	}
 })

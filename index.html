@@ -13017,41 +13017,29 @@
 			textLine += yearRange.split('_').join(' ')
 		}
 
-		$.ajax({
-		 	type: "POST",
-			url: "http://127.0.0.1:"+port+"/savePants",
-			dataType: "json",
-			data: {
+		ipcRenderer.send('save-pants', {
 				text: textLine,
 				pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
 				pantsBelow: pantsBelow.toDataURL(),
 				name: fileName.split(' ').join('_').toLowerCase(),
 				pantsWatermarkColor: idealTextColor(pantsBelow.backgroundColor),
 				pantsTexture: ($("#pantsTextureSelect").val() == "custom") ? customPantsTexture : $("#pantsTextureSelect").val(),
-			},
-			success: function(data) {
-				if (data.result == "error") {
-					if (data.errno == -4082) {
-						alert("An error occurred saving the file, it appears to already be open.\n\nClose the file and try again!")
-					} else {
-						alert("An error occurred saving the file.")
-					}
-				}
-
-				pantsBelow.setDimensions({ width: pantsBelow.getWidth() * 0.75, height: pantsBelow.getHeight() * 0.75 });
-				pantsBelow.setZoom(scaleRatio)
-				pantsLogoCanvas.setDimensions({ width: pantsLogoCanvas.getWidth() * 0.75, height: pantsLogoCanvas.getHeight() * 0.75 });
-				pantsLogoCanvas.setZoom(scaleRatio)
-
-				pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));
-
-				if	($("#togglePantsGrid").is(':checked')) {
-					pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
-				}
-
-				hideOverlay()
-			}
 		})
+	})
+
+	ipcRenderer.on('save-pants-response', (event, response) => {
+		pantsBelow.setDimensions({ width: pantsBelow.getWidth() * 0.75, height: pantsBelow.getHeight() * 0.75 });
+		pantsBelow.setZoom(scaleRatio)
+		pantsLogoCanvas.setDimensions({ width: pantsLogoCanvas.getWidth() * 0.75, height: pantsLogoCanvas.getHeight() * 0.75 });
+		pantsLogoCanvas.setZoom(scaleRatio)
+
+		pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));
+
+		if	($("#togglePantsGrid").is(':checked')) {
+			pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+		}
+
+		hideOverlay()
 	})
 
 	$("#saveJersey").on("click",function(e){
