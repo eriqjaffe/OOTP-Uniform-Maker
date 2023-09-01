@@ -1855,12 +1855,9 @@ ipcMain.on('local-font-folder', (event, arg) => {
 	event.sender.send('local-font-folder-response', jsonObj)
 })
 
-app2.post('/setPreference', (req, res) => {
-	const pref = req.body.pref;
-	const val = req.body.val;
-	store.set(pref, val)
-	res.end()
-});
+ipcMain.on('set-preference', (event, arg) => {
+	store.set(arg.pref, arg.val)
+})
 
 ipcMain.on('open-font-folder', (event, arg) => {
 	shell.openPath(userFontsFolder)

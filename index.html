@@ -15068,25 +15068,13 @@
 				break;
 		}
 
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/setPreference",
-			data: {pref:pref,val:val},
-			success: function(result) {
-			}
-		})
+		ipcRenderer.send('set-preference', {pref:pref,val:val})
 	})
 
 	$("#checkForUpdatesPref").on("change",function() {
 		const pref = "checkForUpdates"
 		const val = $(this).is(':checked')
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/setPreference",
-			data: {pref:pref,val:val.toString()},
-			success: function(result) {
-			}
-		})
+		ipcRenderer.send('set-preference', {pref:pref,val:val.toString()})
 	})
 
 	$("#gridsVisible").on("change", function() {
@@ -15095,26 +15083,14 @@
 		$("#toggleJerseyGrid").prop( "checked", val ).triggerHandler('click');
 		$("#togglePantsGrid").prop( "checked", val ).triggerHandler('click');
 		$("#toggleCapGuides").prop( "checked", val ).triggerHandler('click');
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/setPreference",
-			data: {pref:pref,val:val.toString()},
-			success: function(result) {
-			}
-		})
+		ipcRenderer.send('set-preference', {pref:pref,val:val.toString()})
 	})
 
 	$("#seamsVisibleOnDiffuse").on("change", function() {
 		const pref = "seamsVisibleOnDiffuse"
 		const val = $(this).is(':checked')
 		$("#toggleDiffuseSeams").prop( "checked", val ).triggerHandler('click');
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/setPreference",
-			data: {pref:pref,val:val.toString()},
-			success: function(result) {
-			}
-		})
+		ipcRenderer.send('set-preference', {pref:pref,val:val.toString()})
 	})
 
 	$("#saveSwatches").on("click",function() {	
