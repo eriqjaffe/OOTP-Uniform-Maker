@@ -11661,67 +11661,66 @@
 
 			theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
 			
-			$.ajax({
-				type: "POST",
-				url: "http://127.0.0.1:"+port+"/warpText",
-				data: {deform: $("#warpEffect").val(), amount: $("#warpAmount").val(), imgdata: theImage},
-				success: function(data) {
-					if (data == "NOT INSTALLED") {
-						alert("An error occurred - please make sure ImageMagick is installed")
-						hideOverlay()
-					} else {
-						var obj = jerseyLogoCanvas.getObjects('image').forEach(function(o) {
-							if (o.id == "warpedText") {
-								jerseyLogoCanvas.remove(o);
-							}
-						})
-						var imgObj = new Image();
-						imgObj.src = data;
-						imgObj.onload = function () {
-							var image = new fabric.Image(imgObj);
-							image.set({
-								originX: 'center',
-								originY: 'center',
-								left: wordmark.get("left"),
-								top: wordmark.get("top"),
-								perPixelTargetFind: true,
-								centeredScaling: true,
-								centeredRotation: true,
-								borderColor: 'red',
-								cornerColor: 'yellow',
-								cornerSize: 12,
-								name: 'warpedText',
-								id: 'warpedText',
-								description: 'Wordmark',
-								transparentCorners: false
-							});
-							
-							image.filters.push(new fabric.Image.filters.Resize({
-								resizeType: 'lanczos', // typo fixed
-								lanczosLobes: 2 // typo fixed
-							}));
-							
-							image.on('object:modified',function() {
-								wmLeft = image.getBoundingRect()['left'];
-								wmTop = image.getBoundingRect()['top'];
-							});
-
-							jerseyLogoCanvas.getObjects().forEach(function(o) {
-								if (o.id == "wordmark") {
-									o.set("visible", false)
-								}
-							});
-
-							jerseyLogoCanvas.add(image);
-							jerseyLogoCanvas.renderAll();
-							hideOverlay()
-						}
-					}		
-				}
-			})
+			ipcRenderer.send('warp-text', {deform: $("#warpEffect").val(), amount: $("#warpAmount").val(), imgdata: theImage})
+	
 			return false;		
 		}
 	}
+
+	ipcRenderer.on('warp-text-response', (event, response) => {
+		if (response.status == "error") {
+			alert(response.message)
+			hideOverlay()
+		} else {
+			let data = response.data
+			var obj = jerseyLogoCanvas.getObjects('image').forEach(function(o) {
+				if (o.id == "warpedText") {
+					jerseyLogoCanvas.remove(o);
+				}
+			})
+			var imgObj = new Image();
+			imgObj.src = data;
+			imgObj.onload = function () {
+				var image = new fabric.Image(imgObj);
+				image.set({
+					originX: 'center',
+					originY: 'center',
+					left: wordmark.get("left"),
+					top: wordmark.get("top"),
+					perPixelTargetFind: true,
+					centeredScaling: true,
+					centeredRotation: true,
+					borderColor: 'red',
+					cornerColor: 'yellow',
+					cornerSize: 12,
+					name: 'warpedText',
+					id: 'warpedText',
+					description: 'Wordmark',
+					transparentCorners: false
+				});
+				
+				image.filters.push(new fabric.Image.filters.Resize({
+					resizeType: 'lanczos', // typo fixed
+					lanczosLobes: 2 // typo fixed
+				}));
+				
+				image.on('object:modified',function() {
+					wmLeft = image.getBoundingRect()['left'];
+					wmTop = image.getBoundingRect()['top'];
+				});
+
+				jerseyLogoCanvas.getObjects().forEach(function(o) {
+					if (o.id == "wordmark") {
+						o.set("visible", false)
+					}
+				});
+
+				jerseyLogoCanvas.add(image);
+				jerseyLogoCanvas.renderAll();
+				hideOverlay()
+			}
+		}
+	})
 
 	function warpName() {
 		var warp = true;

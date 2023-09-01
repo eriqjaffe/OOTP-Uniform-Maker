@@ -799,16 +799,20 @@ app2.post("/saveFontPosition", (req, res) => {
 	});
 })
 
-app2.post('/warpText', (req, res)=> {
-	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	var amount = req.body.amount;
-	var deform = req.body.deform;
-	var width;
-	var height;
-	var cmdLine;
+ipcMain.on('warp-text', (event, arg) => {
+	let buffer = Buffer.from(arg.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	let amount = arg.amount;
+	let deform = arg.deform;
+	let width;
+	let height;
+	let cmdLine;
+	let json = {}
 	Jimp.read(buffer, (err, image) => {
 		if (err) {
+			json.status = 'error'
+			json.message = err
 			console.log(err);
+			event.sender.send('warp-text-response', json)
 		} else {
 			image.autocrop();
 			image.write(tempDir+"/temp.png");
@@ -830,52 +834,91 @@ app2.post('/warpText', (req, res)=> {
 					cmdLine = 'magick convert '+tempDir+'/temp.png -virtual-pixel transparent -interpolate Spline -distort BilinearForward "0,0 0,0 0,'+height+' 0,'+y2+' '+width+',0 '+width+',0 '+width+','+height+' '+width+','+height+'" '+tempDir+'/'+deform+'.png'
 					break;
 				case "archUp":
-					imagemagickCli.exec('magick convert '+tempDir+'/temp.png -gravity west -background transparent -extent '+width*2+'x'+height+' '+tempDir+'/temp.png').then(({stdout, stderr }) => {
-						imagemagickCli.exec('magick convert -background transparent -wave -'+amount*2+'x'+width*4+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png').then(({ stdout, stderr }) => {
-							Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
-								if (err) {
-									console.log(err);
-								} else {
-									image.getBase64(Jimp.AUTO, (err, ret) => {
-										res.end(ret);
-									})
-								}
+					try {
+						imagemagickCli.exec('magick convert '+tempDir+'/temp.png -gravity west -background transparent -extent '+width*2+'x'+height+' '+tempDir+'/temp.png').then(({stdout, stderr }) => {
+							imagemagickCli.exec('magick convert -background transparent -wave -'+amount*2+'x'+width*4+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png').then(({ stdout, stderr }) => {
+								Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
+									if (err) {
+										json.status = 'error'
+										json.message = err
+										console.log(err);
+										event.sender.send('warp-text-response', json)
+									} else {
+										image.getBase64(Jimp.AUTO, (err, ret) => {
+											json.status = 'success'
+											json.data = ret
+											event.sender.send('warp-text-response', json)
+											//res.end(ret);
+										})
+									}
+								})
 							})
 						})
-					})
+					} catch (err) {
+						json.status = 'error'
+						json.message = err
+						console.log(err);
+						event.sender.send('warp-text-response', json)
+					}
 					break;
 				case "archDown":
-					imagemagickCli.exec('magick convert '+tempDir+'/temp.png -gravity east -background transparent -extent '+width*2+'x'+height+' '+tempDir+'/temp.png').then(({stdout, stderr }) => {
-						imagemagickCli.exec('magick convert -background transparent -wave -'+amount*2+'x'+width*4+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png').then(({ stdout, stderr }) => {
-							Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
-								if (err) {
-									console.log(err);
-								} else {
-									image.getBase64(Jimp.AUTO, (err, ret) => {
-										res.end(ret);
-									})
-								}
+					try {
+						imagemagickCli.exec('magick convert '+tempDir+'/temp.png -gravity east -background transparent -extent '+width*2+'x'+height+' '+tempDir+'/temp.png').then(({stdout, stderr }) => {
+							imagemagickCli.exec('magick convert -background transparent -wave -'+amount*2+'x'+width*4+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png').then(({ stdout, stderr }) => {
+								Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
+									if (err) {
+										json.status = 'error'
+										json.message = err
+										console.log(err);
+										event.sender.send('warp-text-response', json)
+									} else {
+										image.getBase64(Jimp.AUTO, (err, ret) => {
+											json.status = 'success'
+											json.data = ret
+											event.sender.send('warp-text-response', json)
+										})
+									}
+								})
 							})
 						})
-					})
+					} catch (err) {
+						json.status = 'error'
+						json.message = err
+						console.log(err);
+						event.sender.send('warp-text-response', json)
+					}
 					break;
 				default:
 					image.getBase64(Jimp.AUTO, (err, ret) => {
-						res.end(ret);
+						json.status = 'success'
+						json.data = ret
+						event.sender.send('warp-text-response', json)
 					})
 					break;
 			}
-			imagemagickCli.exec(cmdLine).then(({ stdout, stderr }) => {
-				Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
-					if (err) {
-						console.log(err);
-					} else {
-						image.getBase64(Jimp.AUTO, (err, ret) => {
-							res.end(ret);
-						})
-					}
+			try {
+				imagemagickCli.exec(cmdLine).then(({ stdout, stderr }) => {
+					Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
+						if (err) {
+							json.status = 'error'
+							json.message = err
+							console.log(err);
+							event.sender.send('warp-text-response', json)
+						} else {
+							image.getBase64(Jimp.AUTO, (err, ret) => {
+								json.status = 'success'
+								json.data = ret
+								event.sender.send('warp-text-response', json)
+							})
+						}
+					})
 				})
-			})
+			} catch (err) {
+				json.status = 'error'
+				json.message = err
+				console.log(err);
+				event.sender.send('warp-text-response', json)
+			}
 		}
 	})
 })
