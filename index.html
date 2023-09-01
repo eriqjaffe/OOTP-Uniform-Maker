@@ -15183,7 +15183,15 @@
 		teamName = teamName.split(' ').join('_');
 		var fileName = teamName+"_"+$("#uniformType").val()+yearRange;
 
-		$.ajax({
+		ipcRenderer.send('save-swatches', {
+				name: fileName.toLowerCase(), 
+				swatch1: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].text, 
+				swatch2: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].text, 
+				swatch3: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].text, 
+				swatch4: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].text,
+				commonPalette: commonPalette
+		})
+		/* $.ajax({
 			type: "POST",
 			url: "http://127.0.0.1:"+port+"/saveSwatches",
 			data: {
@@ -15200,7 +15208,7 @@
 			error: function(result) {
 				hideOverlay()
 			}
-		})
+		}) */
 	})
 
 	$("#loadSwatches").on("click",function() {

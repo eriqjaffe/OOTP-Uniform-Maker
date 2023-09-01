@@ -951,25 +951,25 @@ ipcMain.on('save-wordmark', (event, arg) => {
 	});
 })
 
-app2.post('/saveSwatches', (req, res) => {
+ipcMain.on('save-swatches', (event, arg) => {
 	const options = {
 		//defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')) + '/' + req.body.name+'.pal'
-		defaultPath: increment(store.get("downloadSwatchPath", app.getPath('downloads')) + '/' + req.body.name+'.pal',{fs: true})
+		defaultPath: increment(store.get("downloadSwatchPath", app.getPath('downloads')) + '/' + arg.name+'.pal',{fs: true})
 	}
 
 	dialog.showSaveDialog(null, options).then((result) => {
 		if (!result.canceled) {
 			store.set("downloadSwatchPath", path.dirname(result.filePath))
-			fs.writeFile(result.filePath, JSON.stringify(req.body, null, 2), 'utf8', function(err) {
+			fs.writeFile(result.filePath, JSON.stringify(arg, null, 2), 'utf8', function(err) {
 				console.log(err)
 			})
-			res.json({result: "success"})
+			event.sender.send('hide-overlay', null)
 		} else {
-			res.json({result: "success"})
+			event.sender.send('hide-overlay', null)
 		}
 	}).catch((err) => {
 		console.log(err);
-		res.json({result: "success"})
+		event.sender.send('hide-overlay', null)
 	});
 })
 
