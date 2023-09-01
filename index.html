@@ -13249,8 +13249,13 @@
 	})
 
 	ipcRenderer.on('save-uniform-response', (event, response) => {
-		console.log("save uniform ipc called")
+		//console.log("save uniform ipc called")
 	})
+
+	ipcRenderer.on('save-uniform-zip-response', (event, response) => {
+		//console.log("save uniform ipc called")
+	})
+
 
 	$("#saveFont").on("click", function(e) {
 		showOverlay("Generating Font...")
