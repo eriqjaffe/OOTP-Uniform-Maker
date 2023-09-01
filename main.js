@@ -973,7 +973,8 @@ ipcMain.on('save-swatches', (event, arg) => {
 	});
 })
 
-app2.get("/loadSwatches", (req, res) => {
+ipcMain.on('load-swatches', (event, arg) => {
+	let jsonResponse = {}
 	const options = {
 		defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')),
 		properties: ['openFile'],
@@ -986,10 +987,9 @@ app2.get("/loadSwatches", (req, res) => {
 			store.set("downloadSwatchPath", path.dirname(result.filePaths[0]))
 			switch (getExtension(result.filePaths[0])) {
 				case "pal":
-					res.json({
-						"result": "success",
-						"json": JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
-					})
+					jsonResponse.result = "success"
+					jsonResponse.json = JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
+					event.sender.send('load-swatches-response', jsonResponse)
 					break;
 				case "uni":
 					var json = JSON.parse(fs.readFileSync(result.filePaths[0]))
@@ -1006,10 +1006,9 @@ app2.get("/loadSwatches", (req, res) => {
 					commonPalette.push(json.swatchSelectors.swatch3Color.val)
 					commonPalette.push(json.swatchSelectors.swatch4Color.val)
 					palette.commonPalette = commonPalette
-					res.json({
-						"result": "success",
-						"json": JSON.stringify(palette)	
-					})
+					jsonResponse.result = "success",
+					jsonResponse.json = JSON.stringify(palette)
+					event.sender.send('load-swatches-response', jsonResponse)
 					break;
 				case "zip":
 					var palFile = null;
@@ -1021,43 +1020,30 @@ app2.get("/loadSwatches", (req, res) => {
 						}
 					});
 					if (palFile != null) {
-						res.json({
-							"result": "success",
-							"json": JSON.stringify(JSON.parse(palFile.getData().toString("utf8")))
-						})
+						jsonResponse.result = "success"
+						jsonResponse.json = JSON.stringify(JSON.parse(palFile.getData().toString("utf8")))
+						event.sender.send('load-swatches-response', jsonResponse)
 					} else {
-						res.json({
-							"result": "error",
-							"message": "No valid palette file was found in "+path.basename(result.filePaths[0])
-						})
+						jsonResponse.result = "error",
+						jsonResponse.message = "No valid palette file was found in "+path.basename(result.filePaths[0])
+						event.sender.send('load-swatches-response', jsonResponse)
 					}
 					break;
 				default:
-					res.json({
-						"result": "error",
-						"message": "Invalid file type: "+path.basename(result.filePaths[0])
-					})
+					jsonResponse.result = "error"
+					jsonResponse.message = "Invalid file type: "+path.basename(result.filePaths[0])
+					event.sender.send('load-swatches-response', jsonResponse)
 			}
-			res.end()
-		/* if(!result.canceled) {
-			res.json({
-				"result": "success",
-				"json": JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
-			})
-			res.end() */
+			event.sender.send('hide-overlay', null)
 		} else {
-			res.json({
-				"result": "cancelled"
-			})
-			res.end()
+			event.sender.send('hide-overlay', null)
 			console.log("cancelled")
 		}
 	}).catch(err => {
-		res.json({
-			"result": "error"
-		})
+		jsonResponse.result = "error"
+		jsonResponse.message = err
 		console.log(err)
-		res.end()
+		event.sender.send('load-swatches-response', jsonResponse)
 	})
 })
 
