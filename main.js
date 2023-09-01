@@ -1813,7 +1813,7 @@ ipcMain.on('load-uniform', (event, arg) => {
 	})
 })
 
-app2.get("/localFontFolder", (req, res) => {
+ipcMain.on('local-font-folder', (event, arg) => {
 	const jsonObj = {}
 	const jsonArr = []
 
@@ -1852,8 +1852,7 @@ app2.get("/localFontFolder", (req, res) => {
 	}
 	jsonObj.result = "success"
 	jsonObj.fonts = jsonArr
-	res.json(jsonObj)
-	res.end()
+	event.sender.send('local-font-folder-response', jsonObj)
 })
 
 app2.post('/setPreference', (req, res) => {

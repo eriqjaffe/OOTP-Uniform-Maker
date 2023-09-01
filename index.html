@@ -3174,92 +3174,90 @@
 	})
 
 	$("#localFontFolder").on("click",function() {
-		const fontErrors = []
 		showOverlay("Loading User Fonts...")
-		$.ajax({
-			type: "GET",
-			url: "http://127.0.0.1:"+port+"/localFontFolder",
-			success: function(data) {
-				if (data.result == 'success') {
-					const letterDropdown = document.getElementById("letterDropdown").msDropdown;
-					const numberDropdown = document.getElementById("numberDropdown").msDropdown;
-					const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
-					const capDropdown = document.getElementById("capTextSelect").msDropdown;
-					const preferredJerseyDropdown = document.getElementById("preferredJerseyFont").msDropdown;
-					const preferredCapDropdown = document.getElementById("preferredCapFont").msDropdown;
-					const preferredNameDropdown = document.getElementById("preferredNameFont").msDropdown;
-					const preferredNumberDropdown = document.getElementById("preferredNumberFont").msDropdown;
+		ipcRenderer.send('local-font-folder', null)
+	})
 
-					for (result of data.fonts) {
-						if (result.status == "ok") {
-							fontList.push(result.fontName)
-							var thumb = null;
-							const name = result.fontName
-							const value = result.fontPath
-							opentype.load(result.fontPath, (err,font) => {
-								if (err || !font) {
-									console.log(err)
-									return;
-								}
-								
-								var thumbText = font.getPath("ABC 123", 0, 0, 96)
-								var outPath = thumbText.toPathData(5)
+	ipcRenderer.on('local-font-folder-response', (event, data) => {
+		let fontErrors = []
+		if (data.result == 'success') {
+			const letterDropdown = document.getElementById("letterDropdown").msDropdown;
+			const numberDropdown = document.getElementById("numberDropdown").msDropdown;
+			const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
+			const capDropdown = document.getElementById("capTextSelect").msDropdown;
+			const preferredJerseyDropdown = document.getElementById("preferredJerseyFont").msDropdown;
+			const preferredCapDropdown = document.getElementById("preferredCapFont").msDropdown;
+			const preferredNameDropdown = document.getElementById("preferredNameFont").msDropdown;
+			const preferredNumberDropdown = document.getElementById("preferredNumberFont").msDropdown;
 
-								thumbText = new fabric.Path(outPath, {
-									left: 0,
-									originX: 'center',
-									originY: 'center',
-									centeredScaling: true,
-									centeredRotation: true,
-									fill: 'black',
-									height: '80px'
-								})
-
-								thumb = thumbText.toDataURL()
-
-								if (findIndexByText(letterDropdown, name) == -1) {
-									letterDropdown.add({text:name, value:value, image:thumb},0)
-									if (value == prefs.preferredNameFont) { letterDropdown.selectedIndex = 0 }
-
-									numberDropdown.add({text:name, value:value, image:thumb},0)
-									if (value == prefs.preferredNumberFont) { numberDropdown.selectedIndex = 0 }
-									
-									jerseyDropdown.add({text:name, value:value, image:thumb},0)
-									if (value == prefs.preferredJerseyFont) { jerseyDropdown.selectedIndex = 0 }
-
-									capDropdown.add({text:name, value:value, image:thumb},0)
-									if (value == prefs.preferredCapFont) { capDropdown.selectedIndex = 0 }
-
-									preferredJerseyDropdown.add({text:name, value:value, image:thumb},0)
-									if (value == prefs.preferredJerseyFont) { preferredJerseyDropdown.selectedIndex = 0 }
-
-									preferredCapDropdown.add({text:name, value:value, image:thumb},0)
-									if (value == prefs.preferredCapFont) { preferredCapDropdown.selectedIndex = 0 }
-
-									preferredNameDropdown.add({text:name, value:value, image:thumb},0)
-									if (value == prefs.preferredNameFont) { preferredNameDropdown.selectedIndex = 0 }
-
-									preferredNumberDropdown.add({text:name, value:value, image:thumb},0)
-									if (value == prefs.preferredNumberFont) { preferredNumberDropdown.selectedIndex = 0 }
-								}
-
-								sortFontDropdowns()
-							})
-						} else {
-							fontErrors.push(result.fontName)
+			for (result of data.fonts) {
+				if (result.status == "ok") {
+					fontList.push(result.fontName)
+					var thumb = null;
+					const name = result.fontName
+					const value = result.fontPath
+					opentype.load(result.fontPath, (err,font) => {
+						if (err || !font) {
+							console.log(err)
+							return;
 						}
-					}
-				}
-				hideOverlay()
-				if (fontErrors.length > 0) {
-					var message = "The following fonts failed to import, and have been removed from your user fonts folder:\r\n\r\n"
-					for (font of fontErrors) {
-						message += font+"\r\n"
-					}
-					alert(message)
+						
+						var thumbText = font.getPath("ABC 123", 0, 0, 96)
+						var outPath = thumbText.toPathData(5)
+
+						thumbText = new fabric.Path(outPath, {
+							left: 0,
+							originX: 'center',
+							originY: 'center',
+							centeredScaling: true,
+							centeredRotation: true,
+							fill: 'black',
+							height: '80px'
+						})
+
+						thumb = thumbText.toDataURL()
+
+						if (findIndexByText(letterDropdown, name) == -1) {
+							letterDropdown.add({text:name, value:value, image:thumb},0)
+							if (value == prefs.preferredNameFont) { letterDropdown.selectedIndex = 0 }
+
+							numberDropdown.add({text:name, value:value, image:thumb},0)
+							if (value == prefs.preferredNumberFont) { numberDropdown.selectedIndex = 0 }
+							
+							jerseyDropdown.add({text:name, value:value, image:thumb},0)
+							if (value == prefs.preferredJerseyFont) { jerseyDropdown.selectedIndex = 0 }
+
+							capDropdown.add({text:name, value:value, image:thumb},0)
+							if (value == prefs.preferredCapFont) { capDropdown.selectedIndex = 0 }
+
+							preferredJerseyDropdown.add({text:name, value:value, image:thumb},0)
+							if (value == prefs.preferredJerseyFont) { preferredJerseyDropdown.selectedIndex = 0 }
+
+							preferredCapDropdown.add({text:name, value:value, image:thumb},0)
+							if (value == prefs.preferredCapFont) { preferredCapDropdown.selectedIndex = 0 }
+
+							preferredNameDropdown.add({text:name, value:value, image:thumb},0)
+							if (value == prefs.preferredNameFont) { preferredNameDropdown.selectedIndex = 0 }
+
+							preferredNumberDropdown.add({text:name, value:value, image:thumb},0)
+							if (value == prefs.preferredNumberFont) { preferredNumberDropdown.selectedIndex = 0 }
+						}
+
+						sortFontDropdowns()
+					})
+				} else {
+					fontErrors.push(result.fontName)
 				}
 			}
-		})
+		}
+		hideOverlay()
+		if (fontErrors.length > 0) {
+			var message = "The following fonts failed to import, and have been removed from your user fonts folder:\r\n\r\n"
+			for (font of fontErrors) {
+				message += font+"\r\n"
+			}
+			alert(message)
+		}
 	})
 
 	$("#teamBGColor").spectrum({
