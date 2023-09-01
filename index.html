@@ -4067,23 +4067,12 @@
 				nameCanvas.add(item);
 			});
    		 	nameCanvas.renderAll(); // Make sure to call once we're ready!
-			$.ajax({
-				type: "POST",
-				url: "http://127.0.0.1:"+port+"/saveWordmark",
-				dataType: "json",
-				data: {image: nameCanvas.toDataURL(), name: fileName},
-				success: function(data) {
-					if (data.result == "error") {
-						console.log("ERROR")
-					}
-					nameCanvas.clear()
-					hideOverlay()
-				},
-				error: function(data) {
-					hideOverlay()
-				}
-			})
+			ipcRenderer.send('save-wordmark', {image: nameCanvas.toDataURL(), name: fileName})
 		});
+	})
+
+	ipcRenderer.on('hide-overlay', (event, arg) => {
+		hideOverlay()
 	})
 
 	$("#jerseyTextureSelect").on("change",function(){

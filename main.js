@@ -923,6 +923,34 @@ ipcMain.on('warp-text', (event, arg) => {
 	})
 })
 
+ipcMain.on('save-wordmark', (event, arg) => {
+	const buffer = Buffer.from(arg.image.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+
+    const options = {
+        defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/wordmark_' + arg.name+'.png',{fs: true})
+	}
+	
+	dialog.showSaveDialog(null, options).then((result) => {
+		if (!result.canceled) {
+			store.set("downloadPath", path.dirname(result.filePath))
+			Jimp.read(buffer, (err, image) => {
+				if (err) {
+					console.log(err);
+				} else {
+					image.autocrop();
+					image.write(result.filePath);
+				}
+			})
+			event.sender.send('hide-overlay', null)
+		} else {
+			event.sender.send('hide-overlay', null)
+		}
+	}).catch((err) => {
+		console.log(err);
+		event.sender.send('hide-overlay', null)
+	});
+})
+
 app2.post('/saveWordmark', (req,res) => {
 	const buffer = Buffer.from(req.body.image.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 
