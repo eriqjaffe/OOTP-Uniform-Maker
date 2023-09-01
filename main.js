@@ -1862,9 +1862,8 @@ app2.post('/setPreference', (req, res) => {
 	res.end()
 });
 
-app2.post('/openFontFolder', (req, res) => {
+ipcMain.on('open-font-folder', (event, arg) => {
 	shell.openPath(userFontsFolder)
-	res.end()
 })
 
 function createWindow () {

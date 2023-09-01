@@ -3166,11 +3166,7 @@
 	});
 
 	$("#openFontFolder").on("click",function(e) {
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/openFontFolder",
-			success: function(data) {}
-		})
+		ipcRenderer.send('open-font-folder', null)
 	})
 
 	$("#localFontFolder").on("click",function() {
