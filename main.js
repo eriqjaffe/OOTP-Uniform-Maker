@@ -81,6 +81,8 @@ const imInstalled = hasbin.sync('magick');
 
 app2.use(express.urlencoded({limit: '200mb', extended: true, parameterLimit: 500000}));
 
+
+
 ipcMain.on('check-for-update', (event, arg) => {
 	const res = {}
 	versionCheck(options, function (error, update) { // callback function
@@ -530,7 +532,6 @@ ipcMain.on('replace-color', (event, arg) => {
 	})
 })
 
-
 ipcMain.on('remove-color-range', (event, arg) => {
 	let buffer = Buffer.from(arg.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	let x = parseInt(arg.x);
@@ -779,7 +780,7 @@ ipcMain.on('drop-font', (event, arg) => {
 	}
 })
 
-app2.post("/saveFontPosition", (req, res) => {
+ipcMain.on('save-font-position', (event, arg) => {
 	const options = {
 		defaultPath: increment(store.get("downloadPositionPath", app.getPath('downloads'))+'/'+req.body.filename+'.json',{fs: true})
 	}
@@ -789,13 +790,13 @@ app2.post("/saveFontPosition", (req, res) => {
 			fs.writeFile(result.filePath, JSON.stringify(req.body.json, null, 2), 'utf8', function(err) {
 				console.log(err)
 			})
-			res.json({result: "success"})
+			event.sender.send('save-font-position-response', 'success')
 		} else {
-			res.json({result: "success"})
+			event.sender.send('save-font-position-response', 'success')
 		}
 	}).catch((err) => {
 		console.log(err);
-		res.json({result: "success"})
+		event.sender.send('save-font-position-response', 'success')
 	});
 })
 

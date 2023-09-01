@@ -8483,13 +8483,11 @@
 			chars.push(obj)
 		})
 		json.chars = chars
-		$.ajax({
-			type: "POST",
-				url: "http://127.0.0.1:"+port+"/saveFontPosition",
-				data: {json:json, filename:filename},
-				success: function(data) {}
-		})
-		console.log(json)
+		ipcRenderer.send('save-font-position', {json:json, filename:filename})
+	})
+
+	ipcRenderer.on('save-font-position-response', (event, response) => {
+		// TO BE DETERMINED?
 	})
 
 	fontCanvas.on('selection:created', function(e) {
