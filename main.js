@@ -3,7 +3,6 @@ const path = require('path')
 const os = require('os');
 const fs = require('fs')
 const url = require('url');
-const express = require('express')
 const Jimp = require('jimp')
 const archiver = require('archiver');
 const imagemagickCli = require('imagemagick-cli')
@@ -32,13 +31,8 @@ console.log = proxiedLog;
 
 const isMac = process.platform === 'darwin'
 const tempDir = os.tmpdir()
-const app2 = express();
 const store = new Store();
 const userFontsFolder = path.join(app.getPath('userData'),"fonts")
-
-const server = app2.listen(0, () => {
-	console.log(`Server running on port ${server.address().port}`);
-});
 
 const preferredColorFormat = store.get("preferredColorFormat", "hex")
 const preferredJerseyTexture = store.get("preferredJerseyTexture", "jersey_texture_default.png")
@@ -79,24 +73,25 @@ const options = {
 
 const imInstalled = hasbin.sync('magick');
 
-app2.use(express.urlencoded({limit: '200mb', extended: true, parameterLimit: 500000}));
-
-
-
 ipcMain.on('check-for-update', (event, arg) => {
-	const res = {}
+	let json = {}
 	versionCheck(options, function (error, update) { // callback function
-		if (error) throw error;
-		if (update) { // print some update info if an update is available
-			res.update = true,
-			res.currentVersion = pkg.version,
-			res.name = update.name,
-			res.url = update.url
-		} else {
-			res.update = false,
-			res.currentVersion = pkg.version
+		if (error) {
+			json.update = "error"
+			json.silent = arg
 		}
-		event.sender.send('check-for-update-response', res)
+		if (update) { // print some update info if an update is available
+			json.update = true,
+			json.currentVersion = pkg.version,
+			json.name = update.name,
+			json.url = update.url
+			json.silent = arg
+		} else {
+			json.update = false,
+			json.currentVersion = pkg.version
+			json.silent = arg
+		}
+		event.sender.send('check-for-update-response', json)
 	});
 })
 
@@ -2043,7 +2038,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}&imagemagick=${imInstalled}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}&imagemagick=${imInstalled}`);
     
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
       shell.openExternal(url);

@@ -33,7 +33,6 @@
     <script>
 		const { ipcRenderer } = require('electron');
 		const params = new URLSearchParams(window.location.search)
-		const port = params.get('port')
 		const appVersion = params.get('appVersion')
 		const gridsVisible = (params.get('gridsVisible').toLowerCase() == "true") ? true : false
 		const checkForUpdates = (params.get('checkForUpdates').toLowerCase() == "true") ? true : false
@@ -2855,20 +2854,7 @@
 		activeCanvas = jerseyLogoCanvas;
 
  		if (checkForUpdates == true) {
-			$.ajax({
-				type: "GET",
-				url: "http://127.0.0.1:"+port+"/checkForUpdate",
-				success: function(data) { 
-					if (data.update == true) {
-						if (confirm("Current version: "+data.currentVersion+"\r\n\r\nVersion "+data.name+" is now availble.  Click 'OK' to go to the releases page.\r\n\r\bThis automatic check can be disabled in the Preferences.")) {
-							window.open(
-								data.url, 
-								'_blank'
-							);
-						}
-					} 
-				}
-			})
+			ipcRenderer.send('check-for-update', true)
 		}
 	})
 
@@ -7846,289 +7832,6 @@
 
 	$("#customFontFace").on("click",function(e) {
 		ipcRenderer.send('custom-font', null)
-/* 		$.ajax({
-			type: "GET",
-			url: "http://127.0.0.1:"+port+"/customFont",
-			success: function(data) {
-				if (data.status != "cancelled") {
-					if (data.result == "error") {
-						alert("An error occurred:\r\n\r\n"+data.message)
-						return false;
-					} else if (data.status == "error") {
-						alert("The font '"+data.fontName+"' could not be loaded.")
-						return false;
-					} else {
-						if (fontList.includes(data.fontName)) {
-							const letterDropdown = document.getElementById("letterDropdown").msDropdown;
-							const numberDropdown = document.getElementById("numberDropdown").msDropdown;
-							const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
-							const capDropdown = document.getElementById("capTextSelect").msDropdown;
-									
-							opentype.load(data.fontPath, (err,font) => {
-								if (err || !font) {
-									console.log(err)
-									return;
-								}
-
-								const maxNumWidth = 170
-								const maxLetWidth = 56
-
-								var nArr = []
-								var lArr = []
-
-								const arr = letters.concat(numbers)
-
-								arr.forEach((chr) => {
-									var char = chars.find(o => o.char === chr)
-									var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
-									const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
-									const svgPath = paths.toPathData(5)
-									var tmp = new fabric.Path(svgPath, {
-										fill: initialTextColors['fillColor'], 
-									});
-									if (isNumeric(chr)) {
-										nArr.push(tmp.width)
-									} else {
-										lArr.push(tmp.width)
-									}
-								})
-
-								if (arr == numbers) {
-									var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
-									var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
-								} else {
-									var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
-									var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
-								}
-
-								arr.forEach((chr) => {
-									var char = chars.find(o => o.char === chr)
-									var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
-									var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
-									const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
-									const svgPath = paths.toPathData(5)
-									var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
-									grp.getObjects('path').forEach(function(o) {
-										grp.removeWithUpdate(o)
-									})
-									fontCanvas.renderAll()
-
-									var tmp = new fabric.Path(svgPath, {
-										fill: initialTextColors['fillColor'], 
-									});
-
-									
-									if (isNumeric(chr)) {
-										var scaleX = 1.0 * scaleMod
-										scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
-										var strokeWidth1 = strokeWidth["numbers1"]
-										var strokeWidth2 = strokeWidth["numbers2"]
-										var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
-										var stroke1Color = $("#numbersStroke1").spectrum("get")
-										var stroke2Color = $("#numbersStroke2").spectrum("get")
-									} else {
-										var scaleX = 1.0 * scaleMod
-										scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
-										var strokeWidth1 = strokeWidth["letters1"]
-										var strokeWidth2 = strokeWidth["letters2"]
-										var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
-										var stroke1Color = $("#lettersStroke1").spectrum("get")
-										var stroke2Color = $("#lettersStroke2").spectrum("get")
-									}
-
-									var strokePath = new fabric.Path(svgPath, {
-										id: char.char.toLowerCase()+"Stroke",
-										fill: stroke2Color, 
-										stroke: stroke2Color, 
-										strokeWidth: strokeWidth2, 
-										strokeLineCap: "round",
-										paintFirst: "stroke",
-										visible: true,
-										originX: "center",
-										originY: "center",
-										scaleX: scaleX,
-										scaleY: scaleY
-									})
-
-									var newTextPath = new fabric.Path(svgPath, {
-										id: char.char.toLowerCase()+"Fill",
-										fill: fillColor, 
-										stroke: stroke1Color, 
-										strokeWidth: strokeWidth1, 
-										strokeLineCap: "round",
-										paintFirst: "stroke",
-										visible: true,
-										originX: "center",
-										originY: "center",
-										scaleX: scaleX,
-										scaleY: scaleY
-									});
-									
-									grp.addWithUpdate(strokePath)
-									grp.addWithUpdate(newTextPath)
-
-									if (isNumeric(chr)) {
-										for (y of numberStyle.split(",")) {
-											groupAlign(grp,y)
-										}
-									} else {
-										for (y of letterStyle.split(",")) {
-											groupAlign(grp,y)
-										}
-									}
-								})
-
-								var thumbText = font.getPath("ABC 123", 0, 0, 96)
-								var outPath = thumbText.toPathData(5)
-
-								var foo = new fabric.Path(outPath, {
-									fill: 'black',
-									top: 0,
-									left: 0
-								})
-
-								fontCanvas.renderAll()
-
-								var foo = findIndexByText(letterDropdown, data.fontName)
-								letterDropdown.selectedIndex = foo
-								letterDropdown.refresh()
-								numberDropdown.selectedIndex = foo
-								numberDropdown.refresh()
-							})
-						} else {
-							fontList.push(data.fontName)
-							opentype.load(data.fontPath, (err,font) => {
-								if (err || !font) {
-									console.log(err)
-									return;
-								}
-
-								const maxNumWidth = 170
-								const maxLetWidth = 56
-
-								var nArr = []
-								var lArr = []
-
-								const arr = letters.concat(numbers)
-
-								arr.forEach((chr) => {
-									var char = chars.find(o => o.char === chr)
-									var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
-									const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
-									const svgPath = paths.toPathData(5)
-									var tmp = new fabric.Path(svgPath, {
-										fill: initialTextColors['fillColor'], 
-									});
-									if (isNumeric(chr)) {
-										nArr.push(tmp.width)
-									} else {
-										lArr.push(tmp.width)
-									}
-								})
-
-								if (arr == numbers) {
-									var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
-									var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
-								} else {
-									var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
-									var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
-								}
-
-								arr.forEach((chr) => {
-									var char = chars.find(o => o.char === chr)
-									var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
-									var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
-									const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
-									const svgPath = paths.toPathData(5)
-									var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
-									grp.getObjects('path').forEach(function(o) {
-										grp.removeWithUpdate(o)
-									})
-									fontCanvas.renderAll()
-
-									var tmp = new fabric.Path(svgPath, {
-										fill: initialTextColors['fillColor'], 
-									});
-
-									
-									if (isNumeric(chr)) {
-										var scaleX = 1.0 * scaleMod
-										scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
-										var strokeWidth1 = strokeWidth["numbers1"]
-										var strokeWidth2 = strokeWidth["numbers2"]
-										var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
-										var stroke1Color = $("#numbersStroke1").spectrum("get")
-										var stroke2Color = $("#numbersStroke2").spectrum("get")
-									} else {
-										var scaleX = 1.0 * scaleMod
-										scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
-										var strokeWidth1 = strokeWidth["letters1"]
-										var strokeWidth2 = strokeWidth["letters2"]
-										var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
-										var stroke1Color = $("#lettersStroke1").spectrum("get")
-										var stroke2Color = $("#lettersStroke2").spectrum("get")
-									}
-
-									var strokePath = new fabric.Path(svgPath, {
-										id: char.char.toLowerCase()+"Stroke",
-										fill: stroke2Color, 
-										stroke: stroke2Color, 
-										strokeWidth: strokeWidth2, 
-										strokeLineCap: "round",
-										paintFirst: "stroke",
-										visible: true,
-										originX: "center",
-										originY: "center",
-										scaleX: scaleX,
-										scaleY: scaleY
-									})
-
-									var newTextPath = new fabric.Path(svgPath, {
-										id: char.char.toLowerCase()+"Fill",
-										fill: fillColor, 
-										stroke: stroke1Color, 
-										strokeWidth: strokeWidth1, 
-										strokeLineCap: "round",
-										paintFirst: "stroke",
-										visible: true,
-										originX: "center",
-										originY: "center",
-										scaleX: scaleX,
-										scaleY: scaleY
-									});
-									
-									grp.addWithUpdate(strokePath)
-									grp.addWithUpdate(newTextPath)
-
-									if (isNumeric(chr)) {
-										for (y of numberStyle.split(",")) {
-											groupAlign(grp,y)
-										}
-									} else {
-										for (y of letterStyle.split(",")) {
-											groupAlign(grp,y)
-										}
-									}
-								})
-
-								var thumbText = font.getPath("ABC 123", 0, 0, 96)
-								var outPath = thumbText.toPathData(5)
-
-								var foo = new fabric.Path(outPath, {
-									fill: 'black',
-									top: 0,
-									left: 0
-								})
-
-								fontCanvas.renderAll()
-
-								refreshDropdowns("font",data,foo)
-							})
-						}
-					}
-				} 
-			}
-		}) */
 	})
 
 	ipcRenderer.on('custom-font-response', (event, data) => {
@@ -11703,125 +11406,6 @@
 		}
 	})
 
-	function warpName() {
-		var warp = true;
-		jerseyNameFill.transformMatrix = [1, 0, 0, 1, 0, 0];
-		jerseyNameStroke1.transformMatrix = [1, 0, 0, 1, 0, 0];
-		jerseyNameStroke2.transformMatrix = [1, 0, 0, 1, 0, 0];
-		jerseyLogoCanvas.renderAll();
-		const g = jerseyLogoCanvas.getObjects('group').find(o => o.id === 'playerName');
-		if ($("#jerseyNameWarpEffect").val() == "none") {
-			$("#jerseyNameWarpAmount").val("0");
-			jerseyLogoCanvas.getObjects("image").forEach(function(o) {
-				if (o.get('name') == "warpedName") {
-					jerseyLogoCanvas.remove(o);
-				}
-			});
-			g.set("skewX", 0)
-			g.set("skewY", 0)
-			jerseyLogoCanvas.renderAll();
-		} else {	
-			showOverlay("Applying Warp...")
-			var obj = jerseyLogoCanvas.getObjects().forEach(function(o) {
-				if (o.id == "warpedName") {
-					jerseyLogoCanvas.remove(o);
-				}
-				if (o.id == "playerName") {
-					o.getObjects().forEach(function(q) {
-						q.set("left",0);
-						q.set("top",0);
-					});
-					o.set("visible",true)
-				}
-			})
-			jerseyLogoCanvas.renderAll();
-			warpCanvas.clear()
-			var grp = jerseyLogoCanvas.getObjects('group').find(o => o.id === 'playerName');
-			g.getObjects().forEach(function(o) {
-				o.clone(function(cloned) {
-    				warpCanvas.add(cloned)
-				});
-			})
-			warpCanvas.getObjects().forEach(function(o) {
-				o.set({
-					scaleX: wordmark.scaleX,
-					scaleY: wordmark.scaleY,
-					angle: 0
-				})
-				o.set("scaleX", wordmark.scaleX)
-				o.set("scaleY", wordmark.scaleY)
-				//o.scaleY = wordmark.scaleY;
-				if (o.text != $("#jerseyNameTextBox").val()) {
-					o.set("text", $("#jerseyNameTextBox").val())
-				}
-				o.set("left",256)
-				o.set("top",256)
-			})
-
-			warpCanvas.renderAll();
-		
-			var theImage = warpCanvas.toDataURL();
-
-			theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
-			
-			$.ajax({
-				type: "POST",
-				url: "http://127.0.0.1:"+port+"/warpText",
-				data: {deform: $("#jerseyNameWarpEffect").val(), amount: $("#jerseyNameWarpAmount").val(), imgdata: theImage},
-				success: function(data) {
-					if (data == "NOT INSTALLED") {
-						alert("An error occurred - please make sure ImageMagick is installed")
-						hideOverlay()
-					} else {
-						var imgObj = new Image();
-						imgObj.src = data;
-						imgObj.onload = function () {
-							var image = new fabric.Image(imgObj);
-							image.set({
-								originX: 'center',
-								originY: 'center',
-								left: playerName.get("left"),
-								top: playerName.get("top"),
-								angle: 180,
-								perPixelTargetFind: true,
-								centeredScaling: true,
-								centeredRotation: true,
-								borderColor: 'red',
-								cornerColor: 'yellow',
-								cornerSize: 12,
-								name: 'warpedName',
-								id: 'warpedName',
-								transparentCorners: false
-							});
-							
-							image.filters.push(new fabric.Image.filters.Resize({
-								resizeType: 'lanczos', // typo fixed
-								lanczosLobes: 2 // typo fixed
-							}));
-							
-							image.on('object:modified',function() {
-								wmLeft = image.getBoundingRect()['left'];
-								wmTop = image.getBoundingRect()['top'];
-							});
-
-							jerseyLogoCanvas.getObjects().forEach(function(o) {
-								if (o.id == "playerName") {
-									o.set("visible", false)
-								}
-							});
-
-							jerseyLogoCanvas.add(image);
-							jerseyLogoCanvas.renderAll();
-							hideOverlay()
-						}
-					}
-					
-				}
-			})
-			return false;		
-		}
-	}
-
 	// DOCUMENT-WIDE CANVAS FUNCTIONS
 
 	$(".jerseyNameToggle, .jerseyNumberToggle, .jerseyTextToggle, .capTextToggle, .capText2Toggle, .pantsNumberToggle").on("change",function(e) {
@@ -12689,87 +12273,7 @@
 				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
 				
 				ipcRenderer.send('replace-color', [theImage, pLeft, pTop, pScaleX, pScaleY, action, color, newcolor, fuzz, pictureName, canvasName, x, y, colorSquare, newColorSquare ])
-				/* $.ajax({
-					type: "POST",
-					url: "http://127.0.0.1:"+port+"/replaceColor",
-					data: {imgdata: theImage, x: pX, y: pY, action: action, color: color, newcolor: newcolor, fuzz: fuzz, filename: pictureName},
-					success: function(data) {
-					//$("#testImage").attr("src","data:image/png;base64,"+data);
-						if (data == "NOT INSTALLED") {
-							alert("An error occurred - please make sure ImageMagick is installed")
-							hideOverlay()
-						} else {
-							var imgObj = new Image();
-							imgObj.src = data;
-							imgObj.onload = function () {
-								var image = new fabric.Image(imgObj);
-								image.set({
-									originX: 'center',
-									originY: 'center',
-									left: pLeft,
-									top: pTop,
-									scaleX: pScaleX,
-									scaleY: pScaleY,
-									perPixelTargetFind: true,
-									centeredScaling: true,
-									centeredRotation: true,
-									name: pictureName,
-									id: pictureName
-								});
-								
-								image.filters.push(new fabric.Image.filters.Resize({
-									resizeType: 'lanczos',
-									lanczosLobes: 2
-								}));
-								
-								image.on('object:modified',function() {
-									imLeft = image.get('left')
-									imTop = image.get('top');
-									//$("#infoWTF").html("imLeft: "+imLeft+"<br>imTop: "+imTop);
-								});
-
-								image.on('selected',function() {
-									switch (activeCanvas.id) {
-										case "jerseyLogoCanvas":
-											var canStr = "jersey"
-											break;
-										case "capLogoCanvas":
-											var canStr = "cap"
-											break;
-										case "pantsLogoCanvas":
-											var canStr = "pants"
-											break;
-									} 
-									$("#"+canStr+"FileName").html(image.get('id'));
-									if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-										$("#"+canStr+"TrimImageDiv").css("display","block");
-										$("#"+canStr+"UploadImageDiv").css("display","none");
-										$("#"+canStr+"SelectedImageDiv").css("display","block");
-									}
-									$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-									$(".copypaste").each(function() {
-										$(this).css("display","inline-block")
-									})
-								})
-								
-								canvas.remove(object);
-								canvas.add(image);
-								image.moveTo(idx);
-								canvas.renderAll();
-								imLeft = image.get('left')
-								imTop = image.get('top');
-								colorSquare.val("Select Color");
-								colorSquare.css("background","#FFFFFF");
-								colorSquare.css("color","#000000");
-								newColorSquare.val("Select Color");
-								newColorSquare.css("background","#FF0000");
-								newColorSquare.css("color","#000000");
-								hideOverlay()
-								//$("#infoWTF").html("imLeft: "+imLeft+"<br>imTop: "+imTop);
-							}
-						}
-					}
-				}) */
+			
 				return false;
 			}
 		}	
@@ -14942,21 +14446,30 @@
 	}
 	
 	$("#checkForUpdates").on("click", function() {
-		ipcRenderer.send('check-for-update', null)
+		ipcRenderer.send('check-for-update', false)
 	})
 
 	ipcRenderer.on('check-for-update-response', (event, data) => {
-		if (data.update == true) {
-			if (confirm("Current version: "+data.currentVersion+"\r\n\r\nVersion "+data.name+" is now availble.  Click 'OK' to go to the releases page.")) {
-				window.open(
-					data.url, 
-					'_blank'
-				);
-			}
-		} else if (data.update == false) {
-			alert("Current version: "+data.currentVersion+"\r\n\r\nThere is no update available at this time")
-		} else {
-			alert("Something went wrong, the update check failed.")
+		console.log (data)
+		switch (data.update) {
+			case true:
+				if (confirm("Current version: "+data.currentVersion+"\r\n\r\nVersion "+data.name+" is now availble.  Click 'OK' to go to the releases page.")) {
+					window.open(
+						data.url, 
+						'_blank'
+					);
+				}
+				break;
+			case false:
+				if (data.silent == false) {
+					alert("Current version: "+data.currentVersion+"\r\n\r\nThere is no update available at this time")
+				}
+				break;
+			default:
+				if (data.silent == false) {
+					alert("Something went wrong, the update check failed.")
+				}
+				break;
 		}
 	})
 
