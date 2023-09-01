@@ -1153,11 +1153,11 @@ ipcMain.on('save-cap', (event, arg) => {
 	}
 })
 
-app2.post("/saveFont", (req, res) => {
-    const fontCanvas = Buffer.from(req.body.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+ipcMain.on('save-font', (event, arg) => {
+	const fontCanvas = Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 
     const options = {
-        defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png',{fs: true})
+        defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.png',{fs: true})
 	}
             
 	prepareImages()
@@ -1169,13 +1169,13 @@ app2.post("/saveFont", (req, res) => {
 				fs.writeFile(result.filePath, fontCanvas, 'base64', function(err) {
 					console.log(err)
 				})
-				res.json({result: "success"})
+				event.sender.send('save-font-response', null)
 			} else {
-				res.json({result: "success"})
+				event.sender.send('save-font-response', null)
 			}
 		}).catch((err) => {
 			console.log(err);
-			res.json({result: "success"})
+			event.sender.send('save-font-response', null)
 		});
 	}
 })

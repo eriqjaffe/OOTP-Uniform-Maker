@@ -13333,31 +13333,21 @@
 		fontCanvas.setDimensions({ width: 1024, height: 1024 });
     	fontCanvas.setZoom(1)
 
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/saveFont",
-			dataType: "json",
-			data: {
-				name: fileName.toLowerCase(),
-				fontCanvas: fontCanvas.toDataURL()
-			},
-			success: function(data) {
-				if (data.result == "error") {
-					console.log("ERROR")
-				}
-				fontCanvas.set({
-					backgroundColor: "#D8D8D8"
-				})
-				
-				fontCanvas.setDimensions({ width: fontCanvas.getWidth() * 0.75, height: fontCanvas.getHeight() * 0.75 });
-				fontCanvas.setZoom(scaleRatio)
-				fontCanvas.setBackgroundImage('./images/symbol_grid.png', fontCanvas.renderAll.bind(fontCanvas));
-				hideOverlay()
-			},
-			error: function(data) {
-				hideOverlay()
-			}
+		ipcRenderer.send('save-font', {
+			name: fileName.toLowerCase(),
+			fontCanvas: fontCanvas.toDataURL()
 		})
+	})
+
+	ipcRenderer.on('save-font-response', (event, response) => {
+		fontCanvas.set({
+			backgroundColor: "#D8D8D8"
+		})
+		
+		fontCanvas.setDimensions({ width: fontCanvas.getWidth() * 0.75, height: fontCanvas.getHeight() * 0.75 });
+		fontCanvas.setZoom(scaleRatio)
+		fontCanvas.setBackgroundImage('./images/symbol_grid.png', fontCanvas.renderAll.bind(fontCanvas));
+		hideOverlay()
 	})
 
 	$("#save").on("click",function(e) {
