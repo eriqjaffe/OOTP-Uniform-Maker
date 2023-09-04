@@ -19,8 +19,8 @@
 	<script type="text/javascript" src="./scripts/opentype.js"></script>
 	<script type="text/javascript" src="./scripts/vex.combined.min.js"></script>
 	<script>vex.defaultOptions.className = 'vex-theme-os'</script>
-	<script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
-	<script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+	<script src="./scripts/popper.min.js"></script>
+	<script src="./scripts/tippy-bundle.umd.js"></script>
 	<link href='./scripts/uniformmaker.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/spectrum.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/menu.css' rel='stylesheet' type='text/css'>
@@ -2897,7 +2897,21 @@
 							}
 							activeCanvas.renderAll();
 						}
-						return false;
+						break;
+					case 187: // plus
+						if (obj.get('type') == "group" || obj.get('type') == "image") {
+							if (e.shiftKey) {
+								obj.bringToFront()
+								tippyInstance.setContent(getStackingOrder())
+								tippyInstance.show()
+							} else {
+								obj.bringForward();
+								tippyInstance.setContent(getStackingOrder())
+								tippyInstance.show()	
+							}
+							activeCanvas.renderAll();
+						}
+						break;
 					case 109: // minus
 						if (obj.get('type') == "group" || obj.get('type') == "image") {
 							if (e.shiftKey) {
@@ -2911,7 +2925,21 @@
 							}
 							activeCanvas.renderAll();
 						}
-						return false;
+						break;
+					case 189: // minus
+						if (obj.get('type') == "group" || obj.get('type') == "image") {
+							if (e.shiftKey) {
+								obj.sendToBack()
+								tippyInstance.setContent(getStackingOrder())
+								tippyInstance.show()
+							} else {
+								obj.sendBackwards();
+								tippyInstance.setContent(getStackingOrder())
+								tippyInstance.show()
+							}
+							activeCanvas.renderAll();
+						}
+						break;
 					case 37:
 						e.preventDefault();
 						var a = obj.get('left') - movementDelta;
