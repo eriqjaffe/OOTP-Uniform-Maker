@@ -19,8 +19,8 @@
 	<script type="text/javascript" src="./scripts/opentype.js"></script>
 	<script type="text/javascript" src="./scripts/vex.combined.min.js"></script>
 	<script>vex.defaultOptions.className = 'vex-theme-os'</script>
-	<script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
-	<script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+	<script src="./scripts/popper.min.js"></script>
+	<script src="./scripts/tippy-bundle.umd.js"></script>
 	<link href='./scripts/uniformmaker.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/spectrum.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/menu.css' rel='stylesheet' type='text/css'>
@@ -31,8 +31,8 @@
 	<link href="./scripts/vex.css" rel="stylesheet" type='text/css'>
 	<link href="./scripts/vex-theme-os.css" rel="stylesheet" type='text/css'>
     <script>
+		const { ipcRenderer } = require('electron');
 		const params = new URLSearchParams(window.location.search)
-		const port = params.get('port')
 		const appVersion = params.get('appVersion')
 		const gridsVisible = (params.get('gridsVisible').toLowerCase() == "true") ? true : false
 		const checkForUpdates = (params.get('checkForUpdates').toLowerCase() == "true") ? true : false
@@ -2544,6 +2544,7 @@
 </div>
 </body>
 <script>
+
 	const jerseyTippy = tippy(document.getElementById('jerseyContainer'), {
         content: '',
 		trigger: 'manual',
@@ -2853,20 +2854,7 @@
 		activeCanvas = jerseyLogoCanvas;
 
  		if (checkForUpdates == true) {
-			$.ajax({
-				type: "GET",
-				url: "http://127.0.0.1:"+port+"/checkForUpdate",
-				success: function(data) { 
-					if (data.update == true) {
-						if (confirm("Current version: "+data.currentVersion+"\r\n\r\nVersion "+data.name+" is now availble.  Click 'OK' to go to the releases page.\r\n\r\bThis automatic check can be disabled in the Preferences.")) {
-							window.open(
-								data.url, 
-								'_blank'
-							);
-						}
-					} 
-				}
-			})
+			ipcRenderer.send('check-for-update', true)
 		}
 	})
 
@@ -2909,7 +2897,21 @@
 							}
 							activeCanvas.renderAll();
 						}
-						return false;
+						break;
+					case 187: // plus
+						if (obj.get('type') == "group" || obj.get('type') == "image") {
+							if (e.shiftKey) {
+								obj.bringToFront()
+								tippyInstance.setContent(getStackingOrder())
+								tippyInstance.show()
+							} else {
+								obj.bringForward();
+								tippyInstance.setContent(getStackingOrder())
+								tippyInstance.show()	
+							}
+							activeCanvas.renderAll();
+						}
+						break;
 					case 109: // minus
 						if (obj.get('type') == "group" || obj.get('type') == "image") {
 							if (e.shiftKey) {
@@ -2923,7 +2925,21 @@
 							}
 							activeCanvas.renderAll();
 						}
-						return false;
+						break;
+					case 189: // minus
+						if (obj.get('type') == "group" || obj.get('type') == "image") {
+							if (e.shiftKey) {
+								obj.sendToBack()
+								tippyInstance.setContent(getStackingOrder())
+								tippyInstance.show()
+							} else {
+								obj.sendBackwards();
+								tippyInstance.setContent(getStackingOrder())
+								tippyInstance.show()
+							}
+							activeCanvas.renderAll();
+						}
+						break;
 					case 37:
 						e.preventDefault();
 						var a = obj.get('left') - movementDelta;
@@ -3164,100 +3180,94 @@
 	});
 
 	$("#openFontFolder").on("click",function(e) {
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/openFontFolder",
-			success: function(data) {}
-		})
+		ipcRenderer.send('open-font-folder', null)
 	})
 
 	$("#localFontFolder").on("click",function() {
-		const fontErrors = []
 		showOverlay("Loading User Fonts...")
-		$.ajax({
-			type: "GET",
-			url: "http://127.0.0.1:"+port+"/localFontFolder",
-			success: function(data) {
-				if (data.result == 'success') {
-					const letterDropdown = document.getElementById("letterDropdown").msDropdown;
-					const numberDropdown = document.getElementById("numberDropdown").msDropdown;
-					const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
-					const capDropdown = document.getElementById("capTextSelect").msDropdown;
-					const preferredJerseyDropdown = document.getElementById("preferredJerseyFont").msDropdown;
-					const preferredCapDropdown = document.getElementById("preferredCapFont").msDropdown;
-					const preferredNameDropdown = document.getElementById("preferredNameFont").msDropdown;
-					const preferredNumberDropdown = document.getElementById("preferredNumberFont").msDropdown;
+		ipcRenderer.send('local-font-folder', null)
+	})
 
-					for (result of data.fonts) {
-						if (result.status == "ok") {
-							fontList.push(result.fontName)
-							var thumb = null;
-							const name = result.fontName
-							const value = result.fontPath
-							opentype.load(result.fontPath, (err,font) => {
-								if (err || !font) {
-									console.log(err)
-									return;
-								}
-								
-								var thumbText = font.getPath("ABC 123", 0, 0, 96)
-								var outPath = thumbText.toPathData(5)
+	ipcRenderer.on('local-font-folder-response', (event, data) => {
+		let fontErrors = []
+		if (data.result == 'success') {
+			const letterDropdown = document.getElementById("letterDropdown").msDropdown;
+			const numberDropdown = document.getElementById("numberDropdown").msDropdown;
+			const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
+			const capDropdown = document.getElementById("capTextSelect").msDropdown;
+			const preferredJerseyDropdown = document.getElementById("preferredJerseyFont").msDropdown;
+			const preferredCapDropdown = document.getElementById("preferredCapFont").msDropdown;
+			const preferredNameDropdown = document.getElementById("preferredNameFont").msDropdown;
+			const preferredNumberDropdown = document.getElementById("preferredNumberFont").msDropdown;
 
-								thumbText = new fabric.Path(outPath, {
-									left: 0,
-									originX: 'center',
-									originY: 'center',
-									centeredScaling: true,
-									centeredRotation: true,
-									fill: 'black',
-									height: '80px'
-								})
-
-								thumb = thumbText.toDataURL()
-
-								if (findIndexByText(letterDropdown, name) == -1) {
-									letterDropdown.add({text:name, value:value, image:thumb},0)
-									if (value == prefs.preferredNameFont) { letterDropdown.selectedIndex = 0 }
-
-									numberDropdown.add({text:name, value:value, image:thumb},0)
-									if (value == prefs.preferredNumberFont) { numberDropdown.selectedIndex = 0 }
-									
-									jerseyDropdown.add({text:name, value:value, image:thumb},0)
-									if (value == prefs.preferredJerseyFont) { jerseyDropdown.selectedIndex = 0 }
-
-									capDropdown.add({text:name, value:value, image:thumb},0)
-									if (value == prefs.preferredCapFont) { capDropdown.selectedIndex = 0 }
-
-									preferredJerseyDropdown.add({text:name, value:value, image:thumb},0)
-									if (value == prefs.preferredJerseyFont) { preferredJerseyDropdown.selectedIndex = 0 }
-
-									preferredCapDropdown.add({text:name, value:value, image:thumb},0)
-									if (value == prefs.preferredCapFont) { preferredCapDropdown.selectedIndex = 0 }
-
-									preferredNameDropdown.add({text:name, value:value, image:thumb},0)
-									if (value == prefs.preferredNameFont) { preferredNameDropdown.selectedIndex = 0 }
-
-									preferredNumberDropdown.add({text:name, value:value, image:thumb},0)
-									if (value == prefs.preferredNumberFont) { preferredNumberDropdown.selectedIndex = 0 }
-								}
-
-								sortFontDropdowns()
-							})
-						} else {
-							fontErrors.push(result.fontName)
+			for (result of data.fonts) {
+				if (result.status == "ok") {
+					fontList.push(result.fontName)
+					var thumb = null;
+					const name = result.fontName
+					const value = result.fontPath
+					opentype.load(result.fontPath, (err,font) => {
+						if (err || !font) {
+							console.log(err)
+							return;
 						}
-					}
-				}
-				hideOverlay()
-				if (fontErrors.length > 0) {
-					var message = "The following fonts failed to import, and have been removed from your user fonts folder:\r\n\r\n"
-					for (font of fontErrors) {
-						message += font+"\r\n"
-					}
-					alert(message)
+						
+						var thumbText = font.getPath("ABC 123", 0, 0, 96)
+						var outPath = thumbText.toPathData(5)
+
+						thumbText = new fabric.Path(outPath, {
+							left: 0,
+							originX: 'center',
+							originY: 'center',
+							centeredScaling: true,
+							centeredRotation: true,
+							fill: 'black',
+							height: '80px'
+						})
+
+						thumb = thumbText.toDataURL()
+
+						if (findIndexByText(letterDropdown, name) == -1) {
+							letterDropdown.add({text:name, value:value, image:thumb},0)
+							if (value == prefs.preferredNameFont) { letterDropdown.selectedIndex = 0 }
+
+							numberDropdown.add({text:name, value:value, image:thumb},0)
+							if (value == prefs.preferredNumberFont) { numberDropdown.selectedIndex = 0 }
+							
+							jerseyDropdown.add({text:name, value:value, image:thumb},0)
+							if (value == prefs.preferredJerseyFont) { jerseyDropdown.selectedIndex = 0 }
+
+							capDropdown.add({text:name, value:value, image:thumb},0)
+							if (value == prefs.preferredCapFont) { capDropdown.selectedIndex = 0 }
+
+							preferredJerseyDropdown.add({text:name, value:value, image:thumb},0)
+							if (value == prefs.preferredJerseyFont) { preferredJerseyDropdown.selectedIndex = 0 }
+
+							preferredCapDropdown.add({text:name, value:value, image:thumb},0)
+							if (value == prefs.preferredCapFont) { preferredCapDropdown.selectedIndex = 0 }
+
+							preferredNameDropdown.add({text:name, value:value, image:thumb},0)
+							if (value == prefs.preferredNameFont) { preferredNameDropdown.selectedIndex = 0 }
+
+							preferredNumberDropdown.add({text:name, value:value, image:thumb},0)
+							if (value == prefs.preferredNumberFont) { preferredNumberDropdown.selectedIndex = 0 }
+						}
+
+						sortFontDropdowns()
+					})
+				} else {
+					fontErrors.push(result.fontName)
 				}
 			}
-		})
+		}
+		hideOverlay()
+		if (fontErrors.length > 0) {
+			var message = "The following fonts failed to import, and have been removed from your user fonts folder:\r\n\r\n"
+			for (font of fontErrors) {
+				message += font+"\r\n"
+			}
+			alert(message)
+		}
 	})
 
 	$("#teamBGColor").spectrum({
@@ -4065,23 +4075,12 @@
 				nameCanvas.add(item);
 			});
    		 	nameCanvas.renderAll(); // Make sure to call once we're ready!
-			$.ajax({
-				type: "POST",
-				url: "http://127.0.0.1:"+port+"/saveWordmark",
-				dataType: "json",
-				data: {image: nameCanvas.toDataURL(), name: fileName},
-				success: function(data) {
-					if (data.result == "error") {
-						console.log("ERROR")
-					}
-					nameCanvas.clear()
-					hideOverlay()
-				},
-				error: function(data) {
-					hideOverlay()
-				}
-			})
+			ipcRenderer.send('save-wordmark', {image: nameCanvas.toDataURL(), name: fileName})
 		});
+	})
+
+	ipcRenderer.on('hide-overlay', (event, arg) => {
+		hideOverlay()
 	})
 
 	$("#jerseyTextureSelect").on("change",function(){
@@ -7802,20 +7801,11 @@
 
 	$("#tesseract").on("click",function() {	
 		showOverlay("Detecting Characters...")
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/uploadFontImage",
-			success: function(data) {
-				if (data.status != "cancelled") {
-					placeOCR(data)
-				} else {
-					hideOverlay()
-				}
-			},
-			error: function(data) {
-				hideOverlay()
-			}
-		})
+		ipcRenderer.send('upload-font-image', null)
+	})
+
+	ipcRenderer.on('upload-font-image-response', (event, data) => {
+		console.log(data)
 	})
 
 	$("#clearOCR").on("click",function() {
@@ -7869,421 +7859,287 @@
 	}
 
 	$("#customFontFace").on("click",function(e) {
-		$.ajax({
-			type: "GET",
-			url: "http://127.0.0.1:"+port+"/customFont",
-			success: function(data) {
-				if (data.status != "cancelled") {
-					if (data.result == "error") {
-						alert("An error occurred:\r\n\r\n"+data.message)
-						return false;
-					} else if (data.status == "error") {
-						alert("The font '"+data.fontName+"' could not be loaded.")
-						return false;
-					} else {
-						if (fontList.includes(data.fontName)) {
-							const letterDropdown = document.getElementById("letterDropdown").msDropdown;
-							const numberDropdown = document.getElementById("numberDropdown").msDropdown;
-							const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
-							const capDropdown = document.getElementById("capTextSelect").msDropdown;
-									
-							opentype.load(data.fontPath, (err,font) => {
-								if (err || !font) {
-									console.log(err)
-									return;
-								}
+		ipcRenderer.send('custom-font', null)
+	})
 
-								const maxNumWidth = 170
-								const maxLetWidth = 56
-
-								var nArr = []
-								var lArr = []
-
-								const arr = letters.concat(numbers)
-
-								arr.forEach((chr) => {
-									var char = chars.find(o => o.char === chr)
-									var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
-									const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
-									const svgPath = paths.toPathData(5)
-									var tmp = new fabric.Path(svgPath, {
-										fill: initialTextColors['fillColor'], 
-									});
-									if (isNumeric(chr)) {
-										nArr.push(tmp.width)
-									} else {
-										lArr.push(tmp.width)
-									}
-								})
-
-								if (arr == numbers) {
-									var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
-									var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
-								} else {
-									var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
-									var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
-								}
-
-								arr.forEach((chr) => {
-									var char = chars.find(o => o.char === chr)
-									var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
-									var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
-									const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
-									const svgPath = paths.toPathData(5)
-									var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
-									grp.getObjects('path').forEach(function(o) {
-										grp.removeWithUpdate(o)
-									})
-									fontCanvas.renderAll()
-
-									var tmp = new fabric.Path(svgPath, {
-										fill: initialTextColors['fillColor'], 
-									});
-
-									
-									if (isNumeric(chr)) {
-										var scaleX = 1.0 * scaleMod
-										scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
-										var strokeWidth1 = strokeWidth["numbers1"]
-										var strokeWidth2 = strokeWidth["numbers2"]
-										var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
-										var stroke1Color = $("#numbersStroke1").spectrum("get")
-										var stroke2Color = $("#numbersStroke2").spectrum("get")
-									} else {
-										var scaleX = 1.0 * scaleMod
-										scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
-										var strokeWidth1 = strokeWidth["letters1"]
-										var strokeWidth2 = strokeWidth["letters2"]
-										var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
-										var stroke1Color = $("#lettersStroke1").spectrum("get")
-										var stroke2Color = $("#lettersStroke2").spectrum("get")
-									}
-
-									var strokePath = new fabric.Path(svgPath, {
-										id: char.char.toLowerCase()+"Stroke",
-										fill: stroke2Color, 
-										stroke: stroke2Color, 
-										strokeWidth: strokeWidth2, 
-										strokeLineCap: "round",
-										paintFirst: "stroke",
-										visible: true,
-										originX: "center",
-										originY: "center",
-										scaleX: scaleX,
-										scaleY: scaleY
-									})
-
-									var newTextPath = new fabric.Path(svgPath, {
-										id: char.char.toLowerCase()+"Fill",
-										fill: fillColor, 
-										stroke: stroke1Color, 
-										strokeWidth: strokeWidth1, 
-										strokeLineCap: "round",
-										paintFirst: "stroke",
-										visible: true,
-										originX: "center",
-										originY: "center",
-										scaleX: scaleX,
-										scaleY: scaleY
-									});
-									
-									grp.addWithUpdate(strokePath)
-									grp.addWithUpdate(newTextPath)
-
-									if (isNumeric(chr)) {
-										for (y of numberStyle.split(",")) {
-											groupAlign(grp,y)
-										}
-									} else {
-										for (y of letterStyle.split(",")) {
-											groupAlign(grp,y)
-										}
-									}
-								})
-
-								var thumbText = font.getPath("ABC 123", 0, 0, 96)
-								var outPath = thumbText.toPathData(5)
-
-								var foo = new fabric.Path(outPath, {
-									fill: 'black',
-									top: 0,
-									left: 0
-								})
-
-								fontCanvas.renderAll()
-
-								var foo = findIndexByText(letterDropdown, data.fontName)
-								letterDropdown.selectedIndex = foo
-								letterDropdown.refresh()
-								numberDropdown.selectedIndex = foo
-								numberDropdown.refresh()
-							})
-						} else {
-							fontList.push(data.fontName)
-							opentype.load(data.fontPath, (err,font) => {
-								if (err || !font) {
-									console.log(err)
-									return;
-								}
-
-								const maxNumWidth = 170
-								const maxLetWidth = 56
-
-								var nArr = []
-								var lArr = []
-
-								const arr = letters.concat(numbers)
-
-								arr.forEach((chr) => {
-									var char = chars.find(o => o.char === chr)
-									var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
-									const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
-									const svgPath = paths.toPathData(5)
-									var tmp = new fabric.Path(svgPath, {
-										fill: initialTextColors['fillColor'], 
-									});
-									if (isNumeric(chr)) {
-										nArr.push(tmp.width)
-									} else {
-										lArr.push(tmp.width)
-									}
-								})
-
-								if (arr == numbers) {
-									var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
-									var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
-								} else {
-									var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
-									var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
-								}
-
-								arr.forEach((chr) => {
-									var char = chars.find(o => o.char === chr)
-									var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
-									var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
-									const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
-									const svgPath = paths.toPathData(5)
-									var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
-									grp.getObjects('path').forEach(function(o) {
-										grp.removeWithUpdate(o)
-									})
-									fontCanvas.renderAll()
-
-									var tmp = new fabric.Path(svgPath, {
-										fill: initialTextColors['fillColor'], 
-									});
-
-									
-									if (isNumeric(chr)) {
-										var scaleX = 1.0 * scaleMod
-										scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
-										var strokeWidth1 = strokeWidth["numbers1"]
-										var strokeWidth2 = strokeWidth["numbers2"]
-										var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
-										var stroke1Color = $("#numbersStroke1").spectrum("get")
-										var stroke2Color = $("#numbersStroke2").spectrum("get")
-									} else {
-										var scaleX = 1.0 * scaleMod
-										scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
-										var strokeWidth1 = strokeWidth["letters1"]
-										var strokeWidth2 = strokeWidth["letters2"]
-										var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
-										var stroke1Color = $("#lettersStroke1").spectrum("get")
-										var stroke2Color = $("#lettersStroke2").spectrum("get")
-									}
-
-									var strokePath = new fabric.Path(svgPath, {
-										id: char.char.toLowerCase()+"Stroke",
-										fill: stroke2Color, 
-										stroke: stroke2Color, 
-										strokeWidth: strokeWidth2, 
-										strokeLineCap: "round",
-										paintFirst: "stroke",
-										visible: true,
-										originX: "center",
-										originY: "center",
-										scaleX: scaleX,
-										scaleY: scaleY
-									})
-
-									var newTextPath = new fabric.Path(svgPath, {
-										id: char.char.toLowerCase()+"Fill",
-										fill: fillColor, 
-										stroke: stroke1Color, 
-										strokeWidth: strokeWidth1, 
-										strokeLineCap: "round",
-										paintFirst: "stroke",
-										visible: true,
-										originX: "center",
-										originY: "center",
-										scaleX: scaleX,
-										scaleY: scaleY
-									});
-									
-									grp.addWithUpdate(strokePath)
-									grp.addWithUpdate(newTextPath)
-
-									if (isNumeric(chr)) {
-										for (y of numberStyle.split(",")) {
-											groupAlign(grp,y)
-										}
-									} else {
-										for (y of letterStyle.split(",")) {
-											groupAlign(grp,y)
-										}
-									}
-								})
-
-								var thumbText = font.getPath("ABC 123", 0, 0, 96)
-								var outPath = thumbText.toPathData(5)
-
-								var foo = new fabric.Path(outPath, {
-									fill: 'black',
-									top: 0,
-									left: 0
-								})
-
-								fontCanvas.renderAll()
-
-								refreshDropdowns("font",data,foo)
-							})
+	ipcRenderer.on('custom-font-response', (event, data) => {
+		if (data.status != "cancelled") {
+			if (data.result == "error") {
+				alert("An error occurred:\r\n\r\n"+data.message)
+				return false;
+			} else if (data.status == "error") {
+				alert("The font '"+data.fontName+"' could not be loaded.")
+				return false;
+			} else {
+				if (fontList.includes(data.fontName)) {
+					const letterDropdown = document.getElementById("letterDropdown").msDropdown;
+					const numberDropdown = document.getElementById("numberDropdown").msDropdown;
+					const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
+					const capDropdown = document.getElementById("capTextSelect").msDropdown;
+							
+					opentype.load(data.fontPath, (err,font) => {
+						if (err || !font) {
+							console.log(err)
+							return;
 						}
-					}
-					/* if (data.status == "error") {
-						alert("An error occurred:\r\n\r\n"+data.message)
-					} else {
-						fontList.push(data.fontName)
-						opentype.load(data.fontPath, (err,font) => {
-							if (err || !font) {
-								console.log(err)
-								return;
-							}
 
-							const maxNumWidth = 170
-							const maxLetWidth = 56
+						const maxNumWidth = 170
+						const maxLetWidth = 56
 
-							var nArr = []
-							var lArr = []
+						var nArr = []
+						var lArr = []
 
-							const arr = letters.concat(numbers)
+						const arr = letters.concat(numbers)
 
-							arr.forEach((chr) => {
-								var char = chars.find(o => o.char === chr)
-								var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
-								const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
-								const svgPath = paths.toPathData(5)
-								var tmp = new fabric.Path(svgPath, {
-									fill: initialTextColors['fillColor'], 
-								});
-								if (isNumeric(chr)) {
-									nArr.push(tmp.width)
-								} else {
-									lArr.push(tmp.width)
-								}
-							})
-
-							if (arr == numbers) {
-								var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
-								var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
+						arr.forEach((chr) => {
+							var char = chars.find(o => o.char === chr)
+							var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+							const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+							const svgPath = paths.toPathData(5)
+							var tmp = new fabric.Path(svgPath, {
+								fill: initialTextColors['fillColor'], 
+							});
+							if (isNumeric(chr)) {
+								nArr.push(tmp.width)
 							} else {
-								var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
-								var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
+								lArr.push(tmp.width)
 							}
+						})
 
-							arr.forEach((chr) => {
-								var char = chars.find(o => o.char === chr)
-								var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
-								var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
-								const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
-								const svgPath = paths.toPathData(5)
-								var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
-								grp.getObjects('path').forEach(function(o) {
-									grp.removeWithUpdate(o)
-								})
-								fontCanvas.renderAll()
+						if (arr == numbers) {
+							var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
+							var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
+						} else {
+							var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
+							var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
+						}
 
-								var tmp = new fabric.Path(svgPath, {
-									fill: initialTextColors['fillColor'], 
-								});
-
-								
-								if (isNumeric(chr)) {
-									var scaleX = 1.0 * scaleMod
-									scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
-									var strokeWidth1 = strokeWidth["numbers1"]
-									var strokeWidth2 = strokeWidth["numbers2"]
-									var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
-									var stroke1Color = $("#numbersStroke1").spectrum("get")
-									var stroke2Color = $("#numbersStroke2").spectrum("get")
-								} else {
-									var scaleX = 1.0 * scaleMod
-									scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
-									var strokeWidth1 = strokeWidth["letters1"]
-									var strokeWidth2 = strokeWidth["letters2"]
-									var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
-									var stroke1Color = $("#lettersStroke1").spectrum("get")
-									var stroke2Color = $("#lettersStroke2").spectrum("get")
-								}
-
-								var strokePath = new fabric.Path(svgPath, {
-									id: char.char.toLowerCase()+"Stroke",
-									fill: stroke2Color, 
-									stroke: stroke2Color, 
-									strokeWidth: strokeWidth2, 
-									strokeLineCap: "round",
-									paintFirst: "stroke",
-									visible: true,
-									originX: "center",
-    								originY: "center",
-									scaleX: scaleX,
-									scaleY: scaleY
-								})
-
-								var newTextPath = new fabric.Path(svgPath, {
-									id: char.char.toLowerCase()+"Fill",
-									fill: fillColor, 
-									stroke: stroke1Color, 
-									strokeWidth: strokeWidth1, 
-									strokeLineCap: "round",
-									paintFirst: "stroke",
-									visible: true,
-									originX: "center",
-    								originY: "center",
-									scaleX: scaleX,
-									scaleY: scaleY
-								});
-								
-								grp.addWithUpdate(strokePath)
-								grp.addWithUpdate(newTextPath)
-
-								if (isNumeric(chr)) {
-									for (y of numberStyle.split(",")) {
-										groupAlign(grp,y)
-									}
-								} else {
-									for (y of letterStyle.split(",")) {
-										groupAlign(grp,y)
-									}
-								}
+						arr.forEach((chr) => {
+							var char = chars.find(o => o.char === chr)
+							var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
+							var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+							const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+							const svgPath = paths.toPathData(5)
+							var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
+							grp.getObjects('path').forEach(function(o) {
+								grp.removeWithUpdate(o)
 							})
-
-							var thumbText = font.getPath("ABC 123", 0, 0, 96)
-							var outPath = thumbText.toPathData(5)
-
-							var foo = new fabric.Path(outPath, {
-								fill: 'black',
-								top: 0,
-								left: 0
-							})
-
 							fontCanvas.renderAll()
 
-							refreshDropdowns("font",data,foo)
+							var tmp = new fabric.Path(svgPath, {
+								fill: initialTextColors['fillColor'], 
+							});
+
+							
+							if (isNumeric(chr)) {
+								var scaleX = 1.0 * scaleMod
+								scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
+								var strokeWidth1 = strokeWidth["numbers1"]
+								var strokeWidth2 = strokeWidth["numbers2"]
+								var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
+								var stroke1Color = $("#numbersStroke1").spectrum("get")
+								var stroke2Color = $("#numbersStroke2").spectrum("get")
+							} else {
+								var scaleX = 1.0 * scaleMod
+								scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
+								var strokeWidth1 = strokeWidth["letters1"]
+								var strokeWidth2 = strokeWidth["letters2"]
+								var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
+								var stroke1Color = $("#lettersStroke1").spectrum("get")
+								var stroke2Color = $("#lettersStroke2").spectrum("get")
+							}
+
+							var strokePath = new fabric.Path(svgPath, {
+								id: char.char.toLowerCase()+"Stroke",
+								fill: stroke2Color, 
+								stroke: stroke2Color, 
+								strokeWidth: strokeWidth2, 
+								strokeLineCap: "round",
+								paintFirst: "stroke",
+								visible: true,
+								originX: "center",
+								originY: "center",
+								scaleX: scaleX,
+								scaleY: scaleY
+							})
+
+							var newTextPath = new fabric.Path(svgPath, {
+								id: char.char.toLowerCase()+"Fill",
+								fill: fillColor, 
+								stroke: stroke1Color, 
+								strokeWidth: strokeWidth1, 
+								strokeLineCap: "round",
+								paintFirst: "stroke",
+								visible: true,
+								originX: "center",
+								originY: "center",
+								scaleX: scaleX,
+								scaleY: scaleY
+							});
+							
+							grp.addWithUpdate(strokePath)
+							grp.addWithUpdate(newTextPath)
+
+							if (isNumeric(chr)) {
+								for (y of numberStyle.split(",")) {
+									groupAlign(grp,y)
+								}
+							} else {
+								for (y of letterStyle.split(",")) {
+									groupAlign(grp,y)
+								}
+							}
 						})
-					} */
-				} 
+
+						var thumbText = font.getPath("ABC 123", 0, 0, 96)
+						var outPath = thumbText.toPathData(5)
+
+						var foo = new fabric.Path(outPath, {
+							fill: 'black',
+							top: 0,
+							left: 0
+						})
+
+						fontCanvas.renderAll()
+
+						var foo = findIndexByText(letterDropdown, data.fontName)
+						letterDropdown.selectedIndex = foo
+						letterDropdown.refresh()
+						numberDropdown.selectedIndex = foo
+						numberDropdown.refresh()
+					})
+				} else {
+					fontList.push(data.fontName)
+					opentype.load(data.fontPath, (err,font) => {
+						if (err || !font) {
+							console.log(err)
+							return;
+						}
+
+						const maxNumWidth = 170
+						const maxLetWidth = 56
+
+						var nArr = []
+						var lArr = []
+
+						const arr = letters.concat(numbers)
+
+						arr.forEach((chr) => {
+							var char = chars.find(o => o.char === chr)
+							var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+							const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+							const svgPath = paths.toPathData(5)
+							var tmp = new fabric.Path(svgPath, {
+								fill: initialTextColors['fillColor'], 
+							});
+							if (isNumeric(chr)) {
+								nArr.push(tmp.width)
+							} else {
+								lArr.push(tmp.width)
+							}
+						})
+
+						if (arr == numbers) {
+							var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
+							var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
+						} else {
+							var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
+							var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
+						}
+
+						arr.forEach((chr) => {
+							var char = chars.find(o => o.char === chr)
+							var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
+							var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+							const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+							const svgPath = paths.toPathData(5)
+							var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
+							grp.getObjects('path').forEach(function(o) {
+								grp.removeWithUpdate(o)
+							})
+							fontCanvas.renderAll()
+
+							var tmp = new fabric.Path(svgPath, {
+								fill: initialTextColors['fillColor'], 
+							});
+
+							
+							if (isNumeric(chr)) {
+								var scaleX = 1.0 * scaleMod
+								scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
+								var strokeWidth1 = strokeWidth["numbers1"]
+								var strokeWidth2 = strokeWidth["numbers2"]
+								var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
+								var stroke1Color = $("#numbersStroke1").spectrum("get")
+								var stroke2Color = $("#numbersStroke2").spectrum("get")
+							} else {
+								var scaleX = 1.0 * scaleMod
+								scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
+								var strokeWidth1 = strokeWidth["letters1"]
+								var strokeWidth2 = strokeWidth["letters2"]
+								var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
+								var stroke1Color = $("#lettersStroke1").spectrum("get")
+								var stroke2Color = $("#lettersStroke2").spectrum("get")
+							}
+
+							var strokePath = new fabric.Path(svgPath, {
+								id: char.char.toLowerCase()+"Stroke",
+								fill: stroke2Color, 
+								stroke: stroke2Color, 
+								strokeWidth: strokeWidth2, 
+								strokeLineCap: "round",
+								paintFirst: "stroke",
+								visible: true,
+								originX: "center",
+								originY: "center",
+								scaleX: scaleX,
+								scaleY: scaleY
+							})
+
+							var newTextPath = new fabric.Path(svgPath, {
+								id: char.char.toLowerCase()+"Fill",
+								fill: fillColor, 
+								stroke: stroke1Color, 
+								strokeWidth: strokeWidth1, 
+								strokeLineCap: "round",
+								paintFirst: "stroke",
+								visible: true,
+								originX: "center",
+								originY: "center",
+								scaleX: scaleX,
+								scaleY: scaleY
+							});
+							
+							grp.addWithUpdate(strokePath)
+							grp.addWithUpdate(newTextPath)
+
+							if (isNumeric(chr)) {
+								for (y of numberStyle.split(",")) {
+									groupAlign(grp,y)
+								}
+							} else {
+								for (y of letterStyle.split(",")) {
+									groupAlign(grp,y)
+								}
+							}
+						})
+
+						var thumbText = font.getPath("ABC 123", 0, 0, 96)
+						var outPath = thumbText.toPathData(5)
+
+						var foo = new fabric.Path(outPath, {
+							fill: 'black',
+							top: 0,
+							left: 0
+						})
+
+						fontCanvas.renderAll()
+
+						refreshDropdowns("font",data,foo)
+					})
+				}
 			}
-		})
+		}
 	})
 
 	$("#customFontLayer").on("click",function(e) {
@@ -8358,13 +8214,11 @@
 			chars.push(obj)
 		})
 		json.chars = chars
-		$.ajax({
-			type: "POST",
-				url: "http://127.0.0.1:"+port+"/saveFontPosition",
-				data: {json:json, filename:filename},
-				success: function(data) {}
-		})
-		console.log(json)
+		ipcRenderer.send('save-font-position', {json:json, filename:filename})
+	})
+
+	ipcRenderer.on('save-font-position-response', (event, response) => {
+		// TO BE DETERMINED?
 	})
 
 	fontCanvas.on('selection:created', function(e) {
@@ -11165,7 +11019,7 @@
 	// GENERAL PURPOSE RENDERING FUNCTIONS
 
     function reRenderBG(target) {
-        switch (target) {
+		switch (target) {
             case "jersey":
 				var canvas = jerseyBelow
                 var textureCanvas = jerseyTextureContext
@@ -11265,61 +11119,57 @@
 
 	function uploadCustomTexture(type) {
 		showOverlay("Processing Image...")
-		$.ajax({
-			type: "GET",
-			url: "http://127.0.0.1:"+port+"/uploadImage",
-			data: {type:type},
-			success: function(data) { 
-				if (data.image != undefined) {
-					var imgObj = new Image();
-					imgObj.src = data.image;
-					imgObj.onload = function () {
-						switch (type) {
-							case "jersey":
-								customJerseyTexture = data.image;
-								$("#resetJerseyTexture").prop("disabled",false)
-								break;
-							case "pants":
-								customPantsTexture = data.image;
-								$("#resetPantsTexture").prop("disabled",false)
-								break;
-							case "cap":
-								customCapTexture = data.image;
-								$("#resetCapTexture").prop("disabled",false)
-								break;
-						}
-						hideOverlay()
-						reRenderBG(type)
-					}	
-				} else {
-					switch (type) {
-						case "jersey":
-							customJerseyTexture = null;
-							$("#jerseyTextureSelect").val(defaultJerseyTexture)
-							$("#jerseyTextureSelect").trigger("change")
-							$("#resetJerseyTexture").prop("disabled",true)
-							break;
-						case "pants":
-							customPantsTexture = null;
-							$("#pantsTextureSelect").val(defaultPantsTexture)
-							$("#pantsTextureSelect").trigger("change")
-							$("#resetPantsTexture").prop("disabled",true)
-							break;
-						case "cap":
-							customCapTexture = null;
-							$("#capTextureSelect").val(defaultCapTexture)
-							$("#capTextureSelect").trigger("change")
-							$("#resetCapTexture").prop("disabled",true)
-							break;
-					}
-					hideOverlay()
-				}
-			},
-			error: function(data) {
-				hideOverlay()
-			}
-		});
+		ipcRenderer.send('upload-texture', type)
 	}
+
+	ipcRenderer.on('upload-texture-response', (event, response) => {
+		let type = response.type
+		let data = response
+		if (data.image != undefined) {
+			var imgObj = new Image();
+			imgObj.src = data.image;
+			imgObj.onload = function () {
+				switch (type) {
+					case "jersey":
+						customJerseyTexture = data.image;
+						$("#resetJerseyTexture").prop("disabled",false)
+						break;
+					case "pants":
+						customPantsTexture = data.image;
+						$("#resetPantsTexture").prop("disabled",false)
+						break;
+					case "cap":
+						customCapTexture = data.image;
+						$("#resetCapTexture").prop("disabled",false)
+						break;
+				}
+				hideOverlay()
+				reRenderBG(type)
+			}	
+		} else {
+			switch (type) {
+				case "jersey":
+					customJerseyTexture = null;
+					$("#jerseyTextureSelect").val(defaultJerseyTexture)
+					$("#jerseyTextureSelect").trigger("change")
+					$("#resetJerseyTexture").prop("disabled",true)
+					break;
+				case "pants":
+					customPantsTexture = null;
+					$("#pantsTextureSelect").val(defaultPantsTexture)
+					$("#pantsTextureSelect").trigger("change")
+					$("#resetPantsTexture").prop("disabled",true)
+					break;
+				case "cap":
+					customCapTexture = null;
+					$("#capTextureSelect").val(defaultCapTexture)
+					$("#capTextureSelect").trigger("change")
+					$("#resetCapTexture").prop("disabled",true)
+					break;
+			}
+			hideOverlay()
+		}
+	})
 
 	function diagonalText(type) {
 		const h = (type == "diag") ? parseInt($("#hSpacing").val()) : 0
@@ -11523,186 +11373,66 @@
 
 			theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
 			
-			$.ajax({
-				type: "POST",
-				url: "http://127.0.0.1:"+port+"/warpText",
-				data: {deform: $("#warpEffect").val(), amount: $("#warpAmount").val(), imgdata: theImage},
-				success: function(data) {
-					if (data == "NOT INSTALLED") {
-						alert("An error occurred - please make sure ImageMagick is installed")
-						hideOverlay()
-					} else {
-						var obj = jerseyLogoCanvas.getObjects('image').forEach(function(o) {
-							if (o.id == "warpedText") {
-								jerseyLogoCanvas.remove(o);
-							}
-						})
-						var imgObj = new Image();
-						imgObj.src = data;
-						imgObj.onload = function () {
-							var image = new fabric.Image(imgObj);
-							image.set({
-								originX: 'center',
-								originY: 'center',
-								left: wordmark.get("left"),
-								top: wordmark.get("top"),
-								perPixelTargetFind: true,
-								centeredScaling: true,
-								centeredRotation: true,
-								borderColor: 'red',
-								cornerColor: 'yellow',
-								cornerSize: 12,
-								name: 'warpedText',
-								id: 'warpedText',
-								description: 'Wordmark',
-								transparentCorners: false
-							});
-							
-							image.filters.push(new fabric.Image.filters.Resize({
-								resizeType: 'lanczos', // typo fixed
-								lanczosLobes: 2 // typo fixed
-							}));
-							
-							image.on('object:modified',function() {
-								wmLeft = image.getBoundingRect()['left'];
-								wmTop = image.getBoundingRect()['top'];
-							});
-
-							jerseyLogoCanvas.getObjects().forEach(function(o) {
-								if (o.id == "wordmark") {
-									o.set("visible", false)
-								}
-							});
-
-							jerseyLogoCanvas.add(image);
-							jerseyLogoCanvas.renderAll();
-							hideOverlay()
-						}
-					}		
-				}
-			})
+			ipcRenderer.send('warp-text', {deform: $("#warpEffect").val(), amount: $("#warpAmount").val(), imgdata: theImage})
+	
 			return false;		
 		}
 	}
 
-	function warpName() {
-		var warp = true;
-		jerseyNameFill.transformMatrix = [1, 0, 0, 1, 0, 0];
-		jerseyNameStroke1.transformMatrix = [1, 0, 0, 1, 0, 0];
-		jerseyNameStroke2.transformMatrix = [1, 0, 0, 1, 0, 0];
-		jerseyLogoCanvas.renderAll();
-		const g = jerseyLogoCanvas.getObjects('group').find(o => o.id === 'playerName');
-		if ($("#jerseyNameWarpEffect").val() == "none") {
-			$("#jerseyNameWarpAmount").val("0");
-			jerseyLogoCanvas.getObjects("image").forEach(function(o) {
-				if (o.get('name') == "warpedName") {
+	ipcRenderer.on('warp-text-response', (event, response) => {
+		if (response.status == "error") {
+			alert(response.message)
+			hideOverlay()
+		} else {
+			let data = response.data
+			var obj = jerseyLogoCanvas.getObjects('image').forEach(function(o) {
+				if (o.id == "warpedText") {
 					jerseyLogoCanvas.remove(o);
-				}
-			});
-			g.set("skewX", 0)
-			g.set("skewY", 0)
-			jerseyLogoCanvas.renderAll();
-		} else {	
-			showOverlay("Applying Warp...")
-			var obj = jerseyLogoCanvas.getObjects().forEach(function(o) {
-				if (o.id == "warpedName") {
-					jerseyLogoCanvas.remove(o);
-				}
-				if (o.id == "playerName") {
-					o.getObjects().forEach(function(q) {
-						q.set("left",0);
-						q.set("top",0);
-					});
-					o.set("visible",true)
 				}
 			})
-			jerseyLogoCanvas.renderAll();
-			warpCanvas.clear()
-			var grp = jerseyLogoCanvas.getObjects('group').find(o => o.id === 'playerName');
-			g.getObjects().forEach(function(o) {
-				o.clone(function(cloned) {
-    				warpCanvas.add(cloned)
+			var imgObj = new Image();
+			imgObj.src = data;
+			imgObj.onload = function () {
+				var image = new fabric.Image(imgObj);
+				image.set({
+					originX: 'center',
+					originY: 'center',
+					left: wordmark.get("left"),
+					top: wordmark.get("top"),
+					perPixelTargetFind: true,
+					centeredScaling: true,
+					centeredRotation: true,
+					borderColor: 'red',
+					cornerColor: 'yellow',
+					cornerSize: 12,
+					name: 'warpedText',
+					id: 'warpedText',
+					description: 'Wordmark',
+					transparentCorners: false
 				});
-			})
-			warpCanvas.getObjects().forEach(function(o) {
-				o.set({
-					scaleX: wordmark.scaleX,
-					scaleY: wordmark.scaleY,
-					angle: 0
-				})
-				o.set("scaleX", wordmark.scaleX)
-				o.set("scaleY", wordmark.scaleY)
-				//o.scaleY = wordmark.scaleY;
-				if (o.text != $("#jerseyNameTextBox").val()) {
-					o.set("text", $("#jerseyNameTextBox").val())
-				}
-				o.set("left",256)
-				o.set("top",256)
-			})
+				
+				image.filters.push(new fabric.Image.filters.Resize({
+					resizeType: 'lanczos', // typo fixed
+					lanczosLobes: 2 // typo fixed
+				}));
+				
+				image.on('object:modified',function() {
+					wmLeft = image.getBoundingRect()['left'];
+					wmTop = image.getBoundingRect()['top'];
+				});
 
-			warpCanvas.renderAll();
-		
-			var theImage = warpCanvas.toDataURL();
-
-			theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
-			
-			$.ajax({
-				type: "POST",
-				url: "http://127.0.0.1:"+port+"/warpText",
-				data: {deform: $("#jerseyNameWarpEffect").val(), amount: $("#jerseyNameWarpAmount").val(), imgdata: theImage},
-				success: function(data) {
-					if (data == "NOT INSTALLED") {
-						alert("An error occurred - please make sure ImageMagick is installed")
-						hideOverlay()
-					} else {
-						var imgObj = new Image();
-						imgObj.src = data;
-						imgObj.onload = function () {
-							var image = new fabric.Image(imgObj);
-							image.set({
-								originX: 'center',
-								originY: 'center',
-								left: playerName.get("left"),
-								top: playerName.get("top"),
-								angle: 180,
-								perPixelTargetFind: true,
-								centeredScaling: true,
-								centeredRotation: true,
-								borderColor: 'red',
-								cornerColor: 'yellow',
-								cornerSize: 12,
-								name: 'warpedName',
-								id: 'warpedName',
-								transparentCorners: false
-							});
-							
-							image.filters.push(new fabric.Image.filters.Resize({
-								resizeType: 'lanczos', // typo fixed
-								lanczosLobes: 2 // typo fixed
-							}));
-							
-							image.on('object:modified',function() {
-								wmLeft = image.getBoundingRect()['left'];
-								wmTop = image.getBoundingRect()['top'];
-							});
-
-							jerseyLogoCanvas.getObjects().forEach(function(o) {
-								if (o.id == "playerName") {
-									o.set("visible", false)
-								}
-							});
-
-							jerseyLogoCanvas.add(image);
-							jerseyLogoCanvas.renderAll();
-							hideOverlay()
-						}
+				jerseyLogoCanvas.getObjects().forEach(function(o) {
+					if (o.id == "wordmark") {
+						o.set("visible", false)
 					}
-					
-				}
-			})
-			return false;		
+				});
+
+				jerseyLogoCanvas.add(image);
+				jerseyLogoCanvas.renderAll();
+				hideOverlay()
+			}
 		}
-	}
+	})
 
 	// DOCUMENT-WIDE CANVAS FUNCTIONS
 
@@ -11796,98 +11526,99 @@
 			var imLeft = 256
 			var imTop = 256
 			var moveBelow = 'eyeletGroup'
-			//var canStr = "jersey"
+
 		}
 		if ($(this).data("canvas") == "jersey") {
 			var canvas = jerseyLogoCanvas
 			var imLeft = 256
 			var imTop = 512
 			var moveBelow = 'buttons'
-			//var canStr = "cap"
 		}
 		if ($(this).data("canvas") == "pants") {
 			var canvas = pantsLogoCanvas
 			var imLeft = 256
 			var imTop = 256
 			var moveBelow = 'belt'
-			//var canStr = "pants"
 		}
-		/* switch (activeCanvas.id) {
+		ipcRenderer.send('upload-image', [null, canvas.id, imLeft, imTop, moveBelow])
+	})
+
+	ipcRenderer.on('upload-image-response', (event, response) => {
+		let canvas = null;
+		switch (response[1]) {
 			case "jerseyLogoCanvas":
-				var canStr = "jersey"
+				canvas = jerseyLogoCanvas
 				break;
 			case "capLogoCanvas":
-				var canStr = "cap"
+				canvas = capLogoCanvas
 				break;
 			case "pantsLogoCanvas":
-				var canStr = "pants"
+				canvas = pantsLogoCanvas
 				break;
-		} */
-		$.ajax({
-			type: "GET",
-			url: "http://127.0.0.1:"+port+"/uploadImage",
-			success: function(data) {
-				var imgObj = new Image();
-				imgObj.src = data.image;
-				$("#fileName").html(data.filename);
-				imgObj.onload = function () {
-					var image = new fabric.Image(imgObj);
-					image.set({
-						originX: 'center',
-						originY: 'center',
-						perPixelTargetFind: true,
-						centeredScaling: true,
-						centeredRotation: true,
-						name: data.filename,
-						id: data.filename
-					});
-					image.filters.push(new fabric.Image.filters.Resize({
-						resizeType: 'lanczos', // typo fixed
-						lanczosLobes: 2 // typo fixed
-					}));
-					image.on('object:modified',function() {
-						imLeft = image.get('left')
-						imTop = image.get('top');
-					})
-					image.on('selected',function() {
-						switch (image.canvas.id) {
-							case "jerseyLogoCanvas":
-								var canStr = "jersey"
-								break;
-							case "capLogoCanvas":
-								var canStr = "cap"
-								break;
-							case "pantsLogoCanvas":
-								var canStr = "pants"
-								break;
-						} 
-						$("#"+canStr+"FileName").html(image.get('id'));
-						if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-							$("#"+canStr+"TrimImageDiv").css("display","block");
-							$("#"+canStr+"UploadImageDiv").css("display","none");
-							$("#"+canStr+"SelectedImageDiv").css("display","block");
-						}
-						$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-						$(".copypaste").each(function() {
-							$(this).css("display","inline-block")
-						})
-					})
-					var h = image.height;
-					var w = image.width;
-					canvas.add(image);
-					image.set({"left":imLeft,"top":imTop});
-					image.setCoords();
-					if (moveBelow != 'belt') {
-						canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
-					} else {
-						canvas.sendToBack(image)	
-					}
-					canvas.setActiveObject(image)
-					canvas.requestRenderAll()
-					canvas.renderAll();
+		}
+		let imTop = response[2]
+		let imLeft = response[3]
+		let moveBelow = response[4]
+		let data = response[5]
+		var imgObj = new Image();
+		imgObj.src = data.image;
+		$("#fileName").html(data.filename);
+		imgObj.onload = function () {
+			var image = new fabric.Image(imgObj);
+			image.set({
+				originX: 'center',
+				originY: 'center',
+				perPixelTargetFind: true,
+				centeredScaling: true,
+				centeredRotation: true,
+				name: data.filename,
+				id: data.filename
+			});
+			image.filters.push(new fabric.Image.filters.Resize({
+				resizeType: 'lanczos', // typo fixed
+				lanczosLobes: 2 // typo fixed
+			}));
+			image.on('object:modified',function() {
+				imLeft = image.get('left')
+				imTop = image.get('top');
+			})
+			image.on('selected',function() {
+				switch (image.canvas.id) {
+					case "jerseyLogoCanvas":
+						var canStr = "jersey"
+						break;
+					case "capLogoCanvas":
+						var canStr = "cap"
+						break;
+					case "pantsLogoCanvas":
+						var canStr = "pants"
+						break;
+				} 
+				$("#"+canStr+"FileName").html(image.get('id'));
+				if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+					$("#"+canStr+"TrimImageDiv").css("display","block");
+					$("#"+canStr+"UploadImageDiv").css("display","none");
+					$("#"+canStr+"SelectedImageDiv").css("display","block");
 				}
+				$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+				$(".copypaste").each(function() {
+					$(this).css("display","inline-block")
+				})
+			})
+			var h = image.height;
+			var w = image.width;
+			canvas.add(image);
+			image.set({"left":imLeft,"top":imTop});
+			image.setCoords();
+			if (moveBelow != 'belt') {
+				canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
+			} else {
+				canvas.sendToBack(image)	
 			}
-		});
+			canvas.setActiveObject(image)
+			canvas.requestRenderAll()
+			canvas.renderAll();
+		}
 	})
 
 	$(".localFontButton").on("click",function() {
@@ -11912,54 +11643,52 @@
 				var type = "pantsNumber"		
 				break;
 			} 
-		$.ajax({
-			type: "GET",
-			url: "http://127.0.0.1:"+port+"/customFont",
-			success: function(data) {
-				if (data.status != "cancelled") {
-					if (data.result == "error") {
-						alert("An error occurred:\r\n\r\n"+data.message)
-						return false;
-					} else if (data.status == "error") {
-						alert("The font '"+data.fontName+"' could not be loaded.")
-						return false;
-					} else {
-						if (fontList.includes(data.fontName)) {
-							switch (type) {
-							case "jersey":
-								const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
-								jerseyWordmarkChange(data,true)
-								var foo = findIndexByText(jerseyDropdown, data.fontName)
-								jerseyDropdown.selectedIndex = foo
-								jerseyDropdown.refresh()
-								break;
-							case "cap":
-								const capDropdown = document.getElementById("capTextSelect").msDropdown;
-								capWordmarkChange(data,true)
-								var foo = findIndexByText(capDropdown, data.fontName)
-								capDropdown.selectedIndex = foo
-								capDropdown.refresh()
-								break;
-							}
-						} else {
-							fontList.push(data.fontName)
-							switch (type) {
-							case "jersey":
-								jerseyWordmarkChange(data,true)
-								break;
-							case "cap":
-								capWordmarkChange(data,true)
-								break;
-							}
-						}
-						
-						
+		ipcRenderer.send('local-font', type)
+	})
+
+	ipcRenderer.on('local-font-response', (event, data) => {
+		if (data.status != "cancelled") {
+			if (data.result == "error") {
+				alert("An error occurred:\r\n\r\n"+data.message)
+				return false;
+			} else if (data.status == "error") {
+				alert("The font '"+data.fontName+"' could not be loaded.")
+				return false;
+			} else {
+				if (fontList.includes(data.fontName)) {
+					switch (data.type) {
+					case "jersey":
+						const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
+						jerseyWordmarkChange(data,true)
+						var foo = findIndexByText(jerseyDropdown, data.fontName)
+						jerseyDropdown.selectedIndex = foo
+						jerseyDropdown.refresh()
+						break;
+					case "cap":
+						const capDropdown = document.getElementById("capTextSelect").msDropdown;
+						capWordmarkChange(data,true)
+						var foo = findIndexByText(capDropdown, data.fontName)
+						capDropdown.selectedIndex = foo
+						capDropdown.refresh()
+						break;
 					}
 				} else {
-					hideOverlay();
+					fontList.push(data.fontName)
+					switch (type) {
+					case "jersey":
+						jerseyWordmarkChange(data,true)
+						break;
+					case "cap":
+						capWordmarkChange(data,true)
+						break;
+					}
 				}
+				
+				
 			}
-		})
+		} else {
+			hideOverlay();
+				}
 	})
 	
 	$(".colorSquare").on("click",function(e) {
@@ -12006,14 +11735,17 @@
 	$(".border").on("click",function(e) {
 		if ($(this).data("canvas") == "capLogoCanvas") {
 			var canvas = capLogoCanvas
+			var canvasName = "capLogoCanvas"
 			var fuzz = parseInt($("#capColorFuzz").val());
 		}
 		if ($(this).data("canvas") == "jerseyLogoCanvas") {
 			var canvas = jerseyLogoCanvas
+			var canvasName = "jerseyLogoCanvas"
 			var fuzz = parseInt($("#jerseyColorFuzz").val());
 		}
 		if ($(this).data("canvas") == "pantsLogoCanvas") {
 			var canvas = pantsLogoCanvas
+			var canvasName = "pantsLogoCanvas"
 			var fuzz = parseInt($("#pantsColorFuzz").val());
 		}
 		var action = $(this).data("action");
@@ -12028,78 +11760,96 @@
 				$("#colorSquare").removeClass("colorSquareActive").removeClass("colorSquareSelected");
 				var theImage = object._originalElement.currentSrc;	
 				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
-				$.ajax({
-					type: "POST",
-					url: "http://127.0.0.1:"+port+"/removeBorder",
-					data: {imgdata: theImage, x: "1", y: "1", action: "removeBorder", color: "null", newcolor: "null", fuzz: fuzz, filename: pictureName},
-					success: function(data) {
-						if (data == "NOT INSTALLED") {
-							alert("An error occurred - please make sure ImageMagick is installed")
-							hideOverlay()
-						} else {
-							var imgObj = new Image();
-							imgObj.src = data;
-							imgObj.onload = function () {
-								var image = new fabric.Image(imgObj);
-								image.set({
-									originX: 'center',
-									originY: 'center',
-									left: imLeft,
-									top: imTop,
-									perPixelTargetFind: true,
-									centeredScaling: true,
-									centeredRotation: true,
-									name: pictureName,
-									id: pictureName
-								});
-								
-								image.filters.push(new fabric.Image.filters.Resize({
-									resizeType: 'lanczos', // typo fixed
-									lanczosLobes: 2 // typo fixed
-								}));
-								
-								image.on('object:modified',function() {
-									imLeft = image.get('left')
-									imTop = image.get('top');
-								});
-
-								image.on('selected',function() {
-									switch (activeCanvas.id) {
-										case "jerseyLogoCanvas":
-											var canStr = "jersey"
-											break;
-										case "capLogoCanvas":
-											var canStr = "cap"
-											break;
-										case "pantsLogoCanvas":
-											var canStr = "pants"
-											break;
-									} 
-									$("#"+canStr+"FileName").html(image.get('id'));
-									if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-										$("#"+canStr+"TrimImageDiv").css("display","block");
-										$("#"+canStr+"UploadImageDiv").css("display","none");
-										$("#"+canStr+"SelectedImageDiv").css("display","block");
-									}
-									$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-									$(".copypaste").each(function() {
-										$(this).css("display","inline-block")
-									})
-								})
-								
-								canvas.remove(object);
-								canvas.add(image);
-								image.moveTo(idx);
-								canvas.renderAll();
-								imLeft = image.get('left')
-								imTop = image.get('top');
-							}
-						}
-					}
-				})
+				ipcRenderer.send('remove-border', [theImage, 1, 1, "removeBorder", null, null, fuzz, pictureName, canvasName, imLeft, imTop])
 				return false;
 			}
 		}	
+	})
+
+	ipcRenderer.on('remove-border-response', (event, response) => {
+		if (response.status != "success") {
+			alert(response.message)
+			hideOverlay()
+		} else {
+			let canvas = null
+			switch (response.canvas) {
+				case "jerseyLogoCanvas":
+					canvas = jerseyLogoCanvas
+					break;
+				case "capLogoCanvas":
+					canvas = capLogoCanvas
+					break;
+				case "pantsLogoCanvas":
+					canvas = pantsLogoCanvas
+					break;
+			}
+			console.log(canvas)
+			let data = response.image
+			let imLeft = response.imgLeft
+			let imTop = response.imgTop
+			let pictureName = response.pictureName
+		
+			var object = canvas.getActiveObject()
+			var idx = canvas.getObjects().indexOf(object)
+
+			var imgObj = new Image();
+			imgObj.src = data;
+			imgObj.onload = function () {
+				var image = new fabric.Image(imgObj);
+				image.set({
+					originX: 'center',
+					originY: 'center',
+					left: imLeft,
+					top: imTop,
+					perPixelTargetFind: true,
+					centeredScaling: true,
+					centeredRotation: true,
+					name: pictureName,
+					id: pictureName
+				});
+				
+				image.filters.push(new fabric.Image.filters.Resize({
+					resizeType: 'lanczos', // typo fixed
+					lanczosLobes: 2 // typo fixed
+				}));
+				
+				image.on('object:modified',function() {
+					imLeft = image.get('left')
+					imTop = image.get('top');
+				});
+
+				image.on('selected',function() {
+					switch (activeCanvas.id) {
+						case "jerseyLogoCanvas":
+							var canStr = "jersey"
+							break;
+						case "capLogoCanvas":
+							var canStr = "cap"
+							break;
+						case "pantsLogoCanvas":
+							var canStr = "pants"
+							break;
+					} 
+					$("#"+canStr+"FileName").html(image.get('id'));
+					if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+						$("#"+canStr+"TrimImageDiv").css("display","block");
+						$("#"+canStr+"UploadImageDiv").css("display","none");
+						$("#"+canStr+"SelectedImageDiv").css("display","block");
+					}
+					$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+					$(".copypaste").each(function() {
+						$(this).css("display","inline-block")
+					})
+				})
+				
+				canvas.remove(object);
+				canvas.add(image);
+				image.moveTo(idx);
+				canvas.renderAll();
+				imLeft = image.get('left')
+				imTop = image.get('top');
+			}
+		}
 	})
 
 	$(".rangeButton").on("click",function(e) {
@@ -12194,18 +11944,21 @@
 	$(".removeColorRange").on("click",function(e) {
 		if ($(this).data("canvas") == "capLogoCanvas") {
 			var canvas = capLogoCanvas
+			var canvasName = "capLogoCanvas"
 			var fuzz = parseInt($("#capColorFuzz").val());
-			var colorSquare = $("#capColorSquare")
+			var colorSquare = "#capColorSquare"
 		}
 		if ($(this).data("canvas") == "jerseyLogoCanvas") {
 			var canvas = jerseyLogoCanvas
+			var canvasName = "jerseyLogoCanvas"
 			var fuzz = parseInt($("#jerseyColorFuzz").val());
-			var colorSquare = $("#jerseyColorSquare")
+			var colorSquare = "#jerseyColorSquare"
 		}
 		if ($(this).data("canvas") == "pantsLogoCanvas") {
 			var canvas = pantsLogoCanvas
+			var canvasName = "jerseyLogoCanvas"
 			var fuzz = parseInt($("#pantsColorFuzz").val());
-			var colorSquare = $("#jerseyColorSquare")
+			var colorSquare = "#jerseyColorSquare"
 		}
 		var x = $(this).data("x");
 		var y = $(this).data("y");
@@ -12223,107 +11976,130 @@
 				var pScaleY = object.get('scaleY')
 				var pX = x / pScaleX
 				var pY = y / pScaleY
-				colorSquare.removeClass("colorSquareActive").removeClass("colorSquareSelected");
+				$(colorSquare).removeClass("colorSquareActive").removeClass("colorSquareSelected");
 				var theImage = object._originalElement.currentSrc;
-				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();			
-				$.ajax({
-					type: "POST",
-					url: "http://127.0.0.1:"+port+"/removeColorRange",
-					data: {imgdata: theImage, x: pX, y: pY, color: color, action: action, fuzz: fuzz, filename: pictureName},
-					success: function(data) {
-						if (data == "NOT INSTALLED") {
-							alert("An error occurred - please make sure ImageMagick is installed")
-							hideOverlay()
-						} else {
-							var imgObj = new Image();
-							imgObj.src = data;
-							imgObj.onload = function () {
-								var image = new fabric.Image(imgObj);
-								image.set({
-									originX: 'center',
-									originY: 'center',
-									left: pLeft,
-									top: pTop,
-									scaleX: pScaleX,
-									scaleY: pScaleY,
-									perPixelTargetFind: true,
-									centeredScaling: true,
-									centeredRotation: true,
-									name: pictureName,
-									id: pictureName
-								});
-								
-								image.filters.push(new fabric.Image.filters.Resize({
-									resizeType: 'lanczos', // typo fixed
-									lanczosLobes: 2 // typo fixed
-								}));	
-								
-								image.on('object:modified',function() {
-									imLeft = image.get('left');
-									imTop = image.get('top');
-								});
-
-								image.on('selected',function() {
-									switch (activeCanvas.id) {
-										case "jerseyLogoCanvas":
-											var canStr = "jersey"
-											break;
-										case "capLogoCanvas":
-											var canStr = "cap"
-											break;
-										case "pantsLogoCanvas":
-											var canStr = "pants"
-											break;
-									} 
-									$("#"+canStr+"FileName").html(image.get('id'));
-									if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-										$("#"+canStr+"TrimImageDiv").css("display","block");
-										$("#"+canStr+"UploadImageDiv").css("display","none");
-										$("#"+canStr+"SelectedImageDiv").css("display","block");
-									}
-									$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-									$(".copypaste").each(function() {
-										$(this).css("display","inline-block")
-									})
-								})
-								
-								canvas.remove(object);
-								canvas.add(image);
-								image.moveTo(idx);
-								canvas.renderAll();
-								imLeft = image.get('left');
-								imTop = image.get('top');
-								colorSquare.val("Select Color");
-								colorSquare.css("background","#FFFFFF");
-								colorSquare.css("color","#000000");
-								hideOverlay()
-							}
-						}
-					}
-				})
+				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();	
+				ipcRenderer.send('remove-color-range', {imgdata: theImage, x: pX, y: pY, color: color, action: action, fuzz: fuzz, filename: pictureName, canvas: canvasName, pLeft: pLeft, pTop: pTop, pScaleX: pScaleX, pScaleY: pScaleY, pictureName: pictureName, colorSquare: colorSquare})		
 				return false;
 			}
 		}
 	})
 
+	ipcRenderer.on('remove-color-range-response', (event, response) => {
+		if (response.status != "success") {
+			alert(response.message)
+			hideOverlay()
+		} else {
+			let canvas = null
+			switch (response.canvas) {
+				case "jerseyLogoCanvas":
+					canvas = jerseyLogoCanvas
+					break;
+				case "capLogoCanvas":
+					canvas = capLogoCanvas
+					break;
+				case "pantsLogoCanvas":
+					canvas = pantsLogoCanvas
+					break;
+			}
+			let data = response.data
+			let x = response.x
+			let y = response.y
+			let pTop = response.pTop
+			let pLeft = response.pLeft
+			let pScaleX = response.pScaleX
+			let pScaleY = response.pScaleY
+			let pictureName = response.pictureName
+			let colorSquare = response.colorSquare
+			let object = canvas.getActiveObject()
+			let idx = canvas.getObjects().indexOf(object)
+			var imgObj = new Image();
+			imgObj.src = data;
+			imgObj.onload = function () {
+				var image = new fabric.Image(imgObj);
+				image.set({
+					originX: 'center',
+					originY: 'center',
+					left: pLeft,
+					top: pTop,
+					scaleX: pScaleX,
+					scaleY: pScaleY,
+					perPixelTargetFind: true,
+					centeredScaling: true,
+					centeredRotation: true,
+					name: pictureName,
+					id: pictureName
+				});
+				
+				image.filters.push(new fabric.Image.filters.Resize({
+					resizeType: 'lanczos', // typo fixed
+					lanczosLobes: 2 // typo fixed
+				}));	
+				
+				image.on('object:modified',function() {
+					imLeft = image.get('left');
+					imTop = image.get('top');
+				});
+
+				image.on('selected',function() {
+					switch (activeCanvas.id) {
+						case "jerseyLogoCanvas":
+							var canStr = "jersey"
+							break;
+						case "capLogoCanvas":
+							var canStr = "cap"
+							break;
+						case "pantsLogoCanvas":
+							var canStr = "pants"
+							break;
+					} 
+					$("#"+canStr+"FileName").html(image.get('id'));
+					if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+						$("#"+canStr+"TrimImageDiv").css("display","block");
+						$("#"+canStr+"UploadImageDiv").css("display","none");
+						$("#"+canStr+"SelectedImageDiv").css("display","block");
+					}
+					$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+					$(".copypaste").each(function() {
+						$(this).css("display","inline-block")
+					})
+				})
+				
+				canvas.remove(object);
+				canvas.add(image);
+				image.moveTo(idx);
+				canvas.renderAll();
+				imLeft = image.get('left');
+				imTop = image.get('top');
+				$(colorSquare).val("Select Color");
+				$(colorSquare).css("background","#FFFFFF");
+				$(colorSquare).css("color","#000000");
+				hideOverlay()
+			}
+		}
+	})
+	
 	$(".removeAllColor").on("click",function(e) {
 		if ($(this).data("canvas") == "capLogoCanvas") {
 			var canvas = capLogoCanvas
+			var canvasName = "capLogoCanvas"
 			var fuzz = parseInt($("#capColorFuzz").val());
 			var color = $("#capColorSquare").val();
-			var colorSquare = $("#capColorSquare")
+			var colorSquare = "#capColorSquare"
 		}
 		if ($(this).data("canvas") == "jerseyLogoCanvas") {
 			var canvas = jerseyLogoCanvas
+			var canvasName = "jerseyLogoCanvas"
 			var fuzz = parseInt($("#jerseyColorFuzz").val());
 			var color = $("#jerseyColorSquare").val();
-			var colorSquare = $("#jerseyColorSquare")
+			var colorSquare = "#jerseyColorSquare"
 		}
 		if ($(this).data("canvas") == "pantsLogoCanvas") {
 			var canvas = pantsLogoCanvas
+			var canvasName = "pantsLogoCanvas"
 			var fuzz = parseInt($("#pantsColorFuzz").val());
 			var color = $("#pantsColorSquare").val();
-			var colorSquare = $("#jerseyColorSquare")
+			var colorSquare = "#jerseyColorSquare"
 		}
 		var x = $(this).data("x");
 		var y = $(this).data("y");
@@ -12341,86 +12117,105 @@
 				var pScaleY = object.get('scaleY')
 				var pX = x / pScaleX
 				var pY = y / pScaleY
-				colorSquare.removeClass("colorSquareActive").removeClass("colorSquareSelected");
+				$(colorSquare).removeClass("colorSquareActive").removeClass("colorSquareSelected");
 				var theImage = object._originalElement.currentSrc;
-				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();			
-				$.ajax({
-					type: "POST",
-					//url: "./scripts/changecolor.php",
-					url: "http://127.0.0.1:"+port+"/removeAllColor",
-					data: {imgdata: theImage, x: pX, y: pY, color: color, action: action, fuzz: fuzz, filename: pictureName},
-					success: function(data) {
-						if (data == "NOT INSTALLED") {
-							alert("An error occurred - please make sure ImageMagick is installed")
-							hideOverlay()
-						} else {
-							var imgObj = new Image();
-							imgObj.src = data;
-							imgObj.onload = function () {
-								var image = new fabric.Image(imgObj);
-								image.set({
-									originX: 'center',
-									originY: 'center',
-									left: pLeft,
-									top: pTop,
-									scaleX: pScaleX,
-									scaleY: pScaleY,
-									perPixelTargetFind: true,
-									centeredScaling: true,
-									centeredRotation: true,
-									name: pictureName,
-									id: pictureName
-								});
-								
-								image.filters.push(new fabric.Image.filters.Resize({
-									resizeType: 'lanczos',
-									lanczosLobes: 2
-								}));
-								
-								image.on('object:modified',function() {
-									imLeft = image.get('left');
-									imTop = image.get('top');
-								});
-
-								image.on('selected',function() {
-									switch (activeCanvas.id) {
-										case "jerseyLogoCanvas":
-											var canStr = "jersey"
-											break;
-										case "capLogoCanvas":
-											var canStr = "cap"
-											break;
-										case "pantsLogoCanvas":
-											var canStr = "pants"
-											break;
-									} 
-									$("#"+canStr+"FileName").html(image.get('id'));
-									if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-										$("#"+canStr+"TrimImageDiv").css("display","block");
-										$("#"+canStr+"UploadImageDiv").css("display","none");
-										$("#"+canStr+"SelectedImageDiv").css("display","block");
-									}
-									$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-									$(".copypaste").each(function() {
-										$(this).css("display","inline-block")
-									})
-								})
-								
-								canvas.remove(object);
-								canvas.add(image);
-								image.moveTo(idx);
-								canvas.renderAll();
-								imLeft = image.get('left');
-								imTop = image.get('top');
-								colorSquare.val("Select Color");
-								colorSquare.css("background","#FFFFFF");
-								colorSquare.css("color","#000000");
-								hideOverlay()
-							}
-						}
-					}
-				})
+				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
+				ipcRenderer.send('remove-all-color', {imgdata: theImage, x: pX, y: pY, color: color, action: action, fuzz: fuzz, filename: pictureName, canvas: canvasName, pLeft: pLeft, pTop: pTop, pScaleX: pScaleX, pScaleY: pScaleY, pictureName: pictureName, colorSquare: colorSquare, color: color})			
 				return false;
+			}
+		}
+	})
+
+	ipcRenderer.on('remove-all-color-response', (event, response) => {
+		if (response.status != "success") {
+			alert(response.message)
+			hideOverlay()
+		} else {
+			let canvas = null
+			switch (response.canvas) {
+				case "jerseyLogoCanvas":
+					canvas = jerseyLogoCanvas
+					break;
+				case "capLogoCanvas":
+					canvas = capLogoCanvas
+					break;
+				case "pantsLogoCanvas":
+					canvas = pantsLogoCanvas
+					break;
+			}
+			let data = response.data
+			let x = response.x
+			let y = response.y
+			let pTop = response.pTop
+			let pLeft = response.pLeft
+			let pScaleX = response.pScaleX
+			let pScaleY = response.pScaleY
+			let pictureName = response.pictureName
+			let colorSquare = response.colorSquare
+			let object = canvas.getActiveObject()
+			let idx = canvas.getObjects().indexOf(object)
+			var imgObj = new Image();
+			imgObj.src = data;
+			imgObj.onload = function () {
+				var image = new fabric.Image(imgObj);
+				image.set({
+					originX: 'center',
+					originY: 'center',
+					left: pLeft,
+					top: pTop,
+					scaleX: pScaleX,
+					scaleY: pScaleY,
+					perPixelTargetFind: true,
+					centeredScaling: true,
+					centeredRotation: true,
+					name: pictureName,
+					id: pictureName
+				});
+				
+				image.filters.push(new fabric.Image.filters.Resize({
+					resizeType: 'lanczos', // typo fixed
+					lanczosLobes: 2 // typo fixed
+				}));	
+				
+				image.on('object:modified',function() {
+					imLeft = image.get('left');
+					imTop = image.get('top');
+				});
+
+				image.on('selected',function() {
+					switch (activeCanvas.id) {
+						case "jerseyLogoCanvas":
+							var canStr = "jersey"
+							break;
+						case "capLogoCanvas":
+							var canStr = "cap"
+							break;
+						case "pantsLogoCanvas":
+							var canStr = "pants"
+							break;
+					} 
+					$("#"+canStr+"FileName").html(image.get('id'));
+					if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+						$("#"+canStr+"TrimImageDiv").css("display","block");
+						$("#"+canStr+"UploadImageDiv").css("display","none");
+						$("#"+canStr+"SelectedImageDiv").css("display","block");
+					}
+					$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+					$(".copypaste").each(function() {
+						$(this).css("display","inline-block")
+					})
+				})
+				
+				canvas.remove(object);
+				canvas.add(image);
+				image.moveTo(idx);
+				canvas.renderAll();
+				imLeft = image.get('left');
+				imTop = image.get('top');
+				$(colorSquare).val("Select Color");
+				$(colorSquare).css("background","#FFFFFF");
+				$(colorSquare).css("color","#000000");
+				hideOverlay()
 			}
 		}
 	})
@@ -12458,27 +12253,30 @@
 	$(".replaceColorSubmit").on("click",function(e) {
 		if ($(this).data("canvas") == "capLogoCanvas") {
 			var canvas = capLogoCanvas
+			var canvasName = "capLogoCanvas"
 			var fuzz = parseInt($("#capColorFuzz").val());
 			var color = $("#capColorSquare").val();
 			var newcolor = $("#capReplacementColor").spectrum("get").toHexString();
-			var colorSquare = $("#capColorSquare")
-			var newColorSquare = $("#capReplacemenColor")
+			var colorSquare = "#capColorSquare"
+			var newColorSquare = "#capReplacemenColor"
 		}
 		if ($(this).data("canvas") == "jerseyLogoCanvas") {
 			var canvas = jerseyLogoCanvas
+			var canvasName = "jerseyLogoCanvas"
 			var fuzz = parseInt($("#jerseyColorFuzz").val());
 			var color = $("#jerseyColorSquare").val();
 			var newcolor = $("#jerseyReplacementColor").spectrum("get").toHexString();
-			var colorSquare = $("#jerseyuColorSquare")
-			var newColorSquare = $("#jerseyReplacemenColor")
+			var colorSquare = "#jerseyuColorSquare"
+			var newColorSquare = "#jerseyReplacemenColor"
 		}
 		if ($(this).data("canvas") == "pantsLogoCanvas") {
 			var canvas = pantsLogoCanvas
+			var canvasName = "pantsLogoCanvas"
 			var fuzz = parseInt($("#pantsColorFuzz").val());
 			var color = $("#pantsColorSquare").val();
 			var newcolor = $("#pantsReplacementColor").spectrum("get").toHexString();
-			var colorSquare = $("#pantsColorSquare")
-			var newColorSquare = $("#pantsReplacemenColor")
+			var colorSquare = "#pantsColorSquare"
+			var newColorSquare = "#pantsReplacemenColor"
 		}
 		var action = $(this).data("action");
 		var x = $(this).data("x");
@@ -12489,7 +12287,7 @@
 			if (object.get('type') == "image") {
 				showOverlay("Processing Image...")
 				var pictureName = object.get('name');
-				colorSquare.removeClass("colorSquareActive").removeClass("colorSquareSelected");
+				$(colorSquare).removeClass("colorSquareActive").removeClass("colorSquareSelected");
 				
 				var theImage = object._originalElement.currentSrc;
 
@@ -12502,90 +12300,110 @@
 
 				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
 				
-				$.ajax({
-					type: "POST",
-					url: "http://127.0.0.1:"+port+"/replaceColor",
-					data: {imgdata: theImage, x: pX, y: pY, action: action, color: color, newcolor: newcolor, fuzz: fuzz, filename: pictureName},
-					success: function(data) {
-					//$("#testImage").attr("src","data:image/png;base64,"+data);
-						if (data == "NOT INSTALLED") {
-							alert("An error occurred - please make sure ImageMagick is installed")
-							hideOverlay()
-						} else {
-							var imgObj = new Image();
-							imgObj.src = data;
-							imgObj.onload = function () {
-								var image = new fabric.Image(imgObj);
-								image.set({
-									originX: 'center',
-									originY: 'center',
-									left: pLeft,
-									top: pTop,
-									scaleX: pScaleX,
-									scaleY: pScaleY,
-									perPixelTargetFind: true,
-									centeredScaling: true,
-									centeredRotation: true,
-									name: pictureName,
-									id: pictureName
-								});
-								
-								image.filters.push(new fabric.Image.filters.Resize({
-									resizeType: 'lanczos',
-									lanczosLobes: 2
-								}));
-								
-								image.on('object:modified',function() {
-									imLeft = image.get('left')
-									imTop = image.get('top');
-									//$("#infoWTF").html("imLeft: "+imLeft+"<br>imTop: "+imTop);
-								});
-
-								image.on('selected',function() {
-									switch (activeCanvas.id) {
-										case "jerseyLogoCanvas":
-											var canStr = "jersey"
-											break;
-										case "capLogoCanvas":
-											var canStr = "cap"
-											break;
-										case "pantsLogoCanvas":
-											var canStr = "pants"
-											break;
-									} 
-									$("#"+canStr+"FileName").html(image.get('id'));
-									if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-										$("#"+canStr+"TrimImageDiv").css("display","block");
-										$("#"+canStr+"UploadImageDiv").css("display","none");
-										$("#"+canStr+"SelectedImageDiv").css("display","block");
-									}
-									$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-									$(".copypaste").each(function() {
-										$(this).css("display","inline-block")
-									})
-								})
-								
-								canvas.remove(object);
-								canvas.add(image);
-								image.moveTo(idx);
-								canvas.renderAll();
-								imLeft = image.get('left')
-								imTop = image.get('top');
-								colorSquare.val("Select Color");
-								colorSquare.css("background","#FFFFFF");
-								colorSquare.css("color","#000000");
-								newColorSquare.val("Select Color");
-								newColorSquare.css("background","#FF0000");
-								newColorSquare.css("color","#000000");
-								hideOverlay()
-								//$("#infoWTF").html("imLeft: "+imLeft+"<br>imTop: "+imTop);
-							}
-						}
-					}
-				})
+				ipcRenderer.send('replace-color', [theImage, pLeft, pTop, pScaleX, pScaleY, action, color, newcolor, fuzz, pictureName, canvasName, x, y, colorSquare, newColorSquare ])
+			
 				return false;
 			}
 		}	
+	})
+
+	ipcRenderer.on('replace-color-response', (event, response) => {
+		console.log(response)
+		if (response.result != "success") {
+			alert(response.message)
+			return false;
+		}
+		let canvas = null
+		switch (response.canvas) {
+			case "jerseyLogoCanvas":
+				canvas = jerseyLogoCanvas;
+				break;
+			case "capLogoCanvas":
+				canvas = capLogoCanvas;
+				break;
+			case "pantsLogoCanvas":
+				canvas = pantsLogoCanvas;
+				break;
+		}
+		let data = response.data
+		let pictureName = response.pictureName
+		let pTop = parseInt(response.pTop)
+		let pLeft = parseInt(response.pLeft)
+		let pScaleX = response.pScaleX
+		let pScaleY = response.pScaleY
+		let colorSquare = response.colorSquare
+		let newColorSquare = response.newColorSquare
+		let object = canvas.getActiveObject()
+		console.log(object)
+		let idx = canvas.getObjects().indexOf(object)
+		var imgObj = new Image();
+		imgObj.src = data;
+		imgObj.onload = function () {
+			var image = new fabric.Image(imgObj);
+			image.set({
+				originX: 'center',
+				originY: 'center',
+				left: pLeft,
+				top: pTop,
+				//scaleX: pScaleX,
+				//scaleY: pScaleY,
+				perPixelTargetFind: true,
+				centeredScaling: true,
+				centeredRotation: true,
+				name: pictureName,
+				id: pictureName
+			});
+			
+			image.filters.push(new fabric.Image.filters.Resize({
+				resizeType: 'lanczos',
+				lanczosLobes: 2
+			}));
+			
+			image.on('object:modified',function() {
+				imLeft = image.get('left')
+				imTop = image.get('top');
+				//$("#infoWTF").html("imLeft: "+imLeft+"<br>imTop: "+imTop);
+			});
+
+			image.on('selected',function() {
+				switch (activeCanvas.id) {
+					case "jerseyLogoCanvas":
+						var canStr = "jersey"
+						break;
+					case "capLogoCanvas":
+						var canStr = "cap"
+						break;
+					case "pantsLogoCanvas":
+						var canStr = "pants"
+						break;
+				} 
+				$("#"+canStr+"FileName").html(image.get('id'));
+				if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+					$("#"+canStr+"TrimImageDiv").css("display","block");
+					$("#"+canStr+"UploadImageDiv").css("display","none");
+					$("#"+canStr+"SelectedImageDiv").css("display","block");
+				}
+				$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+				$(".copypaste").each(function() {
+					$(this).css("display","inline-block")
+				})
+			})
+			
+			console.log(image)
+			canvas.remove(object);
+			canvas.add(image);
+			image.moveTo(idx);
+			canvas.renderAll();
+			imLeft = image.get('left')
+			imTop = image.get('top');
+			$(colorSquare).val("Select Color");
+			$(colorSquare).css("background","#FFFFFF");
+			$(colorSquare).css("color","#000000");
+			$(newColorSquare).val("Select Color");
+			$(newColorSquare).css("background","#FF0000");
+			$(newColorSquare).css("color","#000000");
+			hideOverlay()
+		}
 	})
 
 // LOADING AND SAVING FUNCTIONS
@@ -12638,40 +12456,27 @@
 			textLine += yearRange.split('_').join(' ')
 		}
 
-		$.ajax({
-		 	type: "POST",
-			url: "http://127.0.0.1:"+port+"/saveCap",
-			dataType: "json",
-			data: {
-				text: textLine,
-				capLogoCanvas: capLogoCanvas.toDataURL(),
-				capBelow: capBelow.toDataURL(),
-				name: fileName.split(' ').join('_').toLowerCase(),
-				capWatermarkColor: idealTextColor(capBelow.backgroundColor),
-				capTexture: ($("#capTextureSelect").val() == "custom") ? customCapTexture : $("#capTextureSelect").val(),
-			},
-			success: function(data) {
-				if (data.result == "error") {
-					if (data.errno == -4082) {
-						alert("An error occurred saving the file, it appears to already be open.\n\nClose the file and try again!")
-					} else {
-						alert("An error occurred saving the file.")
-					}
-				}
-
-				capBelow.setDimensions({ width: capBelow.getWidth() * 0.75, height: capBelow.getHeight() * 0.75 });
-				capBelow.setZoom(scaleRatio)
-				capLogoCanvas.setDimensions({ width: capLogoCanvas.getWidth() * 0.75, height: capLogoCanvas.getHeight() * 0.75 });
-				capLogoCanvas.setZoom(scaleRatio)
-
-				if ($("#toggleCapGuides").is(":checked")) {
-					capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
-				}
-
-				hideOverlay()
-			}
+		ipcRenderer.send('save-cap', {
+			text: textLine,
+			capLogoCanvas: capLogoCanvas.toDataURL(),
+			capBelow: capBelow.toDataURL(),
+			name: fileName.split(' ').join('_').toLowerCase(),
+			capWatermarkColor: idealTextColor(capBelow.backgroundColor),
+			capTexture: ($("#capTextureSelect").val() == "custom") ? customCapTexture : $("#capTextureSelect").val(),
 		})
+	})
 
+	ipcRenderer.on('save-cap-response', (event, response) => {
+		capBelow.setDimensions({ width: capBelow.getWidth() * 0.75, height: capBelow.getHeight() * 0.75 });
+		capBelow.setZoom(scaleRatio)
+		capLogoCanvas.setDimensions({ width: capLogoCanvas.getWidth() * 0.75, height: capLogoCanvas.getHeight() * 0.75 });
+		capLogoCanvas.setZoom(scaleRatio)
+
+		if ($("#toggleCapGuides").is(":checked")) {
+			capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
+		}
+
+		hideOverlay()
 	})
 
 	$("#savePants").on("click",function(e){
@@ -12723,41 +12528,29 @@
 			textLine += yearRange.split('_').join(' ')
 		}
 
-		$.ajax({
-		 	type: "POST",
-			url: "http://127.0.0.1:"+port+"/savePants",
-			dataType: "json",
-			data: {
+		ipcRenderer.send('save-pants', {
 				text: textLine,
 				pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
 				pantsBelow: pantsBelow.toDataURL(),
 				name: fileName.split(' ').join('_').toLowerCase(),
 				pantsWatermarkColor: idealTextColor(pantsBelow.backgroundColor),
 				pantsTexture: ($("#pantsTextureSelect").val() == "custom") ? customPantsTexture : $("#pantsTextureSelect").val(),
-			},
-			success: function(data) {
-				if (data.result == "error") {
-					if (data.errno == -4082) {
-						alert("An error occurred saving the file, it appears to already be open.\n\nClose the file and try again!")
-					} else {
-						alert("An error occurred saving the file.")
-					}
-				}
-
-				pantsBelow.setDimensions({ width: pantsBelow.getWidth() * 0.75, height: pantsBelow.getHeight() * 0.75 });
-				pantsBelow.setZoom(scaleRatio)
-				pantsLogoCanvas.setDimensions({ width: pantsLogoCanvas.getWidth() * 0.75, height: pantsLogoCanvas.getHeight() * 0.75 });
-				pantsLogoCanvas.setZoom(scaleRatio)
-
-				pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));
-
-				if	($("#togglePantsGrid").is(':checked')) {
-					pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
-				}
-
-				hideOverlay()
-			}
 		})
+	})
+
+	ipcRenderer.on('save-pants-response', (event, response) => {
+		pantsBelow.setDimensions({ width: pantsBelow.getWidth() * 0.75, height: pantsBelow.getHeight() * 0.75 });
+		pantsBelow.setZoom(scaleRatio)
+		pantsLogoCanvas.setDimensions({ width: pantsLogoCanvas.getWidth() * 0.75, height: pantsLogoCanvas.getHeight() * 0.75 });
+		pantsLogoCanvas.setZoom(scaleRatio)
+
+		pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));
+
+		if	($("#togglePantsGrid").is(':checked')) {
+			pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+		}
+
+		hideOverlay()
 	})
 
 	$("#saveJersey").on("click",function(e){
@@ -12893,139 +12686,96 @@
 		nameCanvas.add(text)
 		nameCanvas.add(text2)
 
-		$.ajax({
-		 	type: "POST",
-			url: "http://127.0.0.1:"+port+"/generateHeightMap",
-			dataType: "json",
-			data: {
+		ipcRenderer.send('generate-height-map', {
+			type: 'jersey',
+			nameCanvas: nameCanvas.toDataURL(),
+			normalMap: normalMap,
+			jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
+			jerseyBelow: jerseyBelow.toDataURL(),
+			name: fileName.split(' ').join('_'),
+			jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
+			jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
+			showPlanket: showPlanket,
+			buttonPadSeams: buttonPadSeams,
+			buttonType: $("#buttonsType").val(),
+			seamsVisible: seamsVisible,
+			seamsOption: $("#seamsType").val(),
+			seamsOnDiffuse: ($("#toggleDiffuseSeams").is(":checked")) ? true : false,
+			brightness: $("#preferredHeightMapBrightness").val(),
+			seamOpacity: $("#preferredSeamOpacity").val(),
+			fileName: fileName
+		})
+	})
+
+	ipcRenderer.on('save-jersey-response', (event, response) => {
+		var imgObj = new Image();
+		var normalMap = document.getElementById('normalMapCanvas');
+		imgObj.src = response.image;
+		imgObj.onload = function () {
+			var heightMap = document.getElementById('heightMapSrc');
+			heightMap.src = imgObj.src;
+			var normalMapCTX = normalMap.getContext('2d')
+			normalMapCTX.clearRect(0, 0, 512, 1024);
+			normalMapCTX.drawImage( heightMap, 0, 0 );
+
+			height2normal(normalMap)
+
+			ipcRenderer.send('save-jersey-zip', {
 				nameCanvas: nameCanvas.toDataURL(),
-				normalMap: normalMap,
+				//normalMap: normalMap,
 				jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
 				jerseyBelow: jerseyBelow.toDataURL(),
-				name: fileName.split(' ').join('_'),
+				name: response.args.fileName.split(' ').join('_').toLowerCase(),
 				jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
 				jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
-				showPlanket: showPlanket,
-				buttonPadSeams: buttonPadSeams,
+				showPlanket: response.args.showPlanket,
+				buttonPadSeams: response.args.buttonPadSeams,
 				buttonType: $("#buttonsType").val(),
-				seamsVisible: seamsVisible,
+				seamsVisible: response.args.seamsVisible,
 				seamsOption: $("#seamsType").val(),
 				seamsOnDiffuse: ($("#toggleDiffuseSeams").is(":checked")) ? true : false,
 				brightness: $("#preferredHeightMapBrightness").val(),
-				seamOpacity: $("#preferredSeamOpacity").val()
-			},
-			success: function(data) {
-				/* jerseyBelow.setDimensions({ width: jerseyBelow.getWidth() * 0.75, height: jerseyBelow.getHeight() * 0.75 });
-				jerseyBelow.setZoom(scaleRatio)
-				jerseyLogoCanvas.setDimensions({ width: jerseyLogoCanvas.getWidth() * 0.75, height: jerseyLogoCanvas.getHeight() * 0.75 });
-				jerseyLogoCanvas.setZoom(scaleRatio)
+				heightMap: heightMap.src,
+				normalMap: normalMap.toDataURL()
+			})
+		}
+	})
 
-				jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
+	ipcRenderer.on('save-jersey-zip-response', (event, response) => {
+		let buttonGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons')
+		let seamsGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'seams')
 
-				if	($("#toggleJerseyGrid").is(':checked')) {
-					jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		jerseyBelow.setDimensions({ width: jerseyBelow.getWidth() * 0.75, height: jerseyBelow.getHeight() * 0.75 });
+		jerseyBelow.setZoom(scaleRatio)
+		jerseyLogoCanvas.setDimensions({ width: jerseyLogoCanvas.getWidth() * 0.75, height: jerseyLogoCanvas.getHeight() * 0.75 });
+		jerseyLogoCanvas.setZoom(scaleRatio)
+
+		jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
+
+		if	($("#toggleJerseyGrid").is(':checked')) {
+			jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		}
+
+		if (response.seamsVisible == true) {
+			seamsGroup.visible = true
+		}
+
+		if (response.buttonPadSeams == true) {
+			if ($("#buttonsType").val() != "buttonsHenley") {
+				if ($("#sleeveType").val() == "sixties") {
+					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_sixties.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
+				} else {
+					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
 				}
-
-				if (seamsVisible == true) {
-					seamsGroup.visible = true
+			} else {
+				if ($("#sleeveType").val() == "sixties") {
+					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley_sixties.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
+				} else {
+					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
 				}
-
-				if (buttonPadSeams == true) {
-					if ($("#buttonsType").val() != "buttonsHenley") {
-						jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
-					} else {
-						jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: 0.25});
-					}
-				}
- */
-				var imgObj = new Image();
-				var normalMap = document.getElementById('normalMapCanvas');
-				imgObj.src = data.image;
-				imgObj.onload = function () {
-					var heightMap = document.getElementById('heightMapSrc');
-					heightMap.src = imgObj.src;
-					var normalMapCTX = normalMap.getContext('2d')
-					normalMapCTX.clearRect(0, 0, 512, 1024);
-					normalMapCTX.drawImage( heightMap, 0, 0 );
-
-					height2normal(normalMap)
-
-					$.ajax({
-						type: "POST",
-						url: "http://127.0.0.1:"+port+"/saveJersey",
-						dataType: "json",
-						data: {
-							nameCanvas: nameCanvas.toDataURL(),
-							//normalMap: normalMap,
-							jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
-							jerseyBelow: jerseyBelow.toDataURL(),
-							name: fileName.split(' ').join('_').toLowerCase(),
-							jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
-							jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
-							showPlanket: showPlanket,
-							buttonPadSeams: buttonPadSeams,
-							buttonType: $("#buttonsType").val(),
-							seamsVisible: seamsVisible,
-							seamsOption: $("#seamsType").val(),
-							seamsOnDiffuse: ($("#toggleDiffuseSeams").is(":checked")) ? true : false,
-							brightness: $("#preferredHeightMapBrightness").val(),
-							heightMap: heightMap.src,
-							normalMap: normalMap.toDataURL()
-							
-						},
-						success: function(data) {
-							if (data.result == "error") {
-								if (data.errno == -4082) {
-									alert("An error occurred saving the file, it appears to already be open.\n\nClose the file and try again!")
-								} else {
-									alert("An error occurred saving the file.")
-								}
-							}
-
-							jerseyBelow.setDimensions({ width: jerseyBelow.getWidth() * 0.75, height: jerseyBelow.getHeight() * 0.75 });
-							jerseyBelow.setZoom(scaleRatio)
-							jerseyLogoCanvas.setDimensions({ width: jerseyLogoCanvas.getWidth() * 0.75, height: jerseyLogoCanvas.getHeight() * 0.75 });
-							jerseyLogoCanvas.setZoom(scaleRatio)
-
-							jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
-
-							if	($("#toggleJerseyGrid").is(':checked')) {
-								jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
-							}
-
-							if (seamsVisible == true) {
-								seamsGroup.visible = true
-							}
-
-							if (buttonPadSeams == true) {
-								if ($("#buttonsType").val() != "buttonsHenley") {
-									if ($("#sleeveType").val() == "sixties") {
-										jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_sixties.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
-									} else {
-										jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
-									}
-								} else {
-									if ($("#sleeveType").val() == "sixties") {
-										jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley_sixties.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
-									} else {
-										jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
-									}
-								}
-							}
-							hideOverlay()
-						},
-						error: function(data) {
-							hideOverlay()
-						}
-					})
-				}
-				
 			}
-			/* ,
-			error: function(data) {
-				hideOverlay()
-			} */
-		})
+		}
+		hideOverlay()
 	})
 
 	$("#saveFont").on("click", function(e) {
@@ -13070,31 +12820,21 @@
 		fontCanvas.setDimensions({ width: 1024, height: 1024 });
     	fontCanvas.setZoom(1)
 
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/saveFont",
-			dataType: "json",
-			data: {
-				name: fileName.toLowerCase(),
-				fontCanvas: fontCanvas.toDataURL()
-			},
-			success: function(data) {
-				if (data.result == "error") {
-					console.log("ERROR")
-				}
-				fontCanvas.set({
-					backgroundColor: "#D8D8D8"
-				})
-				
-				fontCanvas.setDimensions({ width: fontCanvas.getWidth() * 0.75, height: fontCanvas.getHeight() * 0.75 });
-				fontCanvas.setZoom(scaleRatio)
-				fontCanvas.setBackgroundImage('./images/symbol_grid.png', fontCanvas.renderAll.bind(fontCanvas));
-				hideOverlay()
-			},
-			error: function(data) {
-				hideOverlay()
-			}
+		ipcRenderer.send('save-font', {
+			name: fileName.toLowerCase(),
+			fontCanvas: fontCanvas.toDataURL()
 		})
+	})
+
+	ipcRenderer.on('save-font-response', (event, response) => {
+		fontCanvas.set({
+			backgroundColor: "#D8D8D8"
+		})
+		
+		fontCanvas.setDimensions({ width: fontCanvas.getWidth() * 0.75, height: fontCanvas.getHeight() * 0.75 });
+		fontCanvas.setZoom(scaleRatio)
+		fontCanvas.setBackgroundImage('./images/symbol_grid.png', fontCanvas.renderAll.bind(fontCanvas));
+		hideOverlay()
 	})
 
 	$("#save").on("click",function(e) {
@@ -13400,423 +13140,406 @@
 		if (yearRange.length > 0) {
 			textLine += yearRange.split('_').join(' ')
 		}
-		
-		$.ajax({
-		 	type: "POST",
-			url: "http://127.0.0.1:"+port+"/generateHeightMap",
-			dataType: "json",
-			data: {
+
+		ipcRenderer.send('generate-height-map', {
+			type: 'uniform',
+			nameCanvas: nameCanvas.toDataURL(),
+			normalMap: normalMap,
+			jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
+			jerseyBelow: jerseyBelow.toDataURL(),
+			name: fileName.split(' ').join('_'),
+			jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
+			jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
+			showPlanket: showPlanket,
+			buttonPadSeams: buttonPadSeams,
+			buttonType: $("#buttonsType").val(),
+			seamsVisible: seamsVisible,
+			seamsOption: $("#seamsType").val(),
+			seamsOnDiffuse: ($("#toggleDiffuseSeams").is(":checked")) ? true : false,
+			brightness: $("#preferredHeightMapBrightness").val(),
+			fileName: fileName,
+			textLine: textLine,
+			exportMeta: exportMeta
+		})
+	})
+
+	ipcRenderer.on('save-uniform-response', (event, response) => {
+		var imgObj = new Image();
+		var normalMap = document.getElementById('normalMapCanvas');
+		imgObj.src = response.image;
+		imgObj.onload = function () {
+			var heightMap = document.getElementById('heightMapSrc');
+			heightMap.src = imgObj.src;
+			var normalMapCTX = normalMap.getContext('2d')
+			normalMapCTX.clearRect(0, 0, 512, 1024);
+			normalMapCTX.drawImage( heightMap, 0, 0 );
+
+			height2normal(normalMap)
+
+			let data = {
+				text: response.args.textLine,
 				nameCanvas: nameCanvas.toDataURL(),
-				normalMap: normalMap,
+				capLogoCanvas: capLogoCanvas.toDataURL(),
+				capBelow: capBelow.toDataURL(),
 				jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
 				jerseyBelow: jerseyBelow.toDataURL(),
-				name: fileName.split(' ').join('_'),
-				jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
-				jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
-				showPlanket: showPlanket,
-				buttonPadSeams: buttonPadSeams,
+				pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
+				pantsBelow: pantsBelow.toDataURL(),
+				fontCanvas: fontCanvas.toDataURL(),
+				name: response.args.fileName.toLowerCase(),
+				showPlanket: response.args.showPlanket,
+				buttonPadSeams: response.args.buttonPadSeams,
+				seamsVisible: response.args.seamsVisible,
 				buttonType: $("#buttonsType").val(),
-				seamsVisible: seamsVisible,
 				seamsOption: $("#seamsType").val(),
 				seamsOnDiffuse: ($("#toggleDiffuseSeams").is(":checked")) ? true : false,
-				brightness: $("#preferredHeightMapBrightness").val()
-			},
-			success: function(data) {
-				var imgObj = new Image();
-				var normalMap = document.getElementById('normalMapCanvas');
-				imgObj.src = data.image;
-				imgObj.onload = function () {
-					var heightMap = document.getElementById('heightMapSrc');
-					heightMap.src = imgObj.src;
-					var normalMapCTX = normalMap.getContext('2d')
-					normalMapCTX.clearRect(0, 0, 512, 1024);
-					normalMapCTX.drawImage( heightMap, 0, 0 );
-
-					height2normal(normalMap)
-					
-					$.ajax({
-						type: "POST",
-						url: "http://127.0.0.1:"+port+"/saveUniform",
-						dataType: "json",
-						data: {
-							text: textLine,
-							nameCanvas: nameCanvas.toDataURL(),
-							capLogoCanvas: capLogoCanvas.toDataURL(),
-							capBelow: capBelow.toDataURL(),
-							jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
-							jerseyBelow: jerseyBelow.toDataURL(),
-							pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
-							pantsBelow: pantsBelow.toDataURL(),
-							fontCanvas: fontCanvas.toDataURL(),
-							name: fileName.toLowerCase(),
-							showPlanket: showPlanket,
-							buttonPadSeams: buttonPadSeams,
-							seamsVisible: seamsVisible,
-							buttonType: $("#buttonsType").val(),
-							seamsOption: $("#seamsType").val(),
-							seamsOnDiffuse: ($("#toggleDiffuseSeams").is(":checked")) ? true : false,
-							jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
-							capWatermarkColor: idealTextColor(capBelow.backgroundColor),
-							pantsWatermarkColor: idealTextColor(pantsBelow.backgroundColor),
-							capTexture: ($("#capTextureSelect").val() == "custom") ? customCapTexture : $("#capTextureSelect").val(),
-							jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
-							pantsTexture: ($("#pantsTextureSelect").val() == "custom") ? customPantsTexture : $("#pantsTextureSelect").val(),
-							json: JSON.stringify(exportMeta,null,2),
-							swatch1: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].text, 
-							swatch2: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].text, 
-							swatch3: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].text, 
-							swatch4: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].text,
-							commonPalette: commonPalette,
-							brightness: $("#preferredHeightMapBrightness").val(),
-							heightMap: heightMap.src,		
-							normalMap: normalMap.toDataURL(),
-							backgroundColor: $("#teamBGColor").spectrum("get").toHexString().slice(-6),
-							textColor: $("#teamTextColor").spectrum("get").toHexString().slice(-6),
-							jerseyColor1: $("#jerseyColor").spectrum("get").toHexString().slice(-6),
-							jerseyColor2:  $("#collarColor").spectrum("get").toHexString().slice(-6),
-							jerseyColor3: $("#jerseyPinstripesColor").spectrum("get").toHexString().slice(-6),
-							capColor1: $("#capColor").spectrum("get").toHexString().slice(-6),
-							capColor2: $("#topsideBrimColor").spectrum("get").toHexString().slice(-6),
-							capColor3: $("#squatcheeColor").spectrum("get").toHexString().slice(-6),
-							pantsColor1: $("#pantsColor").spectrum("get").toHexString().slice(-6),
-							pantsColor2: $("#belt").spectrum("get").toHexString().slice(-6),
-							pantsColor3: $("#pantsPinstripes").spectrum("get").toHexString().slice(-6),
-							type: $("#uniformType").val(),
-							lettersVisible: $("#lettersVisible").is(":checked") ? "y" : "n",
-							numbersVisible: $("#numbersVisible").is(":checked") ? "y" : "n"
-						},
-						success: function(data) {
-							if (data.result == "error") {
-								if (data.errno == -4082) {
-									alert("An error occurred saving the file, it appears to already be open.\n\nClose the .zip and try again!")
-								} else {
-									alert("An error occurred saving the file.")
-								}
-							}
-
-							capBelow.setDimensions({ width: capBelow.getWidth() * 0.75, height: capBelow.getHeight() * 0.75 });
-							capBelow.setZoom(scaleRatio)
-							capLogoCanvas.setDimensions({ width: capLogoCanvas.getWidth() * 0.75, height: capLogoCanvas.getHeight() * 0.75 });
-							capLogoCanvas.setZoom(scaleRatio)
-
-							pantsBelow.setDimensions({ width: pantsBelow.getWidth() * 0.75, height: pantsBelow.getHeight() * 0.75 });
-							pantsBelow.setZoom(scaleRatio)
-							pantsLogoCanvas.setDimensions({ width: pantsLogoCanvas.getWidth() * 0.75, height: pantsLogoCanvas.getHeight() * 0.75 });
-							pantsLogoCanvas.setZoom(scaleRatio)
-
-							jerseyBelow.setDimensions({ width: jerseyBelow.getWidth() * 0.75, height: jerseyBelow.getHeight() * 0.75 });
-							jerseyBelow.setZoom(scaleRatio)
-							jerseyLogoCanvas.setDimensions({ width: jerseyLogoCanvas.getWidth() * 0.75, height: jerseyLogoCanvas.getHeight() * 0.75 });
-							jerseyLogoCanvas.setZoom(scaleRatio)
-
-							fontCanvas.set({backgroundColor:"#D8D8D8"})
-							fontCanvas.setBackgroundImage('./images/symbol_grid.png', fontCanvas.renderAll.bind(fontCanvas), {});
-							fontCanvas.setDimensions({ width: fontCanvas.getWidth() * 0.75, height: fontCanvas.getHeight() * 0.75 });
-							fontCanvas.setZoom(scaleRatio)
-
-							if (seamsVisible == true) {
-								seamsGroup.visible = true
-							}
-
-							pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));
-							jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
-
-							if (buttonPadSeams == true) {
-								if ($("#buttonsType").val() != "buttonsHenley") {
-									if ($("#sleeveType").val() == "sixties") {
-										jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_sixties.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
-									} else {
-										jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
-									}
-								} else {
-									if ($("#sleeveType").val() == "sixties") {
-										jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley_sixties.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
-									} else {
-										jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
-									}
-								}
-								//jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
-							}
-
-							if ($("#toggleCapGuides").is(":checked")) {
-								capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
-							}
-
-							if ($("#toggleJerseyGrid").is(':checked')) {
-								jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
-							}
-
-							if	($("#togglePantsGrid").is(':checked')) {
-								pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
-							}
-
-							hideOverlay()
-						},
-						error: function(data) {
-							hideOverlay()
-						}
-					})
-				}
-			},
-			error: function(data) {
-				hideOverlay()
+				jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
+				capWatermarkColor: idealTextColor(capBelow.backgroundColor),
+				pantsWatermarkColor: idealTextColor(pantsBelow.backgroundColor),
+				capTexture: ($("#capTextureSelect").val() == "custom") ? customCapTexture : $("#capTextureSelect").val(),
+				jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
+				pantsTexture: ($("#pantsTextureSelect").val() == "custom") ? customPantsTexture : $("#pantsTextureSelect").val(),
+				json: JSON.stringify(response.args.exportMeta,null,2),
+				swatch1: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].text, 
+				swatch2: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].text, 
+				swatch3: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].text, 
+				swatch4: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].text,
+				commonPalette: commonPalette,
+				brightness: $("#preferredHeightMapBrightness").val(),
+				heightMap: heightMap.src,		
+				normalMap: normalMap.toDataURL(),
+				backgroundColor: $("#teamBGColor").spectrum("get").toHexString().slice(-6),
+				textColor: $("#teamTextColor").spectrum("get").toHexString().slice(-6),
+				jerseyColor1: $("#jerseyColor").spectrum("get").toHexString().slice(-6),
+				jerseyColor2:  $("#collarColor").spectrum("get").toHexString().slice(-6),
+				jerseyColor3: $("#jerseyPinstripesColor").spectrum("get").toHexString().slice(-6),
+				capColor1: $("#capColor").spectrum("get").toHexString().slice(-6),
+				capColor2: $("#topsideBrimColor").spectrum("get").toHexString().slice(-6),
+				capColor3: $("#squatcheeColor").spectrum("get").toHexString().slice(-6),
+				pantsColor1: $("#pantsColor").spectrum("get").toHexString().slice(-6),
+				pantsColor2: $("#belt").spectrum("get").toHexString().slice(-6),
+				pantsColor3: $("#pantsPinstripes").spectrum("get").toHexString().slice(-6),
+				type: $("#uniformType").val(),
+				lettersVisible: $("#lettersVisible").is(":checked") ? "y" : "n",
+				numbersVisible: $("#numbersVisible").is(":checked") ? "y" : "n"
 			}
-		})
-		
+			
+			ipcRenderer.send('save-uniform-zip', data)
+		}
+	})
+
+	ipcRenderer.on('save-uniform-zip-response', (event, response) => {
+		let buttonGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons')
+		let seamsGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'seams')
+
+		capBelow.setDimensions({ width: capBelow.getWidth() * 0.75, height: capBelow.getHeight() * 0.75 });
+		capBelow.setZoom(scaleRatio)
+		capLogoCanvas.setDimensions({ width: capLogoCanvas.getWidth() * 0.75, height: capLogoCanvas.getHeight() * 0.75 });
+		capLogoCanvas.setZoom(scaleRatio)
+
+		pantsBelow.setDimensions({ width: pantsBelow.getWidth() * 0.75, height: pantsBelow.getHeight() * 0.75 });
+		pantsBelow.setZoom(scaleRatio)
+		pantsLogoCanvas.setDimensions({ width: pantsLogoCanvas.getWidth() * 0.75, height: pantsLogoCanvas.getHeight() * 0.75 });
+		pantsLogoCanvas.setZoom(scaleRatio)
+
+		jerseyBelow.setDimensions({ width: jerseyBelow.getWidth() * 0.75, height: jerseyBelow.getHeight() * 0.75 });
+		jerseyBelow.setZoom(scaleRatio)
+		jerseyLogoCanvas.setDimensions({ width: jerseyLogoCanvas.getWidth() * 0.75, height: jerseyLogoCanvas.getHeight() * 0.75 });
+		jerseyLogoCanvas.setZoom(scaleRatio)
+
+		fontCanvas.set({backgroundColor:"#D8D8D8"})
+		fontCanvas.setBackgroundImage('./images/symbol_grid.png', fontCanvas.renderAll.bind(fontCanvas), {});
+		fontCanvas.setDimensions({ width: fontCanvas.getWidth() * 0.75, height: fontCanvas.getHeight() * 0.75 });
+		fontCanvas.setZoom(scaleRatio)
+
+		if (response.seamsVisible == true) {
+			seamsGroup.visible = true
+		}
+
+		pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));
+		jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
+
+		if (response.buttonPadSeams == true) {
+			if ($("#buttonsType").val() != "buttonsHenley") {
+				if ($("#sleeveType").val() == "sixties") {
+					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_sixties.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
+				} else {
+					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
+				}
+			} else {
+				if ($("#sleeveType").val() == "sixties") {
+					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley_sixties.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
+				} else {
+					jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad_henley.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
+				}
+			}
+			jerseyLogoCanvas.setBackgroundImage('./images/seams/seams_button_pad.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), {opacity: .25});
+		}
+
+		if ($("#toggleCapGuides").is(":checked")) {
+			capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
+		}
+
+		if ($("#toggleJerseyGrid").is(':checked')) {
+			jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		}
+
+		if	($("#togglePantsGrid").is(':checked')) {
+			pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+		}
+		hideOverlay()
 	})
 
 	$("#load").on("click",function(e){	
 		showOverlay("Loading Uniform...")
 		reloading = true;
-		$.ajax({
-			type: "GET",
-			url: "http://127.0.0.1:"+port+"/loadUniform",
-			success: function(response) {
-				if (response.result == "success") {
-					customFonts.splice(0, customFonts.length)
-					commonPalette.splice(0, commonPalette.length)
-					const exportMeta = JSON.parse(response.json)
+		ipcRenderer.send('load-uniform', null)
+	})
 
-					if (exportMeta.version == undefined || !semver.eq(appVersion, exportMeta.version)) {
-						if (confirm("This save file appears to have been generated with a different version of Uniform Maker.  Some elements may not be load properly.\r\n\r\nContinue?")) {
-							loadJersey()
-						} else {
-							hideOverlay()
+	ipcRenderer.on('load-uniform-response', (event, response) => {
+		if (response.result == "success") {
+			customFonts.splice(0, customFonts.length)
+			commonPalette.splice(0, commonPalette.length)
+			const exportMeta = JSON.parse(response.json)
+
+			if (exportMeta.version == undefined || !semver.eq(appVersion, exportMeta.version)) {
+				if (confirm("This save file appears to have been generated with a different version of Uniform Maker.  Some elements may not be load properly.\r\n\r\nContinue?")) {
+					loadJersey()
+				} else {
+					hideOverlay()
+				}
+			} else {
+				loadJersey()
+			}
+
+			function loadJersey() {
+				$("#teamName").val(exportMeta.team)
+				$("#uniformType").val(exportMeta.type)
+				$("#startYear").val(exportMeta.start)
+				$("#endYear").val(exportMeta.end)
+
+				customJerseyTexture = exportMeta.customJerseyTexture
+				customPantsTexture = exportMeta.customPantsTexture
+				customCapTexture = exportMeta.customCapTexture
+				fontOverlayImage = exportMeta.fontOverlayImage
+
+				if (exportMeta.commonPalette != undefined && exportMeta.commonPalette != null) {
+					if (exportMeta.commonPalette.length > 0) {
+						for (x in exportMeta.commonPalette) {
+							commonPalette.push(exportMeta.commonPalette[x])
 						}
-					} else {
-						loadJersey()
 					}
+				}
 
-					function loadJersey() {
-						$("#teamName").val(exportMeta.team)
-						$("#uniformType").val(exportMeta.type)
-						$("#startYear").val(exportMeta.start)
-						$("#endYear").val(exportMeta.end)
+				Object.keys(exportMeta.checkboxes).forEach(function(key){
+					$("#"+key).prop('checked', exportMeta.checkboxes[key].checked)
+					if (exportMeta.checkboxes[key].checked) {
+						$("#"+key).triggerHandler("change")
+					}
+				})	
 
-						customJerseyTexture = exportMeta.customJerseyTexture
-						customPantsTexture = exportMeta.customPantsTexture
-						customCapTexture = exportMeta.customCapTexture
-						fontOverlayImage = exportMeta.fontOverlayImage
+				if ($("#swashCheck").is(":checked")) {
+					$(".ms-swash-container").each(function() {
+						$(this).find(".ms-dd").removeClass("disabled")
+					})
+					$(".swashSelector").each(function() {
+						$(this).spectrum('enable')
+					})	
+				}
 
-						if (exportMeta.commonPalette != undefined && exportMeta.commonPalette != null) {
-							if (exportMeta.commonPalette.length > 0) {
-								for (x in exportMeta.commonPalette) {
-									commonPalette.push(exportMeta.commonPalette[x])
+				if ($("#lettersVisible").is(":checked")) {
+					$(".ms-letter-container").each(function() {
+						$(this).find(".ms-dd").removeClass("disabled")
+					})
+					$("#letterScaling").prop("disabled",false)
+					$("#letter1StrokeInput").prop("disabled",false)
+					$("#letter2StrokeInput").prop("disabled",false)
+				} else {
+					$(".ms-letter-container").each(function() {
+						$(this).find(".ms-dd").addClass("disabled")
+					})
+					$("#letterScaling").prop("disabled",true)
+					$("#letter1StrokeInput").prop("disabled",true)
+					$("#letter2StrokeInput").prop("disabled",true)
+				}
+
+				if ($("#numbersVisible").is(":checked")) {
+					$(".ms-number-container").each(function() {
+						$(this).find(".ms-dd").removeClass("disabled")
+					})
+					$("#numberScaling").prop("disabled",false)
+					$("#number1StrokeInput").prop("disabled",false)
+					$("#number2StrokeInput").prop("disabled",false)
+				} else {
+					$(".ms-number-container").each(function() {
+						$(this).find(".ms-dd").addClass("disabled")
+					})
+					$("#numberScaling").prop("disabled",true)
+					$("#number1StrokeInput").prop("disabled",true)
+					$("#number2StrokeInput").prop("disabled",true)
+				}
+
+				Object.keys(exportMeta.selects).forEach(function(key){
+					if (!$("#"+key).hasClass("msdd")) {
+						$("#"+key).prop("disabled",exportMeta.selects[key].disabled)
+						$("#"+key).val(exportMeta.selects[key].val)
+					} 
+				})
+
+				Object.keys(exportMeta.ranges).forEach(function(key){
+					$("#"+key).prop("disabled",exportMeta.ranges[key].disabled)
+					$("#"+key).val(exportMeta.ranges[key].val)
+				})
+
+				Object.keys(exportMeta.textBoxes).forEach(function(key){
+					$("#"+key).prop("disabled",exportMeta.textBoxes[key].disabled)
+					$("#"+key).val(exportMeta.textBoxes[key].val)
+				})
+
+				Object.keys(exportMeta.buttons).forEach(function(key){
+					$("#"+key).prop("disabled",exportMeta.buttons[key].disabled)
+					$("#"+key).val(exportMeta.buttons[key].val)
+				})
+
+				Object.keys(exportMeta.capSelectors).forEach(function(key){
+					if (exportMeta.capSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+					$("#"+key).spectrum("set",exportMeta.capSelectors[key].val)
+				})
+
+				Object.keys(exportMeta.jerseySelectors).forEach(function(key){
+					if (exportMeta.jerseySelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+					$("#"+key).spectrum("set",exportMeta.jerseySelectors[key].val)
+				})
+
+				Object.keys(exportMeta.pantsSelectors).forEach(function(key){
+					if (exportMeta.pantsSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+					$("#"+key).spectrum("set",exportMeta.pantsSelectors[key].val)
+				})
+
+				Object.keys(exportMeta.swatchSelectors).forEach(function(key){
+					if (exportMeta.swatchSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+					$("#"+key).spectrum("set",exportMeta.swatchSelectors[key].val)
+				})
+
+				Object.keys(exportMeta.fontSelectors).forEach(function(key){
+					if (exportMeta.fontSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+					$("#"+key).spectrum("set",exportMeta.fontSelectors[key].val)
+				})
+
+				jerseyBelow.loadFromJSON(exportMeta.canvases.jerseyBelow, jerseyBelow.renderAll.bind(jerseyBelow), function(o, object) {
+					jerseyBelow.add(object)
+				})
+				jerseyLogoCanvas.loadFromJSON(exportMeta.canvases.jerseyLogoCanvas, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), function(o, object) {
+					jerseyLogoCanvas.add(object)
+				})
+				jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
+				jerseyBelow.renderAll()
+				reRenderBG("jersey")
+
+				capBelow.loadFromJSON(exportMeta.canvases.capBelow, capBelow.renderAll.bind(capBelow), function(o, object) {
+					capBelow.add(object)
+				})
+				capLogoCanvas.loadFromJSON(exportMeta.canvases.capLogoCanvas, capLogoCanvas.renderAll.bind(capLogoCanvas), function(o, object) {
+					if (object.id == "textLogo") {
+						object._objects[0].set("fill", $("#capLogoStroke2Color").spectrum("get").toHexString())
+						object._objects[0].set("stroke", $("#capLogoStroke2Color").spectrum("get").toHexString())
+						object._objects[1].set("fill", $("#capLogoStroke1Color").spectrum("get").toHexString())
+						object._objects[1].set("stroke", $("#capLogoStroke1Color").spectrum("get").toHexString())
+						object._objects[2].set("fill", $("#capLogoTextColor").spectrum("get").toHexString())
+					}
+					if (object.id == "textLogo2") {
+						object._objects[0].set("fill", $("#capLogo2Stroke2Color").spectrum("get").toHexString())
+						object._objects[0].set("stroke", $("#capLogo2Stroke2Color").spectrum("get").toHexString())
+						object._objects[1].set("fill", $("#capLogo2Stroke1Color").spectrum("get").toHexString())
+						object._objects[1].set("stroke", $("#capLogo2Stroke1Color").spectrum("get").toHexString())
+						object._objects[2].set("fill", $("#capLogo2TextColor").spectrum("get").toHexString())
+					}
+					capLogoCanvas.add(object)
+				})
+				//capLogoCanvas.renderAll()
+				capBelow.renderAll()
+				reRenderBG("cap")
+
+				pantsBelow.loadFromJSON(exportMeta.canvases.pantsBelow, pantsBelow.renderAll.bind(pantsBelow), function(o, object) {
+					pantsBelow.add(object)
+				})
+				pantsLogoCanvas.loadFromJSON(exportMeta.canvases.pantsLogoCanvas, pantsLogoCanvas.renderAll.bind(pantsLogoCanvas), function(o, object) {
+					pantsLogoCanvas.add(object)
+				})
+				pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));
+				pantsBelow.renderAll()
+				reRenderBG("pants")
+
+				fontCanvas.clear()
+				fabric.util.enlivenObjects(exportMeta.canvases.fontCanvas.objects, (objs) => {
+					objs.forEach((item) => {
+						fontCanvas.add(item);
+						item.getObjects().forEach(function (o) {
+							if (isNumeric(o.id.charAt(0))) {
+								if(o.id.indexOf("Fill") > -1) {
+									o.set("fill", $("#numbersFill").spectrum('get').toHexString())
+									o.set("stroke", $("#numbersStroke1").spectrum('get').toHexString())
+								} else {
+									o.set("fill", $("#numbersStroke2").spectrum('get').toHexString())
+									o.set("stroke", $("#numbersStroke2").spectrum('get').toHexString())
+								}
+							} else {
+								if(o.id.indexOf("Fill") > -1) {
+									o.set("fill", $("#lettersFill").spectrum('get').toHexString())
+									o.set("stroke", $("#lettersStroke1").spectrum('get').toHexString())
+								} else {
+									o.set("fill", $("#lettersStroke2").spectrum('get').toHexString())
+									o.set("stroke", $("#lettersStroke2").spectrum('get').toHexString())
 								}
 							}
-						}
-
-						Object.keys(exportMeta.checkboxes).forEach(function(key){
-							$("#"+key).prop('checked', exportMeta.checkboxes[key].checked)
-							if (exportMeta.checkboxes[key].checked) {
-								$("#"+key).triggerHandler("change")
-							}
-						})	
-
-						if ($("#swashCheck").is(":checked")) {
-							$(".ms-swash-container").each(function() {
-								$(this).find(".ms-dd").removeClass("disabled")
-							})
-							$(".swashSelector").each(function() {
-								$(this).spectrum('enable')
-							})	
-						}
-
-						if ($("#lettersVisible").is(":checked")) {
-							$(".ms-letter-container").each(function() {
-								$(this).find(".ms-dd").removeClass("disabled")
-							})
-							$("#letterScaling").prop("disabled",false)
-							$("#letter1StrokeInput").prop("disabled",false)
-							$("#letter2StrokeInput").prop("disabled",false)
-						} else {
-							$(".ms-letter-container").each(function() {
-								$(this).find(".ms-dd").addClass("disabled")
-							})
-							$("#letterScaling").prop("disabled",true)
-							$("#letter1StrokeInput").prop("disabled",true)
-							$("#letter2StrokeInput").prop("disabled",true)
-						}
-
-						if ($("#numbersVisible").is(":checked")) {
-							$(".ms-number-container").each(function() {
-								$(this).find(".ms-dd").removeClass("disabled")
-							})
-							$("#numberScaling").prop("disabled",false)
-							$("#number1StrokeInput").prop("disabled",false)
-							$("#number2StrokeInput").prop("disabled",false)
-						} else {
-							$(".ms-number-container").each(function() {
-								$(this).find(".ms-dd").addClass("disabled")
-							})
-							$("#numberScaling").prop("disabled",true)
-							$("#number1StrokeInput").prop("disabled",true)
-							$("#number2StrokeInput").prop("disabled",true)
-						}
-
-						Object.keys(exportMeta.selects).forEach(function(key){
-							if (!$("#"+key).hasClass("msdd")) {
-								$("#"+key).prop("disabled",exportMeta.selects[key].disabled)
-								$("#"+key).val(exportMeta.selects[key].val)
-							} 
 						})
-
-						Object.keys(exportMeta.ranges).forEach(function(key){
-							$("#"+key).prop("disabled",exportMeta.ranges[key].disabled)
-							$("#"+key).val(exportMeta.ranges[key].val)
-						})
-
-						Object.keys(exportMeta.textBoxes).forEach(function(key){
-							$("#"+key).prop("disabled",exportMeta.textBoxes[key].disabled)
-							$("#"+key).val(exportMeta.textBoxes[key].val)
-						})
-
-						Object.keys(exportMeta.buttons).forEach(function(key){
-							$("#"+key).prop("disabled",exportMeta.buttons[key].disabled)
-							$("#"+key).val(exportMeta.buttons[key].val)
-						})
-
-						Object.keys(exportMeta.capSelectors).forEach(function(key){
-							if (exportMeta.capSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
-							$("#"+key).spectrum("set",exportMeta.capSelectors[key].val)
-						})
-
-						Object.keys(exportMeta.jerseySelectors).forEach(function(key){
-							if (exportMeta.jerseySelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
-							$("#"+key).spectrum("set",exportMeta.jerseySelectors[key].val)
-						})
-
-						Object.keys(exportMeta.pantsSelectors).forEach(function(key){
-							if (exportMeta.pantsSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
-							$("#"+key).spectrum("set",exportMeta.pantsSelectors[key].val)
-						})
-
-						Object.keys(exportMeta.swatchSelectors).forEach(function(key){
-							if (exportMeta.swatchSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
-							$("#"+key).spectrum("set",exportMeta.swatchSelectors[key].val)
-						})
-
-						Object.keys(exportMeta.fontSelectors).forEach(function(key){
-							if (exportMeta.fontSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
-							$("#"+key).spectrum("set",exportMeta.fontSelectors[key].val)
-						})
-
-						jerseyBelow.loadFromJSON(exportMeta.canvases.jerseyBelow, jerseyBelow.renderAll.bind(jerseyBelow), function(o, object) {
-							jerseyBelow.add(object)
-						})
-						jerseyLogoCanvas.loadFromJSON(exportMeta.canvases.jerseyLogoCanvas, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), function(o, object) {
-							jerseyLogoCanvas.add(object)
-						})
-						jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
-						jerseyBelow.renderAll()
-						reRenderBG("jersey")
-
-						capBelow.loadFromJSON(exportMeta.canvases.capBelow, capBelow.renderAll.bind(capBelow), function(o, object) {
-							capBelow.add(object)
-						})
-						capLogoCanvas.loadFromJSON(exportMeta.canvases.capLogoCanvas, capLogoCanvas.renderAll.bind(capLogoCanvas), function(o, object) {
-							if (object.id == "textLogo") {
-								object._objects[0].set("fill", $("#capLogoStroke2Color").spectrum("get").toHexString())
-								object._objects[0].set("stroke", $("#capLogoStroke2Color").spectrum("get").toHexString())
-								object._objects[1].set("fill", $("#capLogoStroke1Color").spectrum("get").toHexString())
-								object._objects[1].set("stroke", $("#capLogoStroke1Color").spectrum("get").toHexString())
-								object._objects[2].set("fill", $("#capLogoTextColor").spectrum("get").toHexString())
-							}
-							if (object.id == "textLogo2") {
-								object._objects[0].set("fill", $("#capLogo2Stroke2Color").spectrum("get").toHexString())
-								object._objects[0].set("stroke", $("#capLogo2Stroke2Color").spectrum("get").toHexString())
-								object._objects[1].set("fill", $("#capLogo2Stroke1Color").spectrum("get").toHexString())
-								object._objects[1].set("stroke", $("#capLogo2Stroke1Color").spectrum("get").toHexString())
-								object._objects[2].set("fill", $("#capLogo2TextColor").spectrum("get").toHexString())
-							}
-							capLogoCanvas.add(object)
-						})
-						//capLogoCanvas.renderAll()
-						capBelow.renderAll()
-						reRenderBG("cap")
-
-						pantsBelow.loadFromJSON(exportMeta.canvases.pantsBelow, pantsBelow.renderAll.bind(pantsBelow), function(o, object) {
-							pantsBelow.add(object)
-						})
-						pantsLogoCanvas.loadFromJSON(exportMeta.canvases.pantsLogoCanvas, pantsLogoCanvas.renderAll.bind(pantsLogoCanvas), function(o, object) {
-							pantsLogoCanvas.add(object)
-						})
-						pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));
-						pantsBelow.renderAll()
-						reRenderBG("pants")
-
-						fontCanvas.clear()
-						fabric.util.enlivenObjects(exportMeta.canvases.fontCanvas.objects, (objs) => {
-							objs.forEach((item) => {
-								fontCanvas.add(item);
-								item.getObjects().forEach(function (o) {
-									if (isNumeric(o.id.charAt(0))) {
-										if(o.id.indexOf("Fill") > -1) {
-											o.set("fill", $("#numbersFill").spectrum('get').toHexString())
-											o.set("stroke", $("#numbersStroke1").spectrum('get').toHexString())
-										} else {
-											o.set("fill", $("#numbersStroke2").spectrum('get').toHexString())
-											o.set("stroke", $("#numbersStroke2").spectrum('get').toHexString())
-										}
-									} else {
-										if(o.id.indexOf("Fill") > -1) {
-											o.set("fill", $("#lettersFill").spectrum('get').toHexString())
-											o.set("stroke", $("#lettersStroke1").spectrum('get').toHexString())
-										} else {
-											o.set("fill", $("#lettersStroke2").spectrum('get').toHexString())
-											o.set("stroke", $("#lettersStroke2").spectrum('get').toHexString())
-										}
-									}
-								})
-							});
-							fontCanvas.set({backgroundColor: "#D8D8D8"})
-							fontCanvas.setBackgroundImage('./images/symbol_grid.png', fontCanvas.renderAll.bind(fontCanvas), {});
-						})
-						
-						if (exportMeta.customFonts != undefined && exportMeta.customFonts != null) {
-							if (exportMeta.customFonts.length > 0) {
-								for (x in exportMeta.customFonts) {
-									const data = exportMeta.customFonts[x]
-									$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#letterDropdown')
-									$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#numberDropdown')
-									$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#jerseyWordmarkSelect')
-									$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#capTextSelect')
-								}	
-							}
-						} 
-
-						const letterDropdown = document.getElementById("letterDropdown").msDropdown;
-						const numberDropdown = document.getElementById("numberDropdown").msDropdown;
-						const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
-						const capDropdown = document.getElementById("capTextSelect").msDropdown;
-						const letterStyle = document.getElementById("letterStyle").msDropdown;
-						const numberStyle = document.getElementById("numberStyle").msDropdown;
-						const warpEffect = document.getElementById("warpEffect").msDropdown;
-						const swashCombo = document.getElementById("swashCombo").msDropdown;
-						sortFontDropdowns()
-
-						letterDropdown.selectedIndex = findIndexByValue(letterDropdown, exportMeta.selects.letterDropdown.val)
-						numberDropdown.selectedIndex = findIndexByValue(numberDropdown, exportMeta.selects.numberDropdown.val)
-						jerseyDropdown.selectedIndex = findIndexByValue(jerseyDropdown, exportMeta.selects.jerseyWordmarkSelect.val)
-						capDropdown.selectedIndex = findIndexByValue(capDropdown, exportMeta.selects.capTextSelect.val)
-						letterStyle.selectedIndex = findIndexByValue(letterStyle, exportMeta.selects.letterStyle.val)
-						numberStyle.selectedIndex = findIndexByValue(numberStyle, exportMeta.selects.numberStyle.val)
-						warpEffect.selectedIndex = findIndexByValue(warpEffect, exportMeta.selects.warpEffect.val)
-						swashCombo.selectedIndex = findIndexByValue(swashCombo, exportMeta.selects.swashCombo.val)
-
-						hideOverlay()
-
-						reloading = false;
+					});
+					fontCanvas.set({backgroundColor: "#D8D8D8"})
+					fontCanvas.setBackgroundImage('./images/symbol_grid.png', fontCanvas.renderAll.bind(fontCanvas), {});
+				})
+				
+				if (exportMeta.customFonts != undefined && exportMeta.customFonts != null) {
+					if (exportMeta.customFonts.length > 0) {
+						for (x in exportMeta.customFonts) {
+							const data = exportMeta.customFonts[x]
+							$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#letterDropdown')
+							$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#numberDropdown')
+							$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#jerseyWordmarkSelect')
+							$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#capTextSelect')
+						}	
 					}
-				} else {
-					if (response.result == "error") {
-						alert(response.message)
-					}
-					hideOverlay();
-					reloading = false;
-				}
+				} 
+
+				const letterDropdown = document.getElementById("letterDropdown").msDropdown;
+				const numberDropdown = document.getElementById("numberDropdown").msDropdown;
+				const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
+				const capDropdown = document.getElementById("capTextSelect").msDropdown;
+				const letterStyle = document.getElementById("letterStyle").msDropdown;
+				const numberStyle = document.getElementById("numberStyle").msDropdown;
+				const warpEffect = document.getElementById("warpEffect").msDropdown;
+				const swashCombo = document.getElementById("swashCombo").msDropdown;
+				sortFontDropdowns()
+
+				letterDropdown.selectedIndex = findIndexByValue(letterDropdown, exportMeta.selects.letterDropdown.val)
+				numberDropdown.selectedIndex = findIndexByValue(numberDropdown, exportMeta.selects.numberDropdown.val)
+				jerseyDropdown.selectedIndex = findIndexByValue(jerseyDropdown, exportMeta.selects.jerseyWordmarkSelect.val)
+				capDropdown.selectedIndex = findIndexByValue(capDropdown, exportMeta.selects.capTextSelect.val)
+				letterStyle.selectedIndex = findIndexByValue(letterStyle, exportMeta.selects.letterStyle.val)
+				numberStyle.selectedIndex = findIndexByValue(numberStyle, exportMeta.selects.numberStyle.val)
+				warpEffect.selectedIndex = findIndexByValue(warpEffect, exportMeta.selects.warpEffect.val)
+				swashCombo.selectedIndex = findIndexByValue(swashCombo, exportMeta.selects.swashCombo.val)
+
+				hideOverlay()
+
+				reloading = false;
 			}
-		})
+		} else {
+			if (response.result == "error") {
+				alert(response.message)
+			}
+			hideOverlay();
+			reloading = false;
+		}
 	})
 
 	$(".fakeLayerButton").on("click",function(e){
@@ -13825,95 +13548,96 @@
 		const renderTarget = $(this).data("canvas")
 		switch (target) {
 			case "cap":
-				var canvas = capBelow
+				var canvas = "capBelow"
 				var imLeft = 256
 				var imTop = 256
-				var options = {"left":256,"top":256}
 				var canvasHeight = 512
 				var canvasWidth = 512
-				var span = $("#customCapLayerName")
+				var span = "customCapLayerName"
 				var id = "customCapLayer"
-				var loadButton = $("#customCapLayerButton")
-				var delButton = $("#customCapLayerDelete")
+				var loadButton = "customCapLayerButton"
+				var delButton = "customCapLayerDelete"
 				break;
 		 	case "jersey":
-				var canvas = jerseyBelow
+				var canvas = "jerseyBelow"
 				var imLeft = 256
 				var imTop = 512
 				var canvasHeight = 1024
 				var canvasWidth = 512
-				var span = $("#customJerseyLayerName")
+				var span = "customJerseyLayerName"
 				var id = "customJerseyLayer"
-				var loadButton = $("#customJerseyLayerButton")
-				var delButton = $("#customJerseyLayerDelete")
-				switch ($("#jerseyCustomLayerMask").val()) {
-					case "full":
-						var options = {"left":256,"top":512,"clipPath":clippingPath}
-						break;
-					case "vest":
-						var options = {"left":256,"top":512,"clipPath":($("#sleeveType").val() == "standard") ? clippingPathStandardSleeves : clippingPathRaglanSleeves}
-						break;
-					case "front":
-						var options = {"left":256,"top":512,"clipPath":clippingPathJerseyFront}
-						break;
-					case "back":
-						var options = {"left":256,"top":512,"clipPath":clippingPathJerseyBack}
-						break;
-					case "sleeves":
-						var options = {"left":256,"top":512,"clipPath":($("#sleeveType").val() == "standard") ? vestSleeveClippingPath : raglanSleeveClippingPath}
-						break;
-				}
+				var loadButton = "customJerseyLayerButton"
+				var delButton = "customJerseyLayerDelete"
 				break;
 			case "pants":
-				var canvas = pantsBelow
+				var canvas = "pantsBelow"
 				var imLeft = 256
 				var imTop = 256
-				var options = {"left":256,"top":256}
 				var canvasHeight = 512
 				var canvasWidth = 512
-				var span = $("#customPantsLayerName")
+				var span = "customPantsLayerName"
 				var id = "customPantsLayer"
-				var loadButton = $("#customPantsLayerButton")
-				var delButton = $("#customPantsLayerDelete")
+				var loadButton = "customPantsLayerButton"
+				var delButton = "customPantsLayerDelete"
 				break;
 		}
-		$.ajax({
-			type: "GET",
-			url: "http://127.0.0.1:"+port+"/uploadImage",
-			success: function(data) {
-				var imgObj = new Image();
-				imgObj.src = data.image;
-				imgObj.onload = function () {
-					var image = new fabric.Image(imgObj);
-					image.set({
-						originX: 'center',
-						originY: 'center',
-						perPixelTargetFind: true,
-						centeredScaling: true,
-						centeredRotation: true,
-						id: id
-					});
-					var h = image.height;
-					var w = image.width;
-/* 					if (image.width > image.height) {
-						image.scaleToHeight(canvasWidth)
-					} else {
-						image.scaleToWidth(canvasHeight)
-					} */
-					canvas.add(image);
-					image.set(options);
-					image.sendToBack();
-					image.setCoords();
-					canvas.renderAll();
-					span.html(data.filename)
-					reRenderBG(renderTarget)
-					loadButton.css("display","none")
-					delButton.css("display","inline-block")
-					hideOverlay()
-				}
-				hideOverlay()
+		ipcRenderer.send('upload-layer', [canvas, imLeft, imTop, canvasHeight, canvasWidth, span, id, loadButton, delButton, renderTarget])
+	})
+
+	ipcRenderer.on('upload-layer-response', (event, response) => {
+		let canvas = null
+		switch (response[0]) {
+			case "jerseyBelow":
+				canvas = jerseyBelow;
+				break;
+			case "capBelow":
+				canvas = capBelow;
+				break;
+			case "pantsBelow":
+				canvas = pantsBelow;
+				break;
+		}
+		let imLeft = response[1]
+		let imTop = response[2]
+		//let options = response[3]
+		let span = $("#"+response[5])
+		let id = response[6]
+		let loadButton = $("#"+response[7])
+		let delButton = $("#"+response[8])
+		let renderTarget = response[9]
+		let data = response[10]
+		var imgObj = new Image();
+		imgObj.src = data.image;
+		imgObj.onload = function () {
+			var image = new fabric.Image(imgObj);
+			image.set({
+				originX: 'center',
+				originY: 'center',
+				perPixelTargetFind: true,
+				centeredScaling: true,
+				centeredRotation: true,
+				id: id
+			});
+			var h = image.height;
+			var w = image.width;
+			canvas.add(image);
+			image.set({ 
+				left: imLeft,
+				top: imTop,
+				clipPath: null 
+			})
+			image.sendToBack();
+			image.setCoords();
+			if (response[0] == "jerseyBelow") {
+				$("#jerseyCustomLayerMask").trigger("change")
 			}
-		});
+			canvas.renderAll();
+			span.html(data.filename)
+			reRenderBG(renderTarget)
+			loadButton.css("display","none")
+			delButton.css("display","inline-block")
+			hideOverlay()
+		}
 	})
 
 	$(".fakeLayerDelete").on("click",function() {
@@ -14227,441 +13951,436 @@
 
 	function dropImage(dropCanvas, file, tab) {
 		if ($.inArray(getExtension(file).toLowerCase(), validFontTypes) > -1) {
-			$.ajax({
-				type: "GET",
-				url: "http://127.0.0.1:"+port+"/dropFont",
-				data: {file:file},
-				success: function(data) { 
-					if (data.result == "error") {
-						alert("An error occurred:\r\n\r\n"+data.message)
-						return false;
-					} else if (data.status == "error") {
-						alert("The font '"+data.fontName+"' could not be loaded.")
-						return false;
-					} else {
-						if (fontList.includes(data.fontName)) {
-							const letterDropdown = document.getElementById("letterDropdown").msDropdown;
-							const numberDropdown = document.getElementById("numberDropdown").msDropdown;
-							const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
-							const capDropdown = document.getElementById("capTextSelect").msDropdown;
-							switch(tab) {
-								case 0:
-									var foo = findIndexByText(jerseyDropdown, data.fontName)
-									jerseyDropdown.selectedIndex = foo
-									jerseyDropdown.refresh()
-									jerseyWordmarkChange(data,false)
-									break;
-								case 1:
-									break;
-								case 2:
-									var foo = findIndexByText(capDropdown, data.fontName)
-									capDropdown.selectedIndex = foo
-									capDropdown.refresh()
-									capWordmarkChange(data,false)
-									break;
-								case 3:
-									opentype.load(data.fontPath, (err,font) => {
-										if (err || !font) {
-											console.log(err)
-											return;
-										}
-
-										const maxNumWidth = 170
-										const maxLetWidth = 56
-
-										var nArr = []
-										var lArr = []
-
-										const arr = letters.concat(numbers)
-
-										arr.forEach((chr) => {
-											var char = chars.find(o => o.char === chr)
-											var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
-											const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
-											const svgPath = paths.toPathData(5)
-											var tmp = new fabric.Path(svgPath, {
-												fill: initialTextColors['fillColor'], 
-											});
-											if (isNumeric(chr)) {
-												nArr.push(tmp.width)
-											} else {
-												lArr.push(tmp.width)
-											}
-										})
-
-										if (arr == numbers) {
-											var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
-											var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
-										} else {
-											var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
-											var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
-										}
-
-										arr.forEach((chr) => {
-											var char = chars.find(o => o.char === chr)
-											var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
-											var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
-											const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
-											const svgPath = paths.toPathData(5)
-											var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
-											grp.getObjects('path').forEach(function(o) {
-												grp.removeWithUpdate(o)
-											})
-											fontCanvas.renderAll()
-
-											var tmp = new fabric.Path(svgPath, {
-												fill: initialTextColors['fillColor'], 
-											});
-
-											
-											if (isNumeric(chr)) {
-												var scaleX = 1.0 * scaleMod
-												scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
-												var strokeWidth1 = strokeWidth["numbers1"]
-												var strokeWidth2 = strokeWidth["numbers2"]
-												var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
-												var stroke1Color = $("#numbersStroke1").spectrum("get")
-												var stroke2Color = $("#numbersStroke2").spectrum("get")
-											} else {
-												var scaleX = 1.0 * scaleMod
-												scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
-												var strokeWidth1 = strokeWidth["letters1"]
-												var strokeWidth2 = strokeWidth["letters2"]
-												var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
-												var stroke1Color = $("#lettersStroke1").spectrum("get")
-												var stroke2Color = $("#lettersStroke2").spectrum("get")
-											}
-
-											var strokePath = new fabric.Path(svgPath, {
-												id: char.char.toLowerCase()+"Stroke",
-												fill: stroke2Color, 
-												stroke: stroke2Color, 
-												strokeWidth: strokeWidth2, 
-												strokeLineCap: "round",
-												paintFirst: "stroke",
-												visible: true,
-												originX: "center",
-												originY: "center",
-												scaleX: scaleX,
-												scaleY: scaleY
-											})
-
-											var newTextPath = new fabric.Path(svgPath, {
-												id: char.char.toLowerCase()+"Fill",
-												fill: fillColor, 
-												stroke: stroke1Color, 
-												strokeWidth: strokeWidth1, 
-												strokeLineCap: "round",
-												paintFirst: "stroke",
-												visible: true,
-												originX: "center",
-												originY: "center",
-												scaleX: scaleX,
-												scaleY: scaleY
-											});
-											
-											grp.addWithUpdate(strokePath)
-											grp.addWithUpdate(newTextPath)
-
-											if (isNumeric(chr)) {
-												for (y of numberStyle.split(",")) {
-													groupAlign(grp,y)
-												}
-											} else {
-												for (y of letterStyle.split(",")) {
-													groupAlign(grp,y)
-												}
-											}
-										})
-
-										var thumbText = font.getPath("ABC 123", 0, 0, 96)
-										var outPath = thumbText.toPathData(5)
-
-										var foo = new fabric.Path(outPath, {
-											fill: 'black',
-											top: 0,
-											left: 0
-										})
-
-										fontCanvas.renderAll()
-
-										var foo = findIndexByText(letterDropdown, data.fontName)
-										letterDropdown.selectedIndex = foo
-										letterDropdown.refresh()
-										numberDropdown.selectedIndex = foo
-										numberDropdown.refresh()
-									})
-									break;
-							}
-						} else {
-							fontList.push(data.fontName)
-							switch (tab) {
-								case 0:
-									jerseyWordmarkChange(data,true)
-									break;
-								case 1:
-									break;
-								case 2:
-									capWordmarkChange(data,true)
-									break;
-								case 3:
-									opentype.load(data.fontPath, (err,font) => {
-										if (err || !font) {
-											console.log(err)
-											return;
-										}
-
-										const maxNumWidth = 170
-										const maxLetWidth = 56
-
-										var nArr = []
-										var lArr = []
-
-										const arr = letters.concat(numbers)
-
-										arr.forEach((chr) => {
-											var char = chars.find(o => o.char === chr)
-											var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
-											const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
-											const svgPath = paths.toPathData(5)
-											var tmp = new fabric.Path(svgPath, {
-												fill: initialTextColors['fillColor'], 
-											});
-											if (isNumeric(chr)) {
-												nArr.push(tmp.width)
-											} else {
-												lArr.push(tmp.width)
-											}
-										})
-
-										if (arr == numbers) {
-											var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
-											var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
-										} else {
-											var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
-											var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
-										}
-
-										arr.forEach((chr) => {
-											var char = chars.find(o => o.char === chr)
-											var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
-											var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
-											const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
-											const svgPath = paths.toPathData(5)
-											var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
-											grp.getObjects('path').forEach(function(o) {
-												grp.removeWithUpdate(o)
-											})
-											fontCanvas.renderAll()
-
-											var tmp = new fabric.Path(svgPath, {
-												fill: initialTextColors['fillColor'], 
-											});
-
-											
-											if (isNumeric(chr)) {
-												var scaleX = 1.0 * scaleMod
-												scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
-												var strokeWidth1 = strokeWidth["numbers1"]
-												var strokeWidth2 = strokeWidth["numbers2"]
-												var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
-												var stroke1Color = $("#numbersStroke1").spectrum("get")
-												var stroke2Color = $("#numbersStroke2").spectrum("get")
-											} else {
-												var scaleX = 1.0 * scaleMod
-												scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
-												var strokeWidth1 = strokeWidth["letters1"]
-												var strokeWidth2 = strokeWidth["letters2"]
-												var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
-												var stroke1Color = $("#lettersStroke1").spectrum("get")
-												var stroke2Color = $("#lettersStroke2").spectrum("get")
-											}
-
-											var strokePath = new fabric.Path(svgPath, {
-												id: char.char.toLowerCase()+"Stroke",
-												fill: stroke2Color, 
-												stroke: stroke2Color, 
-												strokeWidth: strokeWidth2, 
-												strokeLineCap: "round",
-												paintFirst: "stroke",
-												visible: true,
-												originX: "center",
-												originY: "center",
-												scaleX: scaleX,
-												scaleY: scaleY
-											})
-
-											var newTextPath = new fabric.Path(svgPath, {
-												id: char.char.toLowerCase()+"Fill",
-												fill: fillColor, 
-												stroke: stroke1Color, 
-												strokeWidth: strokeWidth1, 
-												strokeLineCap: "round",
-												paintFirst: "stroke",
-												visible: true,
-												originX: "center",
-												originY: "center",
-												scaleX: scaleX,
-												scaleY: scaleY
-											});
-											
-											grp.addWithUpdate(strokePath)
-											grp.addWithUpdate(newTextPath)
-
-											if (isNumeric(chr)) {
-												for (y of numberStyle.split(",")) {
-													groupAlign(grp,y)
-												}
-											} else {
-												for (y of letterStyle.split(",")) {
-													groupAlign(grp,y)
-												}
-											}
-										})
-
-										var thumbText = font.getPath("ABC 123", 0, 0, 96)
-										var outPath = thumbText.toPathData(5)
-
-										var foo = new fabric.Path(outPath, {
-											fill: 'black',
-											top: 0,
-											left: 0
-										})
-
-										fontCanvas.renderAll()
-
-										refreshDropdowns("font",data,foo)
-									})
-									break;
-							}
-						}
-					}
-				}
-			})
+			ipcRenderer.send('drop-font', [file, tab])
 		} else {
 			if ($.inArray(getExtension(file).toLowerCase(), validImageTypes) > -1) {
 				if (tab < 3) {
-					$.ajax({
-						type: "GET",
-						url: "http://127.0.0.1:"+port+"/dropImage",
-						data: {file:file},
-						success: function(data) { 
-							if (data.image != "error not an image") {
-								var imgObj = new Image();
-								imgObj.src = data.image;
-								$("#fileName").html(data.filename);
-								imgObj.onload = function () {
-									switch (dropCanvas.id) {
-										case "jerseyLogoCanvas":
-											var canvas = jerseyLogoCanvas
-											var imLeft = 256
-											var imTop = 512
-											var moveBelow = 'buttons'
-											var header = $("#jerseyImagesHeader")
-											break;
-										case "capLogoCanvas":
-											var canvas = capLogoCanvas
-											var imLeft = 256
-											var imTop = 256
-											var moveBelow = 'eyeletGroup'
-											var header = $("#capImagesHeader")
-											break;
-										case "pantsLogoCanvas":
-											var canvas = pantsLogoCanvas
-											var imLeft = 256
-											var imTop = 256
-											var moveBelow = belt
-											var header = $("#pantsImagesHeader")
-											break;
-									} 
-									var image = new fabric.Image(imgObj);
-									image.set({
-										originX: 'center',
-										originY: 'center',
-										perPixelTargetFind: true,
-										centeredScaling: true,
-										centeredRotation: true,
-										name: data.filename,
-										id: data.filename,
-									});
-									image.filters.push(new fabric.Image.filters.Resize({
-										resizeType: 'lanczos', // typo fixed
-										lanczosLobes: 2 // typo fixed
-									}));
-									image.on('object:modified',function() {
-										imLeft = image.get('left')
-										imTop = image.get('top');
-									})
-									image.on('selected',function() {
-										switch (activeCanvas.id) {
-											case "jerseyLogoCanvas":
-												var canStr = "jersey"
-												break;
-											case "capLogoCanvas":
-												var canStr = "cap"
-												break;
-											case "pantsLogoCanvas":
-												var canStr = "pants"
-												break;
-										} 
-										$("#"+canStr+"FileName").html(image.get('id'));
-										if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-											$("#"+canStr+"TrimImageDiv").css("display","block");
-											$("#"+canStr+"UploadImageDiv").css("display","none");
-											$("#"+canStr+"SelectedImageDiv").css("display","block");
-										}
-										$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-										$(".copypaste").each(function() {
-											$(this).css("display","inline-block")
-										})
-									})
-									var h = image.height;
-									var w = image.width;
-									canvas.add(image);
-									image.set({"left":imLeft,"top":imTop});
-									image.setCoords();
-									if (moveBelow != 'belt') {
-										canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
-									} else {
-										canvas.sendToBack(image)	
-									}
-									canvas.setActiveObject(image)
-									//console.log(image.getZIndex())
-									jerseyLogoCanvas.getObjects().forEach(function(o) {
-										if (o.selectable) {
-											console.log(o.id)
-										}
-									})
-									canvas.requestRenderAll()
-									canvas.renderAll();
-									$("#tabContainer").skeletabs('goTo', tab)
-									header.click()
-								}
-							}
-						}
-					})
+					ipcRenderer.send('drop-image', [dropCanvas.id, file, tab])
 				} else {
 					if (getExtension(file) == "png" || getExtension(file) == "jpg") {
 						showOverlay("Detecting Characters...")
-						$.ajax({
-							type: "GET",
-							url: "http://127.0.0.1:"+port+"/dropFontImage",
-							data: {file:file},
-							success: function(data) {
-								placeOCR(data)
-							},
-							error: function(data) {
-								hideOverlay()
-							}
-						})
-					}
-					
+						ipcRenderer.send('drop-font-image', file)
+					}		
 				}
 			} else {
 				alert("Only jpg, png, gif, and tiff images are supported.")
 			}
 		}
 	}
+
+	ipcRenderer.on('drop-image-response', (event, response) => {
+		let dropCanvas = response[0]
+		let data = response[1]
+		let tab = response[2]
+		if (data.image != "error not an image") {
+			var imgObj = new Image();
+			imgObj.src = data.image;
+			$("#fileName").html(data.filename);
+			imgObj.onload = function () {
+				switch (dropCanvas) {
+					case "jerseyLogoCanvas":
+						var canvas = jerseyLogoCanvas
+						var imLeft = 256
+						var imTop = 512
+						var moveBelow = 'buttons'
+						var header = $("#jerseyImagesHeader")
+						break;
+					case "capLogoCanvas":
+						var canvas = capLogoCanvas
+						var imLeft = 256
+						var imTop = 256
+						var moveBelow = 'eyeletGroup'
+						var header = $("#capImagesHeader")
+						break;
+					case "pantsLogoCanvas":
+						var canvas = pantsLogoCanvas
+						var imLeft = 256
+						var imTop = 256
+						var moveBelow = belt
+						var header = $("#pantsImagesHeader")
+						break;
+				} 
+				var image = new fabric.Image(imgObj);
+				image.set({
+					originX: 'center',
+					originY: 'center',
+					perPixelTargetFind: true,
+					centeredScaling: true,
+					centeredRotation: true,
+					name: data.filename,
+					id: data.filename,
+				});
+				image.filters.push(new fabric.Image.filters.Resize({
+					resizeType: 'lanczos', // typo fixed
+					lanczosLobes: 2 // typo fixed
+				}));
+				image.on('object:modified',function() {
+					imLeft = image.get('left')
+					imTop = image.get('top');
+				})
+				image.on('selected',function() {
+					switch (activeCanvas.id) {
+						case "jerseyLogoCanvas":
+							var canStr = "jersey"
+							break;
+						case "capLogoCanvas":
+							var canStr = "cap"
+							break;
+						case "pantsLogoCanvas":
+							var canStr = "pants"
+							break;
+					} 
+					$("#"+canStr+"FileName").html(image.get('id'));
+					if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+						$("#"+canStr+"TrimImageDiv").css("display","block");
+						$("#"+canStr+"UploadImageDiv").css("display","none");
+						$("#"+canStr+"SelectedImageDiv").css("display","block");
+					}
+					$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+					$(".copypaste").each(function() {
+						$(this).css("display","inline-block")
+					})
+				})
+				var h = image.height;
+				var w = image.width;
+				canvas.add(image);
+				image.set({"left":imLeft,"top":imTop});
+				image.setCoords();
+				if (moveBelow != 'belt') {
+					canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
+				} else {
+					canvas.sendToBack(image)	
+				}
+				canvas.setActiveObject(image)
+				//console.log(image.getZIndex())
+				jerseyLogoCanvas.getObjects().forEach(function(o) {
+					if (o.selectable) {
+						//console.log(o.id)
+					}
+				})
+				canvas.requestRenderAll()
+				canvas.renderAll();
+				$("#tabContainer").skeletabs('goTo', tab)
+				header.click()
+			}
+		}
+	})
+
+	ipcRenderer.on('drop-font-response', (event, data) => {
+		let tab = data.tab
+		if (data.result == "error") {
+			alert("An error occurred:\r\n\r\n"+data.message)
+			return false;
+		} else if (data.status == "error") {
+			alert("The font '"+data.fontName+"' could not be loaded.")
+			return false;
+		} else {
+			if (fontList.includes(data.fontName)) {
+				const letterDropdown = document.getElementById("letterDropdown").msDropdown;
+				const numberDropdown = document.getElementById("numberDropdown").msDropdown;
+				const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
+				const capDropdown = document.getElementById("capTextSelect").msDropdown;
+				switch(tab) {
+					case 0:
+						var foo = findIndexByText(jerseyDropdown, data.fontName)
+						jerseyDropdown.selectedIndex = foo
+						jerseyDropdown.refresh()
+						jerseyWordmarkChange(data,false)
+						break;
+					case 1:
+						break;
+					case 2:
+						var foo = findIndexByText(capDropdown, data.fontName)
+						capDropdown.selectedIndex = foo
+						capDropdown.refresh()
+						capWordmarkChange(data,false)
+						break;
+					case 3:
+						opentype.load(data.fontPath, (err,font) => {
+							if (err || !font) {
+								console.log(err)
+								return;
+							}
+
+							const maxNumWidth = 170
+							const maxLetWidth = 56
+
+							var nArr = []
+							var lArr = []
+
+							const arr = letters.concat(numbers)
+
+							arr.forEach((chr) => {
+								var char = chars.find(o => o.char === chr)
+								var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+								const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+								const svgPath = paths.toPathData(5)
+								var tmp = new fabric.Path(svgPath, {
+									fill: initialTextColors['fillColor'], 
+								});
+								if (isNumeric(chr)) {
+									nArr.push(tmp.width)
+								} else {
+									lArr.push(tmp.width)
+								}
+							})
+
+							if (arr == numbers) {
+								var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
+								var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
+							} else {
+								var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
+								var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
+							}
+
+							arr.forEach((chr) => {
+								var char = chars.find(o => o.char === chr)
+								var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
+								var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+								const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+								const svgPath = paths.toPathData(5)
+								var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
+								grp.getObjects('path').forEach(function(o) {
+									grp.removeWithUpdate(o)
+								})
+								fontCanvas.renderAll()
+
+								var tmp = new fabric.Path(svgPath, {
+									fill: initialTextColors['fillColor'], 
+								});
+
+								
+								if (isNumeric(chr)) {
+									var scaleX = 1.0 * scaleMod
+									scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
+									var strokeWidth1 = strokeWidth["numbers1"]
+									var strokeWidth2 = strokeWidth["numbers2"]
+									var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
+									var stroke1Color = $("#numbersStroke1").spectrum("get")
+									var stroke2Color = $("#numbersStroke2").spectrum("get")
+								} else {
+									var scaleX = 1.0 * scaleMod
+									scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
+									var strokeWidth1 = strokeWidth["letters1"]
+									var strokeWidth2 = strokeWidth["letters2"]
+									var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
+									var stroke1Color = $("#lettersStroke1").spectrum("get")
+									var stroke2Color = $("#lettersStroke2").spectrum("get")
+								}
+
+								var strokePath = new fabric.Path(svgPath, {
+									id: char.char.toLowerCase()+"Stroke",
+									fill: stroke2Color, 
+									stroke: stroke2Color, 
+									strokeWidth: strokeWidth2, 
+									strokeLineCap: "round",
+									paintFirst: "stroke",
+									visible: true,
+									originX: "center",
+									originY: "center",
+									scaleX: scaleX,
+									scaleY: scaleY
+								})
+
+								var newTextPath = new fabric.Path(svgPath, {
+									id: char.char.toLowerCase()+"Fill",
+									fill: fillColor, 
+									stroke: stroke1Color, 
+									strokeWidth: strokeWidth1, 
+									strokeLineCap: "round",
+									paintFirst: "stroke",
+									visible: true,
+									originX: "center",
+									originY: "center",
+									scaleX: scaleX,
+									scaleY: scaleY
+								});
+								
+								grp.addWithUpdate(strokePath)
+								grp.addWithUpdate(newTextPath)
+
+								if (isNumeric(chr)) {
+									for (y of numberStyle.split(",")) {
+										groupAlign(grp,y)
+									}
+								} else {
+									for (y of letterStyle.split(",")) {
+										groupAlign(grp,y)
+									}
+								}
+							})
+
+							var thumbText = font.getPath("ABC 123", 0, 0, 96)
+							var outPath = thumbText.toPathData(5)
+
+							var foo = new fabric.Path(outPath, {
+								fill: 'black',
+								top: 0,
+								left: 0
+							})
+
+							fontCanvas.renderAll()
+
+							var foo = findIndexByText(letterDropdown, data.fontName)
+							letterDropdown.selectedIndex = foo
+							letterDropdown.refresh()
+							numberDropdown.selectedIndex = foo
+							numberDropdown.refresh()
+						})
+						break;
+				}
+			} else {
+				fontList.push(data.fontName)
+				switch (tab) {
+					case 0:
+						jerseyWordmarkChange(data,true)
+						break;
+					case 1:
+						break;
+					case 2:
+						capWordmarkChange(data,true)
+						break;
+					case 3:
+						opentype.load(data.fontPath, (err,font) => {
+							if (err || !font) {
+								console.log(err)
+								return;
+							}
+
+							const maxNumWidth = 170
+							const maxLetWidth = 56
+
+							var nArr = []
+							var lArr = []
+
+							const arr = letters.concat(numbers)
+
+							arr.forEach((chr) => {
+								var char = chars.find(o => o.char === chr)
+								var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+								const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+								const svgPath = paths.toPathData(5)
+								var tmp = new fabric.Path(svgPath, {
+									fill: initialTextColors['fillColor'], 
+								});
+								if (isNumeric(chr)) {
+									nArr.push(tmp.width)
+								} else {
+									lArr.push(tmp.width)
+								}
+							})
+
+							if (arr == numbers) {
+								var max = nArr.reduce((a, b) => Math.max(a, b), -Infinity)
+								var scaleMod = (max > maxNumWidth) ? maxNumWidth / max : 1
+							} else {
+								var max = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
+								var scaleMod = (max > maxLetWidth) ? maxLetWidth / max : 1
+							}
+
+							arr.forEach((chr) => {
+								var char = chars.find(o => o.char === chr)
+								var scaleY = (char.char.startsWith("small")) ? 0.7 : 1.0
+								var tmpChar = (char.char.startsWith("small")) ? char.char.slice(-1) : char.char
+								const paths = font.getPath(tmpChar, char.left*2, char.bottom*2, char.size*2)
+								const svgPath = paths.toPathData(5)
+								var grp = fontCanvas.getObjects('group').find(o => o.id === char.char)
+								grp.getObjects('path').forEach(function(o) {
+									grp.removeWithUpdate(o)
+								})
+								fontCanvas.renderAll()
+
+								var tmp = new fabric.Path(svgPath, {
+									fill: initialTextColors['fillColor'], 
+								});
+
+								
+								if (isNumeric(chr)) {
+									var scaleX = 1.0 * scaleMod
+									scaleY = ($("#numberScaling").is(":checked")) ? scaleY * scaleMod : scaleY
+									var strokeWidth1 = strokeWidth["numbers1"]
+									var strokeWidth2 = strokeWidth["numbers2"]
+									var fillColor = (fontOverlayImage == null) ? $("#numbersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
+									var stroke1Color = $("#numbersStroke1").spectrum("get")
+									var stroke2Color = $("#numbersStroke2").spectrum("get")
+								} else {
+									var scaleX = 1.0 * scaleMod
+									scaleY = ($("#letterScaling").is(":checked")) ?  scaleY * scaleMod : scaleY
+									var strokeWidth1 = strokeWidth["letters1"]
+									var strokeWidth2 = strokeWidth["letters2"]
+									var fillColor = (fontOverlayImage == null) ? $("#lettersFill").spectrum("get") : new fabric.Pattern({source:fontOverlayImage})
+									var stroke1Color = $("#lettersStroke1").spectrum("get")
+									var stroke2Color = $("#lettersStroke2").spectrum("get")
+								}
+
+								var strokePath = new fabric.Path(svgPath, {
+									id: char.char.toLowerCase()+"Stroke",
+									fill: stroke2Color, 
+									stroke: stroke2Color, 
+									strokeWidth: strokeWidth2, 
+									strokeLineCap: "round",
+									paintFirst: "stroke",
+									visible: true,
+									originX: "center",
+									originY: "center",
+									scaleX: scaleX,
+									scaleY: scaleY
+								})
+
+								var newTextPath = new fabric.Path(svgPath, {
+									id: char.char.toLowerCase()+"Fill",
+									fill: fillColor, 
+									stroke: stroke1Color, 
+									strokeWidth: strokeWidth1, 
+									strokeLineCap: "round",
+									paintFirst: "stroke",
+									visible: true,
+									originX: "center",
+									originY: "center",
+									scaleX: scaleX,
+									scaleY: scaleY
+								});
+								
+								grp.addWithUpdate(strokePath)
+								grp.addWithUpdate(newTextPath)
+
+								if (isNumeric(chr)) {
+									for (y of numberStyle.split(",")) {
+										groupAlign(grp,y)
+									}
+								} else {
+									for (y of letterStyle.split(",")) {
+										groupAlign(grp,y)
+									}
+								}
+							})
+
+							var thumbText = font.getPath("ABC 123", 0, 0, 96)
+							var outPath = thumbText.toPathData(5)
+
+							var foo = new fabric.Path(outPath, {
+								fill: 'black',
+								top: 0,
+								left: 0
+							})
+
+							fontCanvas.renderAll()
+
+							refreshDropdowns("font",data,foo)
+						})
+						break;
+				}
+			}
+		}
+	})
+
+	ipcRenderer.on('font-image-response', (event, data) => {
+		if (data.status != "cancelled") {
+			placeOCR(data)
+		} else {
+			hideOverlay()
+		}
+	})
 
 	function placeOCR(data) {
 		const nArr = []
@@ -14735,33 +14454,6 @@
 				hideOverlay()
 			}
 		})
-
-		/* for (obj of data) {
-			const char = chars.find(o => o.char === obj.char)
-			const src = obj
-			if (char) {
-				fabric.Image.fromURL(src.image, function (oImg) {
-					if (isNumeric(src.char)) {
-						oImg.set({
-							"top": ((char.bottom*2)-(src.height*numScaleMod))+12, 
-							"left": (char.left*2)-10,
-							"scaleX": numScaleMod,
-							"scaleY": numScaleMod
-						})
-					} else {
-						oImg.set({
-							"top": ((char.bottom*2)-(src.height*letScaleMod))+8, 
-							"left": (char.left*2)-8,
-							"scaleX": letScaleMod,
-							"scaleY": letScaleMod
-						})
-					}
-					fontCanvas.add(oImg)
-					fontCanvas.renderAll()
-				})
-			}
-		}
-		hideOverlay() */
 	}
 
 	function getNumberAtEnd(str) {
@@ -14782,24 +14474,31 @@
 	}
 	
 	$("#checkForUpdates").on("click", function() {
-		$.ajax({
-			type: "GET",
-			url: "http://127.0.0.1:"+port+"/checkForUpdate",
-			success: function(data) { 
-				if (data.update == true) {
-					if (confirm("Current version: "+data.currentVersion+"\r\n\r\nVersion "+data.name+" is now availble.  Click 'OK' to go to the releases page.")) {
-						window.open(
-      						data.url, 
-      						'_blank'
-    					);
-					}
-				} else if (data.update == false) {
+		ipcRenderer.send('check-for-update', false)
+	})
+
+	ipcRenderer.on('check-for-update-response', (event, data) => {
+		console.log (data)
+		switch (data.update) {
+			case true:
+				if (confirm("Current version: "+data.currentVersion+"\r\n\r\nVersion "+data.name+" is now availble.  Click 'OK' to go to the releases page.")) {
+					window.open(
+						data.url, 
+						'_blank'
+					);
+				}
+				break;
+			case false:
+				if (data.silent == false) {
 					alert("Current version: "+data.currentVersion+"\r\n\r\nThere is no update available at this time")
-				} else {
+				}
+				break;
+			default:
+				if (data.silent == false) {
 					alert("Something went wrong, the update check failed.")
 				}
-			}
-		})
+				break;
+		}
 	})
 
 	$("#aboutUniformMaker").magnificPopup({
@@ -14840,25 +14539,13 @@
 				break;
 		}
 
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/setPreference",
-			data: {pref:pref,val:val},
-			success: function(result) {
-			}
-		})
+		ipcRenderer.send('set-preference', {pref:pref,val:val})
 	})
 
 	$("#checkForUpdatesPref").on("change",function() {
 		const pref = "checkForUpdates"
 		const val = $(this).is(':checked')
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/setPreference",
-			data: {pref:pref,val:val.toString()},
-			success: function(result) {
-			}
-		})
+		ipcRenderer.send('set-preference', {pref:pref,val:val.toString()})
 	})
 
 	$("#gridsVisible").on("change", function() {
@@ -14867,26 +14554,14 @@
 		$("#toggleJerseyGrid").prop( "checked", val ).triggerHandler('click');
 		$("#togglePantsGrid").prop( "checked", val ).triggerHandler('click');
 		$("#toggleCapGuides").prop( "checked", val ).triggerHandler('click');
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/setPreference",
-			data: {pref:pref,val:val.toString()},
-			success: function(result) {
-			}
-		})
+		ipcRenderer.send('set-preference', {pref:pref,val:val.toString()})
 	})
 
 	$("#seamsVisibleOnDiffuse").on("change", function() {
 		const pref = "seamsVisibleOnDiffuse"
 		const val = $(this).is(':checked')
 		$("#toggleDiffuseSeams").prop( "checked", val ).triggerHandler('click');
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/setPreference",
-			data: {pref:pref,val:val.toString()},
-			success: function(result) {
-			}
-		})
+		ipcRenderer.send('set-preference', {pref:pref,val:val.toString()})
 	})
 
 	$("#saveSwatches").on("click",function() {	
@@ -14922,72 +14597,57 @@
 		teamName = teamName.split(' ').join('_');
 		var fileName = teamName+"_"+$("#uniformType").val()+yearRange;
 
-		$.ajax({
-			type: "POST",
-			url: "http://127.0.0.1:"+port+"/saveSwatches",
-			data: {
+		ipcRenderer.send('save-swatches', {
 				name: fileName.toLowerCase(), 
 				swatch1: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].text, 
 				swatch2: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].text, 
 				swatch3: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].text, 
 				swatch4: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].text,
 				commonPalette: commonPalette
-			},
-			success: function(result) {
-				hideOverlay()
-			},
-			error: function(result) {
-				hideOverlay()
-			}
 		})
 	})
 
 	$("#loadSwatches").on("click",function() {
 		if (confirm("Are you sure?\r\n\r\nThis will overwrite any non-default colors in the color picker palettes.")) {
 			showOverlay("Loading Swatches...")
-			$.ajax({
-				type: "GET",
-				url: "http://127.0.0.1:"+port+"/loadSwatches",
-				success: function(response) {
-					if (response.result == "success") {
-						const json = JSON.parse(response.json)
+			ipcRenderer.send('load-swatches', null)
+		}
+	})
 
-						commonPalette.splice(0, commonPalette.length)
-						commonPalette = json.commonPalette
+	ipcRenderer.on('load-swatches-response', (event, response) => {
+		if (response.result == "success") {
+			const json = JSON.parse(response.json)
 
-						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[0].set("fill",json.swatch1)
-						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].set("text",json.swatch1)
-						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].set("fill",idealTextColor(json.swatch1))
-						$("#swatch1Color").spectrum("set", json.swatch1)
+			commonPalette.splice(0, commonPalette.length)
+			commonPalette = json.commonPalette
 
-						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[0].set("fill",json.swatch2)
-						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].set("text",json.swatch2)
-						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].set("fill",idealTextColor(json.swatch2))
-						$("#swatch2Color").spectrum("set", json.swatch2)
-						
-						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[0].set("fill",json.swatch3)
-						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].set("text",json.swatch3)
-						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].set("fill",idealTextColor(json.swatch3))
-						$("#swatch3Color").spectrum("set", json.swatch3)
+			jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[0].set("fill",json.swatch1)
+			jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].set("text",json.swatch1)
+			jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].set("fill",idealTextColor(json.swatch1))
+			$("#swatch1Color").spectrum("set", json.swatch1)
 
-						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[0].set("fill",json.swatch4)
-						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].set("text",json.swatch4)
-						jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].set("fill",idealTextColor(json.swatch4))
-						$("#swatch4Color").spectrum("set", json.swatch4)
+			jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[0].set("fill",json.swatch2)
+			jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].set("text",json.swatch2)
+			jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].set("fill",idealTextColor(json.swatch2))
+			$("#swatch2Color").spectrum("set", json.swatch2)
+			
+			jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[0].set("fill",json.swatch3)
+			jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].set("text",json.swatch3)
+			jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].set("fill",idealTextColor(json.swatch3))
+			$("#swatch3Color").spectrum("set", json.swatch3)
 
-						jerseyLogoCanvas.renderAll()
-						hideOverlay()
-					} else {
-						if (response.result == "error") {
-							alert(response.message)
-						}
-						hideOverlay()
-					}
-				},
-				error: function(response) {
-					hideOverlay()
-				}
-			})
+			jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[0].set("fill",json.swatch4)
+			jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].set("text",json.swatch4)
+			jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].set("fill",idealTextColor(json.swatch4))
+			$("#swatch4Color").spectrum("set", json.swatch4)
+
+			jerseyLogoCanvas.renderAll()
+			hideOverlay()
+		} else {
+			if (response.result == "error") {
+				alert(response.message)
+			}
+			hideOverlay()
 		}
 	})
 
