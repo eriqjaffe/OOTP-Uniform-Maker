@@ -1,9 +1,8 @@
-const { app, BrowserWindow, dialog, Menu, shell } = require('electron')
+const { app, BrowserWindow, dialog, Menu, shell, ipcMain } = require('electron')
 const path = require('path')
 const os = require('os');
 const fs = require('fs')
 const url = require('url');
-const express = require('express')
 const Jimp = require('jimp')
 const archiver = require('archiver');
 const imagemagickCli = require('imagemagick-cli')
@@ -32,13 +31,8 @@ console.log = proxiedLog;
 
 const isMac = process.platform === 'darwin'
 const tempDir = os.tmpdir()
-const app2 = express();
 const store = new Store();
 const userFontsFolder = path.join(app.getPath('userData'),"fonts")
-
-const server = app2.listen(0, () => {
-	console.log(`Server running on port ${server.address().port}`);
-});
 
 const preferredColorFormat = store.get("preferredColorFormat", "hex")
 const preferredJerseyTexture = store.get("preferredJerseyTexture", "jersey_texture_default.png")
@@ -79,50 +73,52 @@ const options = {
 
 const imInstalled = hasbin.sync('magick');
 
-app2.use(express.urlencoded({limit: '200mb', extended: true, parameterLimit: 500000}));
-
-app2.get("/checkForUpdate", (req,res) => {
+ipcMain.on('check-for-update', (event, arg) => {
+	let json = {}
 	versionCheck(options, function (error, update) { // callback function
-		if (error) throw error;
-		if (update) { // print some update info if an update is available
-			res.json({
-				"update": true,
-				"currentVersion": pkg.version,
-				"name": update.name,
-				"url": update.url
-			})
-		} else {
-			res.json({
-				"update": false,
-				"currentVersion": pkg.version,
-			})
+		if (error) {
+			json.update = "error"
+			json.silent = arg
 		}
+		if (update) { // print some update info if an update is available
+			json.update = true,
+			json.currentVersion = pkg.version,
+			json.name = update.name,
+			json.url = update.url
+			json.silent = arg
+		} else {
+			json.update = false,
+			json.currentVersion = pkg.version
+			json.silent = arg
+		}
+		event.sender.send('check-for-update-response', json)
 	});
 })
 
-app2.get("/dropImage", (req, res) => {
-	Jimp.read(req.query.file, (err, image) => {
+ipcMain.on('drop-image', (event, arg) => {
+	let dropCanvas = arg[0]
+	let file = arg[1]
+	let tab = arg[2]
+	let json = {}
+	Jimp.read(file, (err, image) => {
 		if (err) {
-			res.json({
-				"filename": "error not an image",
-				"image": "error not an image"
-			})
+			json.filename = "error not an image"
+			json.image = "error not an image"
 		} else {
 			image.getBase64(Jimp.AUTO, (err, ret) => {
-				res.json({
-					"filename": path.basename(req.query.file),
-					"image": ret
-				});
+				json.filename = path.basename(file)
+				json.image = ret
 			})
 		}
+		event.sender.send('drop-image-response', [dropCanvas, json, tab])
 	})
 })
 
-app2.get("/dropFontImage", (req, res) => {
+ipcMain.on('drop-font-image', (event, file) => {
 	recognizeText()
 
 	async function recognizeText() {
-		let image = await Jimp.read(req.query.file)
+		let image = await Jimp.read(file)
 		let border = image.getPixelColor(1, 1)
 
 		const rgba = Jimp.intToRGBA(border)
@@ -133,7 +129,7 @@ app2.get("/dropFontImage", (req, res) => {
 		const jsonOBJ = []
 
 		const base = await replaceColor({
-			image: req.query.file,
+			image: file,
 			colors: {
 				type: 'hex',
 				targetColor: hex,
@@ -188,12 +184,11 @@ app2.get("/dropFontImage", (req, res) => {
 			resultObj.push(temp[char]);
 		});
 
-		res.json(resultObj)
-		res.end()
+		event.sender.send('font-image-response', resultObj)
 	}
 })
 
-app2.post("/uploadFontImage", (req, res) => {
+ipcMain.on('upload-font-image', (event, arg) => {
 	const options = {
 		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
 		properties: ['openFile'],
@@ -273,17 +268,22 @@ app2.post("/uploadFontImage", (req, res) => {
 					resultObj.push(temp[char]);
 				});
 
-				res.json(resultObj)
-				res.end()
+				event.sender.send('font-image-response', resultObj)
 			}
 		} else {
-			res.json({"status":"cancelled"})
-			res.end()
+			event.sender.send('font-image-response', {"status":"cancelled"})
 		}
 	})
 })
 
-app2.get("/uploadImage", (req, res) => {
+ipcMain.on('upload-image', (event, arg) => {
+	let type = arg[0]
+	let canvas = arg[1]
+	let imLeft = arg[2]
+	let imTop = arg[3]
+	let moveBelow = arg[4]
+	let json = {}
+
 	const options = {
 		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
 		properties: ['openFile'],
@@ -298,24 +298,64 @@ app2.get("/uploadImage", (req, res) => {
 				if (err) {
 					console.log(err);
 				} else {
-					if (req.query.type == "jersey") {
+					if (type == "jersey") {
 						Jimp.read(__dirname+"/images/mask.png", (err, mask) => {
 							image.mask(mask,0,0)
 							image.getBase64(Jimp.AUTO, (err, ret) => {
-								res.json({
-									"filename": path.basename(result.filePaths[0]),
-									"image": ret
-								});
+								json.filename = path.basename(result.filePaths[0])
+								json.image = ret
 							})
 						})
 					} else {
 						image.getBase64(Jimp.AUTO, (err, ret) => {
-							res.json({
-								"filename": path.basename(result.filePaths[0]),
-								"image": ret
-							});
+							json.filename = path.basename(result.filePaths[0])
+							json.image = ret
 						})
 					}
+					event.sender.send('upload-image-response', [type, canvas, imTop, imLeft, moveBelow, json])
+				}
+			});
+		  } else {
+			  //res.end()
+			  console.log("cancelled")
+		  }
+	  }).catch(err => {
+		  console.log(err)
+	  })
+})
+
+ipcMain.on('upload-layer', (event, arg) => {
+	let canvas = arg[0]
+	let imLeft = arg[1]
+	let imTop = arg[2]
+	let canvasHeight = arg[3]
+	let canvasWidth = arg[4]
+	let span = arg[5]
+	let id = arg[6]
+	let loadButton = arg[7]
+	let delButton = arg[8]
+	let renderTarget = arg[9]
+	let json = {}
+
+	const options = {
+		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
+		properties: ['openFile'],
+		filters: [
+			{ name: 'Images', extensions: ['jpg', 'png'] }
+		]
+	}
+	dialog.showOpenDialog(null, options).then(result => {
+		  if(!result.canceled) {
+			store.set("uploadImagePath", path.dirname(result.filePaths[0]))
+			Jimp.read(result.filePaths[0], (err, image) => {
+				if (err) {
+					console.log(err);
+				} else {
+					image.getBase64(Jimp.AUTO, (err, ret) => {
+						json.filename = path.basename(result.filePaths[0])
+						json.image = ret
+						event.sender.send('upload-layer-response', [canvas, imLeft, imTop, canvasHeight, canvasWidth, span, id, loadButton, delButton, renderTarget, json])
+					})
 				}
 			});
 		  } else {
@@ -327,9 +367,64 @@ app2.get("/uploadImage", (req, res) => {
 	  })
 })
 
-app2.post("/removeBorder", (req, res) => {
-	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	var fuzz = parseInt(req.body.fuzz);
+ipcMain.on('upload-texture', (event, arg) => {
+	let json = {}
+	const options = {
+		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
+		properties: ['openFile'],
+		filters: [
+			{ name: 'Images', extensions: ['jpg', 'png'] }
+		]
+	}
+	dialog.showOpenDialog(null, options).then(result => {
+		  if(!result.canceled) {
+			store.set("uploadImagePath", path.dirname(result.filePaths[0]))
+			Jimp.read(result.filePaths[0], (err, image) => {
+				if (err) {
+					console.log(err);
+				} else {
+					if (arg == "jersey") {
+						Jimp.read(__dirname+"/images/mask.png", (err, mask) => {
+							if (err) { console.log(err) }
+							image.mask(mask,0,0)
+							image.getBase64(Jimp.AUTO, (err, ret) => {
+								json.type = arg
+								json.filename = path.basename(result.filePaths[0])
+								json.image = ret
+								event.sender.send('upload-texture-response', json)
+							})
+							
+						})
+					} else {
+						image.getBase64(Jimp.AUTO, (err, ret) => {
+							json.type = arg
+							json.filename = path.basename(result.filePaths[0])
+							json.image = ret
+							event.sender.send('upload-texture-response', json)
+						})
+					}
+					
+				}
+			});
+		  } else {
+			  console.log("cancelled")
+		  }
+	  }).catch(err => {
+		  console.log(err)
+	  })
+})
+
+ipcMain.on('remove-border', (event, arg) => {
+	//[theImage, 1, 1, "removeBorder", null, null, fuzz, pictureName]
+	let imgdata = arg[0]
+	let fuzz = parseInt(arg[6]);
+	let pictureName = arg[7]
+	let canvas = arg[8]
+	let imgLeft = arg[9]
+	let imgTop = arg[10]
+	let json = {}
+	let buffer = Buffer.from(imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	
 	Jimp.read(buffer, (err, image) => {
 		if (err) {
 			console.log(err);
@@ -339,33 +434,56 @@ app2.post("/removeBorder", (req, res) => {
 				imagemagickCli.exec('magick convert -trim -fuzz '+fuzz+'% '+tempDir+'/temp.png '+tempDir+'/temp.png').then(({ stdout, stderr }) => {
 					Jimp.read(tempDir+"/temp.png", (err, image) => {
 						if (err) {
+							json.status = 'error'
+							json.message = err
 							console.log(err);
+							event.sender.send('remove-border-response', json)
 						} else {
 							image.getBase64(Jimp.AUTO, (err, ret) => {
-								res.end(ret);
+								json.status = 'success'
+								json.image = ret
+								json.canvas = canvas
+								json.imgTop = imgTop
+								json.imgLeft = imgLeft
+								json.pictureName = pictureName
+								event.sender.send('remove-border-response', json)
 							})
 						}
 					})
 				})
 			} catch (error) {
-				res.end("NOT INSTALLED")
+				json.status = 'error'
+				json.message = "An error occurred - please make sure ImageMagick is installed"
+				console.log(err);
+				event.sender.send('remove-border-response', json)
 			}
 		}
 	})
 })
 
-app2.post("/replaceColor", (req, res) => {
-	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	var x = parseInt(req.body.x);
-	var y = parseInt(req.body.y);
-	var color = req.body.color;
-	var newcolor = req.body.newcolor;
-	var action = req.body.action;
-	var fuzz = parseInt(req.body.fuzz);
-	var cmdString;
+ipcMain.on('replace-color', (event, arg) => {
+	let imgdata = arg[0]
+	let pLeft = arg[1]
+	let pTop = arg[2]
+	let pScaleX = arg[3]
+	let pScaleY = arg[4]
+	let action = arg[5]
+	let color = arg[6]
+	let newcolor = arg[7]
+	let fuzz = arg[8]
+	let pictureName = arg[9]
+	let canvas = arg[10]
+	let x = arg[11]
+	let y = arg[12]
+	let colorSquare = arg[13]
+	let newColorSquare = arg[14]
+	let json = {}
+	var buffer = Buffer.from(imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	Jimp.read(buffer, (err, image) => {
 		if (err) {
-			console.log(err);
+			json.result = "error"
+			json.message = err
+			event.sender.send('replace-color-response', json)
 		} else {
 			image.write(tempDir+"/temp.png");
       if (action.slice(-17) == "ReplaceColorRange") {
@@ -373,77 +491,165 @@ app2.post("/replaceColor", (req, res) => {
 			} else {
 				cmdString = 'magick convert '+tempDir+'/temp.png -fuzz '+fuzz+'% -fill '+newcolor+' -opaque '+color+' '+tempDir+'/temp.png';	
 			}
-			imagemagickCli.exec(cmdString).then(({ stdout, stderr }) => {
-				Jimp.read(tempDir+"/temp.png", (err, image) => {
-					if (err) {
-						console.log(err);
-					} else {
-						image.getBase64(Jimp.AUTO, (err, ret) => {
-							res.end(ret);
-						})
-					}
-				})
-			})
-		}
-	})
-})
-
-app2.post("/removeColorRange", (req, res) => {
-	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	var x = parseInt(req.body.x);
-	var y = parseInt(req.body.y);
-	var fuzz = parseInt(req.body.fuzz);
-	Jimp.read(buffer, (err, image) => {
-		if (err) {
-			console.log(err);
-		} else {
-			image.write(tempDir+"/temp.png", (err) => {
-				imagemagickCli.exec('magick convert '+tempDir+'/temp.png -fuzz '+fuzz+'% -fill none -draw "color '+x+','+y+' floodfill" '+tempDir+'/temp.png')
-				.then(({ stdout, stderr }) => {
+			try {
+				imagemagickCli.exec(cmdString).then(({ stdout, stderr }) => {
 					Jimp.read(tempDir+"/temp.png", (err, image) => {
 						if (err) {
-							console.log(err);
+							json.result = "error"
+							json.message = err
+							event.sender.send('replace-color-response', json)
 						} else {
 							image.getBase64(Jimp.AUTO, (err, ret) => {
-								res.end(ret);
+								json.result = "success"
+								json.data = ret
+								json.pTop = pTop
+								json.pLeft = pLeft
+								json.x = pScaleX
+								json.y = pScaleY
+								json.pictureName = pictureName
+								json.canvas = canvas
+								json.colorSquare = colorSquare
+								json.newColorSquare = newColorSquare
+								json.pScaleX = pScaleX
+								json.pScaleY = pScaleY
+								event.sender.send('replace-color-response', json)
 							})
 						}
 					})
 				})
+			} catch (error) {
+				json.status = 'error'
+				json.message = "An error occurred - please make sure ImageMagick is installed"
+				console.log(err);
+				event.sender.send('remove-border-response', json)
+			}
+		}
+	})
+})
+
+ipcMain.on('remove-color-range', (event, arg) => {
+	let buffer = Buffer.from(arg.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	let x = parseInt(arg.x);
+	let y = parseInt(arg.y);
+	let pTop = arg.pTop
+	let pLeft = arg.pLeft
+	let pScaleX = arg.pScaleX
+	let pScaleY = arg.pScaleY
+	let pictureName = arg.pictureName
+	let colorSquare = arg.colorSquare
+	let fuzz = parseInt(arg.fuzz);
+	let canvas = arg.canvas
+	let json = {}
+	Jimp.read(buffer, (err, image) => {
+		if (err) {
+			json.status = 'error'
+			json.message = "An error occurred - please make sure ImageMagick is installed"
+			console.log(err);
+			event.sender.send('remove-color-range-response', json)
+		} else {
+			image.write(tempDir+"/temp.png", (err) => {
+				try {
+					imagemagickCli.exec('magick convert '+tempDir+'/temp.png -fuzz '+fuzz+'% -fill none -draw "color '+x+','+y+' floodfill" '+tempDir+'/temp.png')
+					.then(({ stdout, stderr }) => {
+						Jimp.read(tempDir+"/temp.png", (err, image) => {
+							if (err) {
+								json.status = 'error'
+								json.message = "An error occurred - please make sure ImageMagick is installed"
+								console.log(err);
+								event.sender.send('remove-color-range-response', json)
+							} else {
+								image.getBase64(Jimp.AUTO, (err, ret) => {
+									json.status = 'success'
+									json.data = ret
+									json.canvas = canvas
+									json.x = x
+									json.y = y
+									json.pTop = pTop
+									json.pLeft = pLeft
+									json.pScaleX = pScaleX
+									json.pScaleY = pScaleY
+									json.pictureName = pictureName
+									json.colorSquare = colorSquare
+									event.sender.send('remove-color-range-response', json)
+								})
+							}
+						})
+					})
+				} catch (error) {
+					json.status = 'error'
+					json.message = "An error occurred - please make sure ImageMagick is installed"
+					console.log(err);
+					event.sender.send('remove-color-range-response', json)
+				}
+				
 			})
 		}
  	})
 })
 
-app2.post('/removeAllColor', (req, res) => {
-	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	var x = parseInt(req.body.x);
-	var y = parseInt(req.body.y);
-	var color = req.body.color;
-	var fuzz = parseInt(req.body.fuzz);
+ipcMain.on('remove-all-color', (event, arg) => {
+	let buffer = Buffer.from(arg.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	let x = parseInt(arg.x);
+	let y = parseInt(arg.y);
+	let pTop = arg.pTop
+	let pLeft = arg.pLeft
+	let pScaleX = arg.pScaleX
+	let pScaleY = arg.pScaleY
+	let pictureName = arg.pictureName
+	let colorSquare = arg.colorSquare
+	let fuzz = parseInt(arg.fuzz);
+	let canvas = arg.canvas
+	let color = arg.color
+	let json = {}
 	Jimp.read(buffer, (err, image) => {
 		if (err) {
-			console.log(err);		
+			json.status = 'error'
+			json.message = err
+			console.log(err);
+			event.sender.send('remove-all-color-response', json)
 		} else {
 			image.write(tempDir+"/temp.png", (err) => {
-				var cmdString = 'magick convert '+tempDir+'/temp.png -fuzz '+fuzz+'% -transparent '+color+' '+tempDir+'/temp.png';
-				imagemagickCli.exec(cmdString).then(({ stdout, stderr }) => {
-					Jimp.read(tempDir+"/temp.png", (err, image) => {
-						if (err) {
-							console.log(err);
-						} else {
-							image.getBase64(Jimp.AUTO, (err, ret) => {
-								res.end(ret);
-							})
-						}
+				try {
+					imagemagickCli.exec('magick convert '+tempDir+'/temp.png -fuzz '+fuzz+'% -transparent '+color+' '+tempDir+'/temp.png')
+					.then(({ stdout, stderr }) => {
+						Jimp.read(tempDir+"/temp.png", (err, image) => {
+							if (err) {
+								json.status = 'error'
+								json.message = err
+								console.log(err);
+								event.sender.send('remove-all-color-response', json)
+							} else {
+								image.getBase64(Jimp.AUTO, (err, ret) => {
+									json.status = 'success'
+									json.data = ret
+									json.canvas = canvas
+									json.x = x
+									json.y = y
+									json.pTop = pTop
+									json.pLeft = pLeft
+									json.pScaleX = pScaleX
+									json.pScaleY = pScaleY
+									json.pictureName = pictureName
+									json.colorSquare = colorSquare
+									event.sender.send('remove-all-color-response', json)
+								})
+							}
+						})
 					})
-				})
+				} catch (error) {
+					json.status = 'error'
+					json.message = "An error occurred - please make sure ImageMagick is installed"
+					console.log(err);
+					event.sender.send('remove-all-color-response', json)
+				}
+				
 			})
 		}
-	})
-});
+ 	})
+})
 
-app2.get("/customFont", (req, res) => {
+ipcMain.on('custom-font', (event, arg) => {
+	let json = {}
 	const options = {
 		defaultPath: store.get("uploadFontPath", app.getPath('desktop')),
 		properties: ['openFile'],
@@ -459,78 +665,117 @@ app2.get("/customFont", (req, res) => {
 				const fontMeta = fontname.parse(fs.readFileSync(result.filePaths[0]))[0];
 				var ext = getExtension(result.filePaths[0])
 				var fontPath = url.pathToFileURL(result.filePaths[0])
-				var json = {
-					"status": "ok",
-					"fontName": fontMeta.fullName,
-					"fontStyle": fontMeta.fontSubfamily,
-					"familyName": fontMeta.fontFamily,
-					"fontFormat": ext,
-					"fontMimetype": 'font/' + ext,
-					"fontData": fontPath.href,
-					"fontPath": filePath
-				};
+				json.status = "ok"
+				json.fontName = fontMeta.fullName
+				json.fontStyle = fontMeta.fontSubfamily
+				json.familyName = fontMeta.fontFamily
+				json.fontFormat = ext
+				json.fontMimetype = 'font/' + ext
+				json.fontData = fontPath.href
+				json.fontPath = filePath
 				fs.copyFileSync(result.filePaths[0], filePath)
-				res.json(json)
-				res.end()
+				event.sender.send('custom-font-response', json)
 			} catch (err) {
-				const json = {
-					"status": "error",
-					"fontName": path.basename(result.filePaths[0]),
-					"fontPath": result.filePaths[0],
-					"message": err
-				}
-				res.json(json)
-				res.end()
+				json.status = "error"
+				json.fontName = path.basename(result.filePaths[0])
+				json.fontPath = result.filePaths[0]
+				json.message = err
+				event.sender.send('custom-font-response', json)
 				fs.unlinkSync(result.filePaths[0])
 			}
 		} else {
-			res.json({"status":"cancelled"})
-			res.end()
+			json.status = "cancelled"
+			event.sender.send('custom-font-response', json)
 			console.log("cancelled")
 		}
 	}).catch(err => {
 		console.log(err)
-		res.json({
-			"status":"error",
-			"message": err
-		})
-		res.end()
+		json.status = "error",
+		json.message = err
+		event.sender.send('custom-font-response', json)
 	})
 })
 
-app2.get("/dropFont", (req, res) => {
-	try {
-		const filePath = path.join(userFontsFolder,path.basename(req.query.file))
-		const fontMeta = fontname.parse(fs.readFileSync(req.query.file))[0];
-		var ext = getExtension(req.query.file)
-		var fontPath = url.pathToFileURL(req.query.file)
-		var json = {
-			"status": "ok",
-			"fontName": fontMeta.fullName,
-			"fontStyle": fontMeta.fontSubfamily,
-			"familyName": fontMeta.fontFamily,
-			"fontFormat": ext,
-			"fontMimetype": 'font/' + ext,
-			"fontData": fontPath.href,
-			"fontPath": filePath
-		};
-		fs.copyFileSync(req.query.file, filePath)
-		res.json(json)
-		res.end()
-	} catch (err) {
-		const json = {
-			"status": "error",
-			"fontName": path.basename(req.query.file),
-			"fontPath": req.query.file,
-			"message": err
+ipcMain.on('local-font', (event, arg) => {
+	let json = {}
+	const options = {
+		defaultPath: store.get("uploadFontPath", app.getPath('desktop')),
+		properties: ['openFile'],
+		filters: [
+			{ name: 'Fonts', extensions: ['ttf', 'otf'] }
+		]
+	}
+	dialog.showOpenDialog(null, options).then(result => {
+		if(!result.canceled) {
+			store.set("uploadFontPath", path.dirname(result.filePaths[0]))
+			const filePath = path.join(userFontsFolder,path.basename(result.filePaths[0]))
+			try {
+				const fontMeta = fontname.parse(fs.readFileSync(result.filePaths[0]))[0];
+				var ext = getExtension(result.filePaths[0])
+				var fontPath = url.pathToFileURL(result.filePaths[0])
+				json.status = "ok"
+				json.fontName = fontMeta.fullName
+				json.fontStyle = fontMeta.fontSubfamily
+				json.familyName = fontMeta.fontFamily
+				json.fontFormat = ext
+				json.fontMimetype = 'font/' + ext
+				json.fontData = fontPath.href
+				json.fontPath = filePath
+				json.type = arg
+				fs.copyFileSync(result.filePaths[0], filePath)
+				event.sender.send('local-font-response', json)
+			} catch (err) {
+				json.status = "error"
+				json.fontName = path.basename(result.filePaths[0])
+				json.fontPath = result.filePaths[0]
+				json.message = err
+				event.sender.send('local-font-response', json)
+				fs.unlinkSync(result.filePaths[0])
+			}
+		} else {
+			json.status = "cancelled"
+			event.sender.send('local-font-response', json)
+			console.log("cancelled")
 		}
-		res.json(json)
-		res.end()
-		fs.unlinkSync(req.query.file)
+	}).catch(err => {
+		console.log(err)
+		json.status = "error",
+		json.message = err
+		event.sender.send('local-font-response', json)
+	})
+})
+
+ipcMain.on('drop-font', (event, arg) => {
+	let file = arg[0]
+	let tab = arg[1]
+	let json = {}
+	try {
+	    const filePath = path.join(userFontsFolder,path.basename(file))
+		const fontMeta = fontname.parse(fs.readFileSync(file))[0];
+		var ext = getExtension(file)
+		var fontPath = url.pathToFileURL(file)
+		json.status = "ok"
+		json.fontName = fontMeta.fullName
+		json.fontStyle = fontMeta.fontSubfamily
+		json.familyName = fontMeta.fontFamily
+		json.fontFormat = ext
+		json.fontMimetype = 'font/' + ext
+		json.fontData = fontPath.href
+		json.fontPath = filePath
+		json.tab = tab
+		fs.copyFileSync(file, filePath)
+		event.sender.send('drop-font-response', json)
+	} catch (err) {
+		json.status = "error"
+		json.fontName = path.basename(file)
+		json.fontPath = file
+		json.message = err
+		fs.unlinkSync(file)
+		event.sender.send('drop-font-response', json)
 	}
 })
 
-app2.post("/saveFontPosition", (req, res) => {
+ipcMain.on('save-font-position', (event, arg) => {
 	const options = {
 		defaultPath: increment(store.get("downloadPositionPath", app.getPath('downloads'))+'/'+req.body.filename+'.json',{fs: true})
 	}
@@ -540,26 +785,30 @@ app2.post("/saveFontPosition", (req, res) => {
 			fs.writeFile(result.filePath, JSON.stringify(req.body.json, null, 2), 'utf8', function(err) {
 				console.log(err)
 			})
-			res.json({result: "success"})
+			event.sender.send('save-font-position-response', 'success')
 		} else {
-			res.json({result: "success"})
+			event.sender.send('save-font-position-response', 'success')
 		}
 	}).catch((err) => {
 		console.log(err);
-		res.json({result: "success"})
+		event.sender.send('save-font-position-response', 'success')
 	});
 })
 
-app2.post('/warpText', (req, res)=> {
-	var buffer = Buffer.from(req.body.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	var amount = req.body.amount;
-	var deform = req.body.deform;
-	var width;
-	var height;
-	var cmdLine;
+ipcMain.on('warp-text', (event, arg) => {
+	let buffer = Buffer.from(arg.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	let amount = arg.amount;
+	let deform = arg.deform;
+	let width;
+	let height;
+	let cmdLine;
+	let json = {}
 	Jimp.read(buffer, (err, image) => {
 		if (err) {
+			json.status = 'error'
+			json.message = err
 			console.log(err);
+			event.sender.send('warp-text-response', json)
 		} else {
 			image.autocrop();
 			image.write(tempDir+"/temp.png");
@@ -581,61 +830,100 @@ app2.post('/warpText', (req, res)=> {
 					cmdLine = 'magick convert '+tempDir+'/temp.png -virtual-pixel transparent -interpolate Spline -distort BilinearForward "0,0 0,0 0,'+height+' 0,'+y2+' '+width+',0 '+width+',0 '+width+','+height+' '+width+','+height+'" '+tempDir+'/'+deform+'.png'
 					break;
 				case "archUp":
-					imagemagickCli.exec('magick convert '+tempDir+'/temp.png -gravity west -background transparent -extent '+width*2+'x'+height+' '+tempDir+'/temp.png').then(({stdout, stderr }) => {
-						imagemagickCli.exec('magick convert -background transparent -wave -'+amount*2+'x'+width*4+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png').then(({ stdout, stderr }) => {
-							Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
-								if (err) {
-									console.log(err);
-								} else {
-									image.getBase64(Jimp.AUTO, (err, ret) => {
-										res.end(ret);
-									})
-								}
+					try {
+						imagemagickCli.exec('magick convert '+tempDir+'/temp.png -gravity west -background transparent -extent '+width*2+'x'+height+' '+tempDir+'/temp.png').then(({stdout, stderr }) => {
+							imagemagickCli.exec('magick convert -background transparent -wave -'+amount*2+'x'+width*4+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png').then(({ stdout, stderr }) => {
+								Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
+									if (err) {
+										json.status = 'error'
+										json.message = err
+										console.log(err);
+										event.sender.send('warp-text-response', json)
+									} else {
+										image.getBase64(Jimp.AUTO, (err, ret) => {
+											json.status = 'success'
+											json.data = ret
+											event.sender.send('warp-text-response', json)
+											//res.end(ret);
+										})
+									}
+								})
 							})
 						})
-					})
+					} catch (err) {
+						json.status = 'error'
+						json.message = err
+						console.log(err);
+						event.sender.send('warp-text-response', json)
+					}
 					break;
 				case "archDown":
-					imagemagickCli.exec('magick convert '+tempDir+'/temp.png -gravity east -background transparent -extent '+width*2+'x'+height+' '+tempDir+'/temp.png').then(({stdout, stderr }) => {
-						imagemagickCli.exec('magick convert -background transparent -wave -'+amount*2+'x'+width*4+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png').then(({ stdout, stderr }) => {
-							Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
-								if (err) {
-									console.log(err);
-								} else {
-									image.getBase64(Jimp.AUTO, (err, ret) => {
-										res.end(ret);
-									})
-								}
+					try {
+						imagemagickCli.exec('magick convert '+tempDir+'/temp.png -gravity east -background transparent -extent '+width*2+'x'+height+' '+tempDir+'/temp.png').then(({stdout, stderr }) => {
+							imagemagickCli.exec('magick convert -background transparent -wave -'+amount*2+'x'+width*4+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png').then(({ stdout, stderr }) => {
+								Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
+									if (err) {
+										json.status = 'error'
+										json.message = err
+										console.log(err);
+										event.sender.send('warp-text-response', json)
+									} else {
+										image.getBase64(Jimp.AUTO, (err, ret) => {
+											json.status = 'success'
+											json.data = ret
+											event.sender.send('warp-text-response', json)
+										})
+									}
+								})
 							})
 						})
-					})
+					} catch (err) {
+						json.status = 'error'
+						json.message = err
+						console.log(err);
+						event.sender.send('warp-text-response', json)
+					}
 					break;
 				default:
 					image.getBase64(Jimp.AUTO, (err, ret) => {
-						res.end(ret);
+						json.status = 'success'
+						json.data = ret
+						event.sender.send('warp-text-response', json)
 					})
 					break;
 			}
-			imagemagickCli.exec(cmdLine).then(({ stdout, stderr }) => {
-				Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
-					if (err) {
-						console.log(err);
-					} else {
-						image.getBase64(Jimp.AUTO, (err, ret) => {
-							res.end(ret);
-						})
-					}
+			try {
+				imagemagickCli.exec(cmdLine).then(({ stdout, stderr }) => {
+					Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
+						if (err) {
+							json.status = 'error'
+							json.message = err
+							console.log(err);
+							event.sender.send('warp-text-response', json)
+						} else {
+							image.getBase64(Jimp.AUTO, (err, ret) => {
+								json.status = 'success'
+								json.data = ret
+								event.sender.send('warp-text-response', json)
+							})
+						}
+					})
 				})
-			})
+			} catch (err) {
+				json.status = 'error'
+				json.message = err
+				console.log(err);
+				event.sender.send('warp-text-response', json)
+			}
 		}
 	})
 })
 
-app2.post('/saveWordmark', (req,res) => {
-	const buffer = Buffer.from(req.body.image.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+ipcMain.on('save-wordmark', (event, arg) => {
+	const buffer = Buffer.from(arg.image.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 
     const options = {
-        defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/wordmark_' + req.body.name+'.png',{fs: true})
+        defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/wordmark_' + arg.name+'.png',{fs: true})
 	}
 	
 	dialog.showSaveDialog(null, options).then((result) => {
@@ -649,40 +937,40 @@ app2.post('/saveWordmark', (req,res) => {
 					image.write(result.filePath);
 				}
 			})
-			res.json({result: "success"})
+			event.sender.send('hide-overlay', null)
 		} else {
-			res.json({result: "success"})
+			event.sender.send('hide-overlay', null)
 		}
 	}).catch((err) => {
 		console.log(err);
-		res.json({result: "success"})
+		event.sender.send('hide-overlay', null)
 	});
-
 })
 
-app2.post('/saveSwatches', (req, res) => {
+ipcMain.on('save-swatches', (event, arg) => {
 	const options = {
 		//defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')) + '/' + req.body.name+'.pal'
-		defaultPath: increment(store.get("downloadSwatchPath", app.getPath('downloads')) + '/' + req.body.name+'.pal',{fs: true})
+		defaultPath: increment(store.get("downloadSwatchPath", app.getPath('downloads')) + '/' + arg.name+'.pal',{fs: true})
 	}
 
 	dialog.showSaveDialog(null, options).then((result) => {
 		if (!result.canceled) {
 			store.set("downloadSwatchPath", path.dirname(result.filePath))
-			fs.writeFile(result.filePath, JSON.stringify(req.body, null, 2), 'utf8', function(err) {
+			fs.writeFile(result.filePath, JSON.stringify(arg, null, 2), 'utf8', function(err) {
 				console.log(err)
 			})
-			res.json({result: "success"})
+			event.sender.send('hide-overlay', null)
 		} else {
-			res.json({result: "success"})
+			event.sender.send('hide-overlay', null)
 		}
 	}).catch((err) => {
 		console.log(err);
-		res.json({result: "success"})
+		event.sender.send('hide-overlay', null)
 	});
 })
 
-app2.get("/loadSwatches", (req, res) => {
+ipcMain.on('load-swatches', (event, arg) => {
+	let jsonResponse = {}
 	const options = {
 		defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')),
 		properties: ['openFile'],
@@ -695,10 +983,9 @@ app2.get("/loadSwatches", (req, res) => {
 			store.set("downloadSwatchPath", path.dirname(result.filePaths[0]))
 			switch (getExtension(result.filePaths[0])) {
 				case "pal":
-					res.json({
-						"result": "success",
-						"json": JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
-					})
+					jsonResponse.result = "success"
+					jsonResponse.json = JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
+					event.sender.send('load-swatches-response', jsonResponse)
 					break;
 				case "uni":
 					var json = JSON.parse(fs.readFileSync(result.filePaths[0]))
@@ -715,10 +1002,9 @@ app2.get("/loadSwatches", (req, res) => {
 					commonPalette.push(json.swatchSelectors.swatch3Color.val)
 					commonPalette.push(json.swatchSelectors.swatch4Color.val)
 					palette.commonPalette = commonPalette
-					res.json({
-						"result": "success",
-						"json": JSON.stringify(palette)	
-					})
+					jsonResponse.result = "success",
+					jsonResponse.json = JSON.stringify(palette)
+					event.sender.send('load-swatches-response', jsonResponse)
 					break;
 				case "zip":
 					var palFile = null;
@@ -730,55 +1016,41 @@ app2.get("/loadSwatches", (req, res) => {
 						}
 					});
 					if (palFile != null) {
-						res.json({
-							"result": "success",
-							"json": JSON.stringify(JSON.parse(palFile.getData().toString("utf8")))
-						})
+						jsonResponse.result = "success"
+						jsonResponse.json = JSON.stringify(JSON.parse(palFile.getData().toString("utf8")))
+						event.sender.send('load-swatches-response', jsonResponse)
 					} else {
-						res.json({
-							"result": "error",
-							"message": "No valid palette file was found in "+path.basename(result.filePaths[0])
-						})
+						jsonResponse.result = "error",
+						jsonResponse.message = "No valid palette file was found in "+path.basename(result.filePaths[0])
+						event.sender.send('load-swatches-response', jsonResponse)
 					}
 					break;
 				default:
-					res.json({
-						"result": "error",
-						"message": "Invalid file type: "+path.basename(result.filePaths[0])
-					})
+					jsonResponse.result = "error"
+					jsonResponse.message = "Invalid file type: "+path.basename(result.filePaths[0])
+					event.sender.send('load-swatches-response', jsonResponse)
 			}
-			res.end()
-		/* if(!result.canceled) {
-			res.json({
-				"result": "success",
-				"json": JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
-			})
-			res.end() */
+			event.sender.send('hide-overlay', null)
 		} else {
-			res.json({
-				"result": "cancelled"
-			})
-			res.end()
+			event.sender.send('hide-overlay', null)
 			console.log("cancelled")
 		}
 	}).catch(err => {
-		res.json({
-			"result": "error"
-		})
+		jsonResponse.result = "error"
+		jsonResponse.message = err
 		console.log(err)
-		res.end()
+		event.sender.send('load-swatches-response', jsonResponse)
 	})
 })
 
-app2.post('/savePants', (req, res) => {
-	const pantsLogoCanvas = Buffer.from(req.body.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const pantsBelow = Buffer.from(req.body.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const text = req.body.text
-	const tmpPantsTexture = req.body.pantsTexture
+ipcMain.on('save-pants', (event, arg) => {
+	const pantsLogoCanvas = Buffer.from(arg.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const pantsBelow = Buffer.from(arg.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const text = arg.text
+	const tmpPantsTexture = arg.pantsTexture
 
 	const options = {
-		//defaultPath: store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png'
-		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png',{fs: true})
+		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.png',{fs: true})
 	}
 
 	if (tmpPantsTexture.startsWith("data:image")) {
@@ -799,11 +1071,11 @@ app2.post('/savePants', (req, res) => {
 		await blankImage.print(font, 10, 10, text)
 		await blankImage.autocrop()
 		await blankImage.scaleToFit(500,15)
-		await blankImage.color([{ apply: "mix", params: [req.body.pantsWatermarkColor, 100] }]);
+		await blankImage.color([{ apply: "mix", params: [arg.pantsWatermarkColor, 100] }]);
 		await pantsBase.composite(pantsTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await pantsBase.composite(pantsOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let pantsWM = await Jimp.read(__dirname+"/images/pants_watermark.png")
-		await pantsWM.color([{ apply: "mix", params: [req.body.pantsWatermarkColor, 100] }]);
+		await pantsWM.color([{ apply: "mix", params: [arg.pantsWatermarkColor, 100] }]);
 		await pantsBase.composite(pantsWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await pantsBase.blit(blankImage, 256-(blankImage.bitmap.width/2), 12.5-(blankImage.bitmap.height/2))
 		let pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
@@ -813,25 +1085,25 @@ app2.post('/savePants', (req, res) => {
 				fs.writeFile(result.filePath, finalImage, 'base64', function(err) {
 					console.log(err)
 				})
-				res.json({result: "success"})
+				event.sender.send('save-pants-response', null)
 			} else {
-				res.json({result: "success"})
+				event.sender.send('save-pants-response', null)
 			}
 		}).catch((err) => {
 			console.log(err);
-			res.json({result: "success"})
+			event.sender.send('save-pants-response', null)
 		});
 	}
 })
 
-app2.post('/saveCap', (req, res) => {
-	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const text = req.body.text
-	const tmpCapTexture = req.body.capTexture
+ipcMain.on('save-cap', (event, arg) => {
+	const capLogoCanvas = Buffer.from(arg.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const capBelow = Buffer.from(arg.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const text = arg.text
+	const tmpCapTexture = arg.capTexture
 
 	const options = {
-		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png',{fs: true})
+		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.png',{fs: true})
 	}
 
 	if (tmpCapTexture.startsWith("data:image")) {
@@ -852,9 +1124,9 @@ app2.post('/saveCap', (req, res) => {
 		await blankImage.print(font, 10, 10, text)
 		await blankImage.autocrop()
 		await blankImage.scaleToFit(290,15)
-		await blankImage.color([{ apply: "mix", params: [req.body.capWatermarkColor, 100] }]);
+		await blankImage.color([{ apply: "mix", params: [arg.capWatermarkColor, 100] }]);
 		let capWM = await Jimp.read(__dirname+"/images/cap_watermark.png")
-		await capWM.color([{ apply: "mix", params: [req.body.capWatermarkColor, 100] }]);
+		await capWM.color([{ apply: "mix", params: [arg.capWatermarkColor, 100] }]);
 		await capBase.composite(capTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await capBase.composite(capOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await capBase.composite(capWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
@@ -866,22 +1138,22 @@ app2.post('/saveCap', (req, res) => {
 				fs.writeFile(result.filePath, finalImage, 'base64', function(err) {
 					console.log(err)
 				})
-				res.json({result: "success"})
+				event.sender.send('save-cap-response', null)
 			} else {
-				res.json({result: "success"})
+				event.sender.send('save-cap-response', null)
 			}
 		}).catch((err) => {
 			console.log(err);
-			res.json({result: "success"})
+			event.sender.send('save-cap-response', null)
 		});
 	}
 })
 
-app2.post("/saveFont", (req, res) => {
-    const fontCanvas = Buffer.from(req.body.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+ipcMain.on('save-font', (event, arg) => {
+	const fontCanvas = Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 
     const options = {
-        defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.png',{fs: true})
+        defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.png',{fs: true})
 	}
             
 	prepareImages()
@@ -893,26 +1165,26 @@ app2.post("/saveFont", (req, res) => {
 				fs.writeFile(result.filePath, fontCanvas, 'base64', function(err) {
 					console.log(err)
 				})
-				res.json({result: "success"})
+				event.sender.send('save-font-response', null)
 			} else {
-				res.json({result: "success"})
+				event.sender.send('save-font-response', null)
 			}
 		}).catch((err) => {
 			console.log(err);
-			res.json({result: "success"})
+			event.sender.send('save-font-response', null)
 		});
 	}
 })
 
-app2.post("/generateHeightMap", (req, res) => {
-	const jerseyLogoCanvas = Buffer.from(req.body.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const showPlanket = req.body.showPlanket
-	const buttonPadSeams = req.body.buttonPadSeams
-	const buttonType = req.body.buttonType
-	const seamsVisible = req.body.seamsVisible
-	const seamsOption = req.body.seamsOption
-	const brightness = parseInt(req.body.brightness)/100
-	const seamOpacity = parseInt(req.body.seamOpacity)/100
+ipcMain.on('generate-height-map', (event, arg) => {
+	const jerseyLogoCanvas = Buffer.from(arg.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const showPlanket = arg.showPlanket
+	const buttonPadSeams = arg.buttonPadSeams
+	const buttonType = arg.buttonType
+	const seamsVisible = arg.seamsVisible
+	const seamsOption = arg.seamsOption
+	const brightness = parseInt(arg.brightness)/100
+	const seamOpacity = parseInt(arg.seamOpacity)/100
 
 	prepareImages()
 
@@ -973,25 +1245,28 @@ app2.post("/generateHeightMap", (req, res) => {
 		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await jerseyHeightMap.write(tempDir+"/temp_height_map.jpg")
 		let base64 = await jerseyHeightMap.getBase64Async(Jimp.AUTO)
-		res.json({
-			"status": "success",
-			"image": base64
-		})
+		if (arg.type == "jersey") {
+			console.log('hello world')
+			event.sender.send('save-jersey-response', {status: "success", "image": base64, args: arg})
+		} else {
+			event.sender.send('save-uniform-response', {status: "success", "image": base64, args: arg})
+		}
 	}
 })
 
-app2.post('/saveJersey', (req, res) => {
-	const jerseyLogoCanvas = Buffer.from(req.body.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const jerseyBelow = Buffer.from(req.body.jerseyBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const nameCanvas = Buffer.from(req.body.nameCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const heightMap = Buffer.from(req.body.heightMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const normalMap = Buffer.from(req.body.normalMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const tmpJerseyTexture = req.body.jerseyTexture
-	const buttonPadSeams = req.body.buttonPadSeams
-	const buttonType = req.body.buttonType
-	const seamsVisible = req.body.seamsVisible
-	const seamsOption = req.body.seamsOption
-	const seamsOnDiffuse = req.body.seamsOnDiffuse
+ipcMain.on('save-jersey-zip', (event, arg) => {
+	const jerseyLogoCanvas = Buffer.from(arg.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const jerseyBelow = Buffer.from(arg.jerseyBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const nameCanvas = Buffer.from(arg.nameCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const heightMap = Buffer.from(arg.heightMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const normalMap = Buffer.from(arg.normalMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const tmpJerseyTexture = arg.jerseyTexture
+	const buttonPadSeams = arg.buttonPadSeams
+	const buttonType = arg.buttonType
+	const seamsVisible = arg.seamsVisible
+	const seamsOption = arg.seamsOption
+	const seamsOnDiffuse = arg.seamsOnDiffuse
+	let json = {}
 
 	if (tmpJerseyTexture.startsWith("data:image")) {
 		fs.writeFileSync(tempDir+"/tempJerseyTexture.png", tmpJerseyTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
@@ -1000,44 +1275,47 @@ app2.post('/saveJersey', (req, res) => {
 		var jerseyTexture = __dirname+"/images/"+tmpJerseyTexture
 	}
 
-	const output = fs.createWriteStream(tempDir + '/'+req.body.name+'.zip');
+	const output = fs.createWriteStream(tempDir + '/'+arg.name+'.zip');
 
 	output.on('close', function() {
-		var data = fs.readFileSync(tempDir + '/'+req.body.name+'.zip');
+		var data = fs.readFileSync(tempDir + '/'+arg.name+'.zip');
 		var saveOptions = {
-		  defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + req.body.name+'.zip',{fs: true})
+		  defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.zip',{fs: true})
 		}
 		dialog.showSaveDialog(null, saveOptions).then((result) => { 
 		  if (!result.canceled) {
 			store.set("downloadPath", path.dirname(result.filePath))
 			fs.writeFile(result.filePath, data, function(err) {
 			  if (err) {
-				fs.unlink(tempDir + '/'+req.body.name+'.zip', (err) => {
+				fs.unlink(tempDir + '/'+arg.name+'.zip', (err) => {
 				  if (err) {
 					console.log(err)
 					return
 				  }
 				})
 				console.log(err)
-				res.json({result: "error", errno: err.errno})
+				json.result = "error"
+				json.errno = err.errno
+				event.sender.send('save-jersey-zip-response', arg)
+				//res.json({result: "error", errno: err.errno})
 			  } else {
-				fs.unlink(tempDir + '/'+req.body.name+'.zip', (err) => {
+				fs.unlink(tempDir + '/'+arg.name+'.zip', (err) => {
 				  if (err) {
 					console.log(err)
 					return
 				  }
 				})
-				res.json({result: "success"})
+				event.sender.send('save-jersey-zip-response', arg)
 			  };
 			})
 		  } else {
-			fs.unlink(tempDir + '/'+req.body.name+'.zip', (err) => {
+			fs.unlink(tempDir + '/'+arg.name+'.zip', (err) => {
 			  if (err) {
 				console.log(err)
 				return
 			  }
 			})
-			res.json({result: "success"})
+			event.sender.send('save-jersey-zip-response', arg)
 		  }
 		})
 	});
@@ -1101,23 +1379,23 @@ app2.post('/saveJersey', (req, res) => {
 		await jerseyBase.composite(jerseyTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await jerseyBase.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyWM = await Jimp.read(__dirname+"/images/jersey_watermark.png")
-		await jerseyWM.color([{ apply: "mix", params: [req.body.jerseyWatermarkColor, 100] }]);
+		await jerseyWM.color([{ apply: "mix", params: [arg.jerseyWatermarkColor, 100] }]);
 		await jerseyBase.composite(jerseyWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await jerseyBase.composite(nameImage, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBuffer = await jerseyBase.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(jerseyBuffer, {name: req.body.name+".png"})
-		//await jerseyBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'.png')
+		archive.append(jerseyBuffer, {name: arg.name+".png"})
+		//await jerseyBase.write(app.getPath('downloads') + '/jerseys_' + arg.name+'.png')
 		
 		// jersey height map
 		let jerseyHeightMap = await Jimp.read(heightMap)
 		let jerseyHMBuffer = await jerseyHeightMap.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(jerseyHMBuffer, {name: req.body.name+"_h.png"})
+		archive.append(jerseyHMBuffer, {name: arg.name+"_h.png"})
 		//await jerseyHeightMap.write(tempDir+"/temp_height_map.jpg")
 
 		// jersey normal map
 		let jerseyNormalMap = await Jimp.read(normalMap)
 		let jerseyNMBUffer = await jerseyNormalMap.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(jerseyNMBUffer, {name: req.body.name+"_n.png"})
+		archive.append(jerseyNMBUffer, {name: arg.name+"_n.png"})
 		//await jerseyNormalMap.write(tempDir+"/temp_normal_map.jpg")
 		
 		// jersey with baked texture
@@ -1170,63 +1448,63 @@ app2.post('/saveJersey', (req, res) => {
 		await jerseyBakedBase.composite(jerseyBakedTexture2, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await jerseyBakedBase.composite(jerseyBakedOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBakedWM = await Jimp.read(__dirname+"/images/jersey_watermark.png")
-		await jerseyBakedWM.color([{ apply: "mix", params: [req.body.jerseyWatermarkColor, 100] }]);
+		await jerseyBakedWM.color([{ apply: "mix", params: [arg.jerseyWatermarkColor, 100] }]);
 		await jerseyBakedBase.composite(jerseyBakedWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await jerseyBakedBase.composite(bakedNameImage, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBakedBuffer = await jerseyBakedBase.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(jerseyBakedBuffer, {name: req.body.name+"_textured.png"})
-		//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'_textured.png')
+		archive.append(jerseyBakedBuffer, {name: arg.name+"_textured.png"})
+		//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + arg.name+'_textured.png')
 
 		archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });
 		archive.finalize()
 	}
 })
 
-app2.post('/saveUniform', (req, res) => {
-	const jerseyLogoCanvas = Buffer.from(req.body.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const jerseyBelow = Buffer.from(req.body.jerseyBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const pantsLogoCanvas = Buffer.from(req.body.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const pantsBelow = Buffer.from(req.body.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const capLogoCanvas = Buffer.from(req.body.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const capBelow = Buffer.from(req.body.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const nameCanvas = Buffer.from(req.body.nameCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const heightMap = Buffer.from(req.body.heightMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const normalMap = Buffer.from(req.body.normalMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const fontCanvas = Buffer.from(req.body.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const text = req.body.text;
-	const tmpCapTexture = req.body.capTexture
-	const tmpJerseyTexture = req.body.jerseyTexture
-	const tmpPantsTexture = req.body.pantsTexture
-	const buttonPadSeams = req.body.buttonPadSeams
-	const buttonType = req.body.buttonType
-	const seamsVisible = req.body.seamsVisible
-	const seamsOption = req.body.seamsOption
-	const seamsOnDiffuse = req.body.seamsOnDiffuse
-	const commonPalette = req.body.commonPalette
-	const json = Buffer.from(req.body.json, 'utf8')
-	const from = (req.body.from == null) ? "" : req.body.from
-	const to = (req.body.to == null) ? "" : req.body.to
-	const lettersVisible = req.body.lettersVisible
-	const numbersVisible = req.body.numbersVisible
+ipcMain.on('save-uniform-zip', (event, arg) => {
+	const jerseyLogoCanvas = Buffer.from(arg.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const jerseyBelow = Buffer.from(arg.jerseyBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const pantsLogoCanvas = Buffer.from(arg.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const pantsBelow = Buffer.from(arg.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const capLogoCanvas = Buffer.from(arg.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const capBelow = Buffer.from(arg.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const nameCanvas = Buffer.from(arg.nameCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const heightMap = Buffer.from(arg.heightMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const normalMap = Buffer.from(arg.normalMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const fontCanvas = Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const text = arg.text;
+	const tmpCapTexture = arg.capTexture
+	const tmpJerseyTexture = arg.jerseyTexture
+	const tmpPantsTexture = arg.pantsTexture
+	const buttonPadSeams = arg.buttonPadSeams
+	const buttonType = arg.buttonType
+	const seamsVisible = arg.seamsVisible
+	const seamsOption = arg.seamsOption
+	const seamsOnDiffuse = arg.seamsOnDiffuse
+	const commonPalette = arg.commonPalette
+	const json = Buffer.from(arg.json, 'utf8')
+	const from = (arg.from == null) ? "" : arg.from
+	const to = (arg.to == null) ? "" : arg.to
+	const lettersVisible = arg.lettersVisible
+	const numbersVisible = arg.numbersVisible
 
 	const swatchJSON = {
-		name: req.body.name,
-		swatch1: req.body.swatch1,
-		swatch2: req.body.swatch2,
-		swatch3: req.body.swatch3,
-		swatch4: req.body.swatch4,
+		name: arg.name,
+		swatch1: arg.swatch1,
+		swatch2: arg.swatch2,
+		swatch3: arg.swatch3,
+		swatch4: arg.swatch4,
 		commonPalette: commonPalette
 	}
 
 	const root = create({ version: '1.0', encoding: 'UTF-8' })
 		.ele("COLORS", {fileversion: "OOTP Developments 2022-08-12 09:30:00"})
-		.ele("TEAMCOLORS", {from: from, to: to, color1: req.body.backgroundColor, color: req.body.textColor})
+		.ele("TEAMCOLORS", {from: from, to: to, color1: arg.backgroundColor, color: arg.textColor})
 		.ele("NOTES").txt(" current team colors ").up()
-		.ele("UNIFORM", {name: req.body.type, from: from, to: to, showname: lettersVisible, shownumber: numbersVisible, highsocks: 'n', font: req.body.name})
-		.ele("NOTES").txt(req.body.type+" uniform").up()
-		.ele("CAP", {color1: req.body.capColor1, color2: req.body.capColor2, color3: req.body.capColor3, id: "", filname: "caps_"+req.body.name+".png"}).up()
-		.ele("JERSEY", {color1: req.body.jerseyColor1, color2: req.body.jerseyColor2, color3: req.body.jerseyColor3, id: "", filname: "jerseys_"+req.body.name+".png"}).up()
-		.ele("PANTS", {color1: req.body.pantsColor1, color2: req.body.pantsColor2, color3: req.body.pantsColor3, id: "", filname: "pants_"+req.body.name+".png"}).up()
+		.ele("UNIFORM", {name: arg.type, from: from, to: to, showname: lettersVisible, shownumber: numbersVisible, highsocks: 'n', font: arg.name})
+		.ele("NOTES").txt(arg.type+" uniform").up()
+		.ele("CAP", {color1: arg.capColor1, color2: arg.capColor2, color3: arg.capColor3, id: "", filname: "caps_"+arg.name+".png"}).up()
+		.ele("JERSEY", {color1: arg.jerseyColor1, color2: arg.jerseyColor2, color3: arg.jerseyColor3, id: "", filname: "jerseys_"+arg.name+".png"}).up()
+		.ele("PANTS", {color1: arg.pantsColor1, color2: arg.pantsColor2, color3: arg.pantsColor3, id: "", filname: "pants_"+arg.name+".png"}).up()
 
 
 	const xml = root.end({prettyPrint:true})
@@ -1252,44 +1530,44 @@ app2.post('/saveUniform', (req, res) => {
 		var pantsTexture = __dirname+"/images/"+tmpPantsTexture
 	}
 
-	const output = fs.createWriteStream(tempDir + '/uniform_'+req.body.name+'.zip');
+	const output = fs.createWriteStream(tempDir + '/uniform_'+arg.name+'.zip');
 
 	output.on('close', function() {
-		var data = fs.readFileSync(tempDir + '/uniform_'+req.body.name+'.zip');
+		var data = fs.readFileSync(tempDir + '/uniform_'+arg.name+'.zip');
 		var saveOptions = {
-		  defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/uniform_' + req.body.name+'.zip',{fs: true})
+		  defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/uniform_' + arg.name+'.zip',{fs: true})
 		}
 		dialog.showSaveDialog(null, saveOptions).then((result) => { 
 		  if (!result.canceled) {
 			store.set("downloadPath", path.dirname(result.filePath))
 			fs.writeFile(result.filePath, data, function(err) {
 			  if (err) {
-				fs.unlink(tempDir + '/uniform_'+req.body.name+'.zip', (err) => {
+				fs.unlink(tempDir + '/uniform_'+arg.name+'.zip', (err) => {
 				  if (err) {
 					console.log(err)
 					return
 				  }
 				})
 				console.log(err)
-				res.json({result: "error", errno: err.errno})
+				event.sender.send('save-uniform-zip-response', arg)
 			  } else {
-				fs.unlink(tempDir + '/uniform_'+req.body.name+'.zip', (err) => {
+				fs.unlink(tempDir + '/uniform_'+arg.name+'.zip', (err) => {
 				  if (err) {
 					console.log(err)
 					return
 				  }
 				})
-				res.json({result: "success"})
+				event.sender.send('save-uniform-zip-response', arg)
 			  };
 			})
 		  } else {
-			fs.unlink(tempDir + '/uniform_'+req.body.name+'.zip', (err) => {
+			fs.unlink(tempDir + '/uniform_'+arg.name+'.zip', (err) => {
 			  if (err) {
 				console.log(err)
 				return
 			  }
 			})
-			res.json({result: "success"})
+			event.sender.send('save-uniform-zip-response', arg)
 		  }
 		})
 	});
@@ -1317,16 +1595,16 @@ app2.post('/saveUniform', (req, res) => {
 		await blankCapImage.print(font, 10, 10, text)
 		await blankCapImage.autocrop()
 		await blankCapImage.scaleToFit(500,15)
-		await blankCapImage.color([{ apply: "mix", params: [req.body.capWatermarkColor, 100] }]);
+		await blankCapImage.color([{ apply: "mix", params: [arg.capWatermarkColor, 100] }]);
 		let capWM = await Jimp.read(__dirname+"/images/cap_watermark.png")
-		await capWM.color([{ apply: "mix", params: [req.body.capWatermarkColor, 100] }]);
+		await capWM.color([{ apply: "mix", params: [arg.capWatermarkColor, 100] }]);
 		await capBase.composite(capTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await capBase.composite(capOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await capBase.composite(capWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await capBase.blit(blankCapImage, 357-(blankCapImage.bitmap.width/2), 120-(blankCapImage.bitmap.height/2))
 		let capBuffer = await capBase.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(capBuffer, {name: "caps_"+req.body.name+".png"})
-		//await capBase.write(app.getPath('desktop') + '/uniform_Unknown_Team_Home/caps_' + req.body.name+'.png')
+		archive.append(capBuffer, {name: "caps_"+arg.name+".png"})
+		//await capBase.write(app.getPath('desktop') + '/uniform_Unknown_Team_Home/caps_' + arg.name+'.png')
 
 		// pants
 		let pantsBase = await Jimp.read(pantsBelow)
@@ -1336,21 +1614,21 @@ app2.post('/saveUniform', (req, res) => {
 		await blankPantsImage.print(font, 10, 10, text)
 		await blankPantsImage.autocrop()
 		await blankPantsImage.scaleToFit(500,15)
-		await blankPantsImage.color([{ apply: "mix", params: [req.body.pantsWatermarkColor, 100] }]);
+		await blankPantsImage.color([{ apply: "mix", params: [arg.pantsWatermarkColor, 100] }]);
 		await pantsBase.composite(pantsTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await pantsBase.composite(pantsOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let pantsWM = await Jimp.read(__dirname+"/images/pants_watermark.png")
-		await pantsWM.color([{ apply: "mix", params: [req.body.pantsWatermarkColor, 100] }]);
+		await pantsWM.color([{ apply: "mix", params: [arg.pantsWatermarkColor, 100] }]);
 		await pantsBase.composite(pantsWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await pantsBase.blit(blankPantsImage, 256-(blankPantsImage.bitmap.width/2), 12.5-(blankPantsImage.bitmap.height/2))
 		let pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(pantsBuffer, {name: "pants_"+req.body.name+".png"})
-		//await pantsBase.write(app.getPath('downloads') + '/pants_' + req.body.name+'.png')
+		archive.append(pantsBuffer, {name: "pants_"+arg.name+".png"})
+		//await pantsBase.write(app.getPath('downloads') + '/pants_' + arg.name+'.png')
 
 		// font
 		let fontBase = await Jimp.read(fontCanvas)
 		let fontBuffer = await fontBase.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(fontBuffer, {name: req.body.name+".png"})
+		archive.append(fontBuffer, {name: arg.name+".png"})
 
 		// jersey diffuse map
 		let jerseyBase = await Jimp.read(jerseyBelow)
@@ -1397,24 +1675,24 @@ app2.post('/saveUniform', (req, res) => {
 		await jerseyBase.composite(jerseyTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})	
 		await jerseyBase.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyWM = await Jimp.read(__dirname+"/images/jersey_watermark.png")
-		await jerseyWM.color([{ apply: "mix", params: [req.body.jerseyWatermarkColor, 100] }]);
+		await jerseyWM.color([{ apply: "mix", params: [arg.jerseyWatermarkColor, 100] }]);
 		await jerseyBase.composite(jerseyWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let nameImage = await Jimp.read(nameCanvas)
 		await jerseyBase.composite(nameImage, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBuffer = await jerseyBase.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(jerseyBuffer, {name: "jerseys_"+req.body.name+".png"})
-		//await jerseyBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'.png')
+		archive.append(jerseyBuffer, {name: "jerseys_"+arg.name+".png"})
+		//await jerseyBase.write(app.getPath('downloads') + '/jerseys_' + arg.name+'.png')
 		
 		// jersey height map
 		let jerseyHeightMap = await Jimp.read(heightMap)
 		let jerseyHMBuffer = await jerseyHeightMap.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(jerseyHMBuffer, {name: "jerseys_"+req.body.name+"_h.png"})
+		archive.append(jerseyHMBuffer, {name: "jerseys_"+arg.name+"_h.png"})
 		//await jerseyHeightMap.write(tempDir+"/temp_height_map.jpg")
 
 		// jersey normal map
 		let jerseyNormalMap = await Jimp.read(normalMap)
 		let jerseyNMBUffer = await jerseyNormalMap.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(jerseyNMBUffer, {name: "jerseys_"+req.body.name+"_n.png"})
+		archive.append(jerseyNMBUffer, {name: "jerseys_"+arg.name+"_n.png"})
 		//await jerseyNormalMap.write(tempDir+"/temp_normal_map.jpg")
 
 		// jersey with baked texture
@@ -1466,24 +1744,25 @@ app2.post('/saveUniform', (req, res) => {
 		await jerseyBakedBase.composite(jerseyBakedTexture2, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await jerseyBakedBase.composite(jerseyBakedOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBakedWM = await Jimp.read(__dirname+"/images/jersey_watermark.png")
-		await jerseyBakedWM.color([{ apply: "mix", params: [req.body.jerseyWatermarkColor, 100] }]);
+		await jerseyBakedWM.color([{ apply: "mix", params: [arg.jerseyWatermarkColor, 100] }]);
 		await jerseyBakedBase.composite(jerseyBakedWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let nameImageBaked = await Jimp.read(nameCanvas)
 		await jerseyBakedBase.composite(nameImageBaked, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let jerseyBakedBuffer = await jerseyBakedBase.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(jerseyBakedBuffer, {name: "jerseys_"+req.body.name+"_textured.png"})
-		//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + req.body.name+'_textured.png')
+		archive.append(jerseyBakedBuffer, {name: "jerseys_"+arg.name+"_textured.png"})
+		//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + arg.name+'_textured.png')
 		
-		archive.append(xml, {name: req.body.name+".xml"});
-		archive.append(JSON.stringify(swatchJSON, null, 2), {name: req.body.name+".pal"});
-		archive.append(json, {name: "uniform_"+req.body.name+".uni"})
+		archive.append(xml, {name: arg.name+".xml"});
+		archive.append(JSON.stringify(swatchJSON, null, 2), {name: arg.name+".pal"});
+		archive.append(json, {name: "uniform_"+arg.name+".uni"})
 		archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });
-		//archive.append(fs.createReadStream(__dirname+"/images/"+normalMap), { name: "jerseys_"+req.body.name+"_n.png" });
+		//archive.append(fs.createReadStream(__dirname+"/images/"+normalMap), { name: "jerseys_"+arg.name+"_n.png" });
 	    archive.finalize()
 	}
 })
 
-app2.get("/loadUniform", (req, res) => {
+ipcMain.on('load-uniform', (event, arg) => {
+	let json = {}
 	const options = {
 		defaultPath: store.get("uploadUniformPath", app.getPath('downloads')),
 		properties: ['openFile'],
@@ -1496,10 +1775,9 @@ app2.get("/loadUniform", (req, res) => {
 			store.set("uploadUniformPath", path.dirname(result.filePaths[0]))
 			switch (getExtension(result.filePaths[0])) {
 				case "uni":
-					res.json({
-						"result": "success",
-						"json": JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
-					})
+					json.result = "success",
+					json.json = JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
+					event.sender.send('load-uniform-response', json)
 					break;
 				case "zip":
 					var uniFile = null;
@@ -1511,41 +1789,33 @@ app2.get("/loadUniform", (req, res) => {
 						}
 					});
 					if (uniFile != null) {
-						res.json({
-							"result": "success",
-							"json": JSON.stringify(JSON.parse(uniFile.getData().toString("utf8")))
-						})
+						json.result = "success"
+						json.json = JSON.stringify(JSON.parse(uniFile.getData().toString("utf8")))
+						event.sender.send('load-uniform-response', json)
 					} else {
-						res.json({
-							"result": "error",
-							"message": "No valid uniform file was found in "+path.basename(result.filePaths[0])
-						})
+						json.result = "error",
+						json.message = "No valid uniform file was found in "+path.basename(result.filePaths[0])
+						event.sender.send('load-uniform-response', json)
 					}
 					break;
 				default:
-					res.json({
-						"result": "error",
-						"message": "Invalid file type: "+path.basename(result.filePaths[0])
-					})
+					json.result = "error",
+					json.message = "Invalid file type: "+path.basename(result.filePaths[0])
+					event.sender.send('load-uniform-response', json)
 			}
-			res.end()
+			event.sender.send('hide-overlay', null)
 		} else {
-			res.json({
-				"result": "cancelled"
-			})
-			res.end()
+			event.sender.send('hide-overlay', null)
 		}
 	}).catch(err => {
-		res.json({
-			"result": "error",
-			"message": err
-		})
+		json.result = "error",
+		json.message = err
+		event.sender.send('load-uniform-response', json)
 		console.log(err)
-		res.end()
 	})
 })
 
-app2.get("/localFontFolder", (req, res) => {
+ipcMain.on('local-font-folder', (event, arg) => {
 	const jsonObj = {}
 	const jsonArr = []
 
@@ -1584,20 +1854,15 @@ app2.get("/localFontFolder", (req, res) => {
 	}
 	jsonObj.result = "success"
 	jsonObj.fonts = jsonArr
-	res.json(jsonObj)
-	res.end()
+	event.sender.send('local-font-folder-response', jsonObj)
 })
 
-app2.post('/setPreference', (req, res) => {
-	const pref = req.body.pref;
-	const val = req.body.val;
-	store.set(pref, val)
-	res.end()
-});
+ipcMain.on('set-preference', (event, arg) => {
+	store.set(arg.pref, arg.val)
+})
 
-app2.post('/openFontFolder', (req, res) => {
+ipcMain.on('open-font-folder', (event, arg) => {
 	shell.openPath(userFontsFolder)
-	res.end()
 })
 
 function createWindow () {
@@ -1773,7 +2038,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?port=${server.address().port}&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}&imagemagick=${imInstalled}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}&imagemagick=${imInstalled}`);
     
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
       shell.openExternal(url);
