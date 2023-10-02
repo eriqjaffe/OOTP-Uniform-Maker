@@ -13,7 +13,7 @@ Image processing (for uploaded logos and some of the jersey text effects) *requi
 
 # Installation notes
 
-The simplest thing to do is just brag a pre-compiled binary from the "[releases](https://github.com/eriqjaffe/OOTP-Uniform-Maker/releases)" section.  Binaries are available for Windows, macOS and Linux.
+The simplest thing to do is just grab a pre-compiled binary from the "[releases](https://github.com/eriqjaffe/OOTP-Uniform-Maker/releases)" section.  Binaries are available for Windows, macOS and Linux.
 
 If you wish to run this from source, you will need to install [node.js](https://nodejs.org/en/download/) and [yarn](https://yarnpkg.com/getting-started/install), and then...
 
