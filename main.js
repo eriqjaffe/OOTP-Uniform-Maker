@@ -47,6 +47,7 @@ const preferredSeamOpacity = store.get("preferredSeamOpacity", "33")
 const gridsVisible = store.get("gridsVisible", true)
 const checkForUpdates = store.get("checkForUpdates", true)
 const seamsVisibleOnDiffuse = store.get("seamsVisibleOnDiffuse", false)
+const imWarning = store.get("imWarning", true)
 
 if (!fs.existsSync(userFontsFolder)) {
     fs.mkdirSync(userFontsFolder);
@@ -2038,7 +2039,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}&imagemagick=${imInstalled}`);
+    mainWindow.loadURL(`file://${__dirname}/index.html?&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}&imagemagick=${imInstalled}&imWarning=${imWarning}`);
     
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
       shell.openExternal(url);

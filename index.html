@@ -17,8 +17,7 @@
     <script type="text/javascript" src="./scripts/skeletabs.js"></script>
 	<script type="text/javascript" src="./scripts/tinycolor-min.js"></script>
 	<script type="text/javascript" src="./scripts/opentype.js"></script>
-	<script type="text/javascript" src="./scripts/vex.combined.min.js"></script>
-	<script>vex.defaultOptions.className = 'vex-theme-os'</script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script src="./scripts/popper.min.js"></script>
 	<script src="./scripts/tippy-bundle.umd.js"></script>
 	<link href='./scripts/uniformmaker.css' rel='stylesheet' type='text/css'>
@@ -28,9 +27,7 @@
 	<link href='./scripts/dd.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/jquery.range.css' rel='stylesheet' type='text/css'>
     <link href='./scripts/skeletabs.css' rel='stylesheet' type='text/css'>
-	<link href="./scripts/vex.css" rel="stylesheet" type='text/css'>
-	<link href="./scripts/vex-theme-os.css" rel="stylesheet" type='text/css'>
-    <script>
+	<script>
 		const { ipcRenderer } = require('electron');
 		const params = new URLSearchParams(window.location.search)
 		const appVersion = params.get('appVersion')
@@ -39,6 +36,7 @@
 		const preferredPlayerName = params.get('preferredPlayerName')
 		const preferredPlayerNumber = params.get('preferredPlayerNumber')
 		const imageMagick = (params.get("imagemagick") == "true") ? true : false
+		const imWarning = (params.get("imWarning") == "true") ? true : false
 
 		var prefs = {
 			appVersion: params.get('appVersion'),
@@ -2708,6 +2706,23 @@
 				$(this).css("display","none");
 			}
 		})
+
+		if (imageMagick == true) {
+			if (imWarning == true) {
+				Swal.fire({
+					title: 'ImageMagick was not detected.  Some functionality will not be available.',
+					showDenyButton: true,
+					confirmButtonText: 'OK',
+					denyButtonText: `Don't Warn Me Again`,
+				}).then((result) => {
+					if (result.isConfirmed) {
+						ipcRenderer.send('set-preference', {pref:"imWarning",val:true})
+					} else if (result.isDenied) {
+						ipcRenderer.send('set-preference', {pref:"imWarning",val:false})
+					}
+				})
+			}
+		}
 
 		$(".preference").each(function() {
 			$(this).val(prefs[$(this).attr("id")])
@@ -14409,51 +14424,49 @@
 		var numScaleMod = (numMax != maxNumWidth) ? maxNumWidth / numMax :  1
 		var letMax = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
 		var letScaleMod = (letMax != maxLetWidth) ? maxLetWidth / letMax : 1
-			
-		vex.dialog.open({
-			message: 'Do you want to resize characters to fit?  This may result in some poor quality results.',
-			buttons: [
-				$.extend({}, vex.dialog.buttons.YES, { text: 'Yes' }),
-        		$.extend({}, vex.dialog.buttons.NO, { text: 'No' })
-    		],
-			callback: function (response) {
-				for (obj of data) {
-					const char = chars.find(o => o.char === obj.char)
-					const src = obj
-					if (char) {
-						fabric.Image.fromURL(src.image, function (oImg) {
-							if (response == true) {
-								if (isNumeric(src.char)) {
-									oImg.set({
-										"top": ((char.bottom*2)-(src.height*numScaleMod))+12, 
-										"left": (char.left*2)-10,
-										"id": src.char+"_ocr",
-										"scaleX": numScaleMod,
-										"scaleY": numScaleMod
-									})
-								} else {
-									oImg.set({
-										"top": ((char.bottom*2)-(src.height*letScaleMod))+8, 
-										"left": (char.left*2)-8,
-										"id": src.char+"_ocr",
-										"scaleX": letScaleMod,
-										"scaleY": letScaleMod
-									})
-								}
-								fontCanvas.add(oImg)
-							} else {
-								oImg.set({ 
-									"top": ((char.bottom*2)-oImg.height)+8, 
-									"left": (char.left*2)-8 
+		
+		Swal.fire({
+			title: 'Do you want to resize characters to fit?  This may result in some poor quality results.',
+			showDenyButton: true,
+			confirmButtonText: 'Yes',
+			denyButtonText: 'No',
+		}).then((response) => {
+			for (obj of data) {
+				const char = chars.find(o => o.char === obj.char)
+				const src = obj
+				if (char) {
+					fabric.Image.fromURL(src.image, function (oImg) {
+						if (response.isConfirmed == true) {
+							if (isNumeric(src.char)) {
+								oImg.set({
+									"top": ((char.bottom*2)-(src.height*numScaleMod))+12, 
+									"left": (char.left*2)-10,
+									"id": src.char+"_ocr",
+									"scaleX": numScaleMod,
+									"scaleY": numScaleMod
 								})
-								fontCanvas.add(oImg)
+							} else {
+								oImg.set({
+									"top": ((char.bottom*2)-(src.height*letScaleMod))+8, 
+									"left": (char.left*2)-8,
+									"id": src.char+"_ocr",
+									"scaleX": letScaleMod,
+									"scaleY": letScaleMod
+								})
 							}
-							fontCanvas.renderAll()
-						})
-					}
+							fontCanvas.add(oImg)
+						} else {
+							oImg.set({ 
+								"top": ((char.bottom*2)-oImg.height)+8, 
+								"left": (char.left*2)-8 
+							})
+							fontCanvas.add(oImg)
+						}
+						fontCanvas.renderAll()
+					})
 				}
-				hideOverlay()
 			}
+			hideOverlay()
 		})
 	}
 
