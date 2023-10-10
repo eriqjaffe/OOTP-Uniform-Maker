@@ -17,7 +17,7 @@
     <script type="text/javascript" src="./scripts/skeletabs.js"></script>
 	<script type="text/javascript" src="./scripts/tinycolor-min.js"></script>
 	<script type="text/javascript" src="./scripts/opentype.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script type="text/javascript" src="./scripts/sweetalert2.min.js"></script>
 	<script src="./scripts/popper.min.js"></script>
 	<script src="./scripts/tippy-bundle.umd.js"></script>
 	<link href='./scripts/uniformmaker.css' rel='stylesheet' type='text/css'>
@@ -27,6 +27,7 @@
 	<link href='./scripts/dd.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/jquery.range.css' rel='stylesheet' type='text/css'>
     <link href='./scripts/skeletabs.css' rel='stylesheet' type='text/css'>
+	<link href='./scripts/sweetalert2.css' rel='stylesheet' type='text/css'>
 	<script>
 		const { ipcRenderer } = require('electron');
 		const params = new URLSearchParams(window.location.search)
@@ -2707,23 +2708,6 @@
 			}
 		})
 
-		if (imageMagick == true) {
-			if (imWarning == true) {
-				Swal.fire({
-					title: 'ImageMagick was not detected.  Some functionality will not be available.',
-					showDenyButton: true,
-					confirmButtonText: 'OK',
-					denyButtonText: `Don't Warn Me Again`,
-				}).then((result) => {
-					if (result.isConfirmed) {
-						ipcRenderer.send('set-preference', {pref:"imWarning",val:true})
-					} else if (result.isDenied) {
-						ipcRenderer.send('set-preference', {pref:"imWarning",val:false})
-					}
-				})
-			}
-		}
-
 		$(".preference").each(function() {
 			$(this).val(prefs[$(this).attr("id")])
 		})
@@ -2868,9 +2852,34 @@
 
 		activeCanvas = jerseyLogoCanvas;
 
- 		if (checkForUpdates == true) {
-			ipcRenderer.send('check-for-update', true)
+		if (imageMagick == false) {
+			if (imWarning == true) {
+				Swal.fire({
+					title: 'ImageMagick was not detected.<br>Some functionality will not be available.',
+					showDenyButton: true,
+					confirmButtonText: 'OK',
+					denyButtonText: `Don't Warn Me Again`,
+				}).then((result) => {
+					if (result.isConfirmed) {
+						ipcRenderer.send('set-preference', {pref:"imWarning",val:true})
+					} else if (result.isDenied) {
+						ipcRenderer.send('set-preference', {pref:"imWarning",val:false})
+					}
+					if (checkForUpdates == true) {
+						ipcRenderer.send('check-for-update', true)
+					}
+				})
+			} else {
+				if (checkForUpdates == true) {
+					ipcRenderer.send('check-for-update', true)
+				}
+			}
+		} else {
+			if (checkForUpdates == true) {
+				ipcRenderer.send('check-for-update', true)
+			}
 		}
+
 	})
 
 	$(document).keydown(function(e) {   
