@@ -1,7 +1,7 @@
 {
   "name": "OOTP-Uniform-Maker",
   "productName": "OOTP Uniform Maker",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "OOTP Uniform Maker",
   "main": "main.js",
   "scripts": {
@@ -45,9 +45,11 @@
     "mac": {
       "category": "public.app-category.utilities",
       "target": [
-        "zip",
         "dmg"
       ]
+    },
+    "dmg": {
+      "writeUpdateInfo": false
     },
     "win": {
       "target": [
@@ -69,13 +71,13 @@
       "include": "build/installer.nsh",
       "uninstallDisplayName": "${productName} ${version}",
       "installerIcon": "build/icon.ico",
-      "uninstallerIcon": "build/icon.ico"
+      "uninstallerIcon": "build/icon.ico",
+      "differentialPackage": false
     },
     "linux": {
       "target": [
         "deb",
-        "rpm",
-        "tar.gz"
+        "rpm"
       ]
     },
     "deb": {}
