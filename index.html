@@ -132,6 +132,7 @@
 		var prevDirection = null;
 
 		const fontPrefMessage = "This will not take effect until you restart the Uniform Maker.\r\n\r\nNote that setting a user font as the default will cause the dropdown to appear blank at first."
+
     </script>
 </head>
 <body>
@@ -2854,8 +2855,22 @@
 
 		if (imageMagick == false) {
 			if (imWarning == true) {
+				let imDL = ""
+
+				switch (process.platform) {
+					case "darwin":
+						imDL = "https://imagemagick.org/script/download.php#macosx"
+						break;
+					case "linux":
+						imLD = "https://imagemagick.org/script/download.php#linux"
+						break;
+					case "win32":
+						imDL = "https://imagemagick.org/script/download.php#windows"
+						break;
+				}
+
 				Swal.fire({
-					title: 'ImageMagick was not detected.<br>Some functionality will not be available.',
+					title: 'ImageMagick was not detected.<br>Some functionality will not be available.<br>You can download ImageMagick <a href="'+imDL+'" target="_blank">Here</a>',
 					showDenyButton: true,
 					confirmButtonText: 'OK',
 					denyButtonText: `Don't Warn Me Again`,
