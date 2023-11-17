@@ -3069,7 +3069,7 @@
 
 	$("#eyedropper").on("click",function() {
 		if (!window.EyeDropper) {
-			alert('Your browser does not support the EyeDropper API');
+			ipcRenderer.send('show-alert','Your browser does not support the EyeDropper API')
 			return;
 		}
 		const currentTab = $('#tabContainer').skeletabs('getCurrentInfo');
@@ -3305,7 +3305,7 @@
 			for (font of fontErrors) {
 				message += font+"\r\n"
 			}
-			alert(message)
+			ipcRenderer.send('show-alert',message)
 		}
 	})
 
@@ -4091,7 +4091,7 @@
 		var jsonArr = []
 		
 		if (fileName == null) {
-			alert("The start year has to be before the end year!");
+			ipcRenderer.send('show-alert',"The start year has to be before the end year!")
 			return false
 		}
 
@@ -5038,7 +5038,8 @@
 		hideOverlay()
 	})
 
-	$("#wordmarkTextBox").on("change",function() {
+	$("#wordmarkTextBox").on("input",function() {
+		console.log($(this).val())
 		jerseyWordmarkChange($("#jerseyWordmarkSelect").val(),false)
 	})
 
@@ -7905,10 +7906,10 @@
 	ipcRenderer.on('custom-font-response', (event, data) => {
 		if (data.status != "cancelled") {
 			if (data.result == "error") {
-				alert("An error occurred:\r\n\r\n"+data.message)
+				ipcRenderer.send('show-alert',"An error occurred:\r\n\r\n"+data.message)
 				return false;
 			} else if (data.status == "error") {
-				alert("The font '"+data.fontName+"' could not be loaded.")
+				ipcRenderer.send('show-alert',"The font '"+data.fontName+"' could not be loaded.")
 				return false;
 			} else {
 				if (fontList.includes(data.fontName)) {
@@ -8235,7 +8236,7 @@
 		var filename = getFileName()
 		
 		if (filename == null) {
-			alert("The start year has to be before the end year!");
+			ipcRenderer.send('show-alert',"The start year has to be before the end year!")ipcRenderer.send('show-alert',"The start year has to be before the end year!")
 			return false
 		}
 
@@ -11421,7 +11422,7 @@
 
 	ipcRenderer.on('warp-text-response', (event, response) => {
 		if (response.status == "error") {
-			alert(response.message)
+			ipcRenderer.send('show-alert',response.message)
 			hideOverlay()
 		} else {
 			let data = response.data
@@ -11689,10 +11690,10 @@
 	ipcRenderer.on('local-font-response', (event, data) => {
 		if (data.status != "cancelled") {
 			if (data.result == "error") {
-				alert("An error occurred:\r\n\r\n"+data.message)
+				ipcRenderer.send('show-alert',"An error occurred:\r\n\r\n"+data.message)
 				return false;
 			} else if (data.status == "error") {
-				alert("The font '"+data.fontName+"' could not be loaded.")
+				ipcRenderer.send('show-alert',"The font '"+data.fontName+"' could not be loaded.")
 				return false;
 			} else {
 				if (fontList.includes(data.fontName)) {
@@ -11808,7 +11809,7 @@
 
 	ipcRenderer.on('remove-border-response', (event, response) => {
 		if (response.status != "success") {
-			alert(response.message)
+			ipcRenderer.send('show-alert',response.message)
 			hideOverlay()
 		} else {
 			let canvas = null
@@ -11909,7 +11910,7 @@
 
 	$("#eyedropper").on("click",function() {
 		if (!window.EyeDropper) {
-			alert('Your browser does not support the EyeDropper API');
+			ipcRenderer.send('show-alert','Your browser does not support the EyeDropper API')
 			return;
 		}
 		const currentTab = $('#tabContainer').skeletabs('getCurrentInfo');
@@ -11949,7 +11950,7 @@
 					break;
 			}
 		}).catch(e => {
-			alert(e);
+			ipcRenderer.send('show-alert',e)
 			if($("#toggleJerseyGrid").is(':checked')){
 				jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 			}
@@ -12027,7 +12028,7 @@
 
 	ipcRenderer.on('remove-color-range-response', (event, response) => {
 		if (response.status != "success") {
-			alert(response.message)
+			ipcRenderer.send('show-alert',response.message)
 			hideOverlay()
 		} else {
 			let canvas = null
@@ -12168,7 +12169,7 @@
 
 	ipcRenderer.on('remove-all-color-response', (event, response) => {
 		if (response.status != "success") {
-			alert(response.message)
+			ipcRenderer.send('show-alert',response.message)
 			hideOverlay()
 		} else {
 			let canvas = null
@@ -12350,7 +12351,7 @@
 	ipcRenderer.on('replace-color-response', (event, response) => {
 		console.log(response)
 		if (response.result != "success") {
-			alert(response.message)
+			ipcRenderer.send('show-alert',response.message)
 			return false;
 		}
 		let canvas = null
@@ -12456,7 +12457,7 @@
 		var yearRange = "";
 		var teamName = "";
 		if (startYear > endYear && endYear > 0) {
-			alert("The start year has to be before the end year!");
+			ipcRenderer.send('show-alert',"The start year has to be before the end year!")
 			return false;
 		}
 		if (startYear == endYear && startYear > 0) {
@@ -12528,7 +12529,7 @@
 		var yearRange = "";
 		var teamName = "";
 		if (startYear > endYear && endYear > 0) {
-			alert("The start year has to be before the end year!");
+			ipcRenderer.send('show-alert',"The start year has to be before the end year!")
 			return false;
 		}
 		if (startYear == endYear && startYear > 0) {
@@ -12612,7 +12613,7 @@
 		var yearRange = "";
 		var teamName = "";
 		if (startYear > endYear && endYear > 0) {
-			alert("The start year has to be before the end year!");
+			ipcRenderer.send('show-alert',"The start year has to be before the end year!")
 			return false;
 		}
 		if (startYear == endYear && startYear > 0) {
@@ -12825,7 +12826,7 @@
 		var yearRange = "";
 		var teamName = "";
 		if (startYear > endYear && endYear > 0) {
-			alert("The start year has to be before the end year!");
+			ipcRenderer.send('show-alert',"The start year has to be before the end year!")
 			return false;
 		}
 		if (startYear == endYear && startYear > 0) {
@@ -13077,7 +13078,7 @@
 		var yearRange = "";
 		var teamName = "";
 		if (startYear > endYear && endYear > 0) {
-			alert("The start year has to be before the end year!");
+			ipcRenderer.send('show-alert',"The start year has to be before the end year!")
 			return false;
 		}
 		if (startYear == endYear && startYear > 0) {
@@ -13575,7 +13576,7 @@
 			}
 		} else {
 			if (response.result == "error") {
-				alert(response.message)
+				ipcRenderer.send('show-alert',response.message)
 			}
 			hideOverlay();
 			reloading = false;
@@ -14003,7 +14004,7 @@
 					}		
 				}
 			} else {
-				alert("Only jpg, png, gif, and tiff images are supported.")
+				ipcRenderer.send('show-alert',"Only jpg, png, gif, and tiff images are supported.")
 			}
 		}
 	}
@@ -14109,10 +14110,10 @@
 	ipcRenderer.on('drop-font-response', (event, data) => {
 		let tab = data.tab
 		if (data.result == "error") {
-			alert("An error occurred:\r\n\r\n"+data.message)
+			ipcRenderer.send('show-alert',"An error occurred:\r\n\r\n"+data.message)
 			return false;
 		} else if (data.status == "error") {
-			alert("The font '"+data.fontName+"' could not be loaded.")
+			ipcRenderer.send('show-alert',"The font '"+data.fontName+"' could not be loaded.")
 			return false;
 		} else {
 			if (fontList.includes(data.fontName)) {
@@ -14515,30 +14516,6 @@
 		ipcRenderer.send('check-for-update', false)
 	})
 
-	ipcRenderer.on('check-for-update-response', (event, data) => {
-		console.log (data)
-		switch (data.update) {
-			case true:
-				if (confirm("Current version: "+data.currentVersion+"\r\n\r\nVersion "+data.name+" is now availble.  Click 'OK' to go to the releases page.")) {
-					window.open(
-						data.url, 
-						'_blank'
-					);
-				}
-				break;
-			case false:
-				if (data.silent == false) {
-					alert("Current version: "+data.currentVersion+"\r\n\r\nThere is no update available at this time")
-				}
-				break;
-			default:
-				if (data.silent == false) {
-					alert("Something went wrong, the update check failed.")
-				}
-				break;
-		}
-	})
-
 	$("#aboutUniformMaker").magnificPopup({
 		items: {
 			src: '#FAQ',
@@ -14610,7 +14587,7 @@
 		var yearRange = "";
 		var teamName = "";
 		if (startYear > endYear && endYear > 0) {
-			alert("The start year has to be before the end year!");
+			ipcRenderer.send('show-alert',"The start year has to be before the end year!")
 			return false;
 		}
 		if (startYear == endYear && startYear > 0) {
@@ -14683,7 +14660,7 @@
 			hideOverlay()
 		} else {
 			if (response.result == "error") {
-				alert(response.message)
+				ipcRenderer.send('show-alert',response.message)
 			}
 			hideOverlay()
 		}
