@@ -2853,8 +2853,8 @@
 
 		activeCanvas = jerseyLogoCanvas;
 
-		if (imageMagick == false) {
-			if (imWarning == true) {
+		if (imageMagick == true) {
+			if (imWarning == false) {
 				let imDL = ""
 
 				switch (process.platform) {
@@ -2870,7 +2870,8 @@
 				}
 
 				Swal.fire({
-					title: 'ImageMagick was not detected.<br>Some functionality will not be available.<br>You can download ImageMagick <a href="'+imDL+'" target="_blank">Here</a>',
+					icon: 'info',
+					title: 'ImageMagick was not detected, some functionality will not be available.<br>You can download ImageMagick <a href="'+imDL+'" target="_blank">here</a>.',
 					showDenyButton: true,
 					confirmButtonText: 'OK',
 					denyButtonText: `Don't Warn Me Again`,

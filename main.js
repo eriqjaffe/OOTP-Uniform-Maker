@@ -1647,7 +1647,7 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 		let jerseyBase = await Jimp.read(jerseyBelow)
 		let jerseyTextureFile = await Jimp.read(jerseyTexture)
 		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
-		if (seamsOnDiffuse == "true") {
+		if (seamsOnDiffuse == "true" || seamsOnDiffuse == true) {
 			if (buttonType != "buttonsHenley") {
 				if (seamsOption == "seamsSixties") {
 					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_sixties.png"
