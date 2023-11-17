@@ -75,25 +75,37 @@ const options = {
 const imInstalled = hasbin.sync('magick');
 
 ipcMain.on('check-for-update', (event, arg) => {
-	let json = {}
 	versionCheck(options, function (error, update) { // callback function
 		if (error) {
-			json.update = "error"
-			json.silent = arg
+			dialog.showMessageBox(null, {
+				type: 'error',
+				message: 'An error occurred checking for updates.'
+			});	
 		}
 		if (update) { // print some update info if an update is available
-			json.update = true,
-			json.currentVersion = pkg.version,
-			json.name = update.name,
-			json.url = update.url
-			json.silent = arg
+			dialog.showMessageBox(null, {
+				type: 'question',
+				message: "Current version: "+pkg.version+"\r\n\r\nVersion "+update.name+" is now availble.  Click 'OK' to go to the releases page.",
+				buttons: ['OK', 'Cancel'],
+			}).then(result => {
+				if (result.response === 0) {
+					shell.openExternal(update.url)
+				}
+			})	
 		} else {
-			json.update = false,
-			json.currentVersion = pkg.version
-			json.silent = arg
+			dialog.showMessageBox(null, {
+				type: 'info',
+				message: "Current version: "+pkg.version+"\r\n\r\nThere is no update available at this time."
+			});	
 		}
-		event.sender.send('check-for-update-response', json)
 	});
+})
+
+ipcMain.on('show-alert', (event, arg) => {
+	dialog.showMessageBox(null, {
+		type: 'info',
+		message: arg
+	})
 })
 
 ipcMain.on('drop-image', (event, arg) => {
