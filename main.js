@@ -18,6 +18,7 @@ const fontname = require('fontname')
 const { createWorker } = require('tesseract.js');
 const replaceColor = require('replace-color');
 const admzip = require('adm-zip');
+const semver = require('semver')
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -74,7 +75,58 @@ const options = {
 
 const imInstalled = hasbin.sync('magick');
 
+ipcMain.on('imagemagick-warning', (event, arg) => {
+	if (!imInstalled) {
+		if (imWarning) {
+			dialog.showMessageBox({
+				noLink: true,
+				type: 'info',
+				buttons: ['OK', 'Download'],
+				message: 'ImageMagick was not detected, some functionality will not be available.',
+				checkboxLabel: 'Don\'t warn me again',
+				checkboxChecked: false
+			}).then(result => {
+				if (result.checkboxChecked) {
+					store.set("imWarning", false)
+				} else {
+					store.set("imWarning", true)
+				}
+				if (result.response === 1) {
+					switch (process.platform) {
+						case "darwin":
+							shell.openExternal("https://imagemagick.org/script/download.php#macosx")
+							break;
+						case "linux":
+							shell.openExternal("https://imagemagick.org/script/download.php#linux")
+							break;
+						case "win32":
+							shell.openExternal("https://imagemagick.org/script/download.php#windows")
+							break;
+					}
+					app.quit()
+				} else {
+					if (JSON.parse(checkForUpdates)) {
+						checkForUpdate()
+					} 
+				}
+			})	
+		} else {
+			if (JSON.parse(checkForUpdates)) {
+				checkForUpdate()
+			} 
+		}
+	} else {
+		if (JSON.parse(checkForUpdates)) {
+			checkForUpdate()
+		} 
+	}
+})
+
 ipcMain.on('check-for-update', (event, arg) => {
+	checkForUpdate()
+})
+
+function checkForUpdate() {
 	versionCheck(options, function (error, update) { // callback function
 		if (error) {
 			dialog.showMessageBox(null, {
@@ -99,8 +151,8 @@ ipcMain.on('check-for-update', (event, arg) => {
 			});	
 		}
 	});
-})
-
+}
+ 
 ipcMain.on('show-alert', (event, arg) => {
 	dialog.showMessageBox(null, {
 		type: 'info',
@@ -982,78 +1034,99 @@ ipcMain.on('save-swatches', (event, arg) => {
 	});
 })
 
+ipcMain.on('confirm-ocr-resize', (event, arg) => {
+	dialog.showMessageBox(null, {
+		type: 'question',
+		message: "Do you want to resize characters to fit?  This may result in some poor quality results.",
+		buttons: ['OK', 'Cancel'],
+	}).then(result => {
+		event.sender.send('ocr-resize-response', {response: result.response, numMax: arg.numMax, numScaleMod: arg.numScaleMod, letMax: arg.letMax, letScaleMod: arg.letScaleMod, data: arg.data})
+	})
+})
+
 ipcMain.on('load-swatches', (event, arg) => {
-	let jsonResponse = {}
-	const options = {
-		defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')),
-		properties: ['openFile'],
-		filters: [
-			{ name: 'Palette Files', extensions: ['pal', 'uni', 'zip'] }
-		]
-	}
-	dialog.showOpenDialog(null, options).then(result => {
-		if(!result.canceled) {
-			store.set("downloadSwatchPath", path.dirname(result.filePaths[0]))
-			switch (getExtension(result.filePaths[0])) {
-				case "pal":
-					jsonResponse.result = "success"
-					jsonResponse.json = JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
-					event.sender.send('load-swatches-response', jsonResponse)
-					break;
-				case "uni":
-					var json = JSON.parse(fs.readFileSync(result.filePaths[0]))
-					console.log(json.swatchSelectors)
-					var palette = {};
-					var commonPalette = []
-					palette.name = json.team.replace(/ /g, "_");
-					palette.swatch1 = json.swatchSelectors.swatch1Color.val
-					palette.swatch2 = json.swatchSelectors.swatch2Color.val
-					palette.swatch3 = json.swatchSelectors.swatch3Color.val
-					palette.swatch4 = json.swatchSelectors.swatch4Color.val
-					commonPalette.push(json.swatchSelectors.swatch1Color.val)
-					commonPalette.push(json.swatchSelectors.swatch2Color.val)
-					commonPalette.push(json.swatchSelectors.swatch3Color.val)
-					commonPalette.push(json.swatchSelectors.swatch4Color.val)
-					palette.commonPalette = commonPalette
-					jsonResponse.result = "success",
-					jsonResponse.json = JSON.stringify(palette)
-					event.sender.send('load-swatches-response', jsonResponse)
-					break;
-				case "zip":
-					var palFile = null;
-					var zip = new admzip(result.filePaths[0]);
-					var zipEntries = zip.getEntries()
-					zipEntries.forEach(function (zipEntry) {
-						if (zipEntry.entryName.slice(-4).toLowerCase() == '.pal') {
-							palFile = zipEntry
-						}
-					});
-					if (palFile != null) {
-						jsonResponse.result = "success"
-						jsonResponse.json = JSON.stringify(JSON.parse(palFile.getData().toString("utf8")))
-						event.sender.send('load-swatches-response', jsonResponse)
-					} else {
-						jsonResponse.result = "error",
-						jsonResponse.message = "No valid palette file was found in "+path.basename(result.filePaths[0])
-						event.sender.send('load-swatches-response', jsonResponse)
-					}
-					break;
-				default:
-					jsonResponse.result = "error"
-					jsonResponse.message = "Invalid file type: "+path.basename(result.filePaths[0])
-					event.sender.send('load-swatches-response', jsonResponse)
+	dialog.showMessageBox(null, {
+		type: 'question',
+		message: "Are you sure?\r\n\r\nThis will overwrite any non-default colors in the color picker palettes.",
+		buttons: ['OK', 'Cancel'],
+	}).then(result => {
+		if (result.response === 0) {
+			let jsonResponse = {}
+			const options = {
+				defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')),
+				properties: ['openFile'],
+				filters: [
+					{ name: 'Palette Files', extensions: ['pal', 'uni', 'zip'] }
+				]
 			}
-			event.sender.send('hide-overlay', null)
+			dialog.showOpenDialog(null, options).then(result => {
+				if(!result.canceled) {
+					store.set("downloadSwatchPath", path.dirname(result.filePaths[0]))
+					switch (getExtension(result.filePaths[0])) {
+						case "pal":
+							jsonResponse.result = "success"
+							jsonResponse.json = JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
+							event.sender.send('load-swatches-response', jsonResponse)
+							break;
+						case "uni":
+							var json = JSON.parse(fs.readFileSync(result.filePaths[0]))
+							console.log(json.swatchSelectors)
+							var palette = {};
+							var commonPalette = []
+							palette.name = json.team.replace(/ /g, "_");
+							palette.swatch1 = json.swatchSelectors.swatch1Color.val
+							palette.swatch2 = json.swatchSelectors.swatch2Color.val
+							palette.swatch3 = json.swatchSelectors.swatch3Color.val
+							palette.swatch4 = json.swatchSelectors.swatch4Color.val
+							commonPalette.push(json.swatchSelectors.swatch1Color.val)
+							commonPalette.push(json.swatchSelectors.swatch2Color.val)
+							commonPalette.push(json.swatchSelectors.swatch3Color.val)
+							commonPalette.push(json.swatchSelectors.swatch4Color.val)
+							palette.commonPalette = commonPalette
+							jsonResponse.result = "success",
+							jsonResponse.json = JSON.stringify(palette)
+							event.sender.send('load-swatches-response', jsonResponse)
+							break;
+						case "zip":
+							var palFile = null;
+							var zip = new admzip(result.filePaths[0]);
+							var zipEntries = zip.getEntries()
+							zipEntries.forEach(function (zipEntry) {
+								if (zipEntry.entryName.slice(-4).toLowerCase() == '.pal') {
+									palFile = zipEntry
+								}
+							});
+							if (palFile != null) {
+								jsonResponse.result = "success"
+								jsonResponse.json = JSON.stringify(JSON.parse(palFile.getData().toString("utf8")))
+								event.sender.send('load-swatches-response', jsonResponse)
+							} else {
+								jsonResponse.result = "error",
+								jsonResponse.message = "No valid palette file was found in "+path.basename(result.filePaths[0])
+								event.sender.send('load-swatches-response', jsonResponse)
+							}
+							break;
+						default:
+							jsonResponse.result = "error"
+							jsonResponse.message = "Invalid file type: "+path.basename(result.filePaths[0])
+							event.sender.send('load-swatches-response', jsonResponse)
+					}
+					event.sender.send('hide-overlay', null)
+				} else {
+					event.sender.send('hide-overlay', null)
+					console.log("cancelled")
+				}
+			}).catch(err => {
+				jsonResponse.result = "error"
+				jsonResponse.message = err
+				console.log(err)
+				event.sender.send('load-swatches-response', jsonResponse)
+			})
 		} else {
 			event.sender.send('hide-overlay', null)
-			console.log("cancelled")
 		}
-	}).catch(err => {
-		jsonResponse.result = "error"
-		jsonResponse.message = err
-		console.log(err)
-		event.sender.send('load-swatches-response', jsonResponse)
-	})
+	})	
+	
 })
 
 ipcMain.on('save-pants', (event, arg) => {
@@ -1802,9 +1875,27 @@ ipcMain.on('load-uniform', (event, arg) => {
 						}
 					});
 					if (uniFile != null) {
-						json.result = "success"
-						json.json = JSON.stringify(JSON.parse(uniFile.getData().toString("utf8")))
-						event.sender.send('load-uniform-response', json)
+						let exportMeta = JSON.parse(uniFile.getData().toString("utf8"))
+						if (exportMeta.version == undefined || !semver.eq(pkg.version, exportMeta.version)) {
+							dialog.showMessageBox(null, {
+								noLink: true,
+								type: 'question',
+								message: "This save file appears to have been generated with a different version of Uniform Maker.  Some elements may not be load properly.\r\n\r\nContinue?",
+							    buttons: ['OK', 'Cancel'],
+							}).then(result => {
+								if (result.response === 0) {
+									json.result = "success"
+									json.json = JSON.stringify(exportMeta)
+									event.sender.send('load-uniform-response', json)
+								} else {
+									event.sender.send('hide-overlay', null)
+								}
+							})	
+						} else {
+							json.result = "success"
+							json.json = JSON.stringify(exportMeta)
+							event.sender.send('load-uniform-response', json)
+						}
 					} else {
 						json.result = "error",
 						json.message = "No valid uniform file was found in "+path.basename(result.filePaths[0])
@@ -1816,7 +1907,7 @@ ipcMain.on('load-uniform', (event, arg) => {
 					json.message = "Invalid file type: "+path.basename(result.filePaths[0])
 					event.sender.send('load-uniform-response', json)
 			}
-			event.sender.send('hide-overlay', null)
+			//event.sender.send('hide-overlay', null)
 		} else {
 			event.sender.send('hide-overlay', null)
 		}

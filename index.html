@@ -17,7 +17,6 @@
     <script type="text/javascript" src="./scripts/skeletabs.js"></script>
 	<script type="text/javascript" src="./scripts/tinycolor-min.js"></script>
 	<script type="text/javascript" src="./scripts/opentype.js"></script>
-	<script type="text/javascript" src="./scripts/sweetalert2.min.js"></script>
 	<script src="./scripts/popper.min.js"></script>
 	<script src="./scripts/tippy-bundle.umd.js"></script>
 	<link href='./scripts/uniformmaker.css' rel='stylesheet' type='text/css'>
@@ -27,7 +26,6 @@
 	<link href='./scripts/dd.css' rel='stylesheet' type='text/css'>
 	<link href='./scripts/jquery.range.css' rel='stylesheet' type='text/css'>
     <link href='./scripts/skeletabs.css' rel='stylesheet' type='text/css'>
-	<link href='./scripts/sweetalert2.css' rel='stylesheet' type='text/css'>
 	<script>
 		const { ipcRenderer } = require('electron');
 		const params = new URLSearchParams(window.location.search)
@@ -2853,49 +2851,7 @@
 
 		activeCanvas = jerseyLogoCanvas;
 
-		if (imageMagick == true) {
-			if (imWarning == false) {
-				let imDL = ""
-
-				switch (process.platform) {
-					case "darwin":
-						imDL = "https://imagemagick.org/script/download.php#macosx"
-						break;
-					case "linux":
-						imLD = "https://imagemagick.org/script/download.php#linux"
-						break;
-					case "win32":
-						imDL = "https://imagemagick.org/script/download.php#windows"
-						break;
-				}
-
-				Swal.fire({
-					icon: 'info',
-					title: 'ImageMagick was not detected, some functionality will not be available.<br>You can download ImageMagick <a href="'+imDL+'" target="_blank">here</a>.',
-					showDenyButton: true,
-					confirmButtonText: 'OK',
-					denyButtonText: `Don't Warn Me Again`,
-				}).then((result) => {
-					if (result.isConfirmed) {
-						ipcRenderer.send('set-preference', {pref:"imWarning",val:true})
-					} else if (result.isDenied) {
-						ipcRenderer.send('set-preference', {pref:"imWarning",val:false})
-					}
-					if (checkForUpdates == true) {
-						ipcRenderer.send('check-for-update', true)
-					}
-				})
-			} else {
-				if (checkForUpdates == true) {
-					ipcRenderer.send('check-for-update', true)
-				}
-			}
-		} else {
-			if (checkForUpdates == true) {
-				ipcRenderer.send('check-for-update', true)
-			}
-		}
-
+		ipcRenderer.send('imagemagick-warning', null)
 	})
 
 	$(document).keydown(function(e) {   
@@ -8237,7 +8193,7 @@
 		var filename = getFileName()
 		
 		if (filename == null) {
-			ipcRenderer.send('show-alert',"The start year has to be before the end year!")ipcRenderer.send('show-alert',"The start year has to be before the end year!")
+			ipcRenderer.send('show-alert',"The start year has to be before the end year!")
 			return false
 		}
 
@@ -13339,242 +13295,231 @@
 	})
 
 	ipcRenderer.on('load-uniform-response', (event, response) => {
+		console.log(response)
 		if (response.result == "success") {
 			customFonts.splice(0, customFonts.length)
 			commonPalette.splice(0, commonPalette.length)
 			const exportMeta = JSON.parse(response.json)
 
-			if (exportMeta.version == undefined || !semver.eq(appVersion, exportMeta.version)) {
-				if (confirm("This save file appears to have been generated with a different version of Uniform Maker.  Some elements may not be load properly.\r\n\r\nContinue?")) {
-					loadJersey()
-				} else {
-					hideOverlay()
+			$("#teamName").val(exportMeta.team)
+			$("#uniformType").val(exportMeta.type)
+			$("#startYear").val(exportMeta.start)
+			$("#endYear").val(exportMeta.end)
+
+			customJerseyTexture = exportMeta.customJerseyTexture
+			customPantsTexture = exportMeta.customPantsTexture
+			customCapTexture = exportMeta.customCapTexture
+			fontOverlayImage = exportMeta.fontOverlayImage
+
+			if (exportMeta.commonPalette != undefined && exportMeta.commonPalette != null) {
+				if (exportMeta.commonPalette.length > 0) {
+					for (x in exportMeta.commonPalette) {
+						commonPalette.push(exportMeta.commonPalette[x])
+					}
 				}
-			} else {
-				loadJersey()
 			}
 
-			function loadJersey() {
-				$("#teamName").val(exportMeta.team)
-				$("#uniformType").val(exportMeta.type)
-				$("#startYear").val(exportMeta.start)
-				$("#endYear").val(exportMeta.end)
-
-				customJerseyTexture = exportMeta.customJerseyTexture
-				customPantsTexture = exportMeta.customPantsTexture
-				customCapTexture = exportMeta.customCapTexture
-				fontOverlayImage = exportMeta.fontOverlayImage
-
-				if (exportMeta.commonPalette != undefined && exportMeta.commonPalette != null) {
-					if (exportMeta.commonPalette.length > 0) {
-						for (x in exportMeta.commonPalette) {
-							commonPalette.push(exportMeta.commonPalette[x])
-						}
-					}
+			Object.keys(exportMeta.checkboxes).forEach(function(key){
+				$("#"+key).prop('checked', exportMeta.checkboxes[key].checked)
+				if (exportMeta.checkboxes[key].checked) {
+					$("#"+key).triggerHandler("change")
 				}
+			})	
 
-				Object.keys(exportMeta.checkboxes).forEach(function(key){
-					$("#"+key).prop('checked', exportMeta.checkboxes[key].checked)
-					if (exportMeta.checkboxes[key].checked) {
-						$("#"+key).triggerHandler("change")
-					}
+			if ($("#swashCheck").is(":checked")) {
+				$(".ms-swash-container").each(function() {
+					$(this).find(".ms-dd").removeClass("disabled")
+				})
+				$(".swashSelector").each(function() {
+					$(this).spectrum('enable')
 				})	
-
-				if ($("#swashCheck").is(":checked")) {
-					$(".ms-swash-container").each(function() {
-						$(this).find(".ms-dd").removeClass("disabled")
-					})
-					$(".swashSelector").each(function() {
-						$(this).spectrum('enable')
-					})	
-				}
-
-				if ($("#lettersVisible").is(":checked")) {
-					$(".ms-letter-container").each(function() {
-						$(this).find(".ms-dd").removeClass("disabled")
-					})
-					$("#letterScaling").prop("disabled",false)
-					$("#letter1StrokeInput").prop("disabled",false)
-					$("#letter2StrokeInput").prop("disabled",false)
-				} else {
-					$(".ms-letter-container").each(function() {
-						$(this).find(".ms-dd").addClass("disabled")
-					})
-					$("#letterScaling").prop("disabled",true)
-					$("#letter1StrokeInput").prop("disabled",true)
-					$("#letter2StrokeInput").prop("disabled",true)
-				}
-
-				if ($("#numbersVisible").is(":checked")) {
-					$(".ms-number-container").each(function() {
-						$(this).find(".ms-dd").removeClass("disabled")
-					})
-					$("#numberScaling").prop("disabled",false)
-					$("#number1StrokeInput").prop("disabled",false)
-					$("#number2StrokeInput").prop("disabled",false)
-				} else {
-					$(".ms-number-container").each(function() {
-						$(this).find(".ms-dd").addClass("disabled")
-					})
-					$("#numberScaling").prop("disabled",true)
-					$("#number1StrokeInput").prop("disabled",true)
-					$("#number2StrokeInput").prop("disabled",true)
-				}
-
-				Object.keys(exportMeta.selects).forEach(function(key){
-					if (!$("#"+key).hasClass("msdd")) {
-						$("#"+key).prop("disabled",exportMeta.selects[key].disabled)
-						$("#"+key).val(exportMeta.selects[key].val)
-					} 
-				})
-
-				Object.keys(exportMeta.ranges).forEach(function(key){
-					$("#"+key).prop("disabled",exportMeta.ranges[key].disabled)
-					$("#"+key).val(exportMeta.ranges[key].val)
-				})
-
-				Object.keys(exportMeta.textBoxes).forEach(function(key){
-					$("#"+key).prop("disabled",exportMeta.textBoxes[key].disabled)
-					$("#"+key).val(exportMeta.textBoxes[key].val)
-				})
-
-				Object.keys(exportMeta.buttons).forEach(function(key){
-					$("#"+key).prop("disabled",exportMeta.buttons[key].disabled)
-					$("#"+key).val(exportMeta.buttons[key].val)
-				})
-
-				Object.keys(exportMeta.capSelectors).forEach(function(key){
-					if (exportMeta.capSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
-					$("#"+key).spectrum("set",exportMeta.capSelectors[key].val)
-				})
-
-				Object.keys(exportMeta.jerseySelectors).forEach(function(key){
-					if (exportMeta.jerseySelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
-					$("#"+key).spectrum("set",exportMeta.jerseySelectors[key].val)
-				})
-
-				Object.keys(exportMeta.pantsSelectors).forEach(function(key){
-					if (exportMeta.pantsSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
-					$("#"+key).spectrum("set",exportMeta.pantsSelectors[key].val)
-				})
-
-				Object.keys(exportMeta.swatchSelectors).forEach(function(key){
-					if (exportMeta.swatchSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
-					$("#"+key).spectrum("set",exportMeta.swatchSelectors[key].val)
-				})
-
-				Object.keys(exportMeta.fontSelectors).forEach(function(key){
-					if (exportMeta.fontSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
-					$("#"+key).spectrum("set",exportMeta.fontSelectors[key].val)
-				})
-
-				jerseyBelow.loadFromJSON(exportMeta.canvases.jerseyBelow, jerseyBelow.renderAll.bind(jerseyBelow), function(o, object) {
-					jerseyBelow.add(object)
-				})
-				jerseyLogoCanvas.loadFromJSON(exportMeta.canvases.jerseyLogoCanvas, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), function(o, object) {
-					jerseyLogoCanvas.add(object)
-				})
-				jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
-				jerseyBelow.renderAll()
-				reRenderBG("jersey")
-
-				capBelow.loadFromJSON(exportMeta.canvases.capBelow, capBelow.renderAll.bind(capBelow), function(o, object) {
-					capBelow.add(object)
-				})
-				capLogoCanvas.loadFromJSON(exportMeta.canvases.capLogoCanvas, capLogoCanvas.renderAll.bind(capLogoCanvas), function(o, object) {
-					if (object.id == "textLogo") {
-						object._objects[0].set("fill", $("#capLogoStroke2Color").spectrum("get").toHexString())
-						object._objects[0].set("stroke", $("#capLogoStroke2Color").spectrum("get").toHexString())
-						object._objects[1].set("fill", $("#capLogoStroke1Color").spectrum("get").toHexString())
-						object._objects[1].set("stroke", $("#capLogoStroke1Color").spectrum("get").toHexString())
-						object._objects[2].set("fill", $("#capLogoTextColor").spectrum("get").toHexString())
-					}
-					if (object.id == "textLogo2") {
-						object._objects[0].set("fill", $("#capLogo2Stroke2Color").spectrum("get").toHexString())
-						object._objects[0].set("stroke", $("#capLogo2Stroke2Color").spectrum("get").toHexString())
-						object._objects[1].set("fill", $("#capLogo2Stroke1Color").spectrum("get").toHexString())
-						object._objects[1].set("stroke", $("#capLogo2Stroke1Color").spectrum("get").toHexString())
-						object._objects[2].set("fill", $("#capLogo2TextColor").spectrum("get").toHexString())
-					}
-					capLogoCanvas.add(object)
-				})
-				//capLogoCanvas.renderAll()
-				capBelow.renderAll()
-				reRenderBG("cap")
-
-				pantsBelow.loadFromJSON(exportMeta.canvases.pantsBelow, pantsBelow.renderAll.bind(pantsBelow), function(o, object) {
-					pantsBelow.add(object)
-				})
-				pantsLogoCanvas.loadFromJSON(exportMeta.canvases.pantsLogoCanvas, pantsLogoCanvas.renderAll.bind(pantsLogoCanvas), function(o, object) {
-					pantsLogoCanvas.add(object)
-				})
-				pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));
-				pantsBelow.renderAll()
-				reRenderBG("pants")
-
-				fontCanvas.clear()
-				fabric.util.enlivenObjects(exportMeta.canvases.fontCanvas.objects, (objs) => {
-					objs.forEach((item) => {
-						fontCanvas.add(item);
-						item.getObjects().forEach(function (o) {
-							if (isNumeric(o.id.charAt(0))) {
-								if(o.id.indexOf("Fill") > -1) {
-									o.set("fill", $("#numbersFill").spectrum('get').toHexString())
-									o.set("stroke", $("#numbersStroke1").spectrum('get').toHexString())
-								} else {
-									o.set("fill", $("#numbersStroke2").spectrum('get').toHexString())
-									o.set("stroke", $("#numbersStroke2").spectrum('get').toHexString())
-								}
-							} else {
-								if(o.id.indexOf("Fill") > -1) {
-									o.set("fill", $("#lettersFill").spectrum('get').toHexString())
-									o.set("stroke", $("#lettersStroke1").spectrum('get').toHexString())
-								} else {
-									o.set("fill", $("#lettersStroke2").spectrum('get').toHexString())
-									o.set("stroke", $("#lettersStroke2").spectrum('get').toHexString())
-								}
-							}
-						})
-					});
-					fontCanvas.set({backgroundColor: "#D8D8D8"})
-					fontCanvas.setBackgroundImage('./images/symbol_grid.png', fontCanvas.renderAll.bind(fontCanvas), {});
-				})
-				
-				if (exportMeta.customFonts != undefined && exportMeta.customFonts != null) {
-					if (exportMeta.customFonts.length > 0) {
-						for (x in exportMeta.customFonts) {
-							const data = exportMeta.customFonts[x]
-							$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#letterDropdown')
-							$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#numberDropdown')
-							$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#jerseyWordmarkSelect')
-							$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#capTextSelect')
-						}	
-					}
-				} 
-
-				const letterDropdown = document.getElementById("letterDropdown").msDropdown;
-				const numberDropdown = document.getElementById("numberDropdown").msDropdown;
-				const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
-				const capDropdown = document.getElementById("capTextSelect").msDropdown;
-				const letterStyle = document.getElementById("letterStyle").msDropdown;
-				const numberStyle = document.getElementById("numberStyle").msDropdown;
-				const warpEffect = document.getElementById("warpEffect").msDropdown;
-				const swashCombo = document.getElementById("swashCombo").msDropdown;
-				sortFontDropdowns()
-
-				letterDropdown.selectedIndex = findIndexByValue(letterDropdown, exportMeta.selects.letterDropdown.val)
-				numberDropdown.selectedIndex = findIndexByValue(numberDropdown, exportMeta.selects.numberDropdown.val)
-				jerseyDropdown.selectedIndex = findIndexByValue(jerseyDropdown, exportMeta.selects.jerseyWordmarkSelect.val)
-				capDropdown.selectedIndex = findIndexByValue(capDropdown, exportMeta.selects.capTextSelect.val)
-				letterStyle.selectedIndex = findIndexByValue(letterStyle, exportMeta.selects.letterStyle.val)
-				numberStyle.selectedIndex = findIndexByValue(numberStyle, exportMeta.selects.numberStyle.val)
-				warpEffect.selectedIndex = findIndexByValue(warpEffect, exportMeta.selects.warpEffect.val)
-				swashCombo.selectedIndex = findIndexByValue(swashCombo, exportMeta.selects.swashCombo.val)
-
-				hideOverlay()
-
-				reloading = false;
 			}
+
+			if ($("#lettersVisible").is(":checked")) {
+				$(".ms-letter-container").each(function() {
+					$(this).find(".ms-dd").removeClass("disabled")
+				})
+				$("#letterScaling").prop("disabled",false)
+				$("#letter1StrokeInput").prop("disabled",false)
+				$("#letter2StrokeInput").prop("disabled",false)
+			} else {
+				$(".ms-letter-container").each(function() {
+					$(this).find(".ms-dd").addClass("disabled")
+				})
+				$("#letterScaling").prop("disabled",true)
+				$("#letter1StrokeInput").prop("disabled",true)
+				$("#letter2StrokeInput").prop("disabled",true)
+			}
+
+			if ($("#numbersVisible").is(":checked")) {
+				$(".ms-number-container").each(function() {
+					$(this).find(".ms-dd").removeClass("disabled")
+				})
+				$("#numberScaling").prop("disabled",false)
+				$("#number1StrokeInput").prop("disabled",false)
+				$("#number2StrokeInput").prop("disabled",false)
+			} else {
+				$(".ms-number-container").each(function() {
+					$(this).find(".ms-dd").addClass("disabled")
+				})
+				$("#numberScaling").prop("disabled",true)
+				$("#number1StrokeInput").prop("disabled",true)
+				$("#number2StrokeInput").prop("disabled",true)
+			}
+
+			Object.keys(exportMeta.selects).forEach(function(key){
+				if (!$("#"+key).hasClass("msdd")) {
+					$("#"+key).prop("disabled",exportMeta.selects[key].disabled)
+					$("#"+key).val(exportMeta.selects[key].val)
+				} 
+			})
+
+			Object.keys(exportMeta.ranges).forEach(function(key){
+				$("#"+key).prop("disabled",exportMeta.ranges[key].disabled)
+				$("#"+key).val(exportMeta.ranges[key].val)
+			})
+
+			Object.keys(exportMeta.textBoxes).forEach(function(key){
+				$("#"+key).prop("disabled",exportMeta.textBoxes[key].disabled)
+				$("#"+key).val(exportMeta.textBoxes[key].val)
+			})
+
+			Object.keys(exportMeta.buttons).forEach(function(key){
+				$("#"+key).prop("disabled",exportMeta.buttons[key].disabled)
+				$("#"+key).val(exportMeta.buttons[key].val)
+			})
+
+			Object.keys(exportMeta.capSelectors).forEach(function(key){
+				if (exportMeta.capSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+				$("#"+key).spectrum("set",exportMeta.capSelectors[key].val)
+			})
+
+			Object.keys(exportMeta.jerseySelectors).forEach(function(key){
+				if (exportMeta.jerseySelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+				$("#"+key).spectrum("set",exportMeta.jerseySelectors[key].val)
+			})
+
+			Object.keys(exportMeta.pantsSelectors).forEach(function(key){
+				if (exportMeta.pantsSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+				$("#"+key).spectrum("set",exportMeta.pantsSelectors[key].val)
+			})
+
+			Object.keys(exportMeta.swatchSelectors).forEach(function(key){
+				if (exportMeta.swatchSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+				$("#"+key).spectrum("set",exportMeta.swatchSelectors[key].val)
+			})
+
+			Object.keys(exportMeta.fontSelectors).forEach(function(key){
+				if (exportMeta.fontSelectors[key].disabled == true) { $("#"+key).spectrum('disable') } else { $("#"+key).spectrum('enable') }
+				$("#"+key).spectrum("set",exportMeta.fontSelectors[key].val)
+			})
+
+			jerseyBelow.loadFromJSON(exportMeta.canvases.jerseyBelow, jerseyBelow.renderAll.bind(jerseyBelow), function(o, object) {
+				jerseyBelow.add(object)
+			})
+			jerseyLogoCanvas.loadFromJSON(exportMeta.canvases.jerseyLogoCanvas, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), function(o, object) {
+				jerseyLogoCanvas.add(object)
+			})
+			jerseyBelow.setOverlayImage('./images/texture_jersey_default_2.png',jerseyBelow.renderAll.bind(jerseyBelow));
+			jerseyBelow.renderAll()
+			reRenderBG("jersey")
+
+			capBelow.loadFromJSON(exportMeta.canvases.capBelow, capBelow.renderAll.bind(capBelow), function(o, object) {
+				capBelow.add(object)
+			})
+			capLogoCanvas.loadFromJSON(exportMeta.canvases.capLogoCanvas, capLogoCanvas.renderAll.bind(capLogoCanvas), function(o, object) {
+				if (object.id == "textLogo") {
+					object._objects[0].set("fill", $("#capLogoStroke2Color").spectrum("get").toHexString())
+					object._objects[0].set("stroke", $("#capLogoStroke2Color").spectrum("get").toHexString())
+					object._objects[1].set("fill", $("#capLogoStroke1Color").spectrum("get").toHexString())
+					object._objects[1].set("stroke", $("#capLogoStroke1Color").spectrum("get").toHexString())
+					object._objects[2].set("fill", $("#capLogoTextColor").spectrum("get").toHexString())
+				}
+				if (object.id == "textLogo2") {
+					object._objects[0].set("fill", $("#capLogo2Stroke2Color").spectrum("get").toHexString())
+					object._objects[0].set("stroke", $("#capLogo2Stroke2Color").spectrum("get").toHexString())
+					object._objects[1].set("fill", $("#capLogo2Stroke1Color").spectrum("get").toHexString())
+					object._objects[1].set("stroke", $("#capLogo2Stroke1Color").spectrum("get").toHexString())
+					object._objects[2].set("fill", $("#capLogo2TextColor").spectrum("get").toHexString())
+				}
+				capLogoCanvas.add(object)
+			})
+			//capLogoCanvas.renderAll()
+			capBelow.renderAll()
+			reRenderBG("cap")
+
+			pantsBelow.loadFromJSON(exportMeta.canvases.pantsBelow, pantsBelow.renderAll.bind(pantsBelow), function(o, object) {
+				pantsBelow.add(object)
+			})
+			pantsLogoCanvas.loadFromJSON(exportMeta.canvases.pantsLogoCanvas, pantsLogoCanvas.renderAll.bind(pantsLogoCanvas), function(o, object) {
+				pantsLogoCanvas.add(object)
+			})
+			pantsBelow.setOverlayImage('./images/texture_pants_default_2.png',pantsBelow.renderAll.bind(pantsBelow));
+			pantsBelow.renderAll()
+			reRenderBG("pants")
+
+			fontCanvas.clear()
+			fabric.util.enlivenObjects(exportMeta.canvases.fontCanvas.objects, (objs) => {
+				objs.forEach((item) => {
+					fontCanvas.add(item);
+					item.getObjects().forEach(function (o) {
+						if (isNumeric(o.id.charAt(0))) {
+							if(o.id.indexOf("Fill") > -1) {
+								o.set("fill", $("#numbersFill").spectrum('get').toHexString())
+								o.set("stroke", $("#numbersStroke1").spectrum('get').toHexString())
+							} else {
+								o.set("fill", $("#numbersStroke2").spectrum('get').toHexString())
+								o.set("stroke", $("#numbersStroke2").spectrum('get').toHexString())
+							}
+						} else {
+							if(o.id.indexOf("Fill") > -1) {
+								o.set("fill", $("#lettersFill").spectrum('get').toHexString())
+								o.set("stroke", $("#lettersStroke1").spectrum('get').toHexString())
+							} else {
+								o.set("fill", $("#lettersStroke2").spectrum('get').toHexString())
+								o.set("stroke", $("#lettersStroke2").spectrum('get').toHexString())
+							}
+						}
+					})
+				});
+				fontCanvas.set({backgroundColor: "#D8D8D8"})
+				fontCanvas.setBackgroundImage('./images/symbol_grid.png', fontCanvas.renderAll.bind(fontCanvas), {});
+			})
+			
+			if (exportMeta.customFonts != undefined && exportMeta.customFonts != null) {
+				if (exportMeta.customFonts.length > 0) {
+					for (x in exportMeta.customFonts) {
+						const data = exportMeta.customFonts[x]
+						$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#letterDropdown')
+						$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#numberDropdown')
+						$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#jerseyWordmarkSelect')
+						$('<option>').val(data.fontPath).attr('data-image',data.thumb).text(data.fontName).appendTo('#capTextSelect')
+					}	
+				}
+			} 
+
+			const letterDropdown = document.getElementById("letterDropdown").msDropdown;
+			const numberDropdown = document.getElementById("numberDropdown").msDropdown;
+			const jerseyDropdown = document.getElementById("jerseyWordmarkSelect").msDropdown;
+			const capDropdown = document.getElementById("capTextSelect").msDropdown;
+			const letterStyle = document.getElementById("letterStyle").msDropdown;
+			const numberStyle = document.getElementById("numberStyle").msDropdown;
+			const warpEffect = document.getElementById("warpEffect").msDropdown;
+			const swashCombo = document.getElementById("swashCombo").msDropdown;
+			sortFontDropdowns()
+
+			letterDropdown.selectedIndex = findIndexByValue(letterDropdown, exportMeta.selects.letterDropdown.val)
+			numberDropdown.selectedIndex = findIndexByValue(numberDropdown, exportMeta.selects.numberDropdown.val)
+			jerseyDropdown.selectedIndex = findIndexByValue(jerseyDropdown, exportMeta.selects.jerseyWordmarkSelect.val)
+			capDropdown.selectedIndex = findIndexByValue(capDropdown, exportMeta.selects.capTextSelect.val)
+			letterStyle.selectedIndex = findIndexByValue(letterStyle, exportMeta.selects.letterStyle.val)
+			numberStyle.selectedIndex = findIndexByValue(numberStyle, exportMeta.selects.numberStyle.val)
+			warpEffect.selectedIndex = findIndexByValue(warpEffect, exportMeta.selects.warpEffect.val)
+			swashCombo.selectedIndex = findIndexByValue(swashCombo, exportMeta.selects.swashCombo.val)
+
+			hideOverlay()
+
+			reloading = false;
 		} else {
 			if (response.result == "error") {
 				ipcRenderer.send('show-alert',response.message)
@@ -14451,50 +14396,48 @@
 		var letMax = lArr.reduce((a, b) => Math.max(a, b), -Infinity)
 		var letScaleMod = (letMax != maxLetWidth) ? maxLetWidth / letMax : 1
 		
-		Swal.fire({
-			title: 'Do you want to resize characters to fit?  This may result in some poor quality results.',
-			showDenyButton: true,
-			confirmButtonText: 'Yes',
-			denyButtonText: 'No',
-		}).then((response) => {
-			for (obj of data) {
-				const char = chars.find(o => o.char === obj.char)
-				const src = obj
-				if (char) {
-					fabric.Image.fromURL(src.image, function (oImg) {
-						if (response.isConfirmed == true) {
-							if (isNumeric(src.char)) {
-								oImg.set({
-									"top": ((char.bottom*2)-(src.height*numScaleMod))+12, 
-									"left": (char.left*2)-10,
-									"id": src.char+"_ocr",
-									"scaleX": numScaleMod,
-									"scaleY": numScaleMod
-								})
-							} else {
-								oImg.set({
-									"top": ((char.bottom*2)-(src.height*letScaleMod))+8, 
-									"left": (char.left*2)-8,
-									"id": src.char+"_ocr",
-									"scaleX": letScaleMod,
-									"scaleY": letScaleMod
-								})
-							}
-							fontCanvas.add(oImg)
-						} else {
-							oImg.set({ 
-								"top": ((char.bottom*2)-oImg.height)+8, 
-								"left": (char.left*2)-8 
-							})
-							fontCanvas.add(oImg)
-						}
-						fontCanvas.renderAll()
-					})
-				}
-			}
-			hideOverlay()
-		})
+		ipcRenderer.send('confirm-ocr-resize', {numMax: numMax, numScaleMod: numScaleMod, letMax: letMax, letScaleMod: letScaleMod, data: data})
 	}
+
+	ipcRenderer.on('ocr-resize-response', (event, response) => {
+		console.log(response)
+		for (obj of response.data) {
+			const char = chars.find(o => o.char === obj.char)
+			const src = obj
+			if (char) {
+				fabric.Image.fromURL(src.image, function (oImg) {
+					if (response.response == 0) {
+						if (isNumeric(src.char)) {
+							oImg.set({
+								"top": ((char.bottom*2)-(src.height*response.numScaleMod))+12, 
+								"left": (char.left*2)-10,
+								"id": src.char+"_ocr",
+								"scaleX": response.numScaleMod,
+								"scaleY": response.numScaleMod
+							})
+						} else {
+							oImg.set({
+								"top": ((char.bottom*2)-(src.height*response.letScaleMod))+8, 
+								"left": (char.left*2)-8,
+								"id": src.char+"_ocr",
+								"scaleX": response.letScaleMod,
+								"scaleY": response.letScaleMod
+							})
+						}
+						fontCanvas.add(oImg)
+					} else {
+						oImg.set({ 
+							"top": ((char.bottom*2)-oImg.height)+8, 
+							"left": (char.left*2)-8 
+						})
+						fontCanvas.add(oImg)
+					}
+					fontCanvas.renderAll()
+				})
+			}
+		}
+		hideOverlay()
+	})
 
 	function getNumberAtEnd(str) {
 		if (endsWithNumber(str)) {
@@ -14624,10 +14567,8 @@
 	})
 
 	$("#loadSwatches").on("click",function() {
-		if (confirm("Are you sure?\r\n\r\nThis will overwrite any non-default colors in the color picker palettes.")) {
-			showOverlay("Loading Swatches...")
-			ipcRenderer.send('load-swatches', null)
-		}
+		showOverlay("Loading Swatches...")
+		ipcRenderer.send('load-swatches', null)
 	})
 
 	ipcRenderer.on('load-swatches-response', (event, response) => {
