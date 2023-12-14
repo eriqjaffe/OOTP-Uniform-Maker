@@ -4952,9 +4952,10 @@
 					object.setCoords();
 					var dim = fitInBox(imageWidth, imageHeight, 28, 22, false)
 					object.scaleToWidth(dim.width)
-					object.set({left:256,top:473,angle:180,width:imageWidth*.64})
+					object.scaleToHeight(dim.height)
+					object.set({left:256,top:473,angle:180})
+					object.set("scaleY",object.scaleY*0.64)
 					object.setCoords()
-					console.log(object)
 					break;
 				case "sleeveLeft":
 					object.set({"left":256,"top":512,"scaleX":1,"scaleY":1,"angle":0})
