@@ -479,6 +479,69 @@ ipcMain.on('upload-texture', (event, arg) => {
 	  })
 })
 
+ipcMain.on('add-stroke', (event, arg) => {
+	//{imgdata: theImage, left: left, top: top, scaleX: scaleX, path: path, pictureName: pictureName, color: color, width: width}
+	let imgdata = arg.imgdata
+	let canvas = arg.canvas
+	let left = arg.left
+	let top = arg.top
+	let scaleX = arg.scaleX
+	let scaleY = arg.scaleY
+	let path = arg.path
+	let pictureName = arg.pictureName
+	let color = arg.color
+	let width = arg.width
+	let buffer = Buffer.from(imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	let json = {}
+	
+	Jimp.read(buffer, (err, image) => {
+		if (err) {
+			console.log(err);
+		} else {
+			try {
+				image.write(tempDir+"/temp.png");
+				let strCommand = "magick convert "+tempDir+"/temp.png \
+				-bordercolor none -border "+width*3+" \
+				\( -clone 0 -alpha extract -morphology dilate disk:"+width+" \) \
+				\( -clone 1 -fuzz 30% -fill "+color+" -opaque white -fill none -opaque black \) \
+				\( -clone 2,0 -compose over -composite \) \
+				-delete 0,2 \
+				+swap -alpha off -compose copy_opacity -composite \
+				-trim +repage \
+				"+tempDir+"/temp.png"
+				imagemagickCli.exec(strCommand).then(({ stdout, stderr }) => {
+					Jimp.read(tempDir+"/temp.png", (err, image) => {
+						if (err) {
+							json.status = 'error'
+							json.message = err
+							console.log(err);
+							event.sender.send('add-stroke-response', json)
+						} else {
+							image.getBase64(Jimp.AUTO, (err, ret) => {
+								json.status = 'success'
+								json.canvas = canvas
+								json.image = ret
+								json.imgTop = top
+								json.imgLeft = left
+								json.pictureName = pictureName
+								json.path = path
+								json.pScaleX = scaleX
+								json.pScaleY = scaleY
+								event.sender.send('add-stroke-response', json)
+							})
+						}
+					})
+				})
+			} catch (error) {
+				json.status = 'error'
+				json.message = "An error occurred - please make sure ImageMagick is installed"
+				console.log(error);
+				event.sender.send('add-stroke-response', json)
+			}
+		}
+	})
+})
+
 ipcMain.on('remove-border', (event, arg) => {
 	//[theImage, 1, 1, "removeBorder", null, null, fuzz, pictureName]
 	let imgdata = arg[0]
