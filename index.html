@@ -1328,6 +1328,7 @@
 												<tr class="imagemagick">
 													<td style="width:482px;"><center>
 														<input type="button" class="button border" id="pantsBorder" value="Remove Border" data-canvas="pantsLogoCanvas">
+														<input type="button" class="button stroke" id="pantsStroke" value="Add Stroke" data-canvas="pantsLogoCanvas" >
 														<input type="button" class="button removeColor removeColorRange" id="pantsRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
 														<input type="button" class="button removeColor removeAllColor" id="pantsRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
 														<input type="button" class="button replaceColor replaceColorRange" id="pantsReplaceColorRange" value="Replace Section" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
@@ -1349,6 +1350,16 @@
 											Select Replacement Color:
 											<input class="colorSelector" type="text" id="pantsReplacementColor" value="#FF0000">
 											<input type="button" class="button replaceColorSubmit removeColor" id="pantsReplaceColorSubmit" value="Replace Color" data-x="0" data-y="0" data-action="null" data-canvas="pantsLogoCanvas">
+											</tr></table>
+										</div>
+										<div id="pantsBorderColorDiv" style="display:none;">
+											<table style="width:478px;"><tr>
+											<td><center>
+											Stroke Color:
+											<input class="colorSelector strokeSelector" type="text" id="pantsStrokeColor" value="#FFFFFF">
+											<span style="padding-left:10px;">Stroke Width:</span>
+											<input type="number" id="pantsStrokeWidth" value="5" min="0" max="20" onkeypress="return isNumberKey(event)">
+											<input type="button" style="padding-left:10px;" class="button strokeSubmit" id="pantsStrokeSubmit" value="Draw Stroke" data-canvas="pantsLogoCanvas">
 											</tr></table>
 										</div>
 									</div>
@@ -1661,6 +1672,7 @@
 												<tr class="imagemagick">
 													<td style="width:482px;"><center>
 														<input type="button" class="button border" id="capBorder" value="Remove Border" data-canvas="capLogoCanvas">
+														<input type="button" class="button stroke" id="capStroke" value="Add Stroke" data-canvas="capLogoCanvas" >
 														<input type="button" class="button removeColor removeColorRange" id="capRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="capLogoCanvas">
 														<input type="button" class="button removeColor removeAllColor" id="capRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="capLogoCanvas">
 														<input type="button" class="button replaceColor replaceColorRange" id="capReplaceColorRange" value="Replace Section" data-x="0" data-y="0" data-canvas="capLogoCanvas">
@@ -1683,6 +1695,16 @@
 											Select Replacement Color:
 											<input class="colorSelector" type="text" id="capReplacementColor" value="#FF0000">
 											<input type="button" class="button replaceColorSubmit removeColor" id="capReplaceColorSubmit" value="Replace Color" data-x="0" data-y="0" data-action="null" data-canvas="capLogoCanvas">
+											</tr></table>
+										</div>
+										<div id="capBorderColorDiv" style="display:none;">
+											<table style="width:478px;"><tr>
+											<td><center>
+											Stroke Color:
+											<input class="colorSelector strokeSelector" type="text" id="capStrokeColor" value="#FFFFFF">
+											<span style="padding-left:10px;">Stroke Width:</span>
+											<input type="number" id="capStrokeWidth" value="5" min="0" max="20" onkeypress="return isNumberKey(event)">
+											<input type="button" style="padding-left:10px;" class="button strokeSubmit" id="capStrokeSubmit" value="Draw Stroke" data-canvas="capLogoCanvas">
 											</tr></table>
 										</div>
 									</div>
@@ -2981,7 +3003,9 @@
 							$("#jerseyFileName").html("")
 							activeCanvas.remove(obj);
 							activeCanvas.renderAll();
-							
+							$("#jerseyBorderColorDiv").css("display","none")
+							$("#capBorderColorDiv").css("display","none")
+							$("#pantsBorderColorDiv").css("display","none")
 						}
 						$("#tipSpan").html("");	
 						$(".copypaste").each(function() {
@@ -11759,6 +11783,9 @@
 
 	$(".stroke").on("click",function(e) {
 		if ($(this).data("canvas") == "capLogoCanvas") {
+			if ($("#capBorderColorDiv").css("display") == "none") {
+            	$("#capBorderColorDiv").slideToggle();       	
+			}
 		}
 		if ($(this).data("canvas") == "jerseyLogoCanvas") {
 			if ($("#jerseyBorderColorDiv").css("display") == "none") {
@@ -11766,6 +11793,9 @@
 			}
 		}
 		if ($(this).data("canvas") == "pantsLogoCanvas") {
+			if ($("#pantsBorderColorDiv").css("display") == "none") {
+            	$("#pantsBorderColorDiv").slideToggle();       	
+			}
 		}
 	})
 
@@ -11773,6 +11803,8 @@
 		if ($(this).data("canvas") == "capLogoCanvas") {
 			var canvas = capLogoCanvas
 			var canvasName = "capLogoCanvas"
+			var color = $("#capStrokeColor").spectrum("get").toHexString();
+			var width = $("#capStrokeWidth").val()
 		}
 		if ($(this).data("canvas") == "jerseyLogoCanvas") {
 			var canvas = jerseyLogoCanvas
@@ -11783,6 +11815,8 @@
 		if ($(this).data("canvas") == "pantsLogoCanvas") {
 			var canvas = pantsLogoCanvas
 			var canvasName = "pantsLogoCanvas"
+			var color = $("#pantsStrokeColor").spectrum("get").toHexString();
+			var width = $("#pantsStrokeWidth").val()
 		}
         if (canvas.getActiveObject()) {
 			//showOverlay()
