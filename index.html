@@ -844,6 +844,8 @@
 												<tr class="imagemagick">
 													<td style="width:482px;"><center>
 														<input type="button" class="button border" id="jerseyBorder" value="Remove Border" data-canvas="jerseyLogoCanvas">
+														<input type="button" class="button stroke" id="jerseyStroke" value="Add Stroke" data-canvas="jerseyLogoCanvas" >
+														<input type="button" class="button makeTransparent" id="makeTransparent" value="Make Background Transparent" data-x="0" data-y="0" data-canvas="jerseyLogoCanvas">
 														<input type="button" class="button removeColor removeColorRange" id="jerseyRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="jerseyLogoCanvas">
 														<input type="button" class="button removeColor removeAllColor" id="jerseyRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="jerseyLogoCanvas">
 														<input type="button" class="button replaceColor replaceColorRange" id="jerseyReplaceColorRange" value="Replace Section" data-x="0" data-y="0" data-canvas="jerseyLogoCanvas">
@@ -858,6 +860,16 @@
 											Select Replacement Color:
 											<input class="colorSelector" type="text" id="jerseyReplacementColor" value="#FF0000">
 											<input type="button" class="button replaceColorSubmit removeColor" id="jerseyReplaceColorSubmit" value="Replace Color" data-x="0" data-y="0" data-action="null" data-canvas="jerseyLogoCanvas">
+											</tr></table>
+										</div>
+										<div id="jerseyBorderColorDiv" style="display:none;">
+											<table style="width:478px;"><tr>
+											<td><center>
+											Stroke Color:
+											<input class="colorSelector strokeSelector" type="text" id="jerseyStrokeColor" value="#FFFFFF">
+											<span style="padding-left:10px;">Stroke Width:</span>
+											<input type="number" id="jerseyStrokeWidth" value="5" min="0" max="20" onkeypress="return isNumberKey(event)">
+											<input type="button" class="button strokeSubmit" id="jerseyStrokeSubmit" value="Draw Stroke" data-canvas="jerseyLogoCanvas">
 											</tr></table>
 										</div>
 									</div>
@@ -1317,6 +1329,8 @@
 												<tr class="imagemagick">
 													<td style="width:482px;"><center>
 														<input type="button" class="button border" id="pantsBorder" value="Remove Border" data-canvas="pantsLogoCanvas">
+														<input type="button" class="button stroke" id="pantsStroke" value="Add Stroke" data-canvas="pantsLogoCanvas" >
+														<input type="button" class="button makeTransparent" id="makeTransparent" value="Make Background Transparent" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
 														<input type="button" class="button removeColor removeColorRange" id="pantsRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
 														<input type="button" class="button removeColor removeAllColor" id="pantsRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
 														<input type="button" class="button replaceColor replaceColorRange" id="pantsReplaceColorRange" value="Replace Section" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
@@ -1338,6 +1352,16 @@
 											Select Replacement Color:
 											<input class="colorSelector" type="text" id="pantsReplacementColor" value="#FF0000">
 											<input type="button" class="button replaceColorSubmit removeColor" id="pantsReplaceColorSubmit" value="Replace Color" data-x="0" data-y="0" data-action="null" data-canvas="pantsLogoCanvas">
+											</tr></table>
+										</div>
+										<div id="pantsBorderColorDiv" style="display:none;">
+											<table style="width:478px;"><tr>
+											<td><center>
+											Stroke Color:
+											<input class="colorSelector strokeSelector" type="text" id="pantsStrokeColor" value="#FFFFFF">
+											<span style="padding-left:10px;">Stroke Width:</span>
+											<input type="number" id="pantsStrokeWidth" value="5" min="0" max="20" onkeypress="return isNumberKey(event)">
+											<input type="button" class="button strokeSubmit" id="pantsStrokeSubmit" value="Draw Stroke" data-canvas="pantsLogoCanvas">
 											</tr></table>
 										</div>
 									</div>
@@ -1650,6 +1674,8 @@
 												<tr class="imagemagick">
 													<td style="width:482px;"><center>
 														<input type="button" class="button border" id="capBorder" value="Remove Border" data-canvas="capLogoCanvas">
+														<input type="button" class="button stroke" id="capStroke" value="Add Stroke" data-canvas="capLogoCanvas" >
+														<input type="button" class="button makeTransparent" id="makeTransparent" value="Make Background Transparent" data-x="0" data-y="0" data-canvas="capLogoCanvas">
 														<input type="button" class="button removeColor removeColorRange" id="capRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="capLogoCanvas">
 														<input type="button" class="button removeColor removeAllColor" id="capRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="capLogoCanvas">
 														<input type="button" class="button replaceColor replaceColorRange" id="capReplaceColorRange" value="Replace Section" data-x="0" data-y="0" data-canvas="capLogoCanvas">
@@ -1672,6 +1698,16 @@
 											Select Replacement Color:
 											<input class="colorSelector" type="text" id="capReplacementColor" value="#FF0000">
 											<input type="button" class="button replaceColorSubmit removeColor" id="capReplaceColorSubmit" value="Replace Color" data-x="0" data-y="0" data-action="null" data-canvas="capLogoCanvas">
+											</tr></table>
+										</div>
+										<div id="capBorderColorDiv" style="display:none;">
+											<table style="width:478px;"><tr>
+											<td><center>
+											Stroke Color:
+											<input class="colorSelector strokeSelector" type="text" id="capStrokeColor" value="#FFFFFF">
+											<span style="padding-left:10px;">Stroke Width:</span>
+											<input type="number" id="capStrokeWidth" value="5" min="0" max="20" onkeypress="return isNumberKey(event)">
+											<input type="button" class="button strokeSubmit" id="capStrokeSubmit" value="Draw Stroke" data-canvas="capLogoCanvas">
 											</tr></table>
 										</div>
 									</div>
@@ -2970,7 +3006,9 @@
 							$("#jerseyFileName").html("")
 							activeCanvas.remove(obj);
 							activeCanvas.renderAll();
-							
+							$("#jerseyBorderColorDiv").css("display","none")
+							$("#capBorderColorDiv").css("display","none")
+							$("#pantsBorderColorDiv").css("display","none")
 						}
 						$("#tipSpan").html("");	
 						$(".copypaste").each(function() {
@@ -3310,6 +3348,22 @@
 		hide: function(color) {
 			$("#exampleText").css("color",color.toHexString())
 		}
+	})
+	
+	$(".strokeSelector").each(function() {
+		$(this).spectrum({
+			type: "color",
+			showAlpha: false,
+			showInput: true,
+			preferredFormat: "hex",
+			showInitial: true,
+			showPalette: true,
+			showButtons: true,
+			color: "#FFFFFF",
+			beforeShow: function(color) {
+				//$(this).spectrum("option", "palette", commonPalette)
+			}
+		})
 	})
 
 	$("#teamName").on("keyup change",function(e) {
@@ -4952,9 +5006,9 @@
 					object.setCoords();
 					var dim = fitInBox(imageWidth, imageHeight, 28, 22, false)
 					object.scaleToWidth(dim.width)
-					object.set({left:256,top:473,angle:180,width:imageWidth*.64})
+					object.set({left:256,top:473,angle:180})
+					object.set("scaleY",object.scaleY*0.64)
 					object.setCoords()
-					console.log(object)
 					break;
 				case "sleeveLeft":
 					object.set({"left":256,"top":512,"scaleX":1,"scaleY":1,"angle":0})
@@ -11730,6 +11784,100 @@
 		});
 	})
 
+	$(".stroke").on("click",function(e) {
+		if ($(this).data("canvas") == "capLogoCanvas") {
+			if ($("#capBorderColorDiv").css("display") == "none") {
+            	$("#capBorderColorDiv").slideToggle();       	
+			}
+		}
+		if ($(this).data("canvas") == "jerseyLogoCanvas") {
+			if ($("#jerseyBorderColorDiv").css("display") == "none") {
+            	$("#jerseyBorderColorDiv").slideToggle();       	
+			}
+		}
+		if ($(this).data("canvas") == "pantsLogoCanvas") {
+			if ($("#pantsBorderColorDiv").css("display") == "none") {
+            	$("#pantsBorderColorDiv").slideToggle();       	
+			}
+		}
+	})
+
+	$(".strokeSubmit").on("click", function(e) {
+		if ($(this).data("canvas") == "capLogoCanvas") {
+			var canvas = capLogoCanvas
+			var canvasName = "capLogoCanvas"
+			var color = $("#capStrokeColor").spectrum("get").toHexString();
+			var width = $("#capStrokeWidth").val()
+		}
+		if ($(this).data("canvas") == "jerseyLogoCanvas") {
+			var canvas = jerseyLogoCanvas
+			var canvasName = "jerseyLogoCanvas"
+			var color = $("#jerseyStrokeColor").spectrum("get").toHexString();
+			var width = $("#jerseyStrokeWidth").val()
+		}
+		if ($(this).data("canvas") == "pantsLogoCanvas") {
+			var canvas = pantsLogoCanvas
+			var canvasName = "pantsLogoCanvas"
+			var color = $("#pantsStrokeColor").spectrum("get").toHexString();
+			var width = $("#pantsStrokeWidth").val()
+		}
+        if (canvas.getActiveObject()) {
+			//showOverlay()
+			let object = canvas.getActiveObject()
+			let idx = canvas.getObjects().indexOf(object)
+			if (object.get('type') == "image") {
+				let left = object.get("left");
+				let top = object.get("top");
+                let scaleX = object.get('scaleX')
+				let scaleY = object.get('scaleY')
+                let path = object.get('path')
+				let pictureName = object.get('name');
+				let theImage = object._originalElement.currentSrc;
+                theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
+				ipcRenderer.send('add-stroke', {imgdata: theImage, left: left, top: top, scaleX: scaleX, path: path, pictureName: pictureName, color: color, width: width, canvas: canvasName})
+				return false;
+			}
+		}	
+    })
+
+	$(".makeTransparent").on("click",function(e) {
+        if ($(this).data("canvas") == "capLogoCanvas") {
+			var canvas = capLogoCanvas
+			var canvasName = "capLogoCanvas"
+			var fuzz = parseInt($("#capColorFuzz").val());
+			var square = $("#capColorSquare")
+		}
+		if ($(this).data("canvas") == "jerseyLogoCanvas") {
+			var canvas = jerseyLogoCanvas
+			var canvasName = "jerseyLogoCanvas"
+			var fuzz = parseInt($("#jerseyColorFuzz").val());
+			var square = $("#capColorSquare")
+		}
+		if ($(this).data("canvas") == "pantsLogoCanvas") {
+			var canvas = pantsLogoCanvas
+			var canvasName = "pantsLogoCanvas"
+			var fuzz = parseInt($("#pantsColorFuzz").val());
+			var square = $("#capColorSquare")
+		}
+        if (canvas.getActiveObject()) {
+			var object = canvas.getActiveObject()
+			var idx = canvas.getObjects().indexOf(object)
+			if (object.get('type') == "image") {
+				$(square).removeClass("colorSquare").removeClass("colorSquareSelected");
+				let left = object.get("left");
+				let top = object.get("top");
+                let scaleX = object.get('scaleX')
+				let scaleY = object.get('scaleY')
+                let path = object.get('path')
+				let pictureName = object.get('name');
+				let theImage = object._originalElement.currentSrc;
+                theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
+				ipcRenderer.send('make-transparent', {imgdata: theImage, x: 0, y: 0, fuzz: fuzz, filename: pictureName, canvas: canvasName, pLeft: left, pTop: top, pScaleX: scaleX, scaleY: scaleY, pictureName: pictureName, path: path})		
+				return false;
+			}
+		}
+	})
+
 	$(".border").on("click",function(e) {
 		if ($(this).data("canvas") == "capLogoCanvas") {
 			var canvas = capLogoCanvas
@@ -11762,6 +11910,176 @@
 				return false;
 			}
 		}	
+	})
+
+	ipcRenderer.on('imagemagick-response', (event, response) => {
+		if (response.status != "success") {
+			ipcRenderer.send('show-alert',response.message)
+			hideOverlay()
+		} else {
+			let canvas = null
+			switch (response.canvas) {
+				case "jerseyLogoCanvas":
+					canvas = jerseyLogoCanvas
+					break;
+				case "capLogoCanvas":
+					canvas = capLogoCanvas
+					break;
+				case "pantsLogoCanvas":
+					canvas = pantsLogoCanvas
+					break;
+			}
+			let data = response.data
+			let imLeft = response.pLeft
+			let imTop = response.pTop
+			let pictureName = response.pictureName
+		
+			var object = canvas.getActiveObject()
+			var idx = canvas.getObjects().indexOf(object)
+
+			var imgObj = new Image();
+			imgObj.src = data;
+			imgObj.onload = function () {
+				var image = new fabric.Image(imgObj);
+				image.set({
+					originX: 'center',
+					originY: 'center',
+					left: imLeft,
+					top: imTop,
+					perPixelTargetFind: true,
+					centeredScaling: true,
+					centeredRotation: true,
+					name: pictureName,
+					id: pictureName
+				});
+				
+				image.filters.push(new fabric.Image.filters.Resize({
+					resizeType: 'lanczos', // typo fixed
+					lanczosLobes: 2 // typo fixed
+				}));
+				
+				image.on('object:modified',function() {
+					imLeft = image.get('left')
+					imTop = image.get('top');
+				});
+
+				image.on('selected',function() {
+					switch (activeCanvas.id) {
+						case "jerseyLogoCanvas":
+							var canStr = "jersey"
+							break;
+						case "capLogoCanvas":
+							var canStr = "cap"
+							break;
+						case "pantsLogoCanvas":
+							var canStr = "pants"
+							break;
+					} 
+					$("#"+canStr+"FileName").html(image.get('id'));
+					if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+						$("#"+canStr+"TrimImageDiv").css("display","block");
+						$("#"+canStr+"UploadImageDiv").css("display","none");
+						$("#"+canStr+"SelectedImageDiv").css("display","block");
+					}
+					$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+					$(".copypaste").each(function() {
+						$(this).css("display","inline-block")
+					})
+				})
+				
+				canvas.remove(object);
+				canvas.add(image);
+				image.moveTo(idx);
+				canvas.renderAll();
+				imLeft = image.get('left')
+				imTop = image.get('top');
+			}
+		}
+	})
+
+	ipcRenderer.on('add-stroke-response', (event, response) => {
+		if (response.status != "success") {
+			ipcRenderer.send('show-alert',response.message)
+			hideOverlay()
+		} else {
+			let canvas = null
+			switch (response.canvas) {
+				case "jerseyLogoCanvas":
+					canvas = jerseyLogoCanvas
+					break;
+				case "capLogoCanvas":
+					canvas = capLogoCanvas
+					break;
+				case "pantsLogoCanvas":
+					canvas = pantsLogoCanvas
+					break;
+			}
+			let data = response.image
+			let imLeft = response.imgLeft
+			let imTop = response.imgTop
+			let pictureName = response.pictureName
+		
+			var object = canvas.getActiveObject()
+			var idx = canvas.getObjects().indexOf(object)
+
+			var imgObj = new Image();
+			imgObj.src = data;
+			imgObj.onload = function () {
+				var image = new fabric.Image(imgObj);
+				image.set({
+					originX: 'center',
+					originY: 'center',
+					left: imLeft,
+					top: imTop,
+					perPixelTargetFind: true,
+					centeredScaling: true,
+					centeredRotation: true,
+					name: pictureName,
+					id: pictureName
+				});
+				
+				image.filters.push(new fabric.Image.filters.Resize({
+					resizeType: 'lanczos', // typo fixed
+					lanczosLobes: 2 // typo fixed
+				}));
+				
+				image.on('object:modified',function() {
+					imLeft = image.get('left')
+					imTop = image.get('top');
+				});
+
+				image.on('selected',function() {
+					switch (activeCanvas.id) {
+						case "jerseyLogoCanvas":
+							var canStr = "jersey"
+							break;
+						case "capLogoCanvas":
+							var canStr = "cap"
+							break;
+						case "pantsLogoCanvas":
+							var canStr = "pants"
+							break;
+					} 
+					$("#"+canStr+"FileName").html(image.get('id'));
+					if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+						$("#"+canStr+"TrimImageDiv").css("display","block");
+						$("#"+canStr+"UploadImageDiv").css("display","none");
+						$("#"+canStr+"SelectedImageDiv").css("display","block");
+					}
+					$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+					$(".copypaste").each(function() {
+						$(this).css("display","inline-block")
+					})
+				})
+				
+				canvas.remove(object);
+				canvas.add(image);
+				image.moveTo(idx);
+				canvas.renderAll();
+				imLeft = image.get('left')
+				imTop = image.get('top');
+			}
+		}
 	})
 
 	ipcRenderer.on('remove-border-response', (event, response) => {
