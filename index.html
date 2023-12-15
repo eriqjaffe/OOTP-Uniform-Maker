@@ -845,6 +845,7 @@
 													<td style="width:482px;"><center>
 														<input type="button" class="button border" id="jerseyBorder" value="Remove Border" data-canvas="jerseyLogoCanvas">
 														<input type="button" class="button stroke" id="jerseyStroke" value="Add Stroke" data-canvas="jerseyLogoCanvas" >
+														<input type="button" class="button makeTransparent" id="makeTransparent" value="Make Background Transparent" data-x="0" data-y="0" data-canvas="jerseyLogoCanvas">
 														<input type="button" class="button removeColor removeColorRange" id="jerseyRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="jerseyLogoCanvas">
 														<input type="button" class="button removeColor removeAllColor" id="jerseyRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="jerseyLogoCanvas">
 														<input type="button" class="button replaceColor replaceColorRange" id="jerseyReplaceColorRange" value="Replace Section" data-x="0" data-y="0" data-canvas="jerseyLogoCanvas">
@@ -1329,6 +1330,7 @@
 													<td style="width:482px;"><center>
 														<input type="button" class="button border" id="pantsBorder" value="Remove Border" data-canvas="pantsLogoCanvas">
 														<input type="button" class="button stroke" id="pantsStroke" value="Add Stroke" data-canvas="pantsLogoCanvas" >
+														<input type="button" class="button makeTransparent" id="makeTransparent" value="Make Background Transparent" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
 														<input type="button" class="button removeColor removeColorRange" id="pantsRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
 														<input type="button" class="button removeColor removeAllColor" id="pantsRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
 														<input type="button" class="button replaceColor replaceColorRange" id="pantsReplaceColorRange" value="Replace Section" data-x="0" data-y="0" data-canvas="pantsLogoCanvas">
@@ -1673,6 +1675,7 @@
 													<td style="width:482px;"><center>
 														<input type="button" class="button border" id="capBorder" value="Remove Border" data-canvas="capLogoCanvas">
 														<input type="button" class="button stroke" id="capStroke" value="Add Stroke" data-canvas="capLogoCanvas" >
+														<input type="button" class="button makeTransparent" id="makeTransparent" value="Make Background Transparent" data-x="0" data-y="0" data-canvas="capLogoCanvas">
 														<input type="button" class="button removeColor removeColorRange" id="capRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="capLogoCanvas">
 														<input type="button" class="button removeColor removeAllColor" id="capRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="capLogoCanvas">
 														<input type="button" class="button replaceColor replaceColorRange" id="capReplaceColorRange" value="Replace Section" data-x="0" data-y="0" data-canvas="capLogoCanvas">
@@ -11837,6 +11840,44 @@
 		}	
     })
 
+	$(".makeTransparent").on("click",function(e) {
+        if ($(this).data("canvas") == "capLogoCanvas") {
+			var canvas = capLogoCanvas
+			var canvasName = "capLogoCanvas"
+			var fuzz = parseInt($("#capColorFuzz").val());
+			var square = $("#capColorSquare")
+		}
+		if ($(this).data("canvas") == "jerseyLogoCanvas") {
+			var canvas = jerseyLogoCanvas
+			var canvasName = "jerseyLogoCanvas"
+			var fuzz = parseInt($("#jerseyColorFuzz").val());
+			var square = $("#capColorSquare")
+		}
+		if ($(this).data("canvas") == "pantsLogoCanvas") {
+			var canvas = pantsLogoCanvas
+			var canvasName = "pantsLogoCanvas"
+			var fuzz = parseInt($("#pantsColorFuzz").val());
+			var square = $("#capColorSquare")
+		}
+        if (canvas.getActiveObject()) {
+			var object = canvas.getActiveObject()
+			var idx = canvas.getObjects().indexOf(object)
+			if (object.get('type') == "image") {
+				$(square).removeClass("colorSquare").removeClass("colorSquareSelected");
+				let left = object.get("left");
+				let top = object.get("top");
+                let scaleX = object.get('scaleX')
+				let scaleY = object.get('scaleY')
+                let path = object.get('path')
+				let pictureName = object.get('name');
+				let theImage = object._originalElement.currentSrc;
+                theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
+				ipcRenderer.send('make-transparent', {imgdata: theImage, x: 0, y: 0, fuzz: fuzz, filename: pictureName, canvas: canvasName, pLeft: left, pTop: top, pScaleX: scaleX, scaleY: scaleY, pictureName: pictureName, path: path})		
+				return false;
+			}
+		}
+	})
+
 	$(".border").on("click",function(e) {
 		if ($(this).data("canvas") == "capLogoCanvas") {
 			var canvas = capLogoCanvas
@@ -11869,6 +11910,91 @@
 				return false;
 			}
 		}	
+	})
+
+	ipcRenderer.on('imagemagick-response', (event, response) => {
+		if (response.status != "success") {
+			ipcRenderer.send('show-alert',response.message)
+			hideOverlay()
+		} else {
+			let canvas = null
+			switch (response.canvas) {
+				case "jerseyLogoCanvas":
+					canvas = jerseyLogoCanvas
+					break;
+				case "capLogoCanvas":
+					canvas = capLogoCanvas
+					break;
+				case "pantsLogoCanvas":
+					canvas = pantsLogoCanvas
+					break;
+			}
+			let data = response.data
+			let imLeft = response.pLeft
+			let imTop = response.pTop
+			let pictureName = response.pictureName
+		
+			var object = canvas.getActiveObject()
+			var idx = canvas.getObjects().indexOf(object)
+
+			var imgObj = new Image();
+			imgObj.src = data;
+			imgObj.onload = function () {
+				var image = new fabric.Image(imgObj);
+				image.set({
+					originX: 'center',
+					originY: 'center',
+					left: imLeft,
+					top: imTop,
+					perPixelTargetFind: true,
+					centeredScaling: true,
+					centeredRotation: true,
+					name: pictureName,
+					id: pictureName
+				});
+				
+				image.filters.push(new fabric.Image.filters.Resize({
+					resizeType: 'lanczos', // typo fixed
+					lanczosLobes: 2 // typo fixed
+				}));
+				
+				image.on('object:modified',function() {
+					imLeft = image.get('left')
+					imTop = image.get('top');
+				});
+
+				image.on('selected',function() {
+					switch (activeCanvas.id) {
+						case "jerseyLogoCanvas":
+							var canStr = "jersey"
+							break;
+						case "capLogoCanvas":
+							var canStr = "cap"
+							break;
+						case "pantsLogoCanvas":
+							var canStr = "pants"
+							break;
+					} 
+					$("#"+canStr+"FileName").html(image.get('id'));
+					if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+						$("#"+canStr+"TrimImageDiv").css("display","block");
+						$("#"+canStr+"UploadImageDiv").css("display","none");
+						$("#"+canStr+"SelectedImageDiv").css("display","block");
+					}
+					$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+					$(".copypaste").each(function() {
+						$(this).css("display","inline-block")
+					})
+				})
+				
+				canvas.remove(object);
+				canvas.add(image);
+				image.moveTo(idx);
+				canvas.renderAll();
+				imLeft = image.get('left')
+				imTop = image.get('top');
+			}
+		}
 	})
 
 	ipcRenderer.on('add-stroke-response', (event, response) => {
