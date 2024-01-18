@@ -49,7 +49,8 @@
       ]
     },
     "dmg": {
-      "writeUpdateInfo": false
+      "writeUpdateInfo": false,
+      "artifactName": "${productName}_${version}_macOS.${ext}"
     },
     "win": {
       "target": [
@@ -58,14 +59,14 @@
       ]
     },
     "portable": {
-      "artifactName": "${productName}_${version}_portable.${ext}"
+      "artifactName": "${productName}_${version}_Windows_portable.${ext}"
     },
     "nsis": {
       "oneClick": false,
       "perMachine": true,
       "allowToChangeInstallationDirectory": true,
       "allowElevation": true,
-      "artifactName": "${productName} ${version} setup.${ext}",
+      "artifactName": "${productName}_${version}_Windows_setup.${ext}",
       "menuCategory": "OOTP Utilities",
       "shortcutName": "${productName}",
       "include": "build/installer.nsh",
