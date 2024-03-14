@@ -2168,6 +2168,7 @@
 						<input type="button" class="button" id="saveCap" value="Save Cap" style="display:none;">
 						<input type="button" class="button" id="saveJersey" value="Save Jersey" style="display:none;">
 						<input type="button" class="button" id="saveFont" value="Save Font" style="display:none;">
+						<input type="button" class="button" id="saveSocks" value="Save Socks" style="display:none;">
 						<input type="button" class="button" id="saveSwatches" value="Save Swatches" style="display:none;">
 						<input type="button" class="button" id="loadSwatches" value="Load Swatches" style="display:none;">
                         <input type="button" class="button" id="save" value="Save Uniform">
@@ -11040,56 +11041,12 @@
 			pantsLogoCanvas.renderAll();
 		})
 
-/* 		fabric.Image.fromURL("./images/socks_left.png", function (img) {
-			var sockLeft = img.set({
-				left: 242, 
-                top: 306,
-				height: 224,
-				width: 224,
-				id: 'sockLeft',
-				visible: true,
-				selectable: false,
-				evented: false,
-				clipPath: pantsClippingPath
-			})
-			sockLeft.filters.push(new fabric.Image.filters.BlendColor({
-				color: initialPantsColors["socks"],
-				mode: 'multiply',
-				alpha: 1.0
-			}))
-			sockLeft.applyFilters()
-			sockCanvas.add(sockLeft)
-			sockCanvas.renderAll();
-		})
-
-		fabric.Image.fromURL("./images/socks_right.png", function (img) {
-			var sockRight = img.set({
-				left: 12, 
-                top: 306,
-				height: 224,
-				width: 224,
-				id: 'sockRight',
-				visible: true,
-				selectable: false,
-				evented: false,
-				clipPath: pantsClippingPath
-			})
-			sockRight.filters.push(new fabric.Image.filters.BlendColor({
-				color: initialPantsColors["socks"],
-				mode: 'multiply',
-				alpha: 1.0
-			}))
-			sockRight.applyFilters()
-			sockCanvas.add(sockRight)
-			sockCanvas.renderAll();
-		}) */
-
 		sockBaseColor = new fabric.Rect({
 			top: 306,
 			left: 0,
 			fill: initialPantsColors["socks"],
 			width: 512,
-			height: 224,
+			height: 512,
 			id: 'sockBaseColor',
 			selectable: false,
 			clipPath: pantsClippingPath
@@ -13010,6 +12967,66 @@
 		if	($("#togglePantsGrid").is(':checked')) {
 			pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
 		}
+
+		hideOverlay()
+	})
+
+	$("#saveSocks").on("click",function() {
+		showOverlay("Generating Socks...");
+		pantsBelow.setOverlayImage(null,pantsBelow.renderAll.bind(pantsBelow));
+
+		var startYear = parseInt($("#startYear").val());
+		var endYear = parseInt($("#endYear").val())
+		var yearRange = "";
+		var teamName = "";
+		if (startYear > endYear && endYear > 0) {
+			ipcRenderer.send('show-alert',"The start year has to be before the end year!")
+			return false;
+		}
+		if (startYear == endYear && startYear > 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear == 0 && endYear > 0) {
+			yearRange = $("#endYear").val();
+		} else if (startYear > 0 && endYear == 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear > 0 && endYear > 0) {
+			yearRange = $("#startYear").val()+"-"+$("#endYear").val()
+		} else {
+			yearRange = ""
+		}
+		if (yearRange.length > 0) {
+			yearRange = "_"+yearRange;
+		}
+		if ($("#teamName").val().length == 0) {
+			teamName = "Unknown_Team";
+		} else {
+			teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
+		}
+		teamName = teamName.split(' ').join('_');
+
+		sockCanvas.setOverlayImage(null,pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+		sockCanvas.setDimensions({ width: 512, height: 512 });
+    	sockCanvas.setZoom(1)
+
+		var textLine = teamName.split('_').join(' ')+" "+$("#uniformType").val()
+		
+		if (yearRange.length > 0) {
+			textLine += yearRange.split('_').join(' ')
+		}
+
+		ipcRenderer.send('save-socks', {
+			sockCanvas: sockCanvas.toDataURL(),
+			teamName: teamName,
+			uniformType: "_"+$("#uniformType").val().split(' ').join('_'),
+			yearRange: yearRange
+		})
+	})
+
+	ipcRenderer.on('save-socks-response', (event, response) => {
+		sockCanvas.setDimensions({ width: sockCanvas.getWidth() * 0.75, height: sockCanvas.getHeight() * 0.75 });
+		sockCanvas.setZoom(scaleRatio)
+
+		sockCanvas.setOverlayImage('./images/texture_socks_default.png',sockCanvas.renderAll.bind(sockCanvas));
 
 		hideOverlay()
 	})
@@ -14985,6 +15002,7 @@
 		$("#toggleDiffuseSeams").prop( "checked", val ).triggerHandler('click');
 		ipcRenderer.send('set-preference', {pref:pref,val:val.toString()})
 	})
+
 
 	$("#saveSwatches").on("click",function() {	
 		showOverlay("Generating Swatches...")
