@@ -1262,24 +1262,85 @@ ipcMain.on('save-socks', (event, arg) => {
 	const uniformType = arg.uniformType
 	const yearRange = arg.yearRange
 
-	const fileName = "socks_"+teamName+uniformType+yearRange+".png"
+	const fileName = "socks_"+teamName+uniformType+yearRange
 
-	const options = {
-		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + fileName,{fs: true})
-	}
+	const output = fs.createWriteStream(tempDir + '/'+fileName+".zip");
+
+	output.on('close', function() {
+		var data = fs.readFileSync(tempDir + '/'+fileName+'.zip');
+		var saveOptions = {
+		  defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + fileName+'.zip',{fs: true})
+		}
+		dialog.showSaveDialog(null, saveOptions).then((result) => { 
+		  if (!result.canceled) {
+			store.set("downloadPath", path.dirname(result.filePath))
+			fs.writeFile(result.filePath, data, function(err) {
+			  if (err) {
+				fs.unlink(tempDir + '/'+fileName+'.zip', (err) => {
+				  if (err) {
+					console.log(err)
+					return
+				  }
+				})
+				console.log(err)
+				json.result = "error"
+				json.errno = err.errno
+				event.sender.send('save-jersey-zip-response', arg)
+				//res.json({result: "error", errno: err.errno})
+			  } else {
+				fs.unlink(tempDir + '/'+fileName+'.zip', (err) => {
+				  if (err) {
+					console.log(err)
+					return
+				  }
+				})
+				event.sender.send('save-jersey-zip-response', arg)
+			  };
+			})
+		  } else {
+			fs.unlink(tempDir + '/'+fileName+'.zip', (err) => {
+			  if (err) {
+				console.log(err)
+				return
+			  }
+			})
+			event.sender.send('save-jersey-zip-response', arg)
+		  }
+		})
+	});
+
+	const archive = archiver('zip', {
+		lib: { level: 9 } // Sets the compression level.
+	});
+		
+	archive.on('error', function(err) {
+		throw err;
+	});
+
+	archive.pipe(output)
 
 	prepareImages()
 
 	async function prepareImages() {
-		let socksBase = await Jimp.read(sockCanvas)
+		let socksLeft = await Jimp.read(sockCanvas)
+		let socksRight = await Jimp.read(sockCanvas)
 		let socksTexture = await Jimp.read(__dirname+"/images/socks_texture.png")
-		let socksLeft = new Jimp(512, 512)
-		let socksRight = new Jimp(512, 512)
-		let socksBuffer = await socksBase.getBufferAsync(Jimp.MIME_PNG)
-		let finalImage = Buffer.from(socksBuffer).toString('base64');
-		dialog.showSaveDialog(null, options).then((result) => {
+		await socksLeft.crop(0,0,512,512).autocrop().resize(512,512)
+		await socksRight.crop(0,512,512,512).autocrop().resize(512,512)
+		await socksLeft.composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+		await socksRight.composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+		let socksLeftBuffer = await socksLeft.getBufferAsync(Jimp.MIME_PNG)
+		//archive.append(socksLeftBuffer, {name: filename+"_left.png"})
+
+		let socksRightBuffer = await socksRight.getBufferAsync(Jimp.MIME_PNG)
+		//let finalImage = Buffer.from(socksBuffer).toString('base64');
+
+		archive.append(socksRightBuffer, {name: filename+"_right.png"})
+		archive.finalize()
+		
+/* 		dialog.showSaveDialog(null, options).then((result) => {
 			if (!result.canceled) {
-				fs.writeFile(result.filePath, finalImage, 'base64', function(err) {
+				fs.writeFile(result.filePath, socksLeftBuffer, 'base64', function(err) {
 					console.log(err)
 				})
 				event.sender.send('save-socks-response', null)
@@ -1289,7 +1350,7 @@ ipcMain.on('save-socks', (event, arg) => {
 		}).catch((err) => {
 			console.log(err);
 			event.sender.send('save-socks-response', null)
-		});
+		}); */
 	}
 })
 
