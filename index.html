@@ -79,7 +79,7 @@
 		const validImageTypes = ["png","jpg","jpeg","bmp","gif","tiff"]
 		const validFontTypes = ["ttf", "otf"]
 
-		const initialSockColors = {sockColor:"#c85959"}
+		const initialSockColors = {sockColor:"#c85959",stirrupFill:"#ffffff"}
 		
 		var capMakersMarkColor = initialCapColors['capMakersMarkColor']
 		var jerseyMakersMarkColor = initialJerseyColors['jerseyMakersMarkColor']
@@ -2063,7 +2063,7 @@
 														<option data-image="./images/Yellowtail.png" value="./fonts/Yellowtail-Regular.ttf">Yellowtail</option>
 														<option data-image="./images/Rawlings Fancy Block.png" value="./fonts/rawlingsfancyblock-regular-webfont.ttf">Fancy Block</option>
 														<option data-image="./images/Rawlings Old English.png" value="./fonts/rawlingsoldenglish-webfont.ttf">Old English</option>
-														<option data-image="./images/Richardson Fancy Block.png" value="./fonts/richardson_fancy_block-webfont.ttf">Fancy Block 2</option>
+														<option data-image="./images/Richardson Fancy Block.png" va<selectsalue="./fonts/richardson_fancy_block-webfont.ttf">Fancy Block 2</option>
 														<option data-image="./images/SPL28Script.png" value="./fonts/spl28script-webfont.ttf">SPL Script</option>
 														<option data-image="./images/VarsityClassicD.png" value="./fonts/VarsityClassicD.ttf">Varsity Classic D</option>
 														<option data-image="./images/VarsityBlockA.png" value="./fonts/VarsityBlockA.ttf">Varsity Block A</option>
@@ -2161,6 +2161,28 @@
                                                     <input class="baseSelector" type="text" id="sockColor" data-element="sockColor">
                                                 </td>
                                             </tr>
+											<tr class="color_tr">
+                                                <td><input type="checkbox" id="stirrupToggle"></td>
+                                                <td>
+													<label>Sanitary Sock: </label>
+													<input type="range" class="range" id="sockHeight" value=80 min="0" max="256">
+												</td>
+                                                <td style="text-align:right;">
+                                                    <input class="selector sockSelector" type="text" id="stirrupFill" data-element="stirrupFill">
+                                                </td>
+                                            </tr>
+											<!-- <tr class="color_tr">
+                                                <td>&nbsp;</td>
+                                                <td colspan="2">
+													<label>Sock Position: </label>
+													<select id = "sockPosition">
+														<option value="0">Super High</option>
+														<option value="80" selected>High</option>
+														<option value="160">Medium</option>
+														<option value="240">Low</option>
+													</select>
+												</td>
+                                            </tr> -->
 										</table>
 									</div>
 								</div>
@@ -8423,6 +8445,65 @@
 		}
 	})
 
+	$(".sockSelector").each(function() {
+		var color = $(this).attr('id');
+		$(this).spectrum({
+			type: "color",
+			showAlpha: false,
+			showInput: true,
+			preferredFormat: prefs['preferredColorFormat'],
+			showInitial: true,
+			showPalette: true,
+			showButtons: true,
+			color: initialSockColors[$(this).attr('id')],
+			beforeShow: function(color) {
+				$(this).spectrum("option", "palette", commonPalette)
+			},
+			show: function(color) {
+				var original_color = color;
+				$(this).data('changed', false);
+			},
+			move: function(color) {
+				$(this).data('changed', true);
+				const id = $(this).data('element');
+				var c = (color == null) ? 'transparent' : color.toHexString()
+				let g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
+				let o = g.getObjects("path").find(o => o.id === id)
+				o.set("fill", c);
+				sockCanvas.renderAll()
+			},
+			change: function(color) {
+				$(this).data('changed', true);
+				const id = $(this).data('element');
+				var c = (color == null) ? 'transparent' : color.toHexString()
+				let g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
+				let o = g.getObjects("path").find(o => o.id === id)
+				o.set("fill", c);
+				sockCanvas.renderAll()
+				if (color !=  null) {
+					if ($.inArray(color.toHexString(), commonPalette) < 0) {
+						commonPalette.push(color.toHexString())
+					}
+					if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+						jerseyPalette.push(color.toHexString())
+					}
+					if ($.inArray(color.toHexString(), capPalette) < 0) {
+						capPalette.push(color.toHexString())
+					}
+				}
+			},
+			hide: function(color) {
+				$(this).data('changed', true);
+				const id = $(this).data('element');
+				var c = (color == null) ? 'transparent' : color.toHexString()
+				let g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
+				let o = g.getObjects("path").find(o => o.id === id)
+				o.set("fill", c);
+				sockCanvas.renderAll()
+			}
+		})
+	})
+
 	$("#toggleSockGuides").on("click",function() {
 		if($(this).is(':checked')){
 			sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
@@ -8431,7 +8512,38 @@
 		}
 	})
 
+	$("#stirrupToggle").on("click",function() {
+		const state = ($(this).is(":checked")) ? true : false
+		let g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
+		let fill = g.getObjects("path").find(o => o.id === "stirrupFill")
+		let shadow = g.getObjects("image").find(o => o.id === "stirrupShadow")
+		fill.set("visible",state)
+		shadow.set("visible",state)
+		sockCanvas.renderAll()
+	})
+	
+/* 	$("#sockHeight").on("change",function() {
+		let val = parseInt($(this).val())
+		let g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
+		let fill = g.getObjects("path").find(o => o.id === "stirrupFill")
+		let shadow = g.getObjects("image").find(o => o.id === "stirrupShadow")
+		console.log(336 + parseInt($(this).val()))
+		fill.set("top",336 + parseInt($(this).val()))
+		//shadow.set("top",256 + parseInt($(this).val()))
+		g.addWithUpdate(fill)
+		sockCanvas.renderAll()
+		console.log(fill)
+	}) */
+
 	function initializeSocks() {
+
+		sockClippingPath = new fabric.Rect({
+			top: 256,
+			left: 0,
+			height: 512,
+			width: 1024,
+			absolutePositioned: true
+		})
 
 		sockBaseColor = new fabric.Rect({
 			top: 256,
@@ -8440,11 +8552,32 @@
 			width: 1024,
 			fill: initialSockColors['sockColor'],
 			id: 'sockBaseColor',
-			selectable: false
+			selectable: false,
+			clipPath: sockClippingPath
 		})
 
-		sockGroup = new fabric.Group([sockBaseColor],{
-			id: 'sockGroup'
+		stirrupFill = new fabric.Path("m 65.5,76.683594 c -25.76649,0 -49.018,10.768802 -65.5,28.050786 v 574.44921 h 156 v -512 c 0,-49.982 -40.519,-90.499996 -90.5,-90.499996 z m 256.92773,0 c -49.981,0 -90.5,40.517996 -90.5,90.499996 v 512 h 181 v -512 c 0,-49.982 -40.519,-90.499996 -90.5,-90.499996 z m 379.14454,0 c -49.981,0 -90.5,40.517996 -90.5,90.499996 v 512 h 181 v -512 c 0,-49.982 -40.519,-90.499996 -90.5,-90.499996 z m 256.92773,0 c -49.981,0 -90.5,40.517996 -90.5,90.499996 v 512 h 156 V 104.73438 C 1007.518,87.452396 984.26649,76.683594 958.5,76.683594 Z M 512,103.63477 c -16.12019,16.34127 -26.07227,38.78103 -26.07227,63.54882 v 512 H 512 538.07227 v -512 c 0,-24.76779 -9.95208,-47.20755 -26.07227,-63.54882 z",{
+			fill: initialSockColors['stirrupFill'],
+			id: 'stirrupFill',
+			top: 416,
+			visible: false,
+			selectable:false
+		});
+
+ 		stirrupShadow = new fabric.Image.fromURL('./images/stirrup_shadow.png', function(oImg) {
+			oImg.set({
+				id: 'stirrupShadow',
+				visible: false,
+				top: 336
+			})
+			sockGroup.addWithUpdate(oImg)
+			sockGroup.bringToFront(oImg)
+		})
+
+		sockGroup = new fabric.Group([sockBaseColor, stirrupFill], {
+			id: "sockGroup",
+			selectable: false,
+			clipPath: sockClippingPath
 		})
 
 		sockCanvas.add(sockGroup)
