@@ -16,6 +16,10 @@ ipcRenderer.on('save-pants', (event, data) => {
     $("#savePants").trigger("click")
 });
 
+ipcRenderer.on('save-socks', (event, data) => {
+    $("#saveSocks").trigger("click")
+});
+
 ipcRenderer.on('save-jersey', (event, data) => {
     $("#saveJersey").trigger("click")
 });

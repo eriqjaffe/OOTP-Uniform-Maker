@@ -157,6 +157,9 @@
                 </div>
 				<!-- <canvas id="tempCanvas" style="border:1px solid blue;"></canvas> -->
 				<div id="canvasContainer" style="position:absolute; height:828px; width:768px;">
+					<div id="sockContainer" style="background-color: red;">
+						<canvas id="sockCanvas" width="1024" height="1024" style="position:absolute; top:0; float:left; z-index:1;"></canvas>
+					</div>
 					<div id="fontContainer">
 						<canvas id="fontCanvas" width="1024" height="1024" style="position:absolute; top:0; float:left; z-index:1;"></canvas>
 					</div>
@@ -231,6 +234,9 @@
                                 </li>
 								<li class="skltbs-tab-item">
 								<button class="skltbs-tab">Font</button>
+								</li>
+								<li class="skltbs-tab-item">
+								<button class="skltbs-tab">Socks</button>
 								</li>
                             </ul>
                             <div class="skltbs-panel-group">
@@ -2137,6 +2143,9 @@
 							</table>
 									</div>
 								</div>
+								<div class="skltbs-panel" id="socksPanel">
+
+								</div>
                             </div>
                             </div>
                         </div>
@@ -2145,6 +2154,7 @@
                     <div style="text-align:center; margin-top:5px;">
                         <!--<input type="button" class="button" id="straightenObject" value="Reset Object Rotation" style="display:none;">-->
 						<input type="button" class="button" id="savePants" value="Save Pants" style="display:none;">
+						<input type="button" class="button" id="saveSocks" value="Save Socks" style="display:none;">
 						<input type="button" class="button" id="saveCap" value="Save Cap" style="display:none;">
 						<input type="button" class="button" id="saveJersey" value="Save Jersey" style="display:none;">
 						<input type="button" class="button" id="saveFont" value="Save Font" style="display:none;">
@@ -2693,12 +2703,25 @@
 		id: 'fontCanvasCanvas'
 	})
 
+	var sockCanvas = new fabric.Canvas('sockCanvas', {
+		enableRetinaScaling:false,
+		controlsAboveOverlay:true,
+		id: 'sockCanvasCanvas'
+	})
+
+	sockCanvas.setBackgroundColor(
+        {source: './images/bg.png', repeat: 'repeat'}, 
+        sockCanvas.renderAll.bind(sockCanvas),
+    );
+
 	if (gridsVisible == true) {
 		jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png', jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 		pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png', pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+		sockCanvas.setOverlayImage('./images/sock_overlay.png', sockCanvas.renderAll.bind(sockCanvas));
 	} else {
 		jerseyLogoCanvas.setOverlayImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 		pantsLogoCanvas.setOverlayImage(null, pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+		sockCanvas.setOverlayImage(null, sockCanvas.renderAll.bind(sockCanvas));
 	}
 
 // SCALING FUNCTIONS
@@ -2718,6 +2741,8 @@
     capLogoCanvas.setZoom(scaleRatio)
 	fontCanvas.setDimensions({ width: fontCanvas.getWidth() * 0.75, height: fontCanvas.getHeight() * 0.75 });
     fontCanvas.setZoom(scaleRatio)
+	sockCanvas.setDimensions({ width: sockCanvas.getWidth() * 0.75, height: sockCanvas.getHeight() * 0.75 });
+    sockCanvas.setZoom(scaleRatio)
 
 // DOCUMENT FUNCTIONS
 
@@ -3029,36 +3054,60 @@
 				$("#jerseyOverlay").css("display","none");
 				$("#capOverlay").css("display","inline-block");
 				$("#pantsOverlay").css("display","inline-block");
-				$("#pantsAndCapContainer").css("display","inline-block")
+				$("#jerseyContainer").css("display","inline-block")
+				$("#pantsContainer").css("display","inline-block")
+				$("#capContainer").css("display","inline-block")
 				$("#eyedropper").css("display","inline-block")
 				$("#fontContainer").css("display","none")
+				$("#sockContainer").css("display","none")
 				break;
 			case 1:
 				activeCanvas = pantsLogoCanvas;
 				$("#jerseyOverlay").css("display","inline-block");
 				$("#capOverlay").css("display","inline-block");
 				$("#pantsOverlay").css("display","none");
-				$("#pantsAndCapContainer").css("display","inline-block")
+				$("#jerseyContainer").css("display","inline-block")
+				$("#pantsContainer").css("display","inline-block")
+				$("#capContainer").css("display","inline-block")
 				$("#eyedropper").css("display","inline-block")
 				$("#fontContainer").css("display","none")
+				$("#sockContainer").css("display","none")
 				break;
 			case 2:
 				activeCanvas = capLogoCanvas;
 				$("#jerseyOverlay").css("display","inline-block");
 				$("#capOverlay").css("display","none");
 				$("#pantsOverlay").css("display","inline-block");
-				$("#pantsAndCapContainer").css("display","inline-block")
+				$("#jerseyContainer").css("display","inline-block")
+				$("#pantsContainer").css("display","inline-block")
+				$("#capContainer").css("display","inline-block")
 				$("#eyedropper").css("display","inline-block")
 				$("#fontContainer").css("display","none")
+				$("#sockContainer").css("display","none")
 				break;
 			case 3:
 				activeCanvas = fontCanvas;
 				$("#jerseyOverlay").css("display","none");
 				$("#capOverlay").css("display","none");
 				$("#pantsOverlay").css("display","none");
-				$("#pantsAndCapContainer").css("display","none")
 				$("#eyedropper").css("display","none")
+				$("#jerseyContainer").css("display","none")
+				$("#pantsContainer").css("display","none")
+				$("#capContainer").css("display","none")
 				$("#fontContainer").css("display","inline-block")
+				$("#sockContainer").css("display","none")
+				break;
+			case 4:
+				$("#jerseyOverlay").css("display","none");
+				$("#capOverlay").css("display","none");
+				$("#pantsOverlay").css("display","none");
+				$("#eyedropper").css("display","none")
+				$("#fontContainer").css("display","none")
+				$("#jerseyContainer").css("display","none")
+				$("#pantsContainer").css("display","none")
+				$("#capContainer").css("display","none")
+				$("#sockContainer").css("display","inline-block")
+				break;
 		}
 	})
 
@@ -8283,6 +8332,32 @@
 		$("#tipSpan").html("");
 	})
 
+	// SOCK SPECIFIC
+	
+	initializeSocks()
+
+	function initializeSocks() {
+
+		sockBaseColor = new fabric.Rect({
+			top: 256,
+			left: 0,
+			height: 512,
+			width: 1024,
+			fill: 'red',
+			id: 'sockBaseColor',
+			selectable: false
+		})
+
+		sockGroup = new fabric.Group([sockBaseColor],{
+			id: 'sockGroup'
+		})
+
+		sockCanvas.add(sockGroup)
+
+		sockCanvas.renderAll()
+
+	}
+ 
 	// CANVAS INITIALIZE FUNCTIONS
 
 	function initializeCap() {
@@ -12852,6 +12927,67 @@
 				pantsWatermarkColor: idealTextColor(pantsBelow.backgroundColor),
 				pantsTexture: ($("#pantsTextureSelect").val() == "custom") ? customPantsTexture : $("#pantsTextureSelect").val(),
 		})
+	})
+
+	$("#saveSocks").on("click",function(e){
+		showOverlay("Generating Socks...");
+		sockCanvas.setOverlayImage(null,sockCanvas.renderAll.bind(sockCanvas));
+
+		var startYear = parseInt($("#startYear").val());
+		var endYear = parseInt($("#endYear").val())
+		var yearRange = "";
+		var teamName = "";
+		if (startYear > endYear && endYear > 0) {
+			ipcRenderer.send('show-alert',"The start year has to be before the end year!")
+			return false;
+		}
+		if (startYear == endYear && startYear > 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear == 0 && endYear > 0) {
+			yearRange = $("#endYear").val();
+		} else if (startYear > 0 && endYear == 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear > 0 && endYear > 0) {
+			yearRange = $("#startYear").val()+"-"+$("#endYear").val()
+		} else {
+			yearRange = ""
+		}
+		if (yearRange.length > 0) {
+			yearRange = "_"+yearRange;
+		}
+		if ($("#teamName").val().length == 0) {
+			teamName = "Unknown_Team";
+		} else {
+			teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
+		}
+		teamName = teamName.split(' ').join('_');
+		var fileName = "socks_"+teamName+"_"+$("#uniformType").val()+yearRange;
+
+		sockCanvas.setDimensions({ width: 1024, height: 1024 });
+    	sockCanvas.setZoom(1)
+
+ 		var textLine = teamName.split('_').join(' ')+" "+$("#uniformType").val()
+		
+		if (yearRange.length > 0) {
+			textLine += yearRange.split('_').join(' ')
+		}
+
+		let socks = sockCanvas.getObjects('group').find(o => o.id == "sockGroup")
+
+		ipcRenderer.send('save-socks', {
+				text: textLine,
+				sockCanvas: socks.toDataURL(),
+				name: fileName.split(' ').join('_').toLowerCase(),
+		})
+	})
+
+	ipcRenderer.on('save-socks-response', (event, response) => {
+		sockCanvas.setDimensions({ width: sockCanvas.getWidth() * 0.75, height: sockCanvas.getHeight() * 0.75 });
+		sockCanvas.setZoom(scaleRatio)
+
+		sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
+
+		hideOverlay()
 	})
 
 	ipcRenderer.on('save-pants-response', (event, response) => {

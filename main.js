@@ -1309,6 +1309,80 @@ ipcMain.on('save-pants', (event, arg) => {
 	}
 })
 
+ipcMain.on('save-socks', (event, arg) => {
+	const sockCanvas = Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	
+	const output = fs.createWriteStream(tempDir + '/'+arg.name+'.zip');
+
+	output.on('close', function() {
+		var data = fs.readFileSync(tempDir + '/'+arg.name+'.zip');
+		var saveOptions = {
+		  defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.zip',{fs: true})
+		}
+		dialog.showSaveDialog(null, saveOptions).then((result) => { 
+		  if (!result.canceled) {
+			store.set("downloadPath", path.dirname(result.filePath))
+			fs.writeFile(result.filePath, data, function(err) {
+			  if (err) {
+				fs.unlink(tempDir + '/'+arg.name+'.zip', (err) => {
+				  if (err) {
+					console.log(err)
+					return
+				  }
+				})
+				console.log(err)
+				json.result = "error"
+				json.errno = err.errno
+				event.sender.send('save-socks-response', arg)
+				//res.json({result: "error", errno: err.errno})
+			  } else {
+				fs.unlink(tempDir + '/'+arg.name+'.zip', (err) => {
+				  if (err) {
+					console.log(err)
+					return
+				  }
+				})
+				event.sender.send('save-socks-response', arg)
+			  };
+			})
+		  } else {
+			fs.unlink(tempDir + '/'+arg.name+'.zip', (err) => {
+			  if (err) {
+				console.log(err)
+				return
+			  }
+			})
+			event.sender.send('save-socks-response', arg)
+		  }
+		})
+	});
+
+	const archive = archiver('zip', {
+		lib: { level: 9 } // Sets the compression level.
+	});
+		
+	archive.on('error', function(err) {
+		throw err;
+	});
+
+	archive.pipe(output)
+
+	prepareImages()
+
+	async function prepareImages() {
+		let socksLeft = await Jimp.read(sockCanvas)
+		let socksRight = await Jimp.read(sockCanvas)
+		let socksTexture = await Jimp.read(__dirname+"/images/socks_texture.png")
+		await socksLeft.crop(512,0,512,512).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+		await socksRight.crop(0,0,512,512).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+		let socksLeftBuffer = await socksLeft.getBufferAsync(Jimp.MIME_PNG)
+		let socksRightBuffer = await socksRight.getBufferAsync(Jimp.MIME_PNG)
+		archive.append(socksLeftBuffer, {name: arg.name+"_left.png"})
+		archive.append(socksRightBuffer, {name: arg.name+"_right.png"})
+		archive.finalize()
+	}
+})
+
 ipcMain.on('save-cap', (event, arg) => {
 	const capLogoCanvas = Buffer.from(arg.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const capBelow = Buffer.from(arg.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
@@ -2150,6 +2224,11 @@ function createWindow () {
               accelerator: isMac ? 'Cmd+P' : 'Control+P',
               label: 'Save Pants Only',
           },
+		  {
+			  click: () => mainWindow.webContents.send('save-socks','click'),
+			  accelerator: isMac ? 'Cmd+O' : 'Control+O',
+			  label: 'Save Socks Only',
+		  },
           {
               click: () => mainWindow.webContents.send('save-jersey','click'),
               accelerator: isMac ? 'Cmd+J' : 'Control+J',
