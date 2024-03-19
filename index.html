@@ -78,6 +78,8 @@
 		const numbers = ["0","1","2","3","4","5","6","7","8","9"]
 		const validImageTypes = ["png","jpg","jpeg","bmp","gif","tiff"]
 		const validFontTypes = ["ttf", "otf"]
+
+		const initialSockColors = {sockColor:"#c85959"}
 		
 		var capMakersMarkColor = initialCapColors['capMakersMarkColor']
 		var jerseyMakersMarkColor = initialJerseyColors['jerseyMakersMarkColor']
@@ -2144,7 +2146,23 @@
 									</div>
 								</div>
 								<div class="skltbs-panel" id="socksPanel">
-
+									<div class="sock-accord-header sock-active-header">Main Sock Elements</div>
+                                    <div class="sock-accord-content" style="display:inline;">  
+                                        <table style="width:475px;">
+											<tr class="color_tr">
+                                                <td class="checkCell"><input type="checkbox" id="toggleSockGuides" checked></td>
+                                                <td><label>Guides (Will be hidden on export)</label></td>
+                                                <td style="text-align:right;">&nbsp;</td>
+                                            </tr>
+                                            <tr class="color_tr">
+                                                <td>&nbsp;</td>
+                                                <td><label>Sock Color: </label></td>
+                                                <td style="text-align:right;">
+                                                    <input class="baseSelector" type="text" id="sockColor" data-element="sockColor">
+                                                </td>
+                                            </tr>
+										</table>
+									</div>
 								</div>
                             </div>
                             </div>
@@ -2751,6 +2769,7 @@
 		$("#toggleJerseyGrid").prop( "checked", gridsVisible )
 		$("#togglePantsGrid").prop( "checked", gridsVisible )
 		$("#toggleCapGuides").prop( "checked", gridsVisible )
+		$("#toggleSockGuides").prop( "checked", gridsVisible )
 		$("#gridsVisible").prop( "checked", gridsVisible )
 		$("#checkForUpdatesPref").prop("checked", checkForUpdates)
 		$("#jerseyNameTextBox").val(prefs['preferredPlayerName'])
@@ -2829,6 +2848,20 @@
 					$(this).removeClass("cap-active-header").addClass("cap-inactive-header");
 				}) 
 				$(this).removeClass("cap-inactive-header").addClass("cap-active-header");
+			}
+		});
+
+		$(".sock-accord-header").click(function() {
+			if($(this).next("div").is(":visible")){
+				$(this).next("div").slideUp("fast");
+				$(this).removeClass("sock-active-header").addClass("sock-inactive-header");
+			} else {
+				$(".sock-accord-content").slideUp("fast");
+				$(this).next("div").slideToggle("fast");
+				$(".sock-active-header").each(function() {
+					$(this).removeClass("sock-active-header").addClass("sock-inactive-header");
+				}) 
+				$(this).removeClass("sock-inactive-header").addClass("sock-active-header");
 			}
 		});
 		
@@ -3135,6 +3168,9 @@
 			if($("#toggleCapGuides").is(":checked")){
 				capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
 			}
+			if($("#toggleSockGuides").is(":checked")){
+				sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
+			}
 			switch(currentTab.currentIndex) {
 				case 0:
 					$("#jerseyOverlay").css("display","none");
@@ -3161,6 +3197,9 @@
 			}
 			if($("#toggleCapGuides").is(":checked")){
 				capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
+			}
+			if($("#toggleSockGuides").is(":checked")){
+				sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
 			}
 			switch(currentTab.currentIndex) {
 				case 0:
@@ -8336,6 +8375,62 @@
 	
 	initializeSocks()
 
+	$("#sockColor").spectrum({
+		type: "color",
+		showAlpha: false,
+		showInput: true,
+		preferredFormat: prefs['preferredColorFormat'],
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		allowEmpty: false,
+		color: initialSockColors["sockColor"],
+		beforeShow: function(color) {
+			$(this).spectrum("option", "palette", [capPalette, commonPalette])
+		},
+		show: function(color) {
+			original_color = color;
+			$(this).data('changed', false);
+		},
+		move: function(color) {
+			$(this).data('changed', true);
+			let g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
+			g.getObjects().find(o => o.id === 'sockBaseColor').set("fill", color.toHexString())
+			sockCanvas.renderAll()
+		},
+		change: function(color) {
+			$(this).data('changed', true);
+			let g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
+			g.getObjects().find(o => o.id === 'sockBaseColor').set("fill", color.toHexString())
+			sockCanvas.renderAll()
+			if (color !=  null) {
+				if ($.inArray(color.toHexString(), commonPalette) < 0) {
+					commonPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+					jerseyPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), capPalette) < 0) {
+					capPalette.push(color.toHexString())
+				}
+			}
+		},
+		hide: function(color) {
+			$(this).data('changed', false);
+			let g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
+			g.getObjects().find(o => o.id === 'sockBaseColor').set("fill", color.toHexString())
+			sockCanvas.renderAll()
+		}
+	})
+
+	$("#toggleSockGuides").on("click",function() {
+		if($(this).is(':checked')){
+			sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
+		} else {
+			sockCanvas.setOverlayImage(null,sockCanvas.renderAll.bind(sockCanvas));
+		}
+	})
+
 	function initializeSocks() {
 
 		sockBaseColor = new fabric.Rect({
@@ -8343,7 +8438,7 @@
 			left: 0,
 			height: 512,
 			width: 1024,
-			fill: 'red',
+			fill: initialSockColors['sockColor'],
 			id: 'sockBaseColor',
 			selectable: false
 		})
@@ -12282,6 +12377,9 @@
 			if($("#toggleCapGuides").is(":checked")){
 				capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
 			}
+			if($("#toggleSockGuides").is(":checked")){
+				sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
+			}
 			switch(currentTab.currentIndex) {
 				case 0:
 					$("#jerseyOverlay").css("display","none");
@@ -12309,6 +12407,9 @@
 			}
 			if($("#toggleCapGuides").is(":checked")){
 				capLogoCanvas.setOverlayImage('./images/cap_centering_guides.png',capLogoCanvas.renderAll.bind(capLogoCanvas));
+			}
+			if($("#toggleSockGuides").is(":checked")){
+				sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
 			}
 			switch(currentTab.currentIndex) {
 				case 0:
@@ -13531,6 +13632,10 @@
 			pantsLogoCanvas.setOverlayImage(null,pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
 		}
 
+		if($("#toggleSockGuides").is(":checked")){
+			sockCanvas.setOverlayImage(null,sockCanvas.renderAll.bind(sockCanvas));
+		}
+
 		jerseyBelow.setDimensions({ width: 512, height: 1024 });
     	jerseyBelow.setZoom(1)
 		jerseyLogoCanvas.setDimensions({ width: 512, height: 1024 });
@@ -13738,9 +13843,14 @@
 			jerseyLogoCanvas.setOverlayImage('./images/jersey_mesh_layout.png',jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
 		}
 
-		if	($("#togglePantsGrid").is(':checked')) {
+		if ($("#togglePantsGrid").is(':checked')) {
 			pantsLogoCanvas.setOverlayImage('./images/pants_mesh_layout.png',pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
 		}
+
+		if ($("#toggleSockGuides").is(":checked")){
+			sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
+		}
+
 		hideOverlay()
 	})
 
@@ -13751,7 +13861,6 @@
 	})
 
 	ipcRenderer.on('load-uniform-response', (event, response) => {
-		console.log(response)
 		if (response.result == "success") {
 			customFonts.splice(0, customFonts.length)
 			commonPalette.splice(0, commonPalette.length)
@@ -14969,6 +15078,7 @@
 		$("#toggleJerseyGrid").prop( "checked", val ).triggerHandler('click');
 		$("#togglePantsGrid").prop( "checked", val ).triggerHandler('click');
 		$("#toggleCapGuides").prop( "checked", val ).triggerHandler('click');
+		$("#toggleSockGuides").prop( "checked", val ).triggerHandler('click');
 		ipcRenderer.send('set-preference', {pref:pref,val:val.toString()})
 	})
 
