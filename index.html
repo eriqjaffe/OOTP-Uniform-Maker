@@ -13424,7 +13424,8 @@
 			'pantsLogoCanvas': pantsLogoCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
 			'capBelow': capBelow.toDatalessJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
 			'capLogoCanvas': capLogoCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
-			'fontCanvas': fontCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners'])
+			'fontCanvas': fontCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
+			'sockCanvas': sockCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners'])
 		}
 
 		if (buttonGroup.visible == true) {
@@ -13638,6 +13639,7 @@
 				pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
 				pantsBelow: pantsBelow.toDataURL(),
 				fontCanvas: fontCanvas.toDataURL(),
+				sockCanvas: sockCanvas.getObjects('group').find(o => o.id == "sockGroup").toDataURL(),
 				name: response.args.fileName.toLowerCase(),
 				showPlanket: response.args.showPlanket,
 				buttonPadSeams: response.args.buttonPadSeams,

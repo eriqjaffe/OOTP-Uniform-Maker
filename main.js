@@ -1758,6 +1758,7 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 	const heightMap = Buffer.from(arg.heightMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const normalMap = Buffer.from(arg.normalMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const fontCanvas = Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const sockCanvas = Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const text = arg.text;
 	const tmpCapTexture = arg.capTexture
 	const tmpJerseyTexture = arg.jerseyTexture
@@ -1911,6 +1912,17 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 		let pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
 		archive.append(pantsBuffer, {name: "pants_"+arg.name+".png"})
 		//await pantsBase.write(app.getPath('downloads') + '/pants_' + arg.name+'.png')
+
+		// socks
+		let socksLeft = await Jimp.read(sockCanvas)
+		let socksRight = await Jimp.read(sockCanvas)
+		let socksTexture = await Jimp.read(__dirname+"/images/socks_texture.png")
+		await socksLeft.crop(512,0,512,512).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+		await socksRight.crop(0,0,512,512).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+		let socksLeftBuffer = await socksLeft.getBufferAsync(Jimp.MIME_PNG)
+		let socksRightBuffer = await socksRight.getBufferAsync(Jimp.MIME_PNG)
+		archive.append(socksLeftBuffer, {name: "socks_"+arg.name+"_left.png"})
+		archive.append(socksRightBuffer, {name: "socks_"+arg.name+"_right.png"})
 
 		// font
 		let fontBase = await Jimp.read(fontCanvas)
