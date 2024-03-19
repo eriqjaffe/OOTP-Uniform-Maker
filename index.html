@@ -13086,8 +13086,12 @@
 		sockCanvas.setDimensions({ width: sockCanvas.getWidth() * 0.75, height: sockCanvas.getHeight() * 0.75 });
 		sockCanvas.setZoom(scaleRatio)
 
-		sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
-
+		if($("#toggleSockGuides").is(":checked")){
+			sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
+		} else {
+			sockCanvas.setOverlayImage(null,sockCanvas.renderAll.bind(sockCanvas));
+		}
+		
 		hideOverlay()
 	})
 
