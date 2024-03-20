@@ -79,7 +79,7 @@
 		const validImageTypes = ["png","jpg","jpeg","bmp","gif","tiff"]
 		const validFontTypes = ["ttf", "otf"]
 
-		const initialSockColors = {sockColor:"#c85959",stirrupFill:"#ffffff"}
+		const initialSockColors = {sockColor:"#c85959",stirrupFill:"#ffffff",stLouis1:"#ffffff",stLouis2:"#0C2340",northwestern1:"#ffffff",northwestern2:"#4E2A84"}
 		
 		var capMakersMarkColor = initialCapColors['capMakersMarkColor']
 		var jerseyMakersMarkColor = initialJerseyColors['jerseyMakersMarkColor']
@@ -2162,15 +2162,35 @@
                                                 </td>
                                             </tr>
 											<tr class="color_tr">
-                                                <td><input type="checkbox" id="stirrupToggle"></td>
+                                                <td class="checkCell"><input type="checkbox" id="stirrupToggle"></td>
                                                 <td>
 													<label>Sanitary Sock: </label>
-													<input type="range" class="range" id="sockHeight" value=80 min="0" max="256">
+													<input type="range" class="range" id="sockHeight" value=0 min="-210" max="400">
 												</td>
                                                 <td style="text-align:right;">
                                                     <input class="selector sockSelector" type="text" id="stirrupFill" data-element="stirrupFill">
                                                 </td>
                                             </tr>
+											<tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" class="" id="sockStripeCheck" data-canvas="above"></td>
+												<td>
+													<label>Striping: </label>
+													<select id="sockStripeSelect">
+														<option value="stLouis" selected>St. Louis</option>
+														<option value="northwestern">Northwestern</option>
+													</select>
+												</td>
+												<td style="text-align:right;">
+													<span id="stLouisSelectors" style="display:inline-block">
+														<input class="sockSelector selector" type="text" id="stLouis1" data-element="stLouis1">
+														<input class="sockSelector selector" type="text" id="stLouis2" data-element="stLouis2">
+													</span>
+													<span id="northwesternSelectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="northwestern1" data-element="northwestern1">
+														<input class="sockSelector selector" type="text" id="northwestern2" data-element="northwestern2">
+													</span>
+												</td>
+											</tr>
 											<!-- <tr class="color_tr">
                                                 <td>&nbsp;</td>
                                                 <td colspan="2">
@@ -8517,23 +8537,85 @@
 		let g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
 		let fill = g.getObjects("path").find(o => o.id === "stirrupFill")
 		let shadow = g.getObjects("image").find(o => o.id === "stirrupShadow")
+		console.log(shadow)
 		fill.set("visible",state)
 		shadow.set("visible",state)
 		sockCanvas.renderAll()
 	})
 	
-/* 	$("#sockHeight").on("change",function() {
-		let val = parseInt($(this).val())
+ 	$("#sockHeight").on("input",function() {
 		let g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
 		let fill = g.getObjects("path").find(o => o.id === "stirrupFill")
 		let shadow = g.getObjects("image").find(o => o.id === "stirrupShadow")
-		console.log(336 + parseInt($(this).val()))
-		fill.set("top",336 + parseInt($(this).val()))
-		//shadow.set("top",256 + parseInt($(this).val()))
-		g.addWithUpdate(fill)
+		fill.set("top",-261.749998 + parseInt($(this).val()))
+		fill.setCoords()
+		shadow.set("top",-341.749998 + parseInt($(this).val()))
+		shadow.setCoords()
 		sockCanvas.renderAll()
-		console.log(fill)
-	}) */
+	})
+
+	$("#sockStripeCheck").on("change",function() {
+		const g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
+		if ($(this).is(":checked")) {
+			switch($("#sockStripeSelect").val()) {
+				case "stLouis":
+					g.getObjects().find(o => o.id === 'stLouis1').visible = true;
+					g.getObjects().find(o => o.id === 'stLouis2').visible = true;
+					g.getObjects().find(o => o.id === 'northwestern1').visible = false;
+					g.getObjects().find(o => o.id === 'northwestern2').visible = false;
+					break;
+				case "northwestern":
+					g.getObjects().find(o => o.id === 'stLouis1').visible = false;
+					g.getObjects().find(o => o.id === 'stLouis2').visible = false;
+					g.getObjects().find(o => o.id === 'northwestern1').visible = true;
+					g.getObjects().find(o => o.id === 'northwestern2').visible = true;
+					break;
+			}
+		} else {
+			g.getObjects().find(o => o.id === 'stLouis1').visible = false;
+					g.getObjects().find(o => o.id === 'stLouis2').visible = false;
+					g.getObjects().find(o => o.id === 'northwestern1').visible = false;
+					g.getObjects().find(o => o.id === 'northwestern2').visible = false;
+		}
+		sockCanvas.renderAll()
+	})
+
+	$("#sockStripeSelect").on("change",function() {
+		const g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
+		const val = $(this).val()
+		switch(val) {
+			case "stLouis":
+				$("#stLouisSelectors").show()
+				$("#northwesternSelectors").hide()
+				break;
+			case "northwestern":
+				$("#stLouisSelectors").hide()
+				$("#northwesternSelectors").show()
+				break;
+		}
+		if ($("#sockStripeCheck").is(":checked")) {
+			switch(val) {
+				case "stLouis":
+					g.getObjects().find(o => o.id === 'stLouis1').visible = true;
+					g.getObjects().find(o => o.id === 'stLouis2').visible = true;
+					g.getObjects().find(o => o.id === 'northwestern1').visible = false;
+					g.getObjects().find(o => o.id === 'northwestern2').visible = false;
+					break;
+				case "northwestern":
+					g.getObjects().find(o => o.id === 'stLouis1').visible = false;
+					g.getObjects().find(o => o.id === 'stLouis2').visible = false;
+					g.getObjects().find(o => o.id === 'northwestern1').visible = true;
+					g.getObjects().find(o => o.id === 'northwestern2').visible = true;
+					break;
+			}
+		} else {
+			g.getObjects().find(o => o.id === 'stLouis1').visible = false;
+			g.getObjects().find(o => o.id === 'stLouis2').visible = false;
+			g.getObjects().find(o => o.id === 'northwestern1').visible = false;
+			g.getObjects().find(o => o.id === 'northwestern2').visible = false;
+}
+		sockCanvas.renderAll()
+	})
 
 	function initializeSocks() {
 
@@ -8556,15 +8638,47 @@
 			clipPath: sockClippingPath
 		})
 
-		stirrupFill = new fabric.Path("m 65.5,76.683594 c -25.76649,0 -49.018,10.768802 -65.5,28.050786 v 574.44921 h 156 v -512 c 0,-49.982 -40.519,-90.499996 -90.5,-90.499996 z m 256.92773,0 c -49.981,0 -90.5,40.517996 -90.5,90.499996 v 512 h 181 v -512 c 0,-49.982 -40.519,-90.499996 -90.5,-90.499996 z m 379.14454,0 c -49.981,0 -90.5,40.517996 -90.5,90.499996 v 512 h 181 v -512 c 0,-49.982 -40.519,-90.499996 -90.5,-90.499996 z m 256.92773,0 c -49.981,0 -90.5,40.517996 -90.5,90.499996 v 512 h 156 V 104.73438 C 1007.518,87.452396 984.26649,76.683594 958.5,76.683594 Z M 512,103.63477 c -16.12019,16.34127 -26.07227,38.78103 -26.07227,63.54882 v 512 H 512 538.07227 v -512 c 0,-24.76779 -9.95208,-47.20755 -26.07227,-63.54882 z",{
-			fill: initialSockColors['stirrupFill'],
-			id: 'stirrupFill',
-			top: 416,
+		stLouis1 = new fabric.Path("M 0 363.85352 L 0 388.85352 L 0 413.85352 L 0 438.85352 L 1024 438.85352 L 1024 413.85352 L 1024 388.85352 L 1024 363.85352 L 0 363.85352 z M 0 463.85352 L 0 488.85352 L 0 513.85352 L 0 538.85352 L 1024 538.85352 L 1024 513.85352 L 1024 488.85352 L 1024 463.85352 L 0 463.85352 z ",{
+			fill: initialSockColors['stLouis1'],
+			id: 'stLouis1',
 			visible: false,
-			selectable:false
+			selectable: false,
 		});
 
- 		stirrupShadow = new fabric.Image.fromURL('./images/stirrup_shadow.png', function(oImg) {
+		stLouis2 = new fabric.Path("M 0 388.85352 L 0 413.85352 L 1024 413.85352 L 1024 388.85352 L 0 388.85352 z M 0 488.85156 L 0 513.85156 L 1024 513.85156 L 1024 488.85156 L 0 488.85156 z ",{
+			fill: initialSockColors['stLouis2'],
+			id: 'stLouis2',
+			visible: false,
+			selectable: false,
+		});
+
+		northwestern1 = new fabric.Path("M 0 363.85352 L 0 388.85352 L 1024 388.85352 L 1024 363.85352 L 0 363.85352 z M 0 513.85156 L 0 513.85352 L 0 538.85352 L 1024 538.85352 L 1024 513.85352 L 1024 513.85156 L 0 513.85156 z ",{
+			fill: initialSockColors['northwestern1'],
+			id: 'northwestern1',
+			visible: false,
+			selectable: false,
+		});
+
+		northwestern2 = new fabric.Path("M 0 413.85352 L 0 437.42383 L 0 463.85352 L 0 474.21094 L 0 488.85156 L 1024 488.85156 L 1024 474.21094 L 1024 463.85352 L 1024 437.42383 L 1024 413.85352 L 0 413.85352 z ",{
+			fill: initialSockColors['northwestern2'],
+			id: 'northwestern2',
+			visible: false,
+			selectable: false,
+		});
+
+		stirrupFill = new fabric.Path("m 65.5,76.683594 c -25.76649,0 -49.018,10.768802 -65.5,28.050786 v 574.44921 h 156 v -512 c 0,-49.982 -40.519,-90.499996 -90.5,-90.499996 z m 256.92773,0 c -49.981,0 -90.5,40.517996 -90.5,90.499996 v 512 h 181 v -512 c 0,-49.982 -40.519,-90.499996 -90.5,-90.499996 z m 379.14454,0 c -49.981,0 -90.5,40.517996 -90.5,90.499996 v 512 h 181 v -512 c 0,-49.982 -40.519,-90.499996 -90.5,-90.499996 z m 256.92773,0 c -49.981,0 -90.5,40.517996 -90.5,90.499996 v 512 h 156 V 104.73438 C 1007.518,87.452396 984.26649,76.683594 958.5,76.683594 Z M 512,103.63477 c -16.12019,16.34127 -26.07227,38.78103 -26.07227,63.54882 v 512 H 512 538.07227 v -512 c 0,-24.76779 -9.95208,-47.20755 -26.07227,-63.54882 z",{
+			fill: initialSockColors['stirrupFill'],
+			top: 416,
+			id: 'stirrupFill',
+			originX: "left",
+			originY: "top",
+			visible: false,
+			selectable: false
+		});
+
+		stirrupFill.setCoords()
+
+  		stirrupShadow = new fabric.Image.fromURL('./images/stirrup_shadow.png', function(oImg) {
 			oImg.set({
 				id: 'stirrupShadow',
 				visible: false,
@@ -8574,7 +8688,7 @@
 			sockGroup.bringToFront(oImg)
 		})
 
-		sockGroup = new fabric.Group([sockBaseColor, stirrupFill], {
+		sockGroup = new fabric.Group([sockBaseColor, stLouis1, stLouis2, northwestern1, northwestern2, stirrupFill], {
 			id: "sockGroup",
 			selectable: false,
 			clipPath: sockClippingPath
