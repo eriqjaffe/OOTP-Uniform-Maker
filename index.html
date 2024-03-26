@@ -3350,6 +3350,8 @@
 			}
 			if($("#toggleSockGuides").is(":checked")){
 				sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
+			} else {
+				sockCanvas.setOverlayImage('./images/sock_pseudo_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
 			}
 			switch(currentTab.currentIndex) {
 				case 0:
@@ -3380,6 +3382,8 @@
 			}
 			if($("#toggleSockGuides").is(":checked")){
 				sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
+			} else {
+				sockCanvas.setOverlayImage('./images/sock_pseudo_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
 			}
 			switch(currentTab.currentIndex) {
 				case 0:
@@ -8627,7 +8631,7 @@
 		$(this).spectrum({
 			type: "color",
 			showAlpha: false,
-			showInput: true,let
+			showInput: true,
 			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
@@ -8682,7 +8686,7 @@
 		if($(this).is(':checked')){
 			sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
 		} else {
-			sockCanvas.setOverlayImage(null,sockCanvas.renderAll.bind(sockCanvas));
+			sockCanvas.setOverlayImage('./images/sock_pseudo_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
 		}
 	})
 
@@ -13101,6 +13105,8 @@
 			}
 			if($("#toggleSockGuides").is(":checked")){
 				sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
+			} else {
+				sockCanvas.setOverlayImage('./images/sock_pseudo_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
 			}
 			switch(currentTab.currentIndex) {
 				case 0:
@@ -13132,6 +13138,8 @@
 			}
 			if($("#toggleSockGuides").is(":checked")){
 				sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
+			} else {
+				sockCanvas.setOverlayImage('./images/sock_pseudo_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
 			}
 			switch(currentTab.currentIndex) {
 				case 0:
@@ -14376,9 +14384,9 @@
 			pantsLogoCanvas.setOverlayImage(null,pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
 		}
 
-		if($("#toggleSockGuides").is(":checked")){
+		//if($("#toggleSockGuides").is(":checked")){
 			sockCanvas.setOverlayImage(null,sockCanvas.renderAll.bind(sockCanvas));
-		}
+		//}
 
 		jerseyBelow.setDimensions({ width: 512, height: 1024 });
     	jerseyBelow.setZoom(1)
@@ -14605,6 +14613,8 @@
 
 		if ($("#toggleSockGuides").is(":checked")){
 			sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
+		} else {
+			sockCanvas.setOverlayImage('./images/sock_pseudo_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
 		}
 
 		hideOverlay()
