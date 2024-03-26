@@ -238,11 +238,12 @@
                                 <button class="skltbs-tab">Cap</button>
                                 </li>
 								<li class="skltbs-tab-item">
-								<button class="skltbs-tab">Font</button>
-								</li>
-								<li class="skltbs-tab-item">
 								<button class="skltbs-tab">Socks</button>
 								</li>
+								<li class="skltbs-tab-item">
+								<button class="skltbs-tab">Font</button>
+								</li>
+								
                             </ul>
                             <div class="skltbs-panel-group">
                                 <div class="skltbs-panel" id="jerseyPanel">
@@ -1858,6 +1859,178 @@
 											</td></tr>
 										</table>
 									</div>
+                                </div>								
+								<div class="skltbs-panel" id="socksPanel">
+									<div class="sock-accord-header sock-active-header">Main Sock Elements</div>
+                                    <div class="sock-accord-content" style="display:inline;">  
+                                        <table style="width:475px;">
+											<tr class="color_tr">
+                                                <td class="checkCell"><input type="checkbox" id="toggleSockGuides" checked></td>
+                                                <td><label>Guides (Will be hidden on export)</label></td>
+                                                <td style="text-align:right;">&nbsp;</td>
+                                            </tr>
+                                            <tr class="color_tr">
+                                                <td>&nbsp;</td>
+                                                <td><label>Sock Color: </label></td>
+                                                <td style="text-align:right;">
+                                                    <input class="baseSelector" type="text" id="sockColor" data-element="sockColor">
+                                                </td>
+                                            </tr>
+											<tr class="color_tr">
+                                                <td>&nbsp;</td>
+                                                <td><label>Custom Layer:&nbsp;</label><span id="customSockLayerName"></span></td>
+                                                <td style="text-align:right;">
+                                                    <input type="button" id="customSockLayerButton" class="button fakeLayerButton" data-canvas="sock" value="Upload Custom Layer">
+													<input type="button" id="customSockLayerDelete" class="button fakeLayerDelete" data-canvas="sock" value="Remove Custom Layer" style="display:none;">
+                                                </td>
+                                            </tr>
+											<tr class="color_tr">
+                                                <td class="checkCell"><input type="checkbox" id="stirrupToggle"></td>
+                                                <td>
+													<label>Sanitary Sock: </label>
+													<input type="range" class="range" id="sockHeight" value=632 min="168" max="770" list="markers" style="width:100%;">
+													<datalist id="markers">
+														<option value="199"></option>
+														<option value="272"></option>
+														<option value="344"></option>
+														<option value="416"></option>
+														<option value="488"></option>
+														<option value="560"></option>
+														<option value="632"></option>
+														<option value="704"></option>
+													  </datalist>
+												</td>
+                                                <td style="text-align:right;">
+                                                    <input class="selector sockSelector" type="text" id="stirrupFill" data-element="stirrupFill">
+                                                </td>
+                                            </tr>
+											<tr class="color_tr">
+												<td class="checkCell"><input type="checkbox" class="" id="sockStripeCheck" data-canvas="above"></td>
+												<td>
+													<label>Striping: </label>
+													<select id="sockStripeSelect">
+														<option value="argyle">Argyle</option>
+														<option value="boston">Boston</option>
+														<option value="greenBay">Green Bay</option>
+														<option value="northwestern">Northwestern</option>
+														<option value="quadruple">Quadruple Stripe</option>
+														<option value="stLouis" selected>St. Louis</option>
+														<option value="triple1">Triple Stripe 1</option>
+														<option value="triple2">Triple Stripe 2</option>
+														<option value="vertical">Vertical</option>
+													</select>
+												</td>
+												<td style="text-align:right;">
+													<span class="sockStripeSelectSpan" id="stLouisSelectors" style="display:inline-block">
+														<input class="sockSelector selector" type="text" id="stLouis1" data-element="stLouis1">
+														<input class="sockSelector selector" type="text" id="stLouis2" data-element="stLouis2">
+													</span>
+													<span class="sockStripeSelectSpan" id="northwesternSelectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="northwestern1" data-element="northwestern1">
+														<input class="sockSelector selector" type="text" id="northwestern2" data-element="northwestern2">
+													</span>
+													<span class="sockStripeSelectSpan" id="bostonSelectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="boston1" data-element="boston1">
+														<input class="sockSelector selector" type="text" id="boston2" data-element="boston2">
+													</span>
+													<span class="sockStripeSelectSpan" id="greenBaySelectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="greenBay1" data-element="greenBay1">
+														<input class="sockSelector selector" type="text" id="greenBay2" data-element="greenBay2">
+													</span>
+													<span class="sockStripeSelectSpan" id="triple1Selectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="triple1_1" data-element="triple1_1">
+														<input class="sockSelector selector" type="text" id="triple1_2" data-element="triple1_2">
+														<input class="sockSelector selector" type="text" id="triple1_3" data-element="triple1_3">
+													</span>
+													<span class="sockStripeSelectSpan" id="triple2Selectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="triple2_1" data-element="triple2_1">
+														<input class="sockSelector selector" type="text" id="triple2_2" data-element="triple2_2">
+													</span>
+													<span class="sockStripeSelectSpan" id="quadrupleSelectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="quadruple_1" data-element="quadruple_1">
+														<input class="sockSelector selector" type="text" id="quadruple_2" data-element="quadruple_2">
+														<input class="sockSelector selector" type="text" id="quadruple_3" data-element="quadruple_3">
+														<input class="sockSelector selector" type="text" id="quadruple_4" data-element="quadruple_4">
+													</span>
+													<span class="sockStripeSelectSpan" id="argyleSelectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="argyle_1" data-element="argyle_1">
+														<input class="sockSelector selector" type="text" id="argyle_2" data-element="argyle_2">
+														<input class="sockSelector selector" type="text" id="argyle_3" data-element="argyle_3">
+													</span>
+													<span class="sockStripeSelectSpan" id="verticalSelectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="vertical" data-element="vertical">
+													</span>
+												</td>
+											</tr>
+										</table>
+									</div>
+									<div class="sock-accord-header sock-inactive-header" id="sockImagesHeader">Images</div>
+									<div class="sock-accord-content">
+										<div id="sockUploadImageDiv">
+										<table style="width:100%;">
+											<tr>
+												<!--<input type="file" id="uploadedImg" accept="image/*" style="display:none;"/>-->
+												<td><center>
+													<input type="button" class="button fakeImageButton" id="sockImageButton" data-canvas='sock' value="Upload An Image">
+												</td>
+											</tr>
+										</table>
+										</div>
+										<div id="sockSelectedImageDiv" style="display:none;">
+											<table style="width:100%;"><tr><td><center>
+											<b>Selected Image:</b> <span id="sockFileName"></span>
+											</td></tr></table>
+										</div>
+										<div id="sockTrimImageDiv" style="display:none;">
+											<table style="width:100%;">
+												<tr class="imagemagick">
+													<td style="width:482px;"><center>
+														<input type="button" id="sockColorSquare" class="colorSquare" value="Pick Color" style="margin-right:10px;" data-canvas="sockCanvas"><span id="chosenCoordinates" style="margin-right:5px;"></span>
+														Fuzz %:
+														<input type="button" class="button rangeButton" value="-">
+														<input type="range" class="range" id="sockColorFuzz" value="50" min="1" max="100" style="margin-left:5px; margin-right:5px;">
+														<input type="button" class="button rangeButton" value="+">
+														<span id="fuzzAmount">50</span>%
+													</td>
+												</tr>
+												<tr class="imagemagick">
+													<td style="width:482px;"><center>
+														<input type="button" class="button border" id="sockBorder" value="Remove Border" data-canvas="sockCanvas">
+														<input type="button" class="button stroke" id="sockStroke" value="Add Stroke" data-canvas="sockCanvas" >
+														<input type="button" class="button makeTransparent" id="makeTransparent" value="Make Background Transparent" data-x="0" data-y="0" data-canvas="sockCanvas">
+														<input type="button" class="button removeColor removeColorRange" id="sockRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="sockCanvas">
+														<input type="button" class="button removeColor removeAllColor" id="sockRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="sockCanvas">
+														<input type="button" class="button replaceColor replaceColorRange" id="sockReplaceColorRange" value="Replace Section" data-x="0" data-y="0" data-canvas="sockCanvas">
+													</td>
+												</tr>
+												<tr>
+													<td><center>
+														<input type="button" id="sockPlaceLeft" class="button sockPlace" data-loc="left" value="Place on Left Sock" data-canvas="sockCanvas">
+														<input type="button" id="sockPlaceRight" class="button sockPlace" data-loc="right" value="Place on Right Sock" data-canvas="sockCanvas">
+														<input type="button" id="sockLogoReset" class="button sockPlace" data-loc="reset" value="Reset Image" data-canvas="sockCanvas">
+													</center></td>
+												</tr>
+											</table>
+										</div>
+										<div id="sockReplaceColorDiv" class="replaceColorDiv" style="display:none;">
+											<table style="width:100%;"><tr>
+											<td><center>
+											Select Replacement Color:
+											<input class="colorSelector" type="text" id="sockReplacementColor" value="#FF0000">
+											<input type="button" class="button replaceColorSubmit removeColor" id="sockReplaceColorSubmit" value="Replace Color" data-x="0" data-y="0" data-action="null" data-canvas="sockCanvas">
+											</tr></table>
+										</div>
+										<div id="sockBorderColorDiv" style="display:none;">
+											<table style="width:478px;"><tr>
+											<td><center>
+											Stroke Color:
+											<input class="colorSelector strokeSelector" type="text" id="sockStrokeColor" value="#FFFFFF">
+											<span style="padding-left:10px;">Stroke Width:</span>
+											<input type="number" id="sockStrokeWidth" value="5" min="0" max="20" onkeypress="return isNumberKey(event)">
+											<input type="button" class="button strokeSubmit" id="sockStrokeSubmit" value="Draw Stroke" data-canvas="sockCanvas">
+											</tr></table>
+										</div>
+									</div>
                                 </div>
 								<div class="skltbs-panel" id="fontPanel">
 									<div class="cap-accord-header cap-active-header">Main Font Elements</div>
@@ -2121,202 +2294,33 @@
 											</tr>
 										</table>
 										<hr>
-							<table style="width:100%;">
-								<tr>
-									<td style="text-align: center;">
-										<input type="button" class="button" id="customFontFace" value="Choose a Local Font...">
-										<input type="button" class="button" id="customFontLayer" value="Load Overlay Image">
-									</td>
-								</tr>
-								<tr>
-									<td style="text-align: center;">
-										<input type="button" class="button selectChars" id="selectLetters" data-chars="letters" value="Select All Letters">
-										<input type="button" class="button selectChars" id="selectNumbers" data-chars="numbers" value="Select All Numbers">
-										<input type="button" class="button" id="resetFont" value="Reset Font Positions">
-										<!-- <input type="button" class="button" id="saveFontPositions" value="Save Font Positions"> -->
-										<input id="customFontLayerUploader" type="file" accept="image/*" style="display:none;"/>
-										<!--<input type="button" class="button" id="uploadTheFont" value="Upload Font" style="display:none;" />-->
-										<!--<input type="button" class="button" id="fitFont" value="temp button">-->
-									</td>
-								</tr>
-								<tr>
-									<td style="text-align: center;">
-										<input type="button" class="button" id="tesseract" value="Optical Character Recognition (Experimental)">
-										<input type="button" class="button" id="clearOCR" value="Delete OCR Characters">
-									</td>
-								</tr>
-							</table>
-									</div>
-								</div>
-								<div class="skltbs-panel" id="socksPanel">
-									<div class="sock-accord-header sock-active-header">Main Sock Elements</div>
-                                    <div class="sock-accord-content" style="display:inline;">  
-                                        <table style="width:475px;">
-											<tr class="color_tr">
-                                                <td class="checkCell"><input type="checkbox" id="toggleSockGuides" checked></td>
-                                                <td><label>Guides (Will be hidden on export)</label></td>
-                                                <td style="text-align:right;">&nbsp;</td>
-                                            </tr>
-                                            <tr class="color_tr">
-                                                <td>&nbsp;</td>
-                                                <td><label>Sock Color: </label></td>
-                                                <td style="text-align:right;">
-                                                    <input class="baseSelector" type="text" id="sockColor" data-element="sockColor">
-                                                </td>
-                                            </tr>
-											<tr class="color_tr">
-                                                <td>&nbsp;</td>
-                                                <td><label>Custom Layer:&nbsp;</label><span id="customSockLayerName"></span></td>
-                                                <td style="text-align:right;">
-                                                    <input type="button" id="customSockLayerButton" class="button fakeLayerButton" data-canvas="sock" value="Upload Custom Layer">
-													<input type="button" id="customSockLayerDelete" class="button fakeLayerDelete" data-canvas="sock" value="Remove Custom Layer" style="display:none;">
-                                                </td>
-                                            </tr>
-											<tr class="color_tr">
-                                                <td class="checkCell"><input type="checkbox" id="stirrupToggle"></td>
-                                                <td>
-													<label>Sanitary Sock: </label>
-													<input type="range" class="range" id="sockHeight" value=0 min="-474" max="125" list="markers" style="width:100%;">
-													<datalist id="markers">
-														<option value="-290"></option>
-														<option value="-218"></option>
-														<option value="-145"></option>
-														<option value="-73"></option>
-														<option value="0"></option>
-													  </datalist>
-												</td>
-                                                <td style="text-align:right;">
-                                                    <input class="selector sockSelector" type="text" id="stirrupFill" data-element="stirrupFill">
-                                                </td>
-                                            </tr>
-											<tr class="color_tr">
-												<td class="checkCell"><input type="checkbox" class="" id="sockStripeCheck" data-canvas="above"></td>
-												<td>
-													<label>Striping: </label>
-													<select id="sockStripeSelect">
-														<option value="argyle">Argyle</option>
-														<option value="boston">Boston</option>
-														<option value="greenBay">Green Bay</option>
-														<option value="northwestern">Northwestern</option>
-														<option value="quadruple">Quadruple Stripe</option>
-														<option value="stLouis" selected>St. Louis</option>
-														<option value="triple1">Triple Stripe 1</option>
-														<option value="triple2">Triple Stripe 2</option>
-														<option value="vertical">Vertical</option>
-													</select>
-												</td>
-												<td style="text-align:right;">
-													<span class="sockStripeSelectSpan" id="stLouisSelectors" style="display:inline-block">
-														<input class="sockSelector selector" type="text" id="stLouis1" data-element="stLouis1">
-														<input class="sockSelector selector" type="text" id="stLouis2" data-element="stLouis2">
-													</span>
-													<span class="sockStripeSelectSpan" id="northwesternSelectors" style="display:none">
-														<input class="sockSelector selector" type="text" id="northwestern1" data-element="northwestern1">
-														<input class="sockSelector selector" type="text" id="northwestern2" data-element="northwestern2">
-													</span>
-													<span class="sockStripeSelectSpan" id="bostonSelectors" style="display:none">
-														<input class="sockSelector selector" type="text" id="boston1" data-element="boston1">
-														<input class="sockSelector selector" type="text" id="boston2" data-element="boston2">
-													</span>
-													<span class="sockStripeSelectSpan" id="greenBaySelectors" style="display:none">
-														<input class="sockSelector selector" type="text" id="greenBay1" data-element="greenBay1">
-														<input class="sockSelector selector" type="text" id="greenBay2" data-element="greenBay2">
-													</span>
-													<span class="sockStripeSelectSpan" id="triple1Selectors" style="display:none">
-														<input class="sockSelector selector" type="text" id="triple1_1" data-element="triple1_1">
-														<input class="sockSelector selector" type="text" id="triple1_2" data-element="triple1_2">
-														<input class="sockSelector selector" type="text" id="triple1_3" data-element="triple1_3">
-													</span>
-													<span class="sockStripeSelectSpan" id="triple2Selectors" style="display:none">
-														<input class="sockSelector selector" type="text" id="triple2_1" data-element="triple2_1">
-														<input class="sockSelector selector" type="text" id="triple2_2" data-element="triple2_2">
-													</span>
-													<span class="sockStripeSelectSpan" id="quadrupleSelectors" style="display:none">
-														<input class="sockSelector selector" type="text" id="quadruple_1" data-element="quadruple_1">
-														<input class="sockSelector selector" type="text" id="quadruple_2" data-element="quadruple_2">
-														<input class="sockSelector selector" type="text" id="quadruple_3" data-element="quadruple_3">
-														<input class="sockSelector selector" type="text" id="quadruple_4" data-element="quadruple_4">
-													</span>
-													<span class="sockStripeSelectSpan" id="argyleSelectors" style="display:none">
-														<input class="sockSelector selector" type="text" id="argyle_1" data-element="argyle_1">
-														<input class="sockSelector selector" type="text" id="argyle_2" data-element="argyle_2">
-														<input class="sockSelector selector" type="text" id="argyle_3" data-element="argyle_3">
-													</span>
-													<span class="sockStripeSelectSpan" id="verticalSelectors" style="display:none">
-														<input class="sockSelector selector" type="text" id="vertical" data-element="vertical">
-													</span>
-												</td>
-											</tr>
-										</table>
-									</div>
-									<div class="sock-accord-header sock-inactive-header" id="sockImagesHeader">Images</div>
-									<div class="sock-accord-content">
-										<div id="sockUploadImageDiv">
 										<table style="width:100%;">
 											<tr>
-												<!--<input type="file" id="uploadedImg" accept="image/*" style="display:none;"/>-->
-												<td><center>
-													<input type="button" class="button fakeImageButton" id="sockImageButton" data-canvas='sock' value="Upload An Image">
+												<td style="text-align: center;">
+													<input type="button" class="button" id="customFontFace" value="Choose a Local Font...">
+													<input type="button" class="button" id="customFontLayer" value="Load Overlay Image">
+												</td>
+											</tr>
+											<tr>
+												<td style="text-align: center;">
+													<input type="button" class="button selectChars" id="selectLetters" data-chars="letters" value="Select All Letters">
+													<input type="button" class="button selectChars" id="selectNumbers" data-chars="numbers" value="Select All Numbers">
+													<input type="button" class="button" id="resetFont" value="Reset Font Positions">
+													<!-- <input type="button" class="button" id="saveFontPositions" value="Save Font Positions"> -->
+													<input id="customFontLayerUploader" type="file" accept="image/*" style="display:none;"/>
+													<!--<input type="button" class="button" id="uploadTheFont" value="Upload Font" style="display:none;" />-->
+													<!--<input type="button" class="button" id="fitFont" value="temp button">-->
+												</td>
+											</tr>
+											<tr>
+												<td style="text-align: center;">
+													<input type="button" class="button" id="tesseract" value="Optical Character Recognition (Experimental)">
+													<input type="button" class="button" id="clearOCR" value="Delete OCR Characters">
 												</td>
 											</tr>
 										</table>
-										</div>
-										<div id="sockSelectedImageDiv" style="display:none;">
-											<table style="width:100%;"><tr><td><center>
-											<b>Selected Image:</b> <span id="sockFileName"></span>
-											</td></tr></table>
-										</div>
-										<div id="sockTrimImageDiv" style="display:none;">
-											<table style="width:100%;">
-												<tr class="imagemagick">
-													<td style="width:482px;"><center>
-														<input type="button" id="sockColorSquare" class="colorSquare" value="Pick Color" style="margin-right:10px;" data-canvas="sockCanvas"><span id="chosenCoordinates" style="margin-right:5px;"></span>
-														Fuzz %:
-														<input type="button" class="button rangeButton" value="-">
-														<input type="range" class="range" id="sockColorFuzz" value="50" min="1" max="100" style="margin-left:5px; margin-right:5px;">
-														<input type="button" class="button rangeButton" value="+">
-														<span id="fuzzAmount">50</span>%
-													</td>
-												</tr>
-												<tr class="imagemagick">
-													<td style="width:482px;"><center>
-														<input type="button" class="button border" id="sockBorder" value="Remove Border" data-canvas="sockCanvas">
-														<input type="button" class="button stroke" id="sockStroke" value="Add Stroke" data-canvas="sockCanvas" >
-														<input type="button" class="button makeTransparent" id="makeTransparent" value="Make Background Transparent" data-x="0" data-y="0" data-canvas="sockCanvas">
-														<input type="button" class="button removeColor removeColorRange" id="sockRemoveColorRange" value="Remove Section" data-x="0" data-y="0" data-canvas="sockCanvas">
-														<input type="button" class="button removeColor removeAllColor" id="sockRemoveAllColor" value="Remove All" data-x="0" data-y="0" data-canvas="sockCanvas">
-														<input type="button" class="button replaceColor replaceColorRange" id="sockReplaceColorRange" value="Replace Section" data-x="0" data-y="0" data-canvas="sockCanvas">
-													</td>
-												</tr>
-												<tr>
-													<td><center>
-														<input type="button" id="sockPlaceLeft" class="button sockPlace" data-loc="left" value="Place on Left Sock" data-canvas="sockCanvas">
-														<input type="button" id="sockPlaceRight" class="button sockPlace" data-loc="right" value="Place on Right Sock" data-canvas="sockCanvas">
-														<input type="button" id="sockLogoReset" class="button sockPlace" data-loc="reset" value="Reset Image" data-canvas="sockCanvas">
-													</center></td>
-												</tr>
-											</table>
-										</div>
-										<div id="sockReplaceColorDiv" class="replaceColorDiv" style="display:none;">
-											<table style="width:100%;"><tr>
-											<td><center>
-											Select Replacement Color:
-											<input class="colorSelector" type="text" id="sockReplacementColor" value="#FF0000">
-											<input type="button" class="button replaceColorSubmit removeColor" id="sockReplaceColorSubmit" value="Replace Color" data-x="0" data-y="0" data-action="null" data-canvas="sockCanvas">
-											</tr></table>
-										</div>
-										<div id="sockBorderColorDiv" style="display:none;">
-											<table style="width:478px;"><tr>
-											<td><center>
-											Stroke Color:
-											<input class="colorSelector strokeSelector" type="text" id="sockStrokeColor" value="#FFFFFF">
-											<span style="padding-left:10px;">Stroke Width:</span>
-											<input type="number" id="sockStrokeWidth" value="5" min="0" max="20" onkeypress="return isNumberKey(event)">
-											<input type="button" class="button strokeSubmit" id="sockStrokeSubmit" value="Draw Stroke" data-canvas="sockCanvas">
-											</tr></table>
-										</div>
 									</div>
-                                </div>
+								</div>
 								</div>
                             </div>
                             </div>
@@ -3288,9 +3292,8 @@
 				$("#sockContainer").css("display","none")
 				$("#sockContainer").css("z-index", 0)
 				$("#notSockContainer").css("z-index", 50)
-				
 				break;
-			case 3:
+			case 4:
 				activeCanvas = fontCanvas;
 				$("#jerseyOverlay").css("display","none");
 				$("#capOverlay").css("display","none");
@@ -3303,9 +3306,9 @@
 				$("#sockContainer").css("display","none")
 				$("#sockContainer").css("z-index", 0)
 				$("#notSockContainer").css("z-index", 50)
-				
 				break;
-			case 4:
+			case 3:
+				activeCanvas = sockCanvas;
 				$("#jerseyOverlay").css("display","none");
 				$("#capOverlay").css("display","none");
 				$("#pantsOverlay").css("display","none");
@@ -3415,7 +3418,7 @@
 		e.stopPropagation();
 		e.preventDefault();
 		var files = e.originalEvent.dataTransfer.files;
-		dropImage(fontCanvas, files[0].path, 3)
+		dropImage(fontCanvas, files[0].path, 4)
 		return false;
 	});
 
@@ -3493,7 +3496,7 @@
 		e.stopPropagation();
 		e.preventDefault();
 		var files = e.originalEvent.dataTransfer.files;
-		dropImage(sockCanvas, files[0].path, 4)
+		dropImage(sockCanvas, files[0].path, 3)
 		return false;
 	});
 
@@ -8624,7 +8627,7 @@
 		$(this).spectrum({
 			type: "color",
 			showAlpha: false,
-			showInput: true,
+			showInput: true,let
 			preferredFormat: prefs['preferredColorFormat'],
 			showInitial: true,
 			showPalette: true,
@@ -8641,7 +8644,6 @@
 				$(this).data('changed', true);
 				const id = $(this).data('element');
 				var c = (color == null) ? 'transparent' : color.toHexString()
-				//let g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
 				let o = sockCanvas.getObjects("path").find(o => o.id === id)
 				o.set("fill", c);
 				sockCanvas.renderAll()
@@ -8650,7 +8652,6 @@
 				$(this).data('changed', true);
 				const id = $(this).data('element');
 				var c = (color == null) ? 'transparent' : color.toHexString()
-				//let g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
 				let o = sockCanvas.getObjects("path").find(o => o.id === id)
 				o.set("fill", c);
 				sockCanvas.renderAll()
@@ -8670,7 +8671,6 @@
 				$(this).data('changed', true);
 				const id = $(this).data('element');
 				var c = (color == null) ? 'transparent' : color.toHexString()
-				//let g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
 				let o = sockCanvas.getObjects("path").find(o => o.id === id)
 				o.set("fill", c);
 				sockCanvas.renderAll()
@@ -8688,23 +8688,18 @@
 
 	$("#stirrupToggle").on("click",function() {
 		const state = ($(this).is(":checked")) ? true : false
-		//let g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
 		let fill = sockCanvas.getObjects("path").find(o => o.id === "stirrupFill")
 		let shadow = sockCanvas.getObjects("image").find(o => o.id === "stirrupShadow")
-		console.log(shadow)
 		fill.set("visible",state)
 		shadow.set("visible",state)
 		sockCanvas.renderAll()
 	})
 	
  	$("#sockHeight").on("input",function() {
-		//let g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
 		let fill = sockCanvas.getObjects("path").find(o => o.id === "stirrupFill")
 		let shadow = sockCanvas.getObjects("image").find(o => o.id === "stirrupShadow")
-		fill.set("top",-113.375 + parseInt($(this).val()))
-		//fill.setCoords()
-		shadow.set("top",-113.375 + parseInt($(this).val()))
-		//shadow.setCoords()
+		fill.set("top",parseInt($(this).val()))
+		shadow.set("top",parseInt($(this).val()))
 		sockCanvas.renderAll()
 	})
 
@@ -14275,7 +14270,7 @@
 			'capBelow': capBelow.toDatalessJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
 			'capLogoCanvas': capLogoCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
 			'fontCanvas': fontCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
-			'sockCanvas': sockCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners'])
+			'sockCanvas': sockCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners','pathType'])
 		}
 
 		if (buttonGroup.visible == true) {
@@ -15313,7 +15308,7 @@
 			ipcRenderer.send('drop-font', [file, tab])
 		} else {
 			if ($.inArray(getExtension(file).toLowerCase(), validImageTypes) > -1) {
-				if (tab != 3) {
+				if (tab < 4) {
 					ipcRenderer.send('drop-image', [dropCanvas.id, file, tab])
 				} else {
 					if (getExtension(file) == "png" || getExtension(file) == "jpg") {
