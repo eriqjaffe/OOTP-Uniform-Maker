@@ -63,3 +63,7 @@ ipcRenderer.on('updateFonts', (event, data) => {
 ipcRenderer.on('openFontFolder', (event, data) => {
     $("#openFontFolder").trigger("click")
 })
+
+ipcRenderer.on('install-uniform', (event, data) => {
+    $("#installUniform").trigger("click")
+})
