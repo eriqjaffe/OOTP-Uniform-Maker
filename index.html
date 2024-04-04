@@ -14145,7 +14145,7 @@
 	})
 
 	$("#installUniform").on("click",function(e) {
-		ipcRenderer.send('show-warning',"DANGER WILL ROBINSON")
+		ipcRenderer.send('show-warning',"Are you sure?\r\n\r\nThis will overwrite files with the same name without warning!")
 		/* showOverlay("Installing Uniform...")
 		jerseyBelow.setOverlayImage(null,jerseyBelow.renderAll.bind(jerseyBelow));
 		var showPlanket = false

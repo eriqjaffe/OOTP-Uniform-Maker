@@ -162,18 +162,20 @@ ipcMain.on('show-alert', (event, arg) => {
 })
 
 ipcMain.on('show-warning', (event, arg) => {
-	const options = {
-		type: 'question',
-		buttons: ['Yes', 'No'],
-		defaultId: 2,
-		title: 'Question',
-		message: arg,
-		detail: 'It does not really matter',
-	  };
-	
-	  dialog.showMessageBox(null, options, (response) => {
-		console.log(response);
-	  });
+	dialog.showMessageBox(null, {
+        type: 'warning',
+        title: 'WARNING',
+        message: arg,
+        buttons: [
+            'No, Thanks',
+            'Sure, Go Ahead'
+        ],
+		defaultId: 0,
+    })
+        // Dialog returns a promise so let's handle it correctly
+        .then((result) => {
+			console.log(result)
+        })
 })
 
 ipcMain.on('drop-image', (event, arg) => {
