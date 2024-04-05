@@ -2110,39 +2110,9 @@ ipcMain.on('install-uniform-zip', (event, arg) => {
 	const tmpCapTexture = arg.capTexture
 	const tmpJerseyTexture = arg.jerseyTexture
 	const tmpPantsTexture = arg.pantsTexture
-	/* const buttonPadSeams = arg.buttonPadSeams */
 	const buttonType = arg.buttonType
-	/* const seamsVisible = arg.seamsVisible */
 	const seamsOption = arg.seamsOption
 	const seamsOnDiffuse = arg.seamsOnDiffuse
-	/* const commonPalette = arg.commonPalette
-	const json = Buffer.from(arg.json, 'utf8')
-	const from = (arg.from == null) ? "" : arg.from
-	const to = (arg.to == null) ? "" : arg.to
-	const lettersVisible = arg.lettersVisible
-	const numbersVisible = arg.numbersVisible
- */
-/* 	const swatchJSON = {
-		name: arg.name,
-		swatch1: arg.swatch1,
-		swatch2: arg.swatch2,
-		swatch3: arg.swatch3,
-		swatch4: arg.swatch4,
-		commonPalette: commonPalette
-	} */
-
-/* 	const root = create({ version: '1.0', encoding: 'UTF-8' })
-		.ele("COLORS", {fileversion: "OOTP Developments 2022-08-12 09:30:00"})
-		.ele("TEAMCOLORS", {from: from, to: to, color1: arg.backgroundColor, color: arg.textColor})
-		.ele("NOTES").txt(" current team colors ").up()
-		.ele("UNIFORM", {name: arg.type, from: from, to: to, showname: lettersVisible, shownumber: numbersVisible, highsocks: 'n', font: arg.name})
-		.ele("NOTES").txt(arg.type+" uniform").up()
-		.ele("CAP", {color1: arg.capColor1, color2: arg.capColor2, color3: arg.capColor3, id: "", filname: "caps_"+arg.name+".png"}).up()
-		.ele("JERSEY", {color1: arg.jerseyColor1, color2: arg.jerseyColor2, color3: arg.jerseyColor3, id: "", filname: "jerseys_"+arg.name+".png"}).up()
-		.ele("PANTS", {color1: arg.pantsColor1, color2: arg.pantsColor2, color3: arg.pantsColor3, id: "", filname: "pants_"+arg.name+".png"}).up()
-
-
-	const xml = root.end({prettyPrint:true}) */
 
 	if (tmpCapTexture.startsWith("data:image")) {
 		fs.writeFileSync(tempDir+"/tempCapTexture.png", tmpCapTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
@@ -2165,58 +2135,6 @@ ipcMain.on('install-uniform-zip', (event, arg) => {
 		var pantsTexture = __dirname+"/images/"+tmpPantsTexture
 	}
 
-	/* const output = fs.createWriteStream(tempDir + '/uniform_'+arg.name+'.zip');
-
-	output.on('close', function() {
-		var data = fs.readFileSync(tempDir + '/uniform_'+arg.name+'.zip');
-		var saveOptions = {
-		  defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/uniform_' + arg.name+'.zip',{fs: true})
-		}
-		dialog.showSaveDialog(null, saveOptions).then((result) => { 
-		  if (!result.canceled) {
-			store.set("downloadPath", path.dirname(result.filePath))
-			fs.writeFile(result.filePath, data, function(err) {
-			  if (err) {
-				fs.unlink(tempDir + '/uniform_'+arg.name+'.zip', (err) => {
-				  if (err) {
-					console.log(err)
-					return
-				  }
-				})
-				console.log(err)
-				event.sender.send('save-uniform-zip-response', arg)
-			  } else {
-				fs.unlink(tempDir + '/uniform_'+arg.name+'.zip', (err) => {
-				  if (err) {
-					console.log(err)
-					return
-				  }
-				})
-				event.sender.send('save-uniform-zip-response', arg)
-			  };
-			})
-		  } else {
-			fs.unlink(tempDir + '/uniform_'+arg.name+'.zip', (err) => {
-			  if (err) {
-				console.log(err)
-				return
-			  }
-			})
-			event.sender.send('save-uniform-zip-response', arg)
-		  }
-		})
-	});
-
-	const archive = archiver('zip', {
-		lib: { level: 9 } // Sets the compression level.
-	});
-		
-	archive.on('error', function(err) {
-		throw err;
-	});
-
-	archive.pipe(output) */
-
 	prepareImages()
 
 	async function prepareImages() {
@@ -2237,10 +2155,7 @@ ipcMain.on('install-uniform-zip', (event, arg) => {
 		await capBase.composite(capOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await capBase.composite(capWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await capBase.blit(blankCapImage, 357-(blankCapImage.bitmap.width/2), 120-(blankCapImage.bitmap.height/2))
-		let capBuffer = await capBase.getBufferAsync(Jimp.MIME_PNG)
-		//archive.append(capBuffer, {name: "caps_"+arg.name+".png"})
-		//await capBase.write(app.getPath('desktop') + '/uniform_Unknown_Team_Home/caps_' + arg.name+'.png')
-
+		
 		// pants
 		let pantsBase = await Jimp.read(pantsBelow)
 		let pantsTextureFile = await Jimp.read(pantsTexture)
@@ -2256,26 +2171,17 @@ ipcMain.on('install-uniform-zip', (event, arg) => {
 		await pantsWM.color([{ apply: "mix", params: [arg.pantsWatermarkColor, 100] }]);
 		await pantsBase.composite(pantsWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await pantsBase.blit(blankPantsImage, 256-(blankPantsImage.bitmap.width/2), 12.5-(blankPantsImage.bitmap.height/2))
-		let pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
-		//archive.append(pantsBuffer, {name: "pants_"+arg.name+".png"})
-		//await pantsBase.write(app.getPath('downloads') + '/pants_' + arg.name+'.png')
-
+		
 		// socks
 		let socksLeft = await Jimp.read(sockCanvas)
 		let socksRight = await Jimp.read(sockCanvas)
 		let socksTexture = await Jimp.read(__dirname+"/images/socks_texture.png")
 		await socksLeft.resize(1024,512).crop(511,0,511,511).resize(512,512).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		await socksRight.resize(1024,512).crop(0,0,511,511).resize(512,512).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
-		let socksLeftBuffer = await socksLeft.getBufferAsync(Jimp.MIME_PNG)
-		let socksRightBuffer = await socksRight.getBufferAsync(Jimp.MIME_PNG)
-		//archive.append(socksLeftBuffer, {name: "socks_"+arg.name+"_left.png"})
-		//archive.append(socksRightBuffer, {name: "socks_"+arg.name+"_right.png"})
-
+		
 		// font
 		let fontBase = await Jimp.read(fontCanvas)
-		let fontBuffer = await fontBase.getBufferAsync(Jimp.MIME_PNG)
-		//archive.append(fontBuffer, {name: arg.name+".png"})
-
+		
 		// jersey diffuse map
 		let jerseyBase = await Jimp.read(jerseyBelow)
 		let jerseyTextureFile = await Jimp.read(jerseyTexture)
@@ -2325,109 +2231,31 @@ ipcMain.on('install-uniform-zip', (event, arg) => {
 		await jerseyBase.composite(jerseyWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		let nameImage = await Jimp.read(nameCanvas)
 		await jerseyBase.composite(nameImage, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		let jerseyBuffer = await jerseyBase.getBufferAsync(Jimp.MIME_PNG)
-		//archive.append(jerseyBuffer, {name: "jerseys_"+arg.name+".png"})
-		//await jerseyBase.write(app.getPath('downloads') + '/jerseys_' + arg.name+'.png')
 		
 		// jersey height map
 		let jerseyHeightMap = await Jimp.read(heightMap)
-		let jerseyHMBuffer = await jerseyHeightMap.getBufferAsync(Jimp.MIME_PNG)
-		//archive.append(jerseyHMBuffer, {name: "jerseys_"+arg.name+"_h.png"})
-		//await jerseyHeightMap.write(tempDir+"/temp_height_map.jpg")
-
+		
 		// jersey normal map
 		let jerseyNormalMap = await Jimp.read(normalMap)
-		let jerseyNMBUffer = await jerseyNormalMap.getBufferAsync(Jimp.MIME_PNG)
-		//archive.append(jerseyNMBUffer, {name: "jerseys_"+arg.name+"_n.png"})
-		//await jerseyNormalMap.write(tempDir+"/temp_normal_map.jpg")
-
+		
 		dialog.showOpenDialog(null, options).then((result) => {
 			if (!result.canceled) {
 				store.set("OOTPDataPath", result.filePaths[0])
+				jerseyHeightMap.write(result.filePaths[0]+"//jerseys//jerseys_"+arg.name+"_h.png")
 				jerseyNormalMap.write(result.filePaths[0]+"//jerseys//jerseys_"+arg.name+"_n.png")
+				jerseyBase.write(result.filePaths[0]+"//jerseys//jerseys_"+arg.name+".png")
+				capBase.write(result.filePaths[0]+"//ballcaps//caps_"+arg.name+".png")
+				pantsBase.write(result.filePaths[0]+"//pants//pants_"+arg.name+".png")
+				fontBase.write(result.filePaths[0]+"//jersey_fonts//"+arg.name+".png")
+				// pending sock path?
+				//socksLeft.write(result.filePaths[0]+"//socks_"+arg.name+"_left.png")
+				//socksRight.write(result.filePaths[0]+"//socks_"+arg.name+"_right.png")
 				event.sender.send('save-uniform-zip-response', arg)
 			} else {
 				event.sender.send('save-uniform-zip-response', arg)
 			}
 			
 		})
-		/* dialog.showSaveDialog(null, options).then((result) => {
-			if (!result.canceled) {
-				fs.writeFile(result.filePath, finalImage, 'base64', function(err) {
-					console.log(err)
-				})
-				event.sender.send('save-cap-response', null)
-			} else {
-				event.sender.send('save-cap-response', null)
-			}
-		}).catch((err) => {
-			console.log(err);
-			event.sender.send('save-cap-response', null)
-		}); */
-
-		// jersey with baked texture
-		/* let jerseyBakedBase = await Jimp.read(jerseyBelow)
-		let jerseyBakedOverlay = await Jimp.read(jerseyLogoCanvas)
-		let jerseyBakedTexture = await Jimp.read(jerseyTexture)
-		let jerseyBakedTexture2 = await Jimp.read(__dirname+"/images/texture_jersey_default.png")
-		if (buttonPadSeams == "true") {
-			if (buttonType != "buttonsHenley") {
-				if (seamsOption == "seamsSixties") {
-					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_sixties.png"
-				} else {
-					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
-				}
-			} else {
-				if (seamsOption == "seamsSixties") {
-					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley_sixties.png"
-				} else {
-					var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
-				}
-			}
-			let bpBakedSeamImg = await Jimp.read(bakedSeamsSrc)
-			await bpBakedSeamImg.opacity(.1)
-			await jerseyBakedBase.composite(bpBakedSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		}
-		if (seamsVisible == "true") {
-			switch (seamsOption) {
-				case "seamsStandardToPiping":
-					var seamSrc = __dirname+"/images/seams/seams_standard_to_piping.png"
-					break;
-				case "seamsStandardToCollar":
-					var seamSrc = __dirname+"/images/seams/seams_standard_to_collar.png"
-					break;
-				case "seamsRaglanToPiping":
-					var seamSrc = __dirname+"/images/seams/seams_raglan_to_piping.png"
-					break;
-				case "seamsRaglanToCollar":
-					var seamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
-					break;
-				case "seamsSixties":
-					var seamSrc = __dirname+"/images/seams/seams_sixties.png"
-					break;
-			}
-			let seamsBakedImg = await Jimp.read(seamSrc)
-			await seamsBakedImg.opacity(.1)
-			await jerseyBakedBase.composite(seamsBakedImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		}
-		await jerseyBakedBase.composite(jerseyBakedTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
-		await jerseyBakedBase.composite(jerseyBakedTexture2, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
-		await jerseyBakedBase.composite(jerseyBakedOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		let jerseyBakedWM = await Jimp.read(__dirname+"/images/jersey_watermark.png")
-		await jerseyBakedWM.color([{ apply: "mix", params: [arg.jerseyWatermarkColor, 100] }]);
-		await jerseyBakedBase.composite(jerseyBakedWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		let nameImageBaked = await Jimp.read(nameCanvas)
-		await jerseyBakedBase.composite(nameImageBaked, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		let jerseyBakedBuffer = await jerseyBakedBase.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(jerseyBakedBuffer, {name: "jerseys_"+arg.name+"_textured.png"}) */
-		//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + arg.name+'_textured.png')
-		
-		//archive.append(xml, {name: arg.name+".xml"});
-		//archive.append(JSON.stringify(swatchJSON, null, 2), {name: arg.name+".pal"});
-		//archive.append(json, {name: "uniform_"+arg.name+".uni"})
-		//archive.append(fs.createReadStream(__dirname+"/images/README.pdf"), { name: 'README.pdf' });
-		//archive.append(fs.createReadStream(__dirname+"/images/"+normalMap), { name: "jerseys_"+arg.name+"_n.png" });
-	    //archive.finalize()
 	}
 })
 
@@ -2623,7 +2451,21 @@ function createWindow () {
               label: 'Save Font Only',
           },
 		  {
-			  click: () => mainWindow.webContents.send('install-uniform','click'),
+			  click: () => dialog.showMessageBox(null, {
+				type: 'warning',
+				title: 'WARNING',
+				message: "Are you sure?\r\n\r\nThis will overwrite files with the same name without warning!",
+				buttons: [
+					'No, Thanks',
+					'Sure, Go Ahead'
+				],
+				defaultId: 0,
+			  })
+				.then((result) => {
+					if (result.response == 1) {
+						mainWindow.webContents.send('install-uniform','click')
+					}
+			  }),
 			  accelerator: 'Control+I',
 			  label: 'Install Uniform',
 			  visible: isWin

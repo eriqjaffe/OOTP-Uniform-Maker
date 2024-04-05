@@ -14145,8 +14145,7 @@
 	})
 
 	$("#installUniform").on("click",function(e) {
-		ipcRenderer.send('show-warning',"Are you sure?\r\n\r\nThis will overwrite files with the same name without warning!")
-		/* showOverlay("Installing Uniform...")
+		showOverlay("Installing Uniform...")
 		jerseyBelow.setOverlayImage(null,jerseyBelow.renderAll.bind(jerseyBelow));
 		var showPlanket = false
 		var buttonStyle = "blank"
@@ -14237,10 +14236,44 @@
 
 		var normalMap = buttonPadStyle+"_"+buttonStyle+"_"+$("#sleeveType").val()+"_n.png"
 
+		if ($("#toggleCapGuides").is(":checked")) {
+			capLogoCanvas.setOverlayImage(null,capLogoCanvas.renderAll.bind(capLogoCanvas));
+		}
+
+		if ($("#toggleJerseyGrid").is(':checked')){
+			jerseyLogoCanvas.setOverlayImage(null,jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		}
+
+		if ($("#togglePantsGrid").is(':checked')){
+			pantsLogoCanvas.setOverlayImage(null,pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+		}
+
+		//if($("#toggleSockGuides").is(":checked")){
+			sockCanvas.setOverlayImage(null,sockCanvas.renderAll.bind(sockCanvas));
+		//}
+
 		jerseyBelow.setDimensions({ width: 512, height: 1024 });
     	jerseyBelow.setZoom(1)
 		jerseyLogoCanvas.setDimensions({ width: 512, height: 1024 });
     	jerseyLogoCanvas.setZoom(1)
+
+		pantsBelow.setDimensions({ width: 512, height: 512 });
+    	pantsBelow.setZoom(1)
+		pantsLogoCanvas.setDimensions({ width: 512, height: 512 });
+    	pantsLogoCanvas.setZoom(1)
+
+		capBelow.setDimensions({ width: 512, height: 512 });
+    	capBelow.setZoom(1)
+		capLogoCanvas.setDimensions({ width: 512, height: 512 });
+    	capLogoCanvas.setZoom(1)
+
+		fontCanvas.set({backgroundColor: null});
+		fontCanvas.setBackgroundImage(null, fontCanvas.renderAll.bind(fontCanvas));
+		fontCanvas.setDimensions({ width: 1024, height: 1024 });
+    	fontCanvas.setZoom(1)
+
+		sockCanvas.setDimensions({ width: 1024, height: 1024 });
+    	sockCanvas.setZoom(1)
 
 		nameCanvas.clear()
 		var text = new fabric.Text(teamName.split('_').join(' '), {
@@ -14303,9 +14336,13 @@
 			seamOpacity: $("#preferredSeamOpacity").val(),
 			fileName: fileName,
 			textLine: textLine,
-		}) */
+		})
 	})
 
+	ipcRenderer.on('install-warning-response', (event, response) => {
+
+	})
+	
 	$("#save").on("click",function(e) {
 		showOverlay("Generating Uniform...");
 		var showPlanket = false
@@ -14713,7 +14750,6 @@
 	})
 
 	ipcRenderer.on('save-uniform-zip-response', (event, response) => {
-		console.log("OK THEN")
 		let buttonGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons')
 		let seamsGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'seams')
 
