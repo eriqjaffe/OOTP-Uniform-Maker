@@ -1256,43 +1256,6 @@ ipcMain.on('load-swatches', (event, arg) => {
 	
 })
 
-ipcMain.on('save-socks', (event, arg) => {
-	const sockCanvas = Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const teamName = arg.teamName
-	const uniformType = arg.uniformType
-	const yearRange = arg.yearRange
-
-	const fileName = "socks_"+teamName+uniformType+yearRange+".png"
-
-	const options = {
-		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + fileName,{fs: true})
-	}
-
-	prepareImages()
-
-	async function prepareImages() {
-		let socksBase = await Jimp.read(sockCanvas)
-		let socksTexture = await Jimp.read(__dirname+"/images/socks_texture.png")
-		let socksLeft = new Jimp(512, 512)
-		let socksRight = new Jimp(512, 512)
-		let socksBuffer = await socksBase.getBufferAsync(Jimp.MIME_PNG)
-		let finalImage = Buffer.from(socksBuffer).toString('base64');
-		dialog.showSaveDialog(null, options).then((result) => {
-			if (!result.canceled) {
-				fs.writeFile(result.filePath, finalImage, 'base64', function(err) {
-					console.log(err)
-				})
-				event.sender.send('save-socks-response', null)
-			} else {
-				event.sender.send('save-socks-response', null)
-			}
-		}).catch((err) => {
-			console.log(err);
-			event.sender.send('save-socks-response', null)
-		});
-	}
-})
-
 ipcMain.on('save-pants', (event, arg) => {
 	const pantsLogoCanvas = Buffer.from(arg.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const pantsBelow = Buffer.from(arg.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
@@ -1300,7 +1263,7 @@ ipcMain.on('save-pants', (event, arg) => {
 	const tmpPantsTexture = arg.pantsTexture
 
 	const options = {
-		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/socks_' + arg.name+'.png',{fs: true})
+		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.png',{fs: true})
 	}
 
 	if (tmpPantsTexture.startsWith("data:image")) {
@@ -2187,11 +2150,6 @@ function createWindow () {
               accelerator: isMac ? 'Cmd+P' : 'Control+P',
               label: 'Save Pants Only',
           },
-		  {
-			  click: () => mainWindow.webContents.send('save-socks','click'),
-			  accelerator: isMac ? 'Cmd+X' : 'Control+X',
-			  label: 'Save Socks Only',
-		  },
           {
               click: () => mainWindow.webContents.send('save-jersey','click'),
               accelerator: isMac ? 'Cmd+J' : 'Control+J',

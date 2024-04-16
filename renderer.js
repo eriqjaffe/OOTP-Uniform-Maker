@@ -28,10 +28,6 @@ ipcRenderer.on('save-swatches', (event, data) => {
     $("#saveSwatches").trigger("click")
 })
 
-ipcRenderer.on('save-socks', (event, data) => {
-    $("#saveSocks").trigger("click")
-})
-
 ipcRenderer.on('load-swatches', (event, data) => {
     $("#loadSwatches").trigger("click")
 })
