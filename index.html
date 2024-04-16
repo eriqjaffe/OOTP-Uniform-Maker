@@ -144,7 +144,7 @@
         <div class="section group" style="position:relative;">
             <div class="col span_3_of_5">
                 <div id="hiddenContainer" style="display:none;">
-					<!-- <canvas id="nameCanvas" width="512" height="1024"></canvas> -->
+					<canvas id="nameCanvas" width="512" height="1024"></canvas>
                     <canvas id="jerseyTexture" width="512" height="1024"></canvas>
                     <canvas id="jerseyBelow" width="512" height="1024"></canvas>
                     <canvas id="pantsTexture" width="512" height="512"></canvas>
@@ -155,7 +155,6 @@
 					<img id="heightMapSrc" width="512", height="1024">
 					<canvas id="normalMapCanvas" width="512" height="1024"></canvas>
                 </div>
-				<canvas id="nameCanvas" width="512" height="1024"></canvas>
 				<!-- <canvas id="tempCanvas" style="border:1px solid blue;"></canvas> -->
 				<div id="canvasContainer" style="position:absolute; height:828px; width:768px;">
 					<div id="fontContainer">
@@ -2700,11 +2699,6 @@
 	});
 
 	var nameCanvas = new fabric.Canvas('nameCanvas',{
-		selection:false,
-		enableRetinaScaling:false
-	})
-
-	var tempCanvas = new fabric.Canvas('tempCanvas',{
 		selection:false,
 		enableRetinaScaling:false
 	})
@@ -6370,42 +6364,6 @@
 	pantsLogoCanvas.on("selection:cleared",function(e) {
 		console.log('cleared')
 		pantsTippy.hide()
-	})
-
-	sockCanvas.on("mouse:down",function(e) {
-		activeCanvas = pantsLogoCanvas;
-		capLogoCanvas.discardActiveObject()
-		capLogoCanvas.requestRenderAll()
-		jerseyLogoCanvas.discardActiveObject()
-		jerseyLogoCanvas.requestRenderAll()
-		$("#jerseyOverlay").css("display","inline-block");
-		$("#capOverlay").css("display","inline-block");
-		$("#pantsOverlay").css("display","none");
-		$("#tabContainer").skeletabs('goTo', 1)
-		if (pantsLogoCanvas.hoverCursor != "move") {
-			var ctx = pantsLogoCanvas.contextContainer;
-			$("#colorSquare").removeClass("colorSquareActive").addClass("colorSquareSelected");
-			pantsLogoCanvas.hoverCursor='move';
-			pantsLogoCanvas.off('mouse:move');
-			var object = pantsLogoCanvas.getActiveObject();
-			var mouse = object.getLocalPointer(e.e);
-			var imageX = parseInt(mouse.x);
-			var imageY = parseInt(mouse.y);
-			$("#chosenCoordinates").html("(X:"+imageX+", Y:"+imageY+")");
-			var mouse2 = pantsLogoCanvas.getPointer(e.e);
-			var x = parseInt(mouse2.x);
-			var y = parseInt(mouse2.y);
-			var px = ctx.getImageData(x, y, 1, 1).data;
-			var hex = rgb2hex(px[0],px[1],px[2]);
-			$(".removeColor").each(function(e) {
-				$(this).data("x",imageX);
-				$(this).data("y",imageY);
-			})
-			$(".replaceColor").each(function(e) {
-				$(this).data("x",imageX);
-				$(this).data("y",imageY);
-			})
-		}
 	})
 
 	pantsLogoCanvas.on("mouse:down",function(e) {
@@ -11083,35 +11041,15 @@
 			pantsLogoCanvas.renderAll();
 		})
 
-		sockBaseColorLeft = new fabric.Rect({
+		sockBaseColor = new fabric.Rect({
 			top: 306,
-			left: 10,
+			left: 0,
 			fill: initialPantsColors["socks"],
-			width: 228,
-			height: 228,
-			id: 'sockBaseColorLeft',
-			selectable: false
-		})
-
-		sockLeft = new fabric.Group([sockBaseColorLeft],{
-			clipPath: pantsClippingPath,
-			id: 'sockLeft'
-		})
-
-		sockBaseColorRight = new fabric.Rect({
-			top: 306,
-			left: 239,
-			//fill: initialPantsColors["socks"],
-			fill: 'blue',
-			width: 228,
-			height: 228,
-			id: 'sockBaseColorRight',
-			selectable: false
-		})
-
-		sockRight = new fabric.Group([sockBaseColorRight],{
-			clipPath: pantsClippingPath,
-			id: 'sockRight'
+			width: 512,
+			height: 512,
+			id: 'sockBaseColor',
+			selectable: false,
+			clipPath: pantsClippingPath
 		})
 
 		pantsBelow.add(chaps)
@@ -11145,8 +11083,7 @@
 		pantsLogoCanvas.add(atlBelt4)
 		pantsLogoCanvas.add(pantsMLBLogo)
 		pantsLogoCanvas.add(pantsMiLBLogo)
-		sockCanvas.add(sockLeft)
-		sockCanvas.add(sockRight)
+		sockCanvas.add(sockBaseColor)
 
 		loadMakersMark("pants",$("#pantsMakersMarkSelect").find(':selected').data('top'),$("#pantsMakersMarkSelect").find(':selected').data('left'),$("#pantsMakersMarkSelect").find(':selected').data('angle'),$("#pantsMakersMarkSelect").find(':selected').data('height'));
 
@@ -13070,42 +13007,15 @@
 		sockCanvas.setOverlayImage(null,pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
 		sockCanvas.setDimensions({ width: 512, height: 512 });
     	sockCanvas.setZoom(1)
-		nameCanvas.clear()
 
-		var left = sockCanvas.getObjects('group').find(o => o.id == "sockLeft")
-		var right = sockCanvas.getObjects('group').find(o => o.id == "sockRight")
-
-		left.clone((obj) => {
-			obj.set("top", 0);
-			obj.set("left", 0);
-			obj.set("clipPath", null)
-			obj.scaleToHeight(512)
-			nameCanvas.add(obj);
-		});
-
-		right.clone((obj) => {
-			obj.set("top", 512);
-			obj.set("left", 0);
-			obj.set("clipPath", null)
-			obj.scaleToHeight(512)
-			nameCanvas.add(obj);
-		});
-
-		nameCanvas.renderAll()
-
-		nameCanvas.getObjects().forEach(function(g) {
-			g.getObjects().forEach(function(o) {
-				console.log(o)
-			})
-		})
 		var textLine = teamName.split('_').join(' ')+" "+$("#uniformType").val()
 		
 		if (yearRange.length > 0) {
 			textLine += yearRange.split('_').join(' ')
 		}
 
- 		ipcRenderer.send('save-socks', {
-			sockCanvas: nameCanvas.toDataURL(),
+		ipcRenderer.send('save-socks', {
+			sockCanvas: sockCanvas.toDataURL(),
 			teamName: teamName,
 			uniformType: "_"+$("#uniformType").val().split(' ').join('_'),
 			yearRange: yearRange
