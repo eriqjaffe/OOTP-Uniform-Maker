@@ -615,15 +615,40 @@ ipcMain.on('remove-border', (event, arg) => {
 	let imgTop = arg[10]
 	let json = {}
 	let buffer = Buffer.from(imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	
+/* 	let im = new Magick.Image()
+	let inBlob = new Magick.Blob
+	let outBlob = new Magick.Blob
+	inBlob.base64(imgdata)
+	im.read(inBlob)
+	im.colorFuzz((fuzz/100)*65535)
+	im.trim()
+	im.write(outBlob)
+	let b64 = outBlob.base64()
+	json.status = 'success'
+	json.image = b64
+	json.canvas = canvas
+	json.imgTop = imgTop
+	json.imgLeft = imgLeft
+	json.pictureName = pictureName
+	console.log(json)
+	event.sender.send('remove-border-response', json) */
 	Jimp.read(buffer, (err, image) => {
 		if (err) {
 			console.log(err);
 		} else {
 			try {
 				image.write(tempDir+"/temp.png");
-				imagemagickCli.exec('magick convert -trim -fuzz '+fuzz+'% '+tempDir+'/temp.png '+tempDir+'/temp.png').then(({ stdout, stderr }) => {
-					Jimp.read(tempDir+"/temp.png", (err, image) => {
+				let im = new Magick.Image(tempDir+"/temp.png")
+				im.magick('PNG')
+				im.colorFuzz((fuzz/100)*65535)
+				im.trim()
+				im.write(tempDir+'/temp2.png')
+				/* let blob = new Magick.Blob;
+				im.write(blob)
+				b64 = blob.base64()
+				console.log(b64) */
+				//imagemagickCli.exec('magick convert -trim -fuzz '+fuzz+'% '+tempDir+'/temp.png '+tempDir+'/temp.png').then(({ stdout, stderr }) => {
+					Jimp.read(tempDir+"/temp2.png", (err, image) => {
 						if (err) {
 							json.status = 'error'
 							json.message = err
@@ -641,14 +666,14 @@ ipcMain.on('remove-border', (event, arg) => {
 							})
 						}
 					})
-				})
+				//})
 			} catch (error) {
 				json.status = 'error'
 				json.message = "An error occurred - please make sure ImageMagick is installed"
 				console.log(err);
 				event.sender.send('remove-border-response', json)
 			}
-		}
+		} 
 	})
 })
 

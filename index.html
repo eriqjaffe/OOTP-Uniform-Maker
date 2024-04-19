@@ -13020,8 +13020,10 @@
 				case "pantsLogoCanvas":
 					canvas = pantsLogoCanvas
 					break;
+				case "sockCanvas":
+					canvas = sockCanvas
+					break;
 			}
-			console.log(canvas)
 			let data = response.image
 			let imLeft = response.imgLeft
 			let imTop = response.imgTop
@@ -13031,7 +13033,7 @@
 			var idx = canvas.getObjects().indexOf(object)
 
 			var imgObj = new Image();
-			imgObj.src = data;
+			
 			imgObj.onload = function () {
 				var image = new fabric.Image(imgObj);
 				image.set({
@@ -13087,6 +13089,7 @@
 				imLeft = image.get('left')
 				imTop = image.get('top');
 			}
+			imgObj.src = data;
 		}
 	})
 
