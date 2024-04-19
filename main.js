@@ -4,9 +4,10 @@ const os = require('os');
 const fs = require('fs')
 const url = require('url');
 const Jimp = require('jimp')
+const { distortUnwrap } = require('@alxcube/lens')
+require('@alxcube/lens-jimp');
 const archiver = require('archiver');
 const imagemagickCli = require('imagemagick-cli')
-const font2base64 = require("node-font2base64")
 const Store = require("electron-store")
 const versionCheck = require('github-version-checker');
 const pkg = require('./package.json');
@@ -19,6 +20,7 @@ const { createWorker } = require('tesseract.js');
 const replaceColor = require('replace-color');
 const admzip = require('adm-zip');
 const semver = require('semver')
+const { Magick, MagickCore } = require('magickwand.js');
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -2342,7 +2344,6 @@ ipcMain.on('local-font-folder', (event, arg) => {
 			try {
 				const fontMeta = fontname.parse(fs.readFileSync(filePath))[0];
 				var ext = getExtension(filePath)
-				const dataUrl = font2base64.encodeToDataUrlSync(filePath)
 				var fontPath = url.pathToFileURL(filePath)
 				var json = {
 					"status": "ok",
