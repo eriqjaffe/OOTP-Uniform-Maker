@@ -12592,6 +12592,7 @@
 	})
 
 	ipcRenderer.on('local-font-response', (event, data) => {
+		console.log(data)
 		if (data.status != "cancelled") {
 			if (data.result == "error") {
 				ipcRenderer.send('show-alert',"An error occurred:\r\n\r\n"+data.message)
@@ -12730,9 +12731,32 @@
 				let scaleY = object.get('scaleY')
                 let path = object.get('path')
 				let pictureName = object.get('name');
-				let theImage = object._originalElement.currentSrc;
-                theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
-				ipcRenderer.send('add-stroke', {imgdata: theImage, left: left, top: top, scaleX: scaleX, path: path, pictureName: pictureName, color: color, width: width, canvas: canvasName})
+				const x = parseInt(width) + 1, y = parseInt(width);
+				let image = new Image();
+				image.onload = function() {
+					const canvas = document.createElement('canvas');
+					canvas.width = image.width + x * 2
+					canvas.height = image.height + y * 2
+					console.log(canvas)
+
+					const ctx = canvas.getContext('2d');
+
+					for (let angle = 0; angle < 360; angle += 360 / 36) {
+						ctx.drawImage(
+							image,
+							width * Math.sin((Math.PI * 2 * angle) / 360) + x,
+							width * Math.cos((Math.PI * 2 * angle) / 360) + y
+						);
+					}
+					ctx.globalCompositeOperation = 'source-in';
+					ctx.fillStyle = color;
+					ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+					ctx.globalCompositeOperation = 'source-over';
+					ctx.drawImage(image, x, y);
+					ipcRenderer.send('add-stroke', {imgdata: canvas.toDataURL(), left: left, top: top, scaleX: scaleX, path: path, pictureName: pictureName, canvas: canvasName})
+				}
+				image.src = object._originalElement.currentSrc
 				return false;
 			}
 		}	
