@@ -847,10 +847,10 @@
 													<td style="width:482px;"><center>
 														<input type="button" id="jerseyColorSquare" class="colorSquare" value="Pick Color" style="margin-right:10px;" data-canvas="jerseyLogoCanvas"><span id="jerseyChosenCoordinates" style="margin-right:5px;"></span>
 														Fuzz %:
-														<input type="button" class="button rangeButton" value="-">
-														<input type="range" class="range" id="jerseyColorFuzz" value="50" min="1" max="100" style="margin-left:5px; margin-right:5px;">
-														<input type="button" class="button rangeButton" value="+">
-														<span id="fuzzAmount">50</span>%
+														<input type="button" class="button rangeButton" value="-" data-span="fuzzAmount">
+														<input type="range" class="range" id="jerseyColorFuzz" value="15" min="1" max="100" style="margin-left:5px; margin-right:5px;" data-span="fuzzAmount">
+														<input type="button" class="button rangeButton" value="+" data-span="fuzzAmount">
+														<span id="fuzzAmount">15</span>%
 													</td>
 												</tr>
 												<tr class="imagemagick">
@@ -13094,7 +13094,6 @@
 	})
 
 	$(".rangeButton").on("click",function(e) {
-	console.log("hello")
 		if ($(this).val() == "-") {
 			$(this).next().val(parseInt($(this).next().val())-1);
 			$("#"+$(this).data("span")).html($(this).next().val())
@@ -13106,6 +13105,10 @@
 			$(this).prev().trigger("change")
 		}
 		$("#"+$(this).data('span')).change();
+	})
+
+	$(".range").on("input",function(e) {
+		$("#"+$(this).data("span")).html($(this).val())
 	})
 
 	$("#eyedropper").on("click",function() {
