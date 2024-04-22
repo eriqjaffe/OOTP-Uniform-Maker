@@ -921,13 +921,119 @@ ipcMain.on('save-font-position', (event, arg) => {
 
 ipcMain.on('warp-text', (event, arg) => {
 	let buffer = Buffer.from(arg.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	let imgdata = arg.imgdata;
 	let amount = arg.amount;
 	let deform = arg.deform;
 	let width;
 	let height;
 	let cmdLine;
 	let json = {}
-	Jimp.read(buffer, (err, image) => {
+	try {
+		let im = new Magick.Image()
+		let inBlob = new Magick.Blob
+		let outBlob = new Magick.Blob
+		inBlob.base64(imgdata)
+		im.read(inBlob)
+		switch (deform) {
+			case "arch":
+				im.trim()
+				im.backgroundColor("transparent");
+				im.wave((amount*-1),im.size().width()*2);
+				im.trim();
+				im.page(im.size())
+				im.magick("PNG")
+				im.write(outBlob)
+				var b64 = outBlob.base64()
+				json.status = 'success'
+				json.data = "data:image/png;base64,"+b64
+				event.sender.send('warp-text-response', json)
+				break;
+			case "arc":
+				arc()
+				async function arc() {
+					let image = await Jimp.read(buffer)
+					image.autocrop()
+					let result = await distortUnwrap(image, "Arc", [parseInt(amount)])
+					let tempImg = await new Jimp(result.bitmap.width*4, result.bitmap.height*4)
+					await tempImg.blit(result, 5, 5)
+					await tempImg.autocrop()
+					let b64 = await tempImg.getBase64Async(Jimp.AUTO)
+					json.status = 'success'
+					json.data = b64
+					event.sender.send('warp-text-response', json)
+				}
+				break;
+			case "bilinearUp":
+				bilinearUp()
+				async function bilinearUp() {
+					let image = await Jimp.read(buffer)
+					await image.autocrop()
+					const y2=image.bitmap.height*((100-amount)*0.01)
+					const controlPoints = [1.5,0,0,0,0,0,image.bitmap.height,0,image.bitmap.height,image.bitmap.width,0,image.bitmap.width,0,image.bitmap.width,image.bitmap.height,image.bitmap.width,y2]
+					const result = await distortUnwrap(image, "Polynomial", controlPoints)
+					const tempImg = await new Jimp(result.bitmap.width*4, result.bitmap.height*4)
+					await tempImg.blit(result, 5, 5)
+					await tempImg.autocrop()
+					let b64 = await tempImg.getBase64Async(Jimp.AUTO)
+					json.status = 'success'
+					json.data = b64
+					event.sender.send('warp-text-response', json)
+				}
+				break;
+			case "bilinearDown":
+				bilinearDown()
+				async function bilinearDown() {
+					let image = await Jimp.read(buffer)
+					await image.autocrop()
+					const y2=image.bitmap.height*((100-amount)*0.01)
+					const controlPoints = [1.5,0,0,0,0,0,image.bitmap.height,0,y2,image.bitmap.width,0,image.bitmap.width,0,image.bitmap.width,image.bitmap.height,image.bitmap.width,image.bitmap.height]
+					const result = await distortUnwrap(image, "Polynomial", controlPoints)
+					const tempImg = await new Jimp(result.bitmap.width*4, result.bitmap.height*4)
+					await tempImg.blit(result, 5, 5)
+					await tempImg.autocrop()
+					let b64 = await tempImg.getBase64Async(Jimp.AUTO)
+					json.status = 'success'
+					json.data = b64
+					event.sender.send('warp-text-response', json)
+				}
+				break;
+			case "archUp":
+				im.trim()
+				im.backgroundColor("transparent")
+				im.extent(im.size().width()+"x"+im.size().height(), MagickCore.WestGravity)
+				im.wave((amount*-1)*2,im.size().width()*4)
+				im.trim()
+				im.page(im.size())
+				im.magick("PNG")
+				im.write(outBlob)
+				var b64 = outBlob.base64()
+				json.status = 'success'
+				json.data = "data:image/png;base64,"+b64
+				event.sender.send('warp-text-response', json)
+				break;
+			case "archDown":
+				im.trim()
+				im.backgroundColor("transparent")
+				im.extent((im.size().width()*2)+"x"+im.size().height(), MagickCore.EastGravity)	
+				im.wave((amount*-1)*2,im.size().width()*4)
+				im.write("test.png")
+				im.trim()
+				im.page(im.size())
+				im.magick("PNG")
+				im.write(outBlob)
+				var b64 = outBlob.base64()
+				json.status = 'success'
+				json.data = "data:image/png;base64,"+b64
+				event.sender.send('warp-text-response', json)
+				break;				
+		}
+	} catch (err) {
+		json.status = 'error'
+		json.message = err.message
+		console.log(err);
+		event.sender.send('warp-text-response', json)
+	}
+	/* Jimp.read(buffer, (err, image) => {
 		if (err) {
 			json.status = 'error'
 			json.message = err
@@ -1040,7 +1146,7 @@ ipcMain.on('warp-text', (event, arg) => {
 				event.sender.send('warp-text-response', json)
 			}
 		}
-	})
+	}) */
 })
 
 ipcMain.on('save-wordmark', (event, arg) => {
