@@ -1,7 +1,7 @@
 {
   "name": "OOTP-Uniform-Maker",
   "productName": "OOTP Uniform Maker",
-  "version": "0.9.3",
+  "version": "0.10.0",
   "description": "OOTP Uniform Maker",
   "main": "main.js",
   "scripts": {
@@ -21,6 +21,8 @@
     "electron-builder": "^24.6.4"
   },
   "dependencies": {
+    "@alxcube/lens": "^2.0.1",
+    "@alxcube/lens-jimp": "^3.0.0",
     "add-filename-increment": "^1.0.0",
     "adm-zip": "^0.5.10",
     "archiver": "^5.3.0",
@@ -29,10 +31,8 @@
     "electron-store": "^8.0.1",
     "fontname": "^1.0.1",
     "github-version-checker": "^2.3.0",
-    "hasbin": "^1.2.3",
-    "imagemagick-cli": "^0.5.0",
-    "jimp": "^0.22.7",
-    "node-font2base64": "^0.7.1",
+    "jimp": "^0.22.12",
+    "magickwand.js": "^1.1.0",
     "node-gyp": "^9.3.1",
     "promise-synchronizer": "^1.1.8",
     "replace-color": "^2.3.0",

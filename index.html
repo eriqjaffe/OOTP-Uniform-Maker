@@ -34,7 +34,7 @@
 		const checkForUpdates = (params.get('checkForUpdates').toLowerCase() == "true") ? true : false
 		const preferredPlayerName = params.get('preferredPlayerName')
 		const preferredPlayerNumber = params.get('preferredPlayerNumber')
-		const imageMagick = (params.get("imagemagick") == "true") ? true : false
+		//const imageMagick = (params.get("imagemagick") == "true") ? true : false
 		const imWarning = (params.get("imWarning") == "true") ? true : false
 
 		var prefs = {
@@ -847,10 +847,10 @@
 													<td style="width:482px;"><center>
 														<input type="button" id="jerseyColorSquare" class="colorSquare" value="Pick Color" style="margin-right:10px;" data-canvas="jerseyLogoCanvas"><span id="jerseyChosenCoordinates" style="margin-right:5px;"></span>
 														Fuzz %:
-														<input type="button" class="button rangeButton" value="-">
-														<input type="range" class="range" id="jerseyColorFuzz" value="50" min="1" max="100" style="margin-left:5px; margin-right:5px;">
-														<input type="button" class="button rangeButton" value="+">
-														<span id="fuzzAmount">50</span>%
+														<input type="button" class="button rangeButton" value="-" data-span="fuzzAmount">
+														<input type="range" class="range" id="jerseyColorFuzz" value="15" min="1" max="100" style="margin-left:5px; margin-right:5px;" data-span="fuzzAmount">
+														<input type="button" class="button rangeButton" value="+" data-span="fuzzAmount">
+														<span id="fuzzAmount">15</span>%
 													</td>
 												</tr>
 												<tr class="imagemagick">
@@ -1902,7 +1902,7 @@
 													  </datalist>
 												</td>
                                                 <td style="text-align:right;">
-                                                    <input class="selector sockSelector" type="text" id="stirrupFill" data-element="stirrupFill">
+                                                    <input class="selector stirrupSelector" type="text" id="stirrupFill" data-element="stirrupFill">
                                                 </td>
                                             </tr>
 											<tr class="color_tr">
@@ -2949,14 +2949,6 @@
 		$("#preferredSeamOpacity").val(prefs['preferredSeamOpacity'])
 		$("#toggleDiffuseSeams").prop("checked", prefs['seamsVisibleOnDiffuse'] == "true")
 
-		$(".imagemagick").each(function() {
-			if (imageMagick == true) {
-				$(this).css("display","inline-block");
-			} else {
-				$(this).css("display","none");
-			}
-		})
-
 		$(".preference").each(function() {
 			$(this).val(prefs[$(this).attr("id")])
 		})
@@ -3115,7 +3107,9 @@
 
 		activeCanvas = jerseyLogoCanvas;
 
-		ipcRenderer.send('imagemagick-warning', null)
+		if (checkForUpdates) {
+			ipcRenderer.send('check-for-update', {type:"auto"})
+		}
 	})
 
 	$(document).keydown(function(e) {   
@@ -8604,6 +8598,7 @@
 			$(this).data('changed', false);
 		},
 		move: function(color) {
+			console.log(color.toHexString())
 			$(this).data('changed', true);
 			sockCanvas.setBackgroundColor(color.toHexString(), sockCanvas.renderAll.bind(sockCanvas))
 		},
@@ -8684,6 +8679,66 @@
 		})
 	})
 
+	$("#stirrupFill").spectrum({
+		type: "color",
+		showAlpha: false,
+		showInput: true,
+		preferredFormat: prefs['preferredColorFormat'],
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		color: initialSockColors['stirrupFill'],
+		beforeShow: function(color) {
+			$(this).spectrum("option", "palette", commonPalette)
+		},
+		show: function(color) {
+			var original_color = color;
+			$(this).data('changed', false);
+		},
+		move: function(color) {
+			$(this).data('changed', true);
+			const id = $(this).data('element');
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			let g = sockCanvas.getObjects("group").find(o => o.id === 'stirrups')
+			g.getObjects("path").forEach(function(o) {
+				o.set("fill", c)
+			})
+			sockCanvas.renderAll()
+		},
+		change: function(color) {
+			$(this).data('changed', true);
+			const id = $(this).data('element');
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			let g = sockCanvas.getObjects("group").find(o => o.id === 'stirrups')
+			g.getObjects("path").forEach(function(o) {
+				o.set("fill", c)
+			})
+			sockCanvas.renderAll()
+			if (color !=  null) {
+				if ($.inArray(color.toHexString(), commonPalette) < 0) {
+					commonPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+					jerseyPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), capPalette) < 0) {
+					capPalette.push(color.toHexString())
+				}
+			}
+		},
+		hide: function(color) {
+			$(this).data('changed', true);
+			const id = $(this).data('element');
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			let g = sockCanvas.getObjects("group").find(o => o.id === 'stirrups')
+			g.getObjects("path").forEach(function(o) {
+				o.set("fill", c)
+			})
+			sockCanvas.renderAll()
+		}
+	})
+
+
 	$("#toggleSockGuides").on("click",function() {
 		if($(this).is(':checked')){
 			sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
@@ -8694,10 +8749,8 @@
 
 	$("#stirrupToggle").on("click",function() {
 		const state = ($(this).is(":checked")) ? true : false
-		let fill = sockCanvas.getObjects("path").find(o => o.id === "stirrupFill")
-		let shadow = sockCanvas.getObjects("image").find(o => o.id === "stirrupShadow")
-		fill.set("visible",state)
-		shadow.set("visible",state)
+		let group = sockCanvas.getObjects("group").find(o => o.id === "stirrups")
+		group.set("visible",state)
 		sockCanvas.renderAll()
 	})
 	
@@ -8935,11 +8988,19 @@
 
 	function initializeSocks() {
 
-		sockClippingPath = new fabric.Rect({
-			top: 256,
-			left: 0,
+		leftSockClippingPath = new fabric.Rect({
+			top: 0,
+			left: 256,
 			height: 512,
-			width: 1024,
+			width: 512,
+			absolutePositioned: true
+		})
+
+		rightSockClippingPath = new fabric.Rect({
+			top: 512,
+			left: 256,
+			height: 512,
+			width: 512,
 			absolutePositioned: true
 		})
 
@@ -9103,11 +9164,27 @@
 			pathType: "stripe"
 		});
 
-		stirrupFill = new fabric.Path("M 65.5 632.75 C 39.733513 632.75 16.482 643.51882 0 660.80078 L 0 1235.25 L 156 1235.25 L 156 723.25 C 156 673.26802 115.481 632.75 65.5 632.75 z M 322.42773 632.75 C 272.44673 632.75 231.92773 673.26802 231.92773 723.25 L 231.92773 1235.25 L 412.92773 1235.25 L 412.92773 723.25 C 412.92773 673.26802 372.40874 632.75 322.42773 632.75 z M 701.57227 632.75 C 651.59126 632.75 611.07227 673.26802 611.07227 723.25 L 611.07227 1235.25 L 792.07227 1235.25 L 792.07227 723.25 C 792.07227 673.26802 751.55327 632.75 701.57227 632.75 z M 958.5 632.75 C 908.519 632.75 868 673.26802 868 723.25 L 868 1235.25 L 1024 1235.25 L 1024 660.80078 C 1007.518 643.51882 984.26648 632.75 958.5 632.75 z M 512 659.70117 C 495.87979 676.04245 485.92773 698.48223 485.92773 723.25 L 485.92773 1235.25 L 512 1235.25 L 538.07227 1235.25 L 538.07227 723.25 C 538.07227 698.48223 528.12018 676.04245 512 659.70117 z ",{
+/* 		stirrupFill = new fabric.Path("M 65.5 632.75 C 39.733513 632.75 16.482 643.51882 0 660.80078 L 0 1235.25 L 156 1235.25 L 156 723.25 C 156 673.26802 115.481 632.75 65.5 632.75 z M 322.42773 632.75 C 272.44673 632.75 231.92773 673.26802 231.92773 723.25 L 231.92773 1235.25 L 412.92773 1235.25 L 412.92773 723.25 C 412.92773 673.26802 372.40874 632.75 322.42773 632.75 z M 701.57227 632.75 C 651.59126 632.75 611.07227 673.26802 611.07227 723.25 L 611.07227 1235.25 L 792.07227 1235.25 L 792.07227 723.25 C 792.07227 673.26802 751.55327 632.75 701.57227 632.75 z M 958.5 632.75 C 908.519 632.75 868 673.26802 868 723.25 L 868 1235.25 L 1024 1235.25 L 1024 660.80078 C 1007.518 643.51882 984.26648 632.75 958.5 632.75 z M 512 659.70117 C 495.87979 676.04245 485.92773 698.48223 485.92773 723.25 L 485.92773 1235.25 L 512 1235.25 L 538.07227 1235.25 L 538.07227 723.25 C 538.07227 698.48223 528.12018 676.04245 512 659.70117 z ",{
 			fill: initialSockColors['stirrupFill'],
 			id: 'stirrupFill',
 			visible: false,
 			selectable: false
+		}); */
+
+		stirrupFillLeft = new fabric.Path("m 256,117 c -52.27632,0 -94.65625,42.37882 -94.65625,94.65625 V 629 h 189.3125 V 211.65625 C 350.65625,159.37882 308.27635,117 256,117 Z m 257.64062,0 c -52.27629,0 -94.65625,42.37882 -94.65624,94.65625 V 629 h 189.3125 V 211.65625 C 608.29688,159.37882 565.91701,117 513.64062,117 Z M 768,117 c -52.27635,0 -94.65625,42.37882 -94.65625,94.65625 V 629 h 189.3125 V 211.65625 C 862.65625,159.37882 820.27635,117 768,117 Z",{
+			fill: initialSockColors['stirrupFill'],
+			id: 'stirrupFillLeft',
+			visible: true,
+			selectable: false,
+			clipPath: leftSockClippingPath
+		});
+
+		stirrupFillRight = new fabric.Path("m 256,629 c -52.27632,0 -94.65625,42.37885 -94.65625,94.65625 V 1141 h 189.3125 V 723.65625 C 350.65625,671.37885 308.27635,629 256,629 Z m 257.64062,0 c -52.27627,0 -94.65625,42.37885 -94.65624,94.65625 V 1141 h 189.3125 V 723.65625 C 608.29688,671.37885 565.91701,629 513.64062,629 Z M 768,629 c -52.27635,0 -94.65625,42.37885 -94.65625,94.65625 V 1141 h 189.3125 V 723.65625 C 862.65625,671.37885 820.27635,629 768,629 Z",{
+			fill: initialSockColors['stirrupFill'],
+			id: 'stirrupFillRight',
+			visible: true,
+			selectable: false,
+			clipPath: rightSockClippingPath
 		});
 
 		vertical = new fabric.Path("M 32,256 V 768 H 64 V 256 Z m 64,0 v 512 h 32 V 256 Z m 64,0 v 512 h 32 V 256 Z m 64,0 v 512 h 32 V 256 Z m 64,0 v 512 h 32 V 256 Z m 64,0 v 512 h 32 V 256 Z m 64,0 v 512 h 32 V 256 Z m 64,0 v 512 h 32 V 256 Z m 64,0 v 512 h 32 V 256 Z m 64,0 v 512 h 32 V 256 Z m 64,0 v 512 h 32 V 256 Z m 64,0 v 512 h 32 V 256 Z m 64,0 v 512 h 32 V 256 Z m 64,0 v 512 h 32 V 256 Z m 64,0 v 512 h 32 V 256 Z m 64,0 v 512 h 32 V 256 ZM 32,226 V 798 H 64 V 226 Z m 64,0 v 572 h 32 V 226 Z m 64,0 v 572 h 32 V 226 Z m 64,0 v 572 h 32 V 226 Z m 64,0 v 572 h 32 V 226 Z m 64,0 v 572 h 32 V 226 Z m 64,0 v 572 h 32 V 226 Z m 64,0 v 572 h 32 V 226 Z m 64,0 v 572 h 32 V 226 Z m 64,0 v 572 h 32 V 226 Z m 64,0 v 572 h 32 V 226 Z m 64,0 v 572 h 32 V 226 Z m 64,0 v 572 h 32 V 226 Z m 64,0 v 572 h 32 V 226 Z m 64,0 v 572 h 32 V 226 Z m 64,0 v 572 h 32 V 226 Z",{
@@ -9118,15 +9195,7 @@
 			pathType: 'stripe'
 		});
 
-  		stirrupShadow = new fabric.Image.fromURL('./images/stirrup_shadow.png', function(oImg) {
-			oImg.set({
-				id: 'stirrupShadow',
-				visible: false,
-				top: 631
-			})
-			sockCanvas.add(oImg)
-			sockCanvas.bringToFront(oImg)
-		})
+  		
 
 		sockCanvas.add(stLouis1) 
 		sockCanvas.add(stLouis2) 
@@ -9149,7 +9218,37 @@
 		sockCanvas.add(argyle_2)
 		sockCanvas.add(argyle_3)
 		sockCanvas.add(vertical)
-		sockCanvas.add(stirrupFill)
+
+		stirrups = new fabric.Group([stirrupFillLeft, stirrupFillRight])
+		stirrups.set({
+			visible:false,
+			selectable:false,
+			id:'stirrups'
+		});
+
+		sockCanvas.add(stirrups)
+
+		stirrupShadowLeft = new fabric.Image.fromURL('./images/stirrup_shadow_left.png', function(oImg) {
+			oImg.set({
+				id: 'stirrupShadowLeft',
+				visible: true,
+				top: 0,
+				clipPath: leftSockClippingPath
+			})
+			stirrups.addWithUpdate(oImg)
+			stirrups.bringToFront(oImg)
+		})
+
+		stirrupShadowRight = new fabric.Image.fromURL('./images/stirrup_shadow_right.png', function(oImg) {
+			oImg.set({
+				id: 'stirrupShadowRight',
+				visible: true,
+				top: 0,
+				clipPath: rightSockClippingPath
+			})
+			stirrups.addWithUpdate(oImg)
+			stirrups.bringToFront(oImg)
+		})
 
 		//let g = sockCanvas.getObjects().find(o => o.id === "sockGroup")
 		//let o = g.getObjects().find(o => o.id === "stirrupFill")
@@ -12592,6 +12691,7 @@
 	})
 
 	ipcRenderer.on('local-font-response', (event, data) => {
+		console.log(data)
 		if (data.status != "cancelled") {
 			if (data.result == "error") {
 				ipcRenderer.send('show-alert',"An error occurred:\r\n\r\n"+data.message)
@@ -12730,9 +12830,32 @@
 				let scaleY = object.get('scaleY')
                 let path = object.get('path')
 				let pictureName = object.get('name');
-				let theImage = object._originalElement.currentSrc;
-                theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
-				ipcRenderer.send('add-stroke', {imgdata: theImage, left: left, top: top, scaleX: scaleX, path: path, pictureName: pictureName, color: color, width: width, canvas: canvasName})
+				const x = parseInt(width) + 1, y = parseInt(width);
+				let image = new Image();
+				image.onload = function() {
+					const canvas = document.createElement('canvas');
+					canvas.width = image.width + x * 2
+					canvas.height = image.height + y * 2
+					console.log(canvas)
+
+					const ctx = canvas.getContext('2d');
+
+					for (let angle = 0; angle < 360; angle += 360 / 36) {
+						ctx.drawImage(
+							image,
+							width * Math.sin((Math.PI * 2 * angle) / 360) + x,
+							width * Math.cos((Math.PI * 2 * angle) / 360) + y
+						);
+					}
+					ctx.globalCompositeOperation = 'source-in';
+					ctx.fillStyle = color;
+					ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+					ctx.globalCompositeOperation = 'source-over';
+					ctx.drawImage(image, x, y);
+					ipcRenderer.send('add-stroke', {imgdata: canvas.toDataURL(), left: left, top: top, scaleX: scaleX, path: path, pictureName: pictureName, canvas: canvasName})
+				}
+				image.src = object._originalElement.currentSrc
 				return false;
 			}
 		}	
@@ -12996,8 +13119,10 @@
 				case "pantsLogoCanvas":
 					canvas = pantsLogoCanvas
 					break;
+				case "sockCanvas":
+					canvas = sockCanvas
+					break;
 			}
-			console.log(canvas)
 			let data = response.image
 			let imLeft = response.imgLeft
 			let imTop = response.imgTop
@@ -13007,7 +13132,7 @@
 			var idx = canvas.getObjects().indexOf(object)
 
 			var imgObj = new Image();
-			imgObj.src = data;
+			
 			imgObj.onload = function () {
 				var image = new fabric.Image(imgObj);
 				image.set({
@@ -13063,11 +13188,11 @@
 				imLeft = image.get('left')
 				imTop = image.get('top');
 			}
+			imgObj.src = data;
 		}
 	})
 
 	$(".rangeButton").on("click",function(e) {
-	console.log("hello")
 		if ($(this).val() == "-") {
 			$(this).next().val(parseInt($(this).next().val())-1);
 			$("#"+$(this).data("span")).html($(this).next().val())
@@ -13079,6 +13204,10 @@
 			$(this).prev().trigger("change")
 		}
 		$("#"+$(this).data('span')).change();
+	})
+
+	$(".range").on("input",function(e) {
+		$("#"+$(this).data("span")).html($(this).val())
 	})
 
 	$("#eyedropper").on("click",function() {
@@ -16114,7 +16243,7 @@
 	}
 	
 	$("#checkForUpdates").on("click", function() {
-		ipcRenderer.send('check-for-update', false)
+		ipcRenderer.send('check-for-update', {type:"manual"})
 	})
 
 	$("#aboutUniformMaker").magnificPopup({
