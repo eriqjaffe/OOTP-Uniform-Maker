@@ -7,14 +7,12 @@ const Jimp = require('jimp')
 const { distortUnwrap } = require('@alxcube/lens')
 require('@alxcube/lens-jimp');
 const archiver = require('archiver');
-const imagemagickCli = require('imagemagick-cli')
 const Store = require("electron-store")
 const versionCheck = require('github-version-checker');
 const pkg = require('./package.json');
 const chokidar = require('chokidar')
 const { create } = require('xmlbuilder2')
 const increment = require('add-filename-increment');
-const hasbin = require('hasbin');
 const fontname = require('fontname')
 const { createWorker } = require('tesseract.js');
 const replaceColor = require('replace-color');
@@ -51,7 +49,6 @@ const preferredSeamOpacity = store.get("preferredSeamOpacity", "33")
 const gridsVisible = store.get("gridsVisible", true)
 const checkForUpdates = store.get("checkForUpdates", true)
 const seamsVisibleOnDiffuse = store.get("seamsVisibleOnDiffuse", false)
-const imWarning = store.get("imWarning", true)
 
 if (!fs.existsSync(userFontsFolder)) {
     fs.mkdirSync(userFontsFolder);
@@ -76,65 +73,13 @@ const options = {
 	currentVersion: pkg.version
 };
 
-const imInstalled = hasbin.sync('magick');
-
-ipcMain.on('imagemagick-warning', (event, arg) => {
-	if (!imInstalled) {
-		if (imWarning) {
-			dialog.showMessageBox({
-				noLink: true,
-				type: 'info',
-				buttons: ['OK', 'Download'],
-				message: 'ImageMagick was not detected, some functionality will not be available.',
-				checkboxLabel: 'Don\'t warn me again',
-				checkboxChecked: false
-			}).then(result => {
-				if (result.checkboxChecked) {
-					store.set("imWarning", false)
-				} else {
-					store.set("imWarning", true)
-				}
-				if (result.response === 1) {
-					switch (process.platform) {
-						case "darwin":
-							shell.openExternal("https://imagemagick.org/script/download.php#macosx")
-							break;
-						case "linux":
-							shell.openExternal("https://imagemagick.org/script/download.php#linux")
-							break;
-						case "win32":
-							shell.openExternal("https://imagemagick.org/script/download.php#windows")
-							break;
-					}
-					app.quit()
-				} else {
-					if (JSON.parse(checkForUpdates)) {
-						checkForUpdate()
-					} 
-				}
-			})	
-		} else {
-			if (JSON.parse(checkForUpdates)) {
-				checkForUpdate()
-			} 
-		}
-	} else {
-		if (JSON.parse(checkForUpdates)) {
-			checkForUpdate()
-		} 
-	}
-})
-
 ipcMain.on('check-for-update', (event, arg) => {
-	checkForUpdate()
-})
-
-function checkForUpdate() {
+	console.log(arg.type)
 	versionCheck(options, function (error, update) { // callback function
 		if (error) {
 			dialog.showMessageBox(null, {
 				type: 'error',
-				message: 'An error occurred checking for updates.'
+				message: 'An error occurred checking for updates:\r\n\r\n'+error.message
 			});	
 		}
 		if (update) { // print some update info if an update is available
@@ -148,13 +93,15 @@ function checkForUpdate() {
 				}
 			})	
 		} else {
-			dialog.showMessageBox(null, {
-				type: 'info',
-				message: "Current version: "+pkg.version+"\r\n\r\nThere is no update available at this time."
-			});	
+			if (arg.type == "manual") {
+				dialog.showMessageBox(null, {
+					type: 'info',
+					message: "Current version: "+pkg.version+"\r\n\r\nThere is no update available at this time."
+				});	
+			}
 		}
 	});
-}
+})
  
 ipcMain.on('show-alert', (event, arg) => {
 	dialog.showMessageBox(null, {
@@ -533,7 +480,7 @@ ipcMain.on('add-stroke', (event, arg) => {
 				})
 			} catch (error) {
 				json.status = 'error'
-				json.message = "An error occurred - please make sure ImageMagick is installed"
+				json.message = error.message
 				console.log(error);
 				event.sender.send('add-stroke-response', json)
 			}
@@ -1014,9 +961,8 @@ ipcMain.on('warp-text', (event, arg) => {
 			case "archDown":
 				im.trim()
 				im.backgroundColor("transparent")
-				im.extent((im.size().width()*2)+"x"+im.size().height(), MagickCore.EastGravity)	
-				im.wave((amount*-1)*2,im.size().width()*4)
-				im.write("test.png")
+				im.extent((im.size().width()*2)+"x"+im.size().height(), MagickCore.EastGravity)
+				im.wave(-15,im.size().width()*2)
 				im.trim()
 				im.page(im.size())
 				im.magick("PNG")
@@ -1025,7 +971,16 @@ ipcMain.on('warp-text', (event, arg) => {
 				json.status = 'success'
 				json.data = "data:image/png;base64,"+b64
 				event.sender.send('warp-text-response', json)
-				break;				
+				break;		
+			default:
+				Jimp.read(buffer, (err, image) => {
+					image.getBase64(Jimp.AUTO, (err, ret) => {
+						json.status = 'success'
+						json.data = ret
+						event.sender.send('warp-text-response', json)
+					})
+				})
+				break;		
 		}
 	} catch (err) {
 		json.status = 'error'
@@ -1033,120 +988,6 @@ ipcMain.on('warp-text', (event, arg) => {
 		console.log(err);
 		event.sender.send('warp-text-response', json)
 	}
-	/* Jimp.read(buffer, (err, image) => {
-		if (err) {
-			json.status = 'error'
-			json.message = err
-			console.log(err);
-			event.sender.send('warp-text-response', json)
-		} else {
-			image.autocrop();
-			image.write(tempDir+"/temp.png");
-			width = image.bitmap.width;
-			height = image.bitmap.height;
-			switch (deform) {
-				case "arch":
-					cmdLine = 'magick convert -background transparent -wave -'+amount+'x'+width*2+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png'
-					break;
-				case "arc":
-					cmdLine = 'magick convert '+tempDir+'/temp.png -virtual-pixel Background -background transparent -distort Arc '+amount+' -trim +repage '+tempDir+'/'+deform+'.png'
-					break;
-				case "bilinearUp":
-					var y2=height*((100-amount)*0.01)
-					cmdLine = 'magick convert '+tempDir+'/temp.png -virtual-pixel transparent -interpolate Spline -distort BilinearForward "0,0 0,0 0,'+height+' 0,'+height+' '+width+',0 '+width+',0 '+width+','+height+' '+width+','+y2+'" '+tempDir+'/'+deform+'.png'
-					break;
-				case "bilinearDown":
-					var y2=height*((100-amount)*0.01)
-					cmdLine = 'magick convert '+tempDir+'/temp.png -virtual-pixel transparent -interpolate Spline -distort BilinearForward "0,0 0,0 0,'+height+' 0,'+y2+' '+width+',0 '+width+',0 '+width+','+height+' '+width+','+height+'" '+tempDir+'/'+deform+'.png'
-					break;
-				case "archUp":
-					try {
-						imagemagickCli.exec('magick convert '+tempDir+'/temp.png -gravity west -background transparent -extent '+width*2+'x'+height+' '+tempDir+'/temp.png').then(({stdout, stderr }) => {
-							imagemagickCli.exec('magick convert -background transparent -wave -'+amount*2+'x'+width*4+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png').then(({ stdout, stderr }) => {
-								Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
-									if (err) {
-										json.status = 'error'
-										json.message = err
-										console.log(err);
-										event.sender.send('warp-text-response', json)
-									} else {
-										image.getBase64(Jimp.AUTO, (err, ret) => {
-											json.status = 'success'
-											json.data = ret
-											event.sender.send('warp-text-response', json)
-											//res.end(ret);
-										})
-									}
-								})
-							})
-						})
-					} catch (err) {
-						json.status = 'error'
-						json.message = err
-						console.log(err);
-						event.sender.send('warp-text-response', json)
-					}
-					break;
-				case "archDown":
-					try {
-						imagemagickCli.exec('magick convert '+tempDir+'/temp.png -gravity east -background transparent -extent '+width*2+'x'+height+' '+tempDir+'/temp.png').then(({stdout, stderr }) => {
-							imagemagickCli.exec('magick convert -background transparent -wave -'+amount*2+'x'+width*4+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png').then(({ stdout, stderr }) => {
-								Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
-									if (err) {
-										json.status = 'error'
-										json.message = err
-										console.log(err);
-										event.sender.send('warp-text-response', json)
-									} else {
-										image.getBase64(Jimp.AUTO, (err, ret) => {
-											json.status = 'success'
-											json.data = ret
-											event.sender.send('warp-text-response', json)
-										})
-									}
-								})
-							})
-						})
-					} catch (err) {
-						json.status = 'error'
-						json.message = err
-						console.log(err);
-						event.sender.send('warp-text-response', json)
-					}
-					break;
-				default:
-					image.getBase64(Jimp.AUTO, (err, ret) => {
-						json.status = 'success'
-						json.data = ret
-						event.sender.send('warp-text-response', json)
-					})
-					break;
-			}
-			try {
-				imagemagickCli.exec(cmdLine).then(({ stdout, stderr }) => {
-					Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
-						if (err) {
-							json.status = 'error'
-							json.message = err
-							console.log(err);
-							event.sender.send('warp-text-response', json)
-						} else {
-							image.getBase64(Jimp.AUTO, (err, ret) => {
-								json.status = 'success'
-								json.data = ret
-								event.sender.send('warp-text-response', json)
-							})
-						}
-					})
-				})
-			} catch (err) {
-				json.status = 'error'
-				json.message = err
-				console.log(err);
-				event.sender.send('warp-text-response', json)
-			}
-		}
-	}) */
 })
 
 ipcMain.on('save-wordmark', (event, arg) => {
@@ -2597,7 +2438,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}&imagemagick=${imInstalled}&imWarning=${imWarning}`);
+	mainWindow.loadURL(`file://${__dirname}/index.html?&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}`);
     
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
       shell.openExternal(url);

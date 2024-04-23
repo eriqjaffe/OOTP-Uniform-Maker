@@ -34,7 +34,7 @@
 		const checkForUpdates = (params.get('checkForUpdates').toLowerCase() == "true") ? true : false
 		const preferredPlayerName = params.get('preferredPlayerName')
 		const preferredPlayerNumber = params.get('preferredPlayerNumber')
-		const imageMagick = (params.get("imagemagick") == "true") ? true : false
+		//const imageMagick = (params.get("imagemagick") == "true") ? true : false
 		const imWarning = (params.get("imWarning") == "true") ? true : false
 
 		var prefs = {
@@ -2949,14 +2949,6 @@
 		$("#preferredSeamOpacity").val(prefs['preferredSeamOpacity'])
 		$("#toggleDiffuseSeams").prop("checked", prefs['seamsVisibleOnDiffuse'] == "true")
 
-		$(".imagemagick").each(function() {
-			if (imageMagick == true) {
-				$(this).css("display","inline-block");
-			} else {
-				$(this).css("display","none");
-			}
-		})
-
 		$(".preference").each(function() {
 			$(this).val(prefs[$(this).attr("id")])
 		})
@@ -3115,7 +3107,9 @@
 
 		activeCanvas = jerseyLogoCanvas;
 
-		ipcRenderer.send('imagemagick-warning', null)
+		if (checkForUpdates) {
+			ipcRenderer.send('check-for-update', {type:"auto"})
+		}
 	})
 
 	$(document).keydown(function(e) {   
@@ -16144,7 +16138,7 @@
 	}
 	
 	$("#checkForUpdates").on("click", function() {
-		ipcRenderer.send('check-for-update', false)
+		ipcRenderer.send('check-for-update', {type:"manual"})
 	})
 
 	$("#aboutUniformMaker").magnificPopup({
