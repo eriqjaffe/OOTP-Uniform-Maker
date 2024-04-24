@@ -13950,13 +13950,7 @@
 
  		ipcRenderer.send('save-socks', {
 				text: textLine,
-				sockCanvas: sockCanvas.toDataURL({
-					format: 'png',
-					left: 1.5,
-					top: 257.5,
-					width: 1023,
-					height: 511
-				}),
+				sockCanvas: sockCanvas.toDataURL(),
 				name: fileName.split(' ').join('_').toLowerCase(),
 		})
 	})
@@ -14829,13 +14823,7 @@
 				pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
 				pantsBelow: pantsBelow.toDataURL(),
 				fontCanvas: fontCanvas.toDataURL(),
-				sockCanvas: sockCanvas.toDataURL({
-					format: 'png',
-					left: 1.5,
-					top: 257.5,
-					width: 1023,
-					height: 511
-				}),
+				sockCanvas: sockCanvas.toDataURL(),
 				name: response.args.fileName.toLowerCase(),
 				showPlanket: response.args.showPlanket,
 				buttonPadSeams: response.args.buttonPadSeams,
@@ -14973,13 +14961,7 @@
 				pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
 				pantsBelow: pantsBelow.toDataURL(),
 				fontCanvas: fontCanvas.toDataURL(),
-				sockCanvas: sockCanvas.toDataURL({
-					format: 'png',
-					left: 1.5,
-					top: 257.5,
-					width: 1023,
-					height: 511
-				}),
+				sockCanvas: sockCanvas.toDataURL(),
 				name: response.args.fileName.toLowerCase(),
 				showPlanket: response.args.showPlanket,
 				buttonPadSeams: response.args.buttonPadSeams,

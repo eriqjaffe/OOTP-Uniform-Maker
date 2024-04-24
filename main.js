@@ -1189,76 +1189,31 @@ ipcMain.on('save-pants', (event, arg) => {
 })
 
 ipcMain.on('save-socks', (event, arg) => {
-	const sockCanvas = Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	
-	const output = fs.createWriteStream(tempDir + '/'+arg.name+'.zip');
+	const buffer = Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 
-	output.on('close', function() {
-		var data = fs.readFileSync(tempDir + '/'+arg.name+'.zip');
-		var saveOptions = {
-		  defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.zip',{fs: true})
-		}
-		dialog.showSaveDialog(null, saveOptions).then((result) => { 
-		  if (!result.canceled) {
-			store.set("downloadPath", path.dirname(result.filePath))
-			fs.writeFile(result.filePath, data, function(err) {
-			  if (err) {
-				fs.unlink(tempDir + '/'+arg.name+'.zip', (err) => {
-				  if (err) {
-					console.log(err)
-					return
-				  }
-				})
-				console.log(err)
-				json.result = "error"
-				json.errno = err.errno
-				event.sender.send('save-socks-response', arg)
-				//res.json({result: "error", errno: err.errno})
-			  } else {
-				fs.unlink(tempDir + '/'+arg.name+'.zip', (err) => {
-				  if (err) {
-					console.log(err)
-					return
-				  }
-				})
-				event.sender.send('save-socks-response', arg)
-			  };
-			})
-		  } else {
-			fs.unlink(tempDir + '/'+arg.name+'.zip', (err) => {
-			  if (err) {
-				console.log(err)
-				return
-			  }
-			})
-			event.sender.send('save-socks-response', arg)
-		  }
-		})
-	});
-
-	const archive = archiver('zip', {
-		lib: { level: 9 } // Sets the compression level.
-	});
-		
-	archive.on('error', function(err) {
-		throw err;
-	});
-
-	archive.pipe(output)
-
+    const options = {
+        defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.png',{fs: true})
+	}
+            
 	prepareImages()
 
 	async function prepareImages() {
-		let socksLeft = await Jimp.read(sockCanvas)
-		let socksRight = await Jimp.read(sockCanvas)
+		let socks = await Jimp.read(buffer)
 		let socksTexture = await Jimp.read(__dirname+"/images/socks_texture.png")
-		await socksLeft.resize(1024,512).crop(511,0,511,511).resize(512,512).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
-		await socksRight.resize(1024,512).crop(0,0,511,511).resize(512,512).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
-		let socksLeftBuffer = await socksLeft.getBufferAsync(Jimp.MIME_PNG)
-		let socksRightBuffer = await socksRight.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(socksLeftBuffer, {name: arg.name+"_left.png"})
-		archive.append(socksRightBuffer, {name: arg.name+"_right.png"})
-		archive.finalize()
+		await socks.crop(256,0,512,1024).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+		event.sender.send('save-socks-response', arg)
+ 		dialog.showSaveDialog(null, options).then((result) => {
+			if (!result.canceled) {
+				store.set("downloadPath", path.dirname(result.filePath))
+				socks.write(result.filePath)
+				event.sender.send('save-socks-response', arg)
+			} else {
+				event.sender.send('save-socks-response', arg)
+			}
+		}).catch((err) => {
+			console.log(err);
+			event.sender.send('save-socks-response', arg)
+		});
 	}
 })
 
@@ -1803,15 +1758,11 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 		//await pantsBase.write(app.getPath('downloads') + '/pants_' + arg.name+'.png')
 
 		// socks
-		let socksLeft = await Jimp.read(sockCanvas)
-		let socksRight = await Jimp.read(sockCanvas)
+		let socks = await Jimp.read(sockCanvas)
 		let socksTexture = await Jimp.read(__dirname+"/images/socks_texture.png")
-		await socksLeft.resize(1024,512).crop(511,0,511,511).resize(512,512).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
-		await socksRight.resize(1024,512).crop(0,0,511,511).resize(512,512).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
-		let socksLeftBuffer = await socksLeft.getBufferAsync(Jimp.MIME_PNG)
-		let socksRightBuffer = await socksRight.getBufferAsync(Jimp.MIME_PNG)
-		archive.append(socksLeftBuffer, {name: "socks_"+arg.name+"_left.png"})
-		archive.append(socksRightBuffer, {name: "socks_"+arg.name+"_right.png"})
+		await socks.crop(256,0,512,1024).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+		let socksBuffer = await socks.getBufferAsync(Jimp.MIME_PNG)
+		archive.append(socksBuffer, {name: "socks_"+arg.name+".png"})
 
 		// font
 		let fontBase = await Jimp.read(fontCanvas)
