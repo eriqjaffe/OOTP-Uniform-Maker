@@ -1889,16 +1889,16 @@
                                                 <td class="checkCell"><input type="checkbox" id="stirrupToggle"></td>
                                                 <td>
 													<label>Sanitary Sock: </label>
-													<input type="range" class="range" id="sockHeight" value=632 min="168" max="770" list="markers" style="width:100%;">
+													<input type="range" class="range" id="sockHeight" value=0 min="-396" max="200" list="markers" style="width:100%;">
 													<datalist id="markers">
-														<option value="199"></option>
-														<option value="272"></option>
-														<option value="344"></option>
-														<option value="416"></option>
-														<option value="488"></option>
-														<option value="560"></option>
-														<option value="632"></option>
-														<option value="704"></option>
+														<option value="-330"></option>
+														<option value="-264"></option>
+														<option value="-197"></option>
+														<option value="-131"></option>
+														<option value="-65"></option>
+														<option value="0"></option>
+														<option value="67"></option>
+														<option value="133"></option>
 													  </datalist>
 												</td>
                                                 <td style="text-align:right;">
@@ -8755,10 +8755,16 @@
 	})
 	
  	$("#sockHeight").on("input",function() {
-		let fill = sockCanvas.getObjects("path").find(o => o.id === "stirrupFill")
-		let shadow = sockCanvas.getObjects("image").find(o => o.id === "stirrupShadow")
-		fill.set("top",parseInt($(this).val()))
-		shadow.set("top",parseInt($(this).val()))
+		let group = sockCanvas.getObjects("group").find(o => o.id === "stirrups")
+		let top = parseInt($(this).val())
+		let stirrupFillLeft = group.getObjects().find(o => o.id === "stirrupFillLeft")
+		let stirrupShadowLeft = group.getObjects().find(o => o.id === "stirrupShadowLeft")
+		let stirrupFillRight = group.getObjects().find(o => o.id === "stirrupFillRight")
+		let stirrupShadowRight = group.getObjects().find(o => o.id === "stirrupShadowRight")
+		stirrupFillLeft.set("top", -883.5 - top)
+		stirrupShadowLeft.set("top", -1000 - top)
+		stirrupFillRight.set("top", -371.5 - top)
+		stirrupShadowRight.set("top", -1000 - top)
 		sockCanvas.renderAll()
 	})
 
@@ -9164,7 +9170,7 @@
 			pathType: "stripe"
 		});
 
-		stirrupFillLeft = new fabric.Path("m 256,117 c -52.27632,0 -94.65625,42.37882 -94.65625,94.65625 V 629 h 189.3125 V 211.65625 C 350.65625,159.37882 308.27635,117 256,117 Z m 257.64062,0 c -52.27629,0 -94.65625,42.37882 -94.65624,94.65625 V 629 h 189.3125 V 211.65625 C 608.29688,159.37882 565.91701,117 513.64062,117 Z M 768,117 c -52.27635,0 -94.65625,42.37882 -94.65625,94.65625 V 629 h 189.3125 V 211.65625 C 862.65625,159.37882 820.27635,117 768,117 Z",{
+		stirrupFillLeft = new fabric.Path("m 256,117 c -52.27632,0 -94.65625,42.37882 -94.65625,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 350.65625,159.37882 308.27635,117 256,117 Z m 257.64062,0 c -52.27629,0 -94.65626,42.37882 -94.65624,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 608.29688,159.37882 565.91702,117 513.64062,117 Z M 768,117 c -52.27635,0 -94.65625,42.37882 -94.65625,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 862.65625,159.37882 820.27635,117 768,117 Z",{
 			fill: initialSockColors['stirrupFill'],
 			id: 'stirrupFillLeft',
 			visible: true,
@@ -9172,7 +9178,7 @@
 			clipPath: leftSockClippingPath
 		});
 
-		stirrupFillRight = new fabric.Path("m 256,629 c -52.27632,0 -94.65625,42.37885 -94.65625,94.65625 V 1141 h 189.3125 V 723.65625 C 350.65625,671.37885 308.27635,629 256,629 Z m 257.64062,0 c -52.27627,0 -94.65625,42.37885 -94.65624,94.65625 V 1141 h 189.3125 V 723.65625 C 608.29688,671.37885 565.91701,629 513.64062,629 Z M 768,629 c -52.27635,0 -94.65625,42.37885 -94.65625,94.65625 V 1141 h 189.3125 V 723.65625 C 862.65625,671.37885 820.27635,629 768,629 Z",{
+		stirrupFillRight = new fabric.Path("m 256,629 c -52.27632,0 -94.65625,42.37885 -94.65625,94.65625 V 1121 v 20 212.5137 h 189.3125 V 1141 1121 723.65625 C 350.65625,671.37885 308.27635,629 256,629 Z m 257.64062,0 c -52.27627,0 -94.65626,42.37885 -94.65624,94.65625 V 1121 v 20 212.5137 h 189.3125 V 1141 1121 723.65625 C 608.29688,671.37885 565.91702,629 513.64062,629 Z M 768,629 c -52.27635,0 -94.65625,42.37885 -94.65625,94.65625 V 1121 v 20 212.5137 h 189.3125 V 1141 1121 723.65625 C 862.65625,671.37885 820.27635,629 768,629 Z",{
 			fill: initialSockColors['stirrupFill'],
 			id: 'stirrupFillRight',
 			visible: true,
