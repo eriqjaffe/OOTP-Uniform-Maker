@@ -80,7 +80,7 @@
 		const validImageTypes = ["png","jpg","jpeg","bmp","gif","tiff"]
 		const validFontTypes = ["ttf", "otf"]
 
-		const initialSockColors = {sockColor:"#c85959",stirrupFill:"#ffffff",stLouis1:"#ffffff",stLouis2:"#0C2340",northwestern1:"#ffffff",northwestern2:"#4E2A84",boston1:"#0C2340",boston2:"#FFFFFF",greenBay1:"#FFFFFF",greenBay2:"#FFB612",triple1_1:"#FFFFFF",triple1_2:"#FFFFFF",triple1_3:"#FFFFFF",triple2_1:"#FFFFFF",triple2_2:"#0000FF",quadruple_1:"#00FF00",quadruple_2:"#00FF00",quadruple_3:"#00FF00",quadruple_4:"#00FF00",argyle_1:"#00FFFF",argyle_2:"#FFFF00",argyle_3:"#FFFFFF",vertical:"#FFFFFF"}
+		const initialSockColors = {sockColor:"#c85959",stirrupFill:"#ffffff",stLouis1:"#ffffff",stLouis2:"#0C2340",northwestern1:"#ffffff",northwestern2:"#4E2A84",boston1:"#0C2340",boston2:"#FFFFFF",greenBay1:"#FFFFFF",greenBay2:"#FFB612",double1_2:"#0C2340",double1_1:"#ffffff",double2_2:"#ffffff",double2_1:"#0C2340",triple1_1:"#FFFFFF",triple1_2:"#FFFFFF",triple1_3:"#FFFFFF",triple2_1:"#FFFFFF",triple2_2:"#0000FF",quadruple_1:"#00FF00",quadruple_2:"#00FF00",quadruple_3:"#00FF00",quadruple_4:"#00FF00",argyle_1:"#00FFFF",argyle_2:"#FFFF00",argyle_3:"#FFFFFF",vertical:"#FFFFFF"}
 		
 		var capMakersMarkColor = initialCapColors['capMakersMarkColor']
 		var jerseyMakersMarkColor = initialJerseyColors['jerseyMakersMarkColor']
@@ -1912,6 +1912,8 @@
 													<select id="sockStripeSelect">
 														<option value="argyle">Argyle</option>
 														<option value="boston">Boston</option>
+														<option value="double1">Double Stripe 1</option>
+														<option value="double2">Double Stripe 2</option>
 														<option value="greenBay">Green Bay</option>
 														<option value="northwestern">Northwestern</option>
 														<option value="quadruple">Quadruple Stripe</option>
@@ -1937,6 +1939,14 @@
 													<span class="sockStripeSelectSpan" id="greenBaySelectors" style="display:none">
 														<input class="sockSelector selector" type="text" id="greenBay1" data-element="greenBay1">
 														<input class="sockSelector selector" type="text" id="greenBay2" data-element="greenBay2">
+													</span>
+													<span class="sockStripeSelectSpan" id="double1Selectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="double1_1" data-element="double1_1">
+														<input class="sockSelector selector" type="text" id="double1_2" data-element="double1_2">
+													</span>
+													<span class="sockStripeSelectSpan" id="double2Selectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="double2_1" data-element="double2_1">
+														<input class="sockSelector selector" type="text" id="double2_2" data-element="double2_2">
 													</span>
 													<span class="sockStripeSelectSpan" id="triple1Selectors" style="display:none">
 														<input class="sockSelector selector" type="text" id="triple1_1" data-element="triple1_1">
@@ -8793,6 +8803,14 @@
 					sockCanvas.getObjects().find(o => o.id === 'greenBay1').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'greenBay2').visible = true;
 					break;
+				case "double1":
+					sockCanvas.getObjects().find(o => o.id === 'double1_1').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'double1_2').visible = true;
+					break;
+				case "double2":
+					sockCanvas.getObjects().find(o => o.id === 'double2_1').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'double2_2').visible = true;
+					break;
 				case "triple1":
 					sockCanvas.getObjects().find(o => o.id === 'triple1_1').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'triple1_2').visible = true;
@@ -8840,6 +8858,12 @@
 				break;
 			case "greenBay":
 				$("#greenBaySelectors").show()
+				break;
+			case "double1":
+				$("#double1Selectors").show()
+				break;
+			case "double2":
+				$("#double2Selectors").show()
 				break;
 			case "triple1":
 				$("#triple1Selectors").show()
@@ -9010,7 +9034,7 @@
 			absolutePositioned: true
 		})
 
-		stLouis1 = new fabric.Path("m 0,117 v 25 25 25 h 1024 v -25 -25 -25 z m 0,100 v 25 25 25 h 1024 v -25 -25 -25 z m 0,412 v 25 25 25 h 1024 v -25 -25 -25 z m 0,100 v 25 25 25 h 1024 v -25 -25 -25 z",{
+		stLouis1 = new fabric.Path("M -0.12304688 143.9707 L -0.12304688 178.67969 L 1024.123 178.67969 L 1024.123 143.9707 L -0.12304688 143.9707 z M -0.12304688 194.71094 L -0.12304688 229.41797 L 1024.123 229.41797 L 1024.123 194.71094 L -0.12304688 194.71094 z M -0.12304688 245.45117 L -0.12304688 280.1582 L 1024.123 280.1582 L 1024.123 245.45117 L -0.12304688 245.45117 z M -0.12304688 656.67383 L -0.12304688 691.38281 L 1024.123 691.38281 L 1024.123 656.67383 L -0.12304688 656.67383 z M -0.12304688 707.41406 L -0.12304688 742.12109 L 1024.123 742.12109 L 1024.123 707.41406 L -0.12304688 707.41406 z M -0.12304688 758.1543 L -0.12304688 792.86133 L 1024.123 792.86133 L 1024.123 758.1543 L -0.12304688 758.1543 z ",{
 			fill: initialSockColors['stLouis1'],
 			id: 'stLouis1',
 			visible: false,
@@ -9018,7 +9042,7 @@
 			pathType: 'stripe'
 		});
 
-		stLouis2 = new fabric.Path("m 0,142 v 25 h 1024 v -25 z m 0,99.99805 v 25 h 1024 v -25 z M 0,654 v 25 h 1024 v -25 z m 0,99.99805 v 25 h 1024 v -25 z",{
+		stLouis2 = new fabric.Path("M -0.12304688 152.81055 L -0.12304688 169.83984 L 1024.123 169.83984 L 1024.123 152.81055 L -0.12304688 152.81055 z M -0.12304688 203.54883 L -0.12304688 220.58008 L 1024.123 220.58008 L 1024.123 203.54883 L -0.12304688 203.54883 z M -0.12304688 254.28906 L -0.12304688 271.32031 L 1024.123 271.32031 L 1024.123 254.28906 L -0.12304688 254.28906 z M -0.12304688 665.51367 L -0.12304688 682.54297 L 1024.123 682.54297 L 1024.123 665.51367 L -0.12304688 665.51367 z M -0.12304688 716.25195 L -0.12304688 733.2832 L 1024.123 733.2832 L 1024.123 716.25195 L -0.12304688 716.25195 z M -0.12304688 766.99219 L -0.12304688 784.02344 L 1024.123 784.02344 L 1024.123 766.99219 L -0.12304688 766.99219 z ",{
 			fill: initialSockColors['stLouis2'],
 			id: 'stLouis2',
 			visible: false,
@@ -9074,7 +9098,39 @@
 			pathType: 'stripe'
 		});
 
-		triple1_1 = new fabric.Path("M 0 117 L 0 146.99805 L 0 147 L 1024 147 L 1024 146.99805 L 1024 117 L 0 117 z M 0 629 L 0 658.99805 L 0 659 L 1024 659 L 1024 658.99805 L 1024 629 L 0 629 z ",{
+		double1_1 = new fabric.Path("M -0.12304688 143.9707 L -0.12304688 212.96484 L 1024.123 212.96484 L 1024.123 143.9707 L -0.12304688 143.9707 z M -0.12304688 243.9707 L -0.12304688 312.96484 L 1024.123 312.96484 L 1024.123 243.9707 L -0.12304688 243.9707 z M -0.12304688 656.67383 L -0.12304688 725.66797 L 1024.123 725.66797 L 1024.123 656.67383 L -0.12304688 656.67383 z M -0.12304688 756.67383 L -0.12304688 825.66797 L 1024.123 825.66797 L 1024.123 756.67383 L -0.12304688 756.67383 z ",{
+			fill: initialSockColors['double1_1'],
+			id: 'double1_1',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe'
+		});
+
+		double1_2 = new fabric.Path("M -0.12304688 161.54297 L -0.12304688 195.39258 L 1024.123 195.39258 L 1024.123 161.54297 L -0.12304688 161.54297 z M -0.12304688 261.54297 L -0.12304688 295.39258 L 1024.123 295.39258 L 1024.123 261.54297 L -0.12304688 261.54297 z M -0.12304688 674.24609 L -0.12304688 708.0957 L 1024.123 708.0957 L 1024.123 674.24609 L -0.12304688 674.24609 z M -0.12304688 774.24609 L -0.12304688 808.0957 L 1024.123 808.0957 L 1024.123 774.24609 L -0.12304688 774.24609 z ",{
+			fill: initialSockColors['double1_2'],
+			id: 'double1_2',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe'
+		});
+
+		double2_1 = new fabric.Path("M 0 0 L 0 0.009765625 L 0 133.11719 L 0 177.27734 L 0 220.82227 L 0 220.82422 L 0 264.36523 L 1024 264.36523 L 1024 220.82422 L 1024 220.82227 L 1024 177.27734 L 1024 133.11523 L 1024 0.009765625 L 1024 0 L 0 0 z M 0 512 L 0 512.00977 L 0 645.11719 L 0 689.27734 L 0 732.82227 L 0 732.82422 L 0 776.36523 L 1024 776.36523 L 1024 732.82422 L 1024 732.82227 L 1024 689.27734 L 1024 645.11523 L 1024 512.00977 L 1024 512 L 0 512 z ",{
+			fill: initialSockColors['double2_1'],
+			id: 'double2_1',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe'
+		});
+
+		double2_2 = new fabric.Path("M 0 316.28711 L 0 367.08008 L 1024 367.08008 L 1024 316.28711 L 0 316.28711 z M 0 828.28711 L 0 879.08008 L 1024 879.08008 L 1024 828.28711 L 0 828.28711 z ",{
+			fill: initialSockColors['double2_2'],
+			id: 'double2_2',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe'
+		});
+
+		triple1_1 = new fabric.Path("M -0.12304688 152.81055 L -0.12304688 169.8418 L 1024.123 169.8418 L 1024.123 152.81055 L -0.12304688 152.81055 z M -0.12304688 664.81055 L -0.12304688 681.8418 L 1024.123 681.8418 L 1024.123 664.81055 L -0.12304688 664.81055 z ",{
 			fill: initialSockColors['triple1_1'],
 			id: 'triple1_1',
 			visible: false,
@@ -9082,7 +9138,7 @@
 			pathType: 'stripe'
 		});
 
-		triple1_2 = new fabric.Path("M 0 184.57227 L 0 214.57031 L 0 214.57422 L 1024 214.57422 L 1024 214.57031 L 1024 184.57227 L 0 184.57227 z M 0 696.57227 L 0 726.57031 L 0 726.57422 L 1024 726.57422 L 1024 726.57031 L 1024 696.57227 L 0 696.57227 z ",{
+		triple1_2 = new fabric.Path("M -0.12304688 188.38086 L -0.12304688 205.41211 L -0.12304688 205.41406 L 1024.123 205.41406 L 1024.123 205.41211 L 1024.123 188.38086 L -0.12304688 188.38086 z M -0.12304688 700.38086 L -0.12304688 717.41211 L -0.12304688 717.41406 L 1024.123 717.41406 L 1024.123 717.41211 L 1024.123 700.38086 L -0.12304688 700.38086 z ",{
 			fill: initialSockColors['triple1_2'],
 			id: 'triple1_2',
 			visible: false,
@@ -9090,7 +9146,7 @@
 			pathType: 'stripe'
 		});
 
-		triple1_3 = new fabric.Path("M 0 252.14648 L 0 282.14453 L 0 282.14648 L 1024 282.14648 L 1024 282.14453 L 1024 252.14648 L 0 252.14648 z M 0 764.14648 L 0 794.14453 L 0 794.14648 L 1024 794.14648 L 1024 794.14453 L 1024 764.14648 L 0 764.14648 z ",{
+		triple1_3 = new fabric.Path("M -0.12304688 223.95312 L -0.12304688 240.98438 L 1024.123 240.98438 L 1024.123 223.95312 L -0.12304688 223.95312 z M -0.12304688 735.95312 L -0.12304688 752.98438 L 1024.123 752.98438 L 1024.123 735.95312 L -0.12304688 735.95312 z ",{
 			fill: initialSockColors['triple1_3'],
 			id: 'triple1_3',
 			visible: false,
@@ -9185,7 +9241,11 @@
 		sockCanvas.add(boston1) 
 		sockCanvas.add(boston2) 
 		sockCanvas.add(greenBay1) 
-		sockCanvas.add(greenBay2) 
+		sockCanvas.add(greenBay2)
+		sockCanvas.add(double1_1) 
+		sockCanvas.add(double1_2)
+		sockCanvas.add(double2_1) 
+		sockCanvas.add(double2_2)
 		sockCanvas.add(triple1_1) 
 		sockCanvas.add(triple1_2) 
 		sockCanvas.add(triple1_3) 
