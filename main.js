@@ -1985,11 +1985,9 @@ ipcMain.on('install-uniform-zip', (event, arg) => {
 		await pantsBase.blit(blankPantsImage, 256-(blankPantsImage.bitmap.width/2), 12.5-(blankPantsImage.bitmap.height/2))
 		
 		// socks
-		let socksLeft = await Jimp.read(sockCanvas)
-		let socksRight = await Jimp.read(sockCanvas)
+		let socks = await Jimp.read(sockCanvas)
 		let socksTexture = await Jimp.read(__dirname+"/images/socks_texture.png")
-		await socksLeft.resize(1024,512).crop(511,0,511,511).resize(512,512).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
-		await socksRight.resize(1024,512).crop(0,0,511,511).resize(512,512).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+		await socks.crop(256,0,512,1024).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 		
 		// font
 		let fontBase = await Jimp.read(fontCanvas)
@@ -2059,9 +2057,7 @@ ipcMain.on('install-uniform-zip', (event, arg) => {
 				capBase.write(result.filePaths[0]+"//ballcaps//caps_"+arg.name+".png")
 				pantsBase.write(result.filePaths[0]+"//pants//pants_"+arg.name+".png")
 				fontBase.write(result.filePaths[0]+"//jersey_fonts//"+arg.name+".png")
-				// pending sock path?
-				//socksLeft.write(result.filePaths[0]+"//socks_"+arg.name+"_left.png")
-				//socksRight.write(result.filePaths[0]+"//socks_"+arg.name+"_right.png")
+				socks.write(result.filePaths[0]+"//socks//socks_"+arg.name+".png")
 				event.sender.send('save-uniform-zip-response', arg)
 			} else {
 				event.sender.send('save-uniform-zip-response', arg)
