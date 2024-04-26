@@ -13956,7 +13956,7 @@
 	})
 
 	ipcRenderer.on('save-socks-response', (event, response) => {
-		sockCanvas.setDimensions({ width: sockCanvas.getWidth() * 0.75, height: sockCanvas.getHeight() * 0.75 });
+		sockCanvas.setDimensions({ width: 768, height: 768 });
 		sockCanvas.setZoom(scaleRatio)
 
 		if($("#toggleSockGuides").is(":checked")){
