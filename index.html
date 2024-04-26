@@ -80,7 +80,7 @@
 		const validImageTypes = ["png","jpg","jpeg","bmp","gif","tiff"]
 		const validFontTypes = ["ttf", "otf"]
 
-		const initialSockColors = {sockColor:"#c85959",stirrupFill:"#ffffff",stLouis1:"#ffffff",stLouis2:"#0C2340",northwestern1:"#ffffff",northwestern2:"#4E2A84",boston1:"#0C2340",boston2:"#FFFFFF",greenBay1:"#FFFFFF",greenBay2:"#FFB612",double1_2:"#0C2340",double1_1:"#ffffff",double2_2:"#ffffff",double2_1:"#0C2340",triple1_1:"#FFFFFF",triple1_2:"#FFFFFF",triple1_3:"#FFFFFF",triple2_1:"#FFFFFF",triple2_2:"#0000FF",quadruple_1:"#00FF00",quadruple_2:"#00FF00",quadruple_3:"#00FF00",quadruple_4:"#00FF00",argyle_1:"#00FFFF",argyle_2:"#FFFF00",argyle_3:"#FFFFFF",vertical:"#FFFFFF"}
+		const initialSockColors = {sockColor:"#c85959",stirrupFill:"#ffffff",stLouis1:"#ffffff",stLouis2:"#0C2340",northwestern1:"#ffffff",northwestern2:"#4E2A84",boston1:"#0C2340",boston2:"#FFFFFF",greenBay1:"#FFFFFF",greenBay2:"#FFB612",double1_2:"#0C2340",double1_1:"#ffffff",double2_2:"#ffffff",double2_1:"#0C2340",triple1_1:"#FFFFFF",triple1_2:"#FFFFFF",triple1_3:"#FFFFFF",triple2_1:"#FFFFFF",triple2_2:"#0000FF",quadruple_1:"#00FF00",quadruple_2:"#00FF00",quadruple_3:"#00FF00",quadruple_4:"#00FF00",argyle_1:"#00FFFF",argyle_2:"#FFFF00",argyle_3:"#FFFFFF",vertical:"#FFFFFF",fakeStirrup:"#0C2340"}
 		
 		var capMakersMarkColor = initialCapColors['capMakersMarkColor']
 		var jerseyMakersMarkColor = initialJerseyColors['jerseyMakersMarkColor']
@@ -1914,6 +1914,7 @@
 														<option value="boston">Boston</option>
 														<option value="double1">Double Stripe 1</option>
 														<option value="double2">Double Stripe 2</option>
+														<option value="fakeStirrup">Fake Stirrup</option>
 														<option value="greenBay">Green Bay</option>
 														<option value="northwestern">Northwestern</option>
 														<option value="quadruple">Quadruple Stripe</option>
@@ -1970,6 +1971,9 @@
 													</span>
 													<span class="sockStripeSelectSpan" id="verticalSelectors" style="display:none">
 														<input class="sockSelector selector" type="text" id="vertical" data-element="vertical">
+													</span>
+													<span class="sockStripeSelectSpan" id="fakeStirrupSelectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="fakeStirrup" data-element="fakeStirrup">
 													</span>
 												</td>
 											</tr>
@@ -8834,6 +8838,9 @@
 				case "vertical":
 					sockCanvas.getObjects().find(o => o.id === 'vertical').visible = true;
 					break;
+				case "fakeStirrup":
+					sockCanvas.getObjects().find(o => o.id === 'fakeStirrup').visible = true;
+					break;
 			}
 		}
 		sockCanvas.renderAll()
@@ -8879,6 +8886,9 @@
 				break;
 			case "vertical":
 				$("#verticalSelectors").show()
+				break;
+			case "fakeStirrup":
+				$("#fakeStirrupSelectors").show()
 				break;
 		}
 		showSockStripes()
@@ -9234,6 +9244,14 @@
 			pathType: 'stripe'
 		});
 
+		fakeStirrup = new fabric.Path("M 199.52148,-0.09960937 V 257.83594 333.42773 c 12.97582,-7.69777 31.17961,-13.06445 56.72852,-13.06445 0.25722,0.001 0.49513,-8.3e-4 0.75,0 0.25475,-8.3e-4 0.49486,0.001 0.75195,0 90.40866,0 88.89453,67.17969 88.89453,67.17969 v 61.12305 L 385,415.28516 l 38.35352,33.38086 v -61.12305 c 0,0 -1.51412,-67.17969 88.89453,-67.17969 0.25723,0.001 0.49903,-8.3e-4 0.7539,0 0.25474,-8.3e-4 0.4929,0.001 0.75,0 90.40867,0 88.89258,67.17969 88.89258,67.17969 v 61.12305 l 37.35742,-32.51172 37.35352,32.51172 v -61.12305 c 0,0 -1.51607,-67.17969 88.89258,-67.17969 0.25723,0.001 0.49903,-8.3e-4 0.7539,0 0.25474,-8.3e-4 0.4929,0.001 0.75,0 22.57122,0 39.41243,4.18687 51.97852,10.4707 V -0.09960937 Z m 0.002,512.05272937 v 257.9375 h -0.002 v 75.58985 c 12.97581,-7.69776 31.17966,-13.06445 56.72852,-13.06445 0.25722,10e-4 0.49708,-8.3e-4 0.75195,0 0.25475,-8.3e-4 0.49486,10e-4 0.75196,0 90.40866,0 88.89257,67.18164 88.89257,67.18164 v 61.12109 l 38.35547,-33.38086 38.35352,33.38086 v -61.12109 c 0,0 -1.51413,-67.18164 88.89453,-67.18164 0.25722,10e-4 0.49708,-8.3e-4 0.75195,0 0.25475,-8.3e-4 0.49486,10e-4 0.75196,0 90.40866,0 88.89257,67.18164 88.89257,67.18164 v 61.12109 l 37.35547,-32.51172 37.35352,32.51172 v -61.12109 c 0,0 -1.51413,-67.18164 88.89453,-67.18164 0.25722,10e-4 0.49708,-8.3e-4 0.75195,0 0.25474,-8.3e-4 0.49291,10e-4 0.75,0 22.57122,0 39.41243,4.18881 51.97852,10.47265 V 511.95312 Z",{
+			fill: initialSockColors['fakeStirrup'],
+			id: 'fakeStirrup',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe'
+		});
+
 		sockCanvas.add(stLouis1) 
 		sockCanvas.add(stLouis2) 
 		sockCanvas.add(northwestern1) 
@@ -9259,6 +9277,7 @@
 		sockCanvas.add(argyle_2)
 		sockCanvas.add(argyle_3)
 		sockCanvas.add(vertical)
+		sockCanvas.add(fakeStirrup)
 
 		stirrupFillLeft = new fabric.Path("m 256,117 c -52.27632,0 -94.65625,42.37882 -94.65625,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 350.65625,159.37882 308.27635,117 256,117 Z m 257.64062,0 c -52.27629,0 -94.65626,42.37882 -94.65624,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 608.29688,159.37882 565.91702,117 513.64062,117 Z M 768,117 c -52.27635,0 -94.65625,42.37882 -94.65625,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 862.65625,159.37882 820.27635,117 768,117 Z",{
 			fill: initialSockColors['stirrupFill'],
