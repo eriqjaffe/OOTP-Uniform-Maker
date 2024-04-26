@@ -8972,7 +8972,7 @@
 					object.setCoords();
 					var dim = fitInBox(object.get("width"), object.get("height"), 75, 75, false)
 					object.scaleToWidth(dim.width)
-					object.set({"left":830,"top":450,"angle":0,"clipPath":null});
+					object.set({"left":638,"top":147,"angle":0,"clipPath":null});
 					object.setCoords()
 					break;
 				case "right":
@@ -8980,7 +8980,7 @@
 					object.setCoords();
 					var dim = fitInBox(object.get("width"), object.get("height"), 75, 75, false)
 					object.scaleToWidth(dim.width)
-					object.set({"left":194,"top":450,"angle":0,"clipPath":null});
+					object.set({"left":386,"top":659,"angle":0,"clipPath":null});
 					object.setCoords()
 					break;
 				case "reset":
@@ -8996,17 +8996,17 @@
 
 		leftSockClippingPath = new fabric.Rect({
 			top: 0,
-			left: 256,
+			left: 0,
 			height: 512,
-			width: 512,
+			width: 1024,
 			absolutePositioned: true
 		})
 
 		rightSockClippingPath = new fabric.Rect({
 			top: 512,
-			left: 256,
+			left: 0,
 			height: 512,
-			width: 512,
+			width: 1024,
 			absolutePositioned: true
 		})
 
@@ -9170,22 +9170,6 @@
 			pathType: "stripe"
 		});
 
-		stirrupFillLeft = new fabric.Path("m 256,117 c -52.27632,0 -94.65625,42.37882 -94.65625,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 350.65625,159.37882 308.27635,117 256,117 Z m 257.64062,0 c -52.27629,0 -94.65626,42.37882 -94.65624,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 608.29688,159.37882 565.91702,117 513.64062,117 Z M 768,117 c -52.27635,0 -94.65625,42.37882 -94.65625,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 862.65625,159.37882 820.27635,117 768,117 Z",{
-			fill: initialSockColors['stirrupFill'],
-			id: 'stirrupFillLeft',
-			visible: true,
-			selectable: false,
-			clipPath: leftSockClippingPath
-		});
-
-		stirrupFillRight = new fabric.Path("m 256,629 c -52.27632,0 -94.65625,42.37885 -94.65625,94.65625 V 1121 v 20 212.5137 h 189.3125 V 1141 1121 723.65625 C 350.65625,671.37885 308.27635,629 256,629 Z m 257.64062,0 c -52.27627,0 -94.65626,42.37885 -94.65624,94.65625 V 1121 v 20 212.5137 h 189.3125 V 1141 1121 723.65625 C 608.29688,671.37885 565.91702,629 513.64062,629 Z M 768,629 c -52.27635,0 -94.65625,42.37885 -94.65625,94.65625 V 1121 v 20 212.5137 h 189.3125 V 1141 1121 723.65625 C 862.65625,671.37885 820.27635,629 768,629 Z",{
-			fill: initialSockColors['stirrupFill'],
-			id: 'stirrupFillRight',
-			visible: true,
-			selectable: false,
-			clipPath: rightSockClippingPath
-		});
-
 		vertical = new fabric.Path("M 736,0 V 53.707031 970.29297 1024 h 32 V 970.29297 53.707031 0 Z M 672,0 V 53.707031 970.29297 1024 h 32 V 970.29297 53.707031 0 Z M 608,0 V 53.707031 970.29297 1024 h 32 V 970.29297 53.707031 0 Z M 544,0 V 53.707031 970.29297 1024 h 32 V 970.29297 53.707031 0 Z M 480,0 V 53.707031 970.29297 1024 h 32 V 970.29297 53.707031 0 Z M 416,0 V 53.707031 970.29297 1024 h 32 V 970.29297 53.707031 0 Z M 352,0 V 53.707031 970.29297 1024 h 32 V 970.29297 53.707031 0 Z M 288,0 V 53.707031 970.29297 1024 h 32 V 970.29297 53.707031 0 Z M 224,0 V 53.707031 970.29297 1024 h 32 V 970.29297 53.707031 0 Z",{
 			fill: initialSockColors['vertical'],
 			id: 'vertical',
@@ -9193,8 +9177,6 @@
 			selectable: false,
 			pathType: 'stripe'
 		});
-
-  		
 
 		sockCanvas.add(stLouis1) 
 		sockCanvas.add(stLouis2) 
@@ -9218,7 +9200,24 @@
 		sockCanvas.add(argyle_3)
 		sockCanvas.add(vertical)
 
+		stirrupFillLeft = new fabric.Path("m 256,117 c -52.27632,0 -94.65625,42.37882 -94.65625,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 350.65625,159.37882 308.27635,117 256,117 Z m 257.64062,0 c -52.27629,0 -94.65626,42.37882 -94.65624,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 608.29688,159.37882 565.91702,117 513.64062,117 Z M 768,117 c -52.27635,0 -94.65625,42.37882 -94.65625,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 862.65625,159.37882 820.27635,117 768,117 Z",{
+			fill: initialSockColors['stirrupFill'],
+			id: 'stirrupFillLeft',
+			visible: true,
+			selectable: false,
+			clipPath: leftSockClippingPath
+		});
+
+		stirrupFillRight = new fabric.Path("m 256,629 c -52.27632,0 -94.65625,42.37885 -94.65625,94.65625 V 1121 v 20 212.5137 h 189.3125 V 1141 1121 723.65625 C 350.65625,671.37885 308.27635,629 256,629 Z m 257.64062,0 c -52.27627,0 -94.65626,42.37885 -94.65624,94.65625 V 1121 v 20 212.5137 h 189.3125 V 1141 1121 723.65625 C 608.29688,671.37885 565.91702,629 513.64062,629 Z M 768,629 c -52.27635,0 -94.65625,42.37885 -94.65625,94.65625 V 1121 v 20 212.5137 h 189.3125 V 1141 1121 723.65625 C 862.65625,671.37885 820.27635,629 768,629 Z",{
+			fill: initialSockColors['stirrupFill'],
+			id: 'stirrupFillRight',
+			visible: true,
+			selectable: false,
+			clipPath: rightSockClippingPath
+		});
+
 		stirrups = new fabric.Group([stirrupFillLeft, stirrupFillRight])
+		
 		stirrups.set({
 			visible:false,
 			selectable:false,
@@ -9231,6 +9230,7 @@
 			oImg.set({
 				id: 'stirrupShadowLeft',
 				visible: true,
+				selectable: false,
 				top: 0,
 				clipPath: leftSockClippingPath
 			})
@@ -9242,6 +9242,7 @@
 			oImg.set({
 				id: 'stirrupShadowRight',
 				visible: true,
+				selectable: false,
 				top: 0,
 				clipPath: rightSockClippingPath
 			})
