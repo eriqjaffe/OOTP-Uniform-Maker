@@ -13379,149 +13379,96 @@
 			var canvasName = "capLogoCanvas"
 			var fuzz = parseInt($("#capColorFuzz").val());
 			var colorSquare = "#capColorSquare"
+			var color = $("#capColorSquare").val()
 		}
 		if ($(this).data("canvas") == "jerseyLogoCanvas") {
 			var canvas = jerseyLogoCanvas
 			var canvasName = "jerseyLogoCanvas"
 			var fuzz = parseInt($("#jerseyColorFuzz").val());
 			var colorSquare = "#jerseyColorSquare"
+			var color = $("#jerseyColorSquare").val()
 		}
 		if ($(this).data("canvas") == "pantsLogoCanvas") {
 			var canvas = pantsLogoCanvas
 			var canvasName = "pantsLogoCanvas"
 			var fuzz = parseInt($("#pantsColorFuzz").val());
 			var colorSquare = "#pantsColorSquare"
+			var color = $("#pantsColorSquare").val()
 		}
 		if ($(this).data("canvas") == "sockCanvas") {
 			var canvas = sockCanvas
 			var canvasName = "sockCanvas"
 			var fuzz = parseInt($("#sockColorFuzz").val());
 			var colorSquare = "#sockColorSquare"
+			var color = $("#sockColorSquare").val()
 		}
 		var x = $(this).data("x");
 		var y = $(this).data("y");
 		var action = $(this).attr("id");
-		var color = $("#colorSquare").val();
+		var replacementColor = hexToRgb("#000000")
 		if (canvas.getActiveObject()) {
 			var object = canvas.getActiveObject()
+			var pictureName = object.get('name')
 			var idx = canvas.getObjects().indexOf(object)
+			var pLeft = object.get('left')
+			var pTop = object.get('top')
+			var pScaleX = object.get('scaleX')
+			var pScaleY = object.get('scaleY')
+			var pX = x / pScaleX
+			var pY = y / pScaleY
+			var newcolor = null
 			if (object.get('type') == "image") {
 				showOverlay("Processing Image...")
-				var pictureName = object.get('name');
-				var pLeft = object.get('left')
-				var pTop = object.get('top')
-				var pScaleX = object.get('scaleX')
-				var pScaleY = object.get('scaleY')
-				var pX = x / pScaleX
-				var pY = y / pScaleY
-				$(colorSquare).removeClass("colorSquareActive").removeClass("colorSquareSelected");
-				var theImage = object._originalElement.currentSrc;
-				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();	
-				ipcRenderer.send('remove-color-range', {imgdata: theImage, x: pX, y: pY, color: color, action: action, fuzz: fuzz, filename: pictureName, canvas: canvasName, pLeft: pLeft, pTop: pTop, pScaleX: pScaleX, pScaleY: pScaleY, pictureName: pictureName, colorSquare: colorSquare})		
-				return false;
-			}
-		}
-	})
+				const img = new Image();
+				img.onload = function() {
+					const canvas = document.createElement('canvas');
+					const ctx = canvas.getContext('2d');
 
-	ipcRenderer.on('remove-color-range-response', (event, response) => {
-		if (response.status != "success") {
-			ipcRenderer.send('show-alert',response.message)
-			hideOverlay()
-		} else {
-			let canvas = null
-			switch (response.canvas) {
-				case "jerseyLogoCanvas":
-					canvas = jerseyLogoCanvas
-					break;
-				case "capLogoCanvas":
-					canvas = capLogoCanvas
-					break;
-				case "pantsLogoCanvas":
-					canvas = pantsLogoCanvas
-					break;
-				case "sockCanvas":
-					canvas = sockCanvas
-					break;
-			}
-			let data = response.data
-			let x = response.x
-			let y = response.y
-			let pTop = response.pTop
-			let pLeft = response.pLeft
-			let pScaleX = response.pScaleX
-			let pScaleY = response.pScaleY
-			let pictureName = response.pictureName
-			let colorSquare = response.colorSquare
-			let object = canvas.getActiveObject()
-			let idx = canvas.getObjects().indexOf(object)
-			var imgObj = new Image();
-			imgObj.src = data;
-			imgObj.onload = function () {
-				var image = new fabric.Image(imgObj);
-				image.set({
-					originX: 'center',
-					originY: 'center',
-					left: pLeft,
-					top: pTop,
-					scaleX: pScaleX,
-					scaleY: pScaleY,
-					perPixelTargetFind: true,
-					centeredScaling: true,
-					centeredRotation: true,
-					name: pictureName,
-					id: pictureName
-				});
-				
-				image.filters.push(new fabric.Image.filters.Resize({
-					resizeType: 'lanczos', // typo fixed
-					lanczosLobes: 2 // typo fixed
-				}));	
-				
-				image.on('object:modified',function() {
-					imLeft = image.get('left');
-					imTop = image.get('top');
-				});
+					canvas.width = img.width;
+					canvas.height = img.height;
 
-				image.on('selected',function() {
-					switch (activeCanvas.id) {
-						case "jerseyLogoCanvas":
-							var canStr = "jersey"
-							break;
-						case "capLogoCanvas":
-							var canStr = "cap"
-							break;
-						case "pantsLogoCanvas":
-							var canStr = "pants"
-							break;
-						case "sockCanvas":
-							var canStr = "sock"
-							break;
-					} 
-					$("#"+canStr+"FileName").html(image.get('id'));
-					if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-						$("#"+canStr+"TrimImageDiv").css("display","block");
-						$("#"+canStr+"UploadImageDiv").css("display","none");
-						$("#"+canStr+"SelectedImageDiv").css("display","block");
+					ctx.drawImage(img, 0, 0);
+
+					const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+					const pixels = imageData.data;
+					const startIndex = (y * canvas.width + x) * 4;
+					const baseColor = {
+						r: pixels[startIndex],
+						g: pixels[startIndex + 1],
+						b: pixels[startIndex + 2],
+						a: pixels[startIndex + 3] // Get alpha channel value
+					};
+
+					const stack = [{ x: x, y: y }];
+
+					while (stack.length) {
+						const { x, y } = stack.pop();
+						const index = (y * canvas.width + x) * 4;
+
+						if (
+							x >= 0 && x < canvas.width &&
+							y >= 0 && y < canvas.height &&
+							isColorMatchAlpha(pixels, index, baseColor, replacementColor, fuzz)
+						) {
+							pixels[index] = replacementColor.r;
+							pixels[index + 1] = replacementColor.g;
+							pixels[index + 2] = replacementColor.b;
+							pixels[index + 3] = replacementColor.a; // Set alpha channel value
+
+							stack.push({ x: x + 1, y: y });
+							stack.push({ x: x - 1, y: y });
+							stack.push({ x: x, y: y + 1 });
+							stack.push({ x: x, y: y - 1 });
+						}
 					}
-					$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-					$(".copypaste").each(function() {
-						$(this).css("display","inline-block")
-					})
-				})
-				
-				canvas.remove(object);
-				canvas.add(image);
-				image.moveTo(idx);
-				canvas.renderAll();
-				imLeft = image.get('left');
-				imTop = image.get('top');
-				$(colorSquare).val("Select Color");
-				$(colorSquare).css("background","#FFFFFF");
-				$(colorSquare).css("color","#000000");
-				hideOverlay()
-			}
 
-			
+					ctx.putImageData(imageData, 0, 0);
+
+					document.body.appendChild(canvas);
+					ipcRenderer.send('replace-color', [canvas.toDataURL(), pLeft, pTop, pScaleX, pScaleY, action, color, newcolor, fuzz, pictureName, canvasName, x, y, colorSquare, null ])
+				};
+				img.src = object._originalElement.currentSrc;
+			}
 		}
 	})
 	
@@ -13550,7 +13497,9 @@
 		var x = $(this).data("x");
 		var y = $(this).data("y");
 		var action = $(this).attr("id");
-		
+		var replacementColor = hexToRgb("#000000")
+		color = hexToRgb(color)
+
 		if (canvas.getActiveObject()) {
 			var object = canvas.getActiveObject()
 			var idx = canvas.getObjects().indexOf(object)
@@ -13564,104 +13513,39 @@
 				var pX = x / pScaleX
 				var pY = y / pScaleY
 				$(colorSquare).removeClass("colorSquareActive").removeClass("colorSquareSelected");
-				var theImage = object._originalElement.currentSrc;
-				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
-				ipcRenderer.send('remove-all-color', {imgdata: theImage, x: pX, y: pY, color: color, action: action, fuzz: fuzz, filename: pictureName, canvas: canvasName, pLeft: pLeft, pTop: pTop, pScaleX: pScaleX, pScaleY: pScaleY, pictureName: pictureName, colorSquare: colorSquare, color: color})			
-				return false;
-			}
-		}
-	})
-
-	ipcRenderer.on('remove-all-color-response', (event, response) => {
-		if (response.status != "success") {
-			ipcRenderer.send('show-alert',response.message)
-			hideOverlay()
-		} else {
-			let canvas = null
-			switch (response.canvas) {
-				case "jerseyLogoCanvas":
-					canvas = jerseyLogoCanvas
-					break;
-				case "capLogoCanvas":
-					canvas = capLogoCanvas
-					break;
-				case "pantsLogoCanvas":
-					canvas = pantsLogoCanvas
-					break;
-			}
-			let data = response.data
-			let x = response.x
-			let y = response.y
-			let pTop = response.pTop
-			let pLeft = response.pLeft
-			let pScaleX = response.pScaleX
-			let pScaleY = response.pScaleY
-			let pictureName = response.pictureName
-			let colorSquare = response.colorSquare
-			let object = canvas.getActiveObject()
-			let idx = canvas.getObjects().indexOf(object)
-			var imgObj = new Image();
-			imgObj.src = data;
-			imgObj.onload = function () {
-				var image = new fabric.Image(imgObj);
-				image.set({
-					originX: 'center',
-					originY: 'center',
-					left: pLeft,
-					top: pTop,
-					scaleX: pScaleX,
-					scaleY: pScaleY,
-					perPixelTargetFind: true,
-					centeredScaling: true,
-					centeredRotation: true,
-					name: pictureName,
-					id: pictureName
-				});
+				const img = new Image();
 				
-				image.filters.push(new fabric.Image.filters.Resize({
-					resizeType: 'lanczos', // typo fixed
-					lanczosLobes: 2 // typo fixed
-				}));	
-				
-				image.on('object:modified',function() {
-					imLeft = image.get('left');
-					imTop = image.get('top');
-				});
+				img.onload = function() {
+					const canvas = document.createElement('canvas');
+					const ctx = canvas.getContext('2d');
 
-				image.on('selected',function() {
-					switch (activeCanvas.id) {
-						case "jerseyLogoCanvas":
-							var canStr = "jersey"
-							break;
-						case "capLogoCanvas":
-							var canStr = "cap"
-							break;
-						case "pantsLogoCanvas":
-							var canStr = "pants"
-							break;
-					} 
-					$("#"+canStr+"FileName").html(image.get('id'));
-					if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-						$("#"+canStr+"TrimImageDiv").css("display","block");
-						$("#"+canStr+"UploadImageDiv").css("display","none");
-						$("#"+canStr+"SelectedImageDiv").css("display","block");
+					canvas.width = img.width;
+					canvas.height = img.height;
+
+					ctx.drawImage(img, 0, 0);
+
+					const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+					const pixels = imageData.data;
+
+					for (let i = 0; i < pixels.length; i += 4) {
+						const r = pixels[i];
+						const g = pixels[i + 1];
+						const b = pixels[i + 2];
+						const a = pixels[i + 3];
+
+						if (isColorWithinTolerance({ r, g, b }, color, fuzz)) {
+							pixels[i] = replacementColor.r;
+							pixels[i + 1] = replacementColor.g;
+							pixels[i + 2] = replacementColor.b;
+							pixels[i + 3] = 0; // Set alpha channel to 0 for transparency
+						}
 					}
-					$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-					$(".copypaste").each(function() {
-						$(this).css("display","inline-block")
-					})
-				})
-				
-				canvas.remove(object);
-				canvas.add(image);
-				image.moveTo(idx);
-				canvas.renderAll();
-				imLeft = image.get('left');
-				imTop = image.get('top');
-				$(colorSquare).val("Select Color");
-				$(colorSquare).css("background","#FFFFFF");
-				$(colorSquare).css("color","#000000");
-				hideOverlay()
+
+					ctx.putImageData(imageData, 0, 0);
+
+					ipcRenderer.send('replace-color', [canvas.toDataURL(), pLeft, pTop, pScaleX, pScaleY, action, color, null, fuzz, pictureName, canvasName, x, y, colorSquare, null ])
+				};
+				img.src = object._originalElement.currentSrc;
 			}
 		}
 	})
@@ -13724,6 +13608,7 @@
 			var colorSquare = "#pantsColorSquare"
 			var newColorSquare = "#pantsReplacemenColor"
 		}
+		newcolor = hexToRgb(newcolor)
 		var action = $(this).data("action");
 		var x = $(this).data("x");
 		var y = $(this).data("y");
@@ -13735,8 +13620,6 @@
 				var pictureName = object.get('name');
 				$(colorSquare).removeClass("colorSquareActive").removeClass("colorSquareSelected");
 				
-				var theImage = object._originalElement.currentSrc;
-
 				var pLeft = object.get('left')
 				var pTop = object.get('top')
 				var pScaleX = object.get('scaleX')
@@ -13744,22 +13627,98 @@
 				var pX = x / pScaleX
 				var pY = y / pScaleY
 
-				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
+				const img = new Image()
+				if (action.slice(-17) == "ReplaceColorRange") {	
+					img.onload = function() {
+						const canvas = document.createElement('canvas');
+						const ctx = canvas.getContext('2d');
 
-				floodFill(object._originalElement.currentSrc, x, y, color, hexToRgb(newcolor), fuzz)
+						canvas.width = img.width;
+						canvas.height = img.height;
+
+						ctx.drawImage(img, 0, 0);
+
+						const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+						const pixels = imageData.data;
+						const startIndex = (y * canvas.width + x) * 4;
+						const baseColor = {
+							r: pixels[startIndex],
+							g: pixels[startIndex + 1],
+							b: pixels[startIndex + 2]
+						};
+
+						const stack = [{ x: x, y: y }];
+
+						while (stack.length) {
+							const { x, y } = stack.pop();
+							const index = (y * canvas.width + x) * 4;
+
+							if (
+								x >= 0 && x < canvas.width &&
+								y >= 0 && y < canvas.height &&
+								isColorMatch(pixels, index, baseColor, color, fuzz)
+							) {
+								pixels[index] = newcolor.r;
+								pixels[index + 1] = newcolor.g;
+								pixels[index + 2] = newcolor.b;
+
+								stack.push({ x: x + 1, y: y });
+								stack.push({ x: x - 1, y: y });
+								stack.push({ x: x, y: y + 1 });
+								stack.push({ x: x, y: y - 1 });
+							}
+						}
+
+						ctx.putImageData(imageData, 0, 0);
+
+						ipcRenderer.send('replace-color', [canvas.toDataURL(), pLeft, pTop, pScaleX, pScaleY, action, color, newcolor, fuzz, pictureName, canvasName, x, y, colorSquare, newColorSquare ])
+					};
+					img.src = object._originalElement.currentSrc
+				} else {
+					img.onload = function() {
+						const canvas = document.createElement('canvas');
+						const ctx = canvas.getContext('2d');
+
+						canvas.width = img.width;
+						canvas.height = img.height;
+
+						ctx.drawImage(img, 0, 0);
+
+						const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+						const pixels = imageData.data;
+
+						for (let i = 0; i < pixels.length; i += 4) {
+							const r = pixels[i];
+							const g = pixels[i + 1];
+							const b = pixels[i + 2];
+							const a = pixels[i + 3];
+
+							if (isColorWithinTolerance({ r, g, b }, hexToRgb(color), fuzz)) {
+								pixels[i] = newcolor.r;
+								pixels[i + 1] = newcolor.g;
+								pixels[i + 2] = newcolor.b;
+							}
+						}
+
+						ctx.putImageData(imageData, 0, 0);
+
+						ipcRenderer.send('replace-color', [canvas.toDataURL(), pLeft, pTop, pScaleX, pScaleY, action, color, newcolor, fuzz, pictureName, canvasName, x, y, colorSquare, newColorSquare ])
+						return false;
+					}
+					img.src = object._originalElement.currentSrc;
+				}
+
+				/* floodFill(object._originalElement.currentSrc, x, y, color, hexToRgb(newcolor), fuzz)
 				transparentFlood(object._originalElement.currentSrc, x, y, color, hexToRgb(newcolor), fuzz)
 				floodFillAll(object._originalElement.currentSrc, hexToRgb(color), hexToRgb(newcolor), fuzz, false)
-				floodFillAll(object._originalElement.currentSrc, hexToRgb(color), hexToRgb(newcolor), fuzz, true)
+				floodFillAll(object._originalElement.currentSrc, hexToRgb(color), hexToRgb(newcolor), fuzz, true) */
 				
-				//ipcRenderer.send('replace-color', [theImage, pLeft, pTop, pScaleX, pScaleY, action, color, newcolor, fuzz, pictureName, canvasName, x, y, colorSquare, newColorSquare ])
-			
 				return false;
 			}
 		}	
 	})
 
 	ipcRenderer.on('replace-color-response', (event, response) => {
-		console.log(response)
 		if (response.result != "success") {
 			ipcRenderer.send('show-alert',response.message)
 			return false;
@@ -13785,7 +13744,6 @@
 		let colorSquare = response.colorSquare
 		let newColorSquare = response.newColorSquare
 		let object = canvas.getActiveObject()
-		console.log(object)
 		let idx = canvas.getObjects().indexOf(object)
 		var imgObj = new Image();
 		imgObj.src = data;
@@ -13840,7 +13798,6 @@
 				})
 			})
 			
-			console.log(image)
 			canvas.remove(object);
 			canvas.add(image);
 			image.moveTo(idx);
@@ -16794,143 +16751,6 @@
 				
 		}
 		return zIdx
-	}
-
-	function floodFill(image, x, y, targetColor, replacementColor, tolerance) {
-		const img = new Image()
-		img.src = image
-		img.onload = function() {
-			const canvas = document.createElement('canvas');
-			const ctx = canvas.getContext('2d');
-
-			canvas.width = img.width;
-			canvas.height = img.height;
-
-			ctx.drawImage(img, 0, 0);
-
-			const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-			const pixels = imageData.data;
-			const startIndex = (y * canvas.width + x) * 4;
-			const baseColor = {
-				r: pixels[startIndex],
-				g: pixels[startIndex + 1],
-				b: pixels[startIndex + 2]
-			};
-
-			const stack = [{ x: x, y: y }];
-
-			while (stack.length) {
-				const { x, y } = stack.pop();
-				const index = (y * canvas.width + x) * 4;
-
-				if (
-					x >= 0 && x < canvas.width &&
-					y >= 0 && y < canvas.height &&
-					isColorMatch(pixels, index, baseColor, targetColor, tolerance)
-				) {
-					pixels[index] = replacementColor.r;
-					pixels[index + 1] = replacementColor.g;
-					pixels[index + 2] = replacementColor.b;
-
-					stack.push({ x: x + 1, y: y });
-					stack.push({ x: x - 1, y: y });
-					stack.push({ x: x, y: y + 1 });
-					stack.push({ x: x, y: y - 1 });
-				}
-			}
-
-			ctx.putImageData(imageData, 0, 0);
-
-			document.body.appendChild(canvas);
-		};
-	}
-
-	function transparentFlood(image, x, y, targetColor, replacementColor, tolerance) {
-		const img = new Image();
-		img.src = image;
-		img.onload = function() {
-			const canvas = document.createElement('canvas');
-			const ctx = canvas.getContext('2d');
-
-			canvas.width = img.width;
-			canvas.height = img.height;
-
-			ctx.drawImage(img, 0, 0);
-
-			const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-			const pixels = imageData.data;
-			const startIndex = (y * canvas.width + x) * 4;
-			const baseColor = {
-				r: pixels[startIndex],
-				g: pixels[startIndex + 1],
-				b: pixels[startIndex + 2],
-				a: pixels[startIndex + 3] // Get alpha channel value
-			};
-
-			const stack = [{ x: x, y: y }];
-
-			while (stack.length) {
-				const { x, y } = stack.pop();
-				const index = (y * canvas.width + x) * 4;
-
-				if (
-					x >= 0 && x < canvas.width &&
-					y >= 0 && y < canvas.height &&
-					isColorMatchAlpha(pixels, index, baseColor, targetColor, tolerance)
-				) {
-					pixels[index] = replacementColor.r;
-					pixels[index + 1] = replacementColor.g;
-					pixels[index + 2] = replacementColor.b;
-					pixels[index + 3] = replacementColor.a; // Set alpha channel value
-
-					stack.push({ x: x + 1, y: y });
-					stack.push({ x: x - 1, y: y });
-					stack.push({ x: x, y: y + 1 });
-					stack.push({ x: x, y: y - 1 });
-				}
-			}
-
-			ctx.putImageData(imageData, 0, 0);
-
-			document.body.appendChild(canvas);
-		};
-	}
-
-	function floodFillAll(image, targetColor, replacementColor, tolerance, transparentFill) {
-		const img = new Image();
-		img.src = image;
-		img.onload = function() {
-			const canvas = document.createElement('canvas');
-			const ctx = canvas.getContext('2d');
-
-			canvas.width = img.width;
-			canvas.height = img.height;
-
-			ctx.drawImage(img, 0, 0);
-
-			const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-			const pixels = imageData.data;
-
-			for (let i = 0; i < pixels.length; i += 4) {
-				const r = pixels[i];
-				const g = pixels[i + 1];
-				const b = pixels[i + 2];
-				const a = pixels[i + 3];
-
-				if (isColorWithinTolerance({ r, g, b }, targetColor, tolerance)) {
-					pixels[i] = replacementColor.r;
-					pixels[i + 1] = replacementColor.g;
-					pixels[i + 2] = replacementColor.b;
-					if (transparentFill) {
-						pixels[i + 3] = 0; // Set alpha channel to 0 for transparency
-					}
-				}
-			}
-
-			ctx.putImageData(imageData, 0, 0);
-
-			document.body.appendChild(canvas);
-		};
 	}
 
 	function isColorWithinTolerance(pixelColor, targetColor, tolerance) {

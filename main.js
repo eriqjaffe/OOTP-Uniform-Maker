@@ -578,145 +578,42 @@ ipcMain.on('replace-color', (event, arg) => {
 	let pTop = arg[2]
 	let pScaleX = arg[3]
 	let pScaleY = arg[4]
-	let action = arg[5]
-	let color = arg[6]
-	let newcolor = arg[7]
-	let fuzz = arg[8]
 	let pictureName = arg[9]
 	let canvas = arg[10]
-	let x = arg[11]
-	let y = arg[12]
 	let colorSquare = arg[13]
 	let newColorSquare = arg[14]
-	let json = {}	
-	try {
-		let im = new Magick.Image()
-		let inBlob = new Magick.Blob
-		let outBlob = new Magick.Blob
-		let oldColor = new Magick.Color(color) // or whatever the outgoing color is
-		let fillColor = new Magick.Color(newcolor) // or whatever the replacement color is
-		inBlob.base64(imgdata)
-		im.read(inBlob)
-		im.colorFuzz((fuzz/100)*65535)
-		if (action.slice(-17) == "ReplaceColorRange") {
-			im.floodFillColor(x,y,fillColor)
-		} else {
-			im.fillColor(fillColor)
-			im.opaque(oldColor, fillColor);
+	let json = {}
+	let buffer = Buffer.from(imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+
+	Jimp.read(buffer, (err, image) => {
+		if (err) {
+			json.status = 'error'
+			json.message = err.message
+			console.log(err);
+			event.sender.send('replace-color-response', json)
 		}
-		im.magick("PNG")
-		im.write(outBlob)
-		let b64 = outBlob.base64()
-		json.result = "success"
-		json.data = "data:image/png;base64,"+b64
-		json.pTop = pTop
-		json.pLeft = pLeft
-		json.x = pScaleX
-		json.y = pScaleY
-		json.pictureName = pictureName
-		json.canvas = canvas
-		json.colorSquare = colorSquare
-		json.newColorSquare = newColorSquare
-		json.pScaleX = pScaleX
-		json.pScaleY = pScaleY
-		event.sender.send('replace-color-response', json)
-	} catch (err) {
-		json.status = 'error'
-		json.message = err.message
-		console.log(err);
-		event.sender.send('remove-border-response', json)
-	}
-})
-
-ipcMain.on('remove-color-range', (event, arg) => {
-	let imgdata = arg.imgdata;
-	let x = parseInt(arg.x);
-	let y = parseInt(arg.y);
-	let pTop = arg.pTop
-	let pLeft = arg.pLeft
-	let pScaleX = arg.pScaleX
-	let pScaleY = arg.pScaleY
-	let pictureName = arg.pictureName
-	let colorSquare = arg.colorSquare
-	let fuzz = parseInt(arg.fuzz);
-	let canvas = arg.canvas
-	let json = {}
-	try {
-		let im = new Magick.Image()
-		let inBlob = new Magick.Blob
-		let outBlob = new Magick.Blob
-		let fillColor = new Magick.Color("none") // or whatever the replacement color is
-		inBlob.base64(imgdata)
-		im.read(inBlob)
-		im.colorFuzz((fuzz/100)*65535)
-		im.floodFillColor(x,y,fillColor)
-		im.magick("PNG")
-		im.write(outBlob)
-		let b64 = outBlob.base64()
-		json.status = 'success'
-		json.data = "data:image/png;base64,"+b64
-		json.canvas = canvas
-		json.x = x
-		json.y = y
-		json.pTop = pTop
-		json.pLeft = pLeft
-		json.pScaleX = pScaleX
-		json.pScaleY = pScaleY
-		json.pictureName = pictureName
-		json.colorSquare = colorSquare
-		event.sender.send('remove-color-range-response', json)
-	} catch (err) {
-		json.status = 'error'
-		json.message = err.message
-		console.log(err);
-		event.sender.send('remove-color-range-response', json)
-	}
-})
-
-ipcMain.on('remove-all-color', (event, arg) => {
-	let imgdata = arg.imgdata;
-	let x = parseInt(arg.x);
-	let y = parseInt(arg.y);
-	let pTop = arg.pTop
-	let pLeft = arg.pLeft
-	let pScaleX = arg.pScaleX
-	let pScaleY = arg.pScaleY
-	let pictureName = arg.pictureName
-	let colorSquare = arg.colorSquare
-	let fuzz = parseInt(arg.fuzz);
-	let canvas = arg.canvas
-	let color = arg.color
-	let json = {}
-	try {
-		let im = new Magick.Image()
-		let inBlob = new Magick.Blob
-		let outBlob = new Magick.Blob
-		inBlob.base64(imgdata)
-		im.read(inBlob)
-		im.colorFuzz((fuzz/100)*65535)
-		let oldColor = new Magick.Color(color)
-		im.transparent(oldColor)
-		im.magick("PNG")
-		im.write(outBlob)
-		let b64 = outBlob.base64()
-		json.status = 'success'
-		json.data = "data:image/png;base64,"+b64
-		json.canvas = canvas
-		json.x = x
-		json.y = y
-		json.pTop = pTop
-		json.pLeft = pLeft
-		json.pScaleX = pScaleX
-		json.pScaleY = pScaleY
-		json.pictureName = pictureName
-		json.colorSquare = colorSquare
-		event.sender.send('remove-all-color-response', json)
-	} catch (err) {
-		json.status = 'error'
-		json.message = err.message
-		console.log(err);
-		event.sender.send('remove-all-color-response', json)
-	}
+		image.getBase64(Jimp.AUTO, (err, ret) => {
+			if (err) {
+				json.status = 'error'
+				json.message = err.message
+				console.log(err);
+				event.sender.send('replace-color-response', json)
+			}
+			json.result = "success"
+			json.data = ret
+			json.pTop = pTop
+			json.pLeft = pLeft
+			json.x = pScaleX
+			json.y = pScaleY
+			json.pictureName = pictureName
+			json.canvas = canvas
+			json.colorSquare = colorSquare
+			json.newColorSquare = newColorSquare
+			json.pScaleX = pScaleX
+			json.pScaleY = pScaleY
+			event.sender.send('replace-color-response', json)
+		})
+	})
 })
 
 ipcMain.on('custom-font', (event, arg) => {
@@ -2421,4 +2318,44 @@ function rgbToHex(r, g, b) {
 function componentToHex(c) {
 	var hex = c.toString(16);
 	return hex.length == 1 ? "0" + hex : hex;
+}
+
+function isColorWithinTolerance(pixelColor, targetColor, tolerance) {
+	const dr = Math.abs(pixelColor.r - targetColor.r);
+	const dg = Math.abs(pixelColor.g - targetColor.g);
+	const db = Math.abs(pixelColor.b - targetColor.b);
+
+	return (dr <= tolerance && dg <= tolerance && db <= tolerance);
+}
+
+function isColorMatch(pixels, index, baseColor, targetColor, tolerance) {
+	const dr = Math.abs(baseColor.r - pixels[index]);
+	const dg = Math.abs(baseColor.g - pixels[index + 1]);
+	const db = Math.abs(baseColor.b - pixels[index + 2]);
+
+	return (dr + dg + db) / 3 <= tolerance;
+}
+
+function isColorMatchAlpha(pixels, index, baseColor, targetColor, tolerance) {
+	const dr = Math.abs(baseColor.r - pixels[index]);
+	const dg = Math.abs(baseColor.g - pixels[index + 1]);
+	const db = Math.abs(baseColor.b - pixels[index + 2]);
+	const da = Math.abs(baseColor.a - pixels[index + 3]); // Include alpha channel difference
+
+	return (dr + dg + db + da) / 4 <= tolerance
+}
+
+function hexToRgb(hex) {
+	// Remove '#' if present
+	hex = hex.replace(/^#/, '');
+
+	// Parse hex values
+	const bigint = parseInt(hex, 16);
+
+	// Extract RGB components
+	const r = (bigint >> 16) & 255;
+	const g = (bigint >> 8) & 255;
+	const b = bigint & 255;
+
+	return { r, g, b };
 }
