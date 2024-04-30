@@ -18,7 +18,6 @@ const { createWorker } = require('tesseract.js');
 const replaceColor = require('replace-color');
 const admzip = require('adm-zip');
 const semver = require('semver')
-const { Magick, MagickCore } = require('magickwand.js');
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -777,11 +776,11 @@ ipcMain.on('warp-text', (event, arg) => {
 	let cmdLine;
 	let json = {}
 	try {
-		let im = new Magick.Image()
+/* 		let im = new Magick.Image()
 		let inBlob = new Magick.Blob
 		let outBlob = new Magick.Blob
 		inBlob.base64(imgdata)
-		im.read(inBlob)
+		im.read(inBlob) */
 		switch (deform) {
 			case "arch":
 				arch()
@@ -894,7 +893,6 @@ ipcMain.on('warp-text', (event, arg) => {
 						let image = await Jimp.read(buffer);
 						const tempImage = new Jimp(image.bitmap.width * 2, image.bitmap.height)
 						tempImage.blit(image, 0, 0, 0, 0, image.bitmap.width, image.bitmap.height);
-						tempImage.write("test.png")
 						const newImage = new Jimp(image.bitmap.width, image.bitmap.height);
 
 						// Apply wave effect
@@ -953,7 +951,6 @@ ipcMain.on('warp-text', (event, arg) => {
 						const tempImage = new Jimp(image.bitmap.width * 2, image.bitmap.height)
 						//const xOffset = image.bitmap.width;
         				tempImage.blit(image, image.bitmap.width, 0, 0, 0, image.bitmap.width, image.bitmap.height);
-						tempImage.write("test.png")
 						const newImage = new Jimp(image.bitmap.width, image.bitmap.height);
 
 						// Apply wave effect
