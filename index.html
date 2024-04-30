@@ -12971,9 +12971,77 @@
                 let path = object.get('path')
 				let pictureName = object.get('name');
 				let theImage = object._originalElement.currentSrc;
-                theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
-				ipcRenderer.send('make-transparent', {imgdata: theImage, x: 0, y: 0, fuzz: fuzz, filename: pictureName, canvas: canvasName, pLeft: left, pTop: top, pScaleX: scaleX, scaleY: scaleY, pictureName: pictureName, path: path})		
-				return false;
+				let replacementColor = hexToRgb("#000000")
+				let x = 1
+				let y = 1
+				const img = new Image();
+				img.onload = function() {
+					const tempCanvas = document.createElement('canvas');
+					const tempCtx = tempCanvas.getContext('2d');
+
+					tempCanvas.width = img.width;
+					tempCanvas.height = img.height;
+
+					tempCtx.drawImage(img, 0, 0);
+
+					let color = GetColorPixel(tempCtx,1,1)
+
+					let hexColor = rgb2hex(color[0], color[1], color[2])
+
+					const canvas = document.createElement('canvas');
+					const ctx = canvas.getContext('2d');
+
+					canvas.width = img.width+20;
+					canvas.height = img.height+20;
+
+					ctx.fillStyle = hexColor;
+					ctx.fillRect(0,0, canvas.width,canvas.height);
+
+					ctx.drawImage(img, 10, 10);
+
+					const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+					const pixels = imageData.data;
+					const startIndex = (y * canvas.width + x) * 4;
+					const baseColor = {
+						r: pixels[startIndex],
+						g: pixels[startIndex + 1],
+						b: pixels[startIndex + 2],
+						a: pixels[startIndex + 3] // Get alpha channel value
+					};
+
+					console.log(baseColor)
+
+					const stack = [{ x: x, y: y }];
+
+					console.log(stack)
+
+					while (stack.length) {
+						const { x, y } = stack.pop();
+						const index = (y * canvas.width + x) * 4;
+
+						if (
+							x >= 0 && x < canvas.width &&
+							y >= 0 && y < canvas.height &&
+							isColorMatchAlpha(pixels, index, baseColor, replacementColor, fuzz)
+						) {
+							pixels[index] = replacementColor.r;
+							pixels[index + 1] = replacementColor.g;
+							pixels[index + 2] = replacementColor.b;
+							pixels[index + 3] = replacementColor.a; // Set alpha channel value
+
+							stack.push({ x: x + 1, y: y });
+							stack.push({ x: x - 1, y: y });
+							stack.push({ x: x, y: y + 1 });
+							stack.push({ x: x, y: y - 1 });
+						}
+					}
+
+					ctx.putImageData(imageData, 0, 0);
+
+					ipcRenderer.send('make-transparent', {imgdata: canvas.toDataURL(), x: 0, y: 0, filename: pictureName, canvas: canvasName, pLeft: left, pTop: top, pScaleX: scaleX, scaleY: scaleY, pictureName: pictureName, path: path})
+				};
+				img.src = object._originalElement.currentSrc;
+                return false;
 			}
 		}
 	})
@@ -13464,7 +13532,7 @@
 
 					ctx.putImageData(imageData, 0, 0);
 
-					document.body.appendChild(canvas);
+					//document.body.appendChild(canvas);
 					ipcRenderer.send('replace-color', [canvas.toDataURL(), pLeft, pTop, pScaleX, pScaleY, action, color, newcolor, fuzz, pictureName, canvasName, x, y, colorSquare, null ])
 				};
 				img.src = object._originalElement.currentSrc;
@@ -16791,6 +16859,12 @@
 		const b = bigint & 255;
 
 		return { r, g, b };
+	}
+
+	function GetColorPixel(context, x, y) {
+  		const imageData = context.getImageData(x, y, 1, 1).data;
+  		const rgbColor = [imageData[0], imageData[1], imageData[2]];
+		return rgbColor;
 	}
 </script>
 </html>

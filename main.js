@@ -492,49 +492,45 @@ ipcMain.on('make-transparent', (event, arg) => {
 	let imgdata = arg.imgdata
 	let x = parseInt(arg.x);
 	let y = parseInt(arg.y);
-	let pTop = arg.pTop
-	let pLeft = arg.pLeft
-	let pScaleX = arg.pScaleX
-	let pScaleY = arg.pScaleY
+	let top = arg.pTop
+	let left = arg.pLeft
+	let scaleX = arg.pScaleX
+	let scaleY = arg.pScaleY
 	let pictureName = arg.pictureName
-	let fuzz = parseInt(arg.fuzz);
 	let canvas = arg.canvas
 	let path = arg.path
 	let json = {}
-	try {
-		let im = new Magick.Image()
-		let inBlob = new Magick.Blob
-		let outBlob = new Magick.Blob
-		let fillColor = new Magick.Color("none")
-		inBlob.base64(imgdata)
-		im.read(inBlob)
-		let px = im.pixelColor(1,1);
-		im.colorFuzz((fuzz/100)*65535)
-		im.borderColor(px)
-		im.border("20x20+0+0")
-		im.floodFillColor(1,1,fillColor)
-		im.trim()
-		im.magick("PNG")
-		im.write(outBlob)
-		let b64 = outBlob.base64()
-		json.status = 'success'
-		json.data = "data:image/png;base64,"+b64
-		json.canvas = canvas
-		json.x = x
-		json.y = y
-		json.pTop = pTop
-		json.pLeft = pLeft
-		json.pScaleX = pScaleX
-		json.pScaleY = pScaleY
-		json.pictureName = pictureName
-		json.path = path
-		event.sender.send('imagemagick-response', json)
-	} catch (err) {
-		json.status = 'error'
-		json.message = err.message
-		console.log(err);
-		event.sender.send('imagemagick-response', json)
-	}
+	let buffer = Buffer.from(imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	Jimp.read(buffer, (err, image) => {
+		if (err) {
+			json.status = 'error'
+			json.message = err.message
+			event.sender.send('add-stroke-response', json)
+		} else {
+			try {
+				image.autocrop()
+				image.getBase64(Jimp.AUTO, (err, ret) => {
+					json.status = 'success'
+					json.data = ret
+					json.canvas = canvas
+					json.x = x
+					json.y = y
+					json.pTop = top
+					json.pLeft = left
+					json.pScaleX = scaleX
+					json.pScaleY = scaleY
+					json.pictureName = pictureName
+					json.path = path
+					event.sender.send('imagemagick-response', json)
+				})
+			} catch (error) {
+				json.status = 'error'
+				json.message = error.message
+				console.log(error);
+				event.sender.send('imagemagick-response', json)
+			}
+		}
+	})
 })
 
 ipcMain.on('remove-border', (event, arg) => {
