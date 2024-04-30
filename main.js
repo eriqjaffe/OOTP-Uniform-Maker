@@ -533,7 +533,7 @@ ipcMain.on('make-transparent', (event, arg) => {
 	})
 })
 
-ipcMain.on('remove-border', (event, arg) => {
+/* ipcMain.on('remove-border', (event, arg) => {
 	//[theImage, 1, 1, "removeBorder", null, null, fuzz, pictureName]
 	let imgdata = arg[0]
 	let fuzz = parseInt(arg[6]);
@@ -566,6 +566,49 @@ ipcMain.on('remove-border', (event, arg) => {
 		console.log(err);
 		event.sender.send('remove-border-response', json)
 	}
+}) */
+
+ipcMain.on('remove-border', (event, arg) => {
+	//[theImage, 1, 1, "removeBorder", null, null, fuzz, pictureName]
+	let imgdata = arg.imgdata
+	let pictureName = arg.name
+	let filePath = arg.filePath
+	let canvas = arg.canvas
+	let top = arg.top
+	let left = arg.left
+	let json = {}
+	let buffer = Buffer.from(imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	
+	Jimp.read(buffer, (err, image) => {
+		if (err) {
+			json.status = 'error'
+			json.message = err.message
+			event.sender.send('add-stroke-response', json)
+		} else {
+			try {
+				image.autocrop()
+				image.getBase64(Jimp.AUTO, (err, ret) => {
+					json.status = 'success'
+					json.data = ret
+					json.canvas = canvas
+					json.x = 0
+					json.y = 0
+					json.pTop = top
+					json.pLeft = left
+					json.pScaleX = 1
+					json.pScaleY = 1
+					json.pictureName = pictureName
+					json.path = filePath
+					event.sender.send('imagemagick-response', json)
+				})
+			} catch (error) {
+				json.status = 'error'
+				json.message = error.message
+				console.log(error);
+				event.sender.send('imagemagick-response', json)
+			}
+		}
+	})
 })
 
 ipcMain.on('replace-color', (event, arg) => {

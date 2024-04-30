@@ -12877,6 +12877,11 @@
             	$("#pantsBorderColorDiv").slideToggle();       	
 			}
 		}
+		if ($(this).data("canvas") == "sockCanvas") {
+			if ($("#sockBorderColorDiv").css("display") == "none") {
+            	$("#sockBorderColorDiv").slideToggle();       	
+			}
+		}
 	})
 
 	$(".strokeSubmit").on("click", function(e) {
@@ -12897,6 +12902,12 @@
 			var canvasName = "pantsLogoCanvas"
 			var color = $("#pantsStrokeColor").spectrum("get").toHexString();
 			var width = $("#pantsStrokeWidth").val()
+		}
+		if ($(this).data("canvas") == "sockCanvas") {
+			var canvas = sockCanvas
+			var canvasName = "sockCanvas"
+			var color = $("#sockStrokeColor").spectrum("get").toHexString();
+			var width = $("#sockStrokeWidth").val()
 		}
         if (canvas.getActiveObject()) {
 			//showOverlay()
@@ -12958,6 +12969,12 @@
 			var canvasName = "pantsLogoCanvas"
 			var fuzz = parseInt($("#pantsColorFuzz").val());
 			var square = $("#capColorSquare")
+		}
+		if ($(this).data("canvas") == "sockCanvas") {
+			var canvas = sockCanvas
+			var canvasName = "sockCanvas"
+			var fuzz = parseInt($("#sockColorFuzz").val());
+			var square = $("#sockColorSquare")
 		}
         if (canvas.getActiveObject()) {
 			var object = canvas.getActiveObject()
@@ -13062,19 +13079,36 @@
 			var canvasName = "pantsLogoCanvas"
 			var fuzz = parseInt($("#pantsColorFuzz").val());
 		}
+		if ($(this).data("canvas") == "sockCanvas") {
+			var canvas = sockCanvas
+			var canvasName = "sockCanvas"
+			var fuzz = parseInt($("#sockColorFuzz").val());
+		}
 		var action = $(this).data("action");
 		if (canvas.getActiveObject()) {
 			//showOverlay()
 			var object = canvas.getActiveObject()
 			var idx = canvas.getObjects().indexOf(object)
 			if (object.get('type') == "image") {
-				var imLeft = object.get("left");
-				var imTop = object.get("top");
-				var pictureName = object.get('name');
+				let left = object.get("left");
+				let top = object.get("top");
+                let scaleX = object.get('scaleX')
+				let scaleY = object.get('scaleY')
+                let path = object.get('path')
+				let pictureName = object.get('name');
+				let theImage = object._originalElement.currentSrc;
 				$("#colorSquare").removeClass("colorSquareActive").removeClass("colorSquareSelected");
-				var theImage = object._originalElement.currentSrc;	
+				//var theImage = object._originalElement.currentSrc;	
 				theImage = theImage.substr(theImage.indexOf(',') + 1).toString();
-				ipcRenderer.send('remove-border', [theImage, 1, 1, "removeBorder", null, null, fuzz, pictureName, canvasName, imLeft, imTop])
+				ipcRenderer.send('remove-border', {
+					imgdata: theImage,
+					name: pictureName,
+					filePath: path,
+					canvas: canvasName,
+					top: top,
+					left: left
+				})
+				//[theImage, 1, 1, "removeBorder", null, null, fuzz, pictureName, canvasName, imLeft, imTop]
 				return false;
 			}
 		}	
@@ -13560,7 +13594,14 @@
 			var canvasName = "pantsLogoCanvas"
 			var fuzz = parseInt($("#pantsColorFuzz").val());
 			var color = $("#pantsColorSquare").val();
-			var colorSquare = "#jerseyColorSquare"
+			var colorSquare = "#pantsColorSquare"
+		}
+		if ($(this).data("canvas") == "sockCanvas") {
+			var canvas = sockCanvas
+			var canvasName = "sockCanvas"
+			var fuzz = parseInt($("#sockColorFuzz").val());
+			var color = $("#sockColorSquare").val();
+			var colorSquare = "#sockColorSquare"
 		}
 		var x = $(this).data("x");
 		var y = $(this).data("y");
@@ -13646,6 +13687,15 @@
 				$("#pantsReplaceColorDiv").slideToggle();
 			}
 		}
+		if ($(this).data("canvas") == "sockCanvas") {
+			$("#sockReplaceColorSubmit").data("action",$(this).attr("id"))
+			$("#sockReplaceColorSubmit").data("x",$(this).data("x"))
+			$("#sockReplaceColorSubmit").data("y",$(this).data("y"))
+			var color = $("#sockColorSquare").val();
+			if ($("#sockReplaceColorDiv").css("display") == "none") {
+				$("#sockReplaceColorDiv").slideToggle();
+			}
+		}
 	})
 	
 	$(".replaceColorSubmit").on("click",function(e) {
@@ -13675,6 +13725,15 @@
 			var newcolor = $("#pantsReplacementColor").spectrum("get").toHexString();
 			var colorSquare = "#pantsColorSquare"
 			var newColorSquare = "#pantsReplacemenColor"
+		}
+		if ($(this).data("canvas") == "sockLogoCanvas") {
+			var canvas = sockLogoCanvas
+			var canvasName = "sockLogoCanvas"
+			var fuzz = parseInt($("#sockColorFuzz").val());
+			var color = $("#sockColorSquare").val();
+			var newcolor = $("#sockReplacementColor").spectrum("get").toHexString();
+			var colorSquare = "#sockColorSquare"
+			var newColorSquare = "#sockReplacemenColor"
 		}
 		newcolor = hexToRgb(newcolor)
 		var action = $(this).data("action");
