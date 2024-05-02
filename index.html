@@ -1889,7 +1889,7 @@
                                                 <td class="checkCell"><input type="checkbox" id="stirrupToggle"></td>
                                                 <td>
 													<label>Sanitary Sock: </label>
-													<input type="range" class="range" id="sockHeight" value=0 min="-396" max="200" list="markers" style="width:100%;">
+													<input type="range" class="range" id="sockHeight" value=0 min="-396" max="200" list="markers" style="margin-top:5px; width:100%;">
 													<datalist id="markers">
 														<option value="-330"></option>
 														<option value="-264"></option>
@@ -1925,6 +1925,10 @@
 														<option value="triple2">Triple Stripe 2</option>
 														<option value="vertical">Vertical</option>
 													</select>
+													<input type="range" class="range" id="sockStripeHeight" value="0" min="1" max="512" list="ssHeightMarkers" style="margin-top:5px; width: 100%;">
+													<datalist id="ssHeightMarkers">
+														<option value="80"></option>
+													  </datalist>
 												</td>
 												<td style="text-align:right;">
 													<span class="sockStripeSelectSpan" id="stLouisSelectors" style="display:inline-block">
@@ -8764,7 +8768,6 @@
 		}
 	})
 
-
 	$("#toggleSockGuides").on("click",function() {
 		if($(this).is(':checked')){
 			sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
@@ -8794,11 +8797,31 @@
 		sockCanvas.renderAll()
 	})
 
+	$("#sockStripeHeight").on("input",function() {
+		let group = []
+		let firstObjectTop;
+		let obj = sockCanvas.getObjects().forEach(function(o) {
+			if (o.pathType == "stripe" && o.visible == true) {
+				if (!firstObjectTop) {
+            		firstObjectTop = o.top;
+        		}
+				let obj = {object: o, top: o.top, offset: (o.top - firstObjectTop)}
+				group.push(obj)
+			}
+		})
+		group.forEach(function(obj) {
+			let fObj = obj.object
+			let newTop = parseInt($("#sockStripeHeight").val()) + obj.offset
+			fObj.set('top', newTop)
+		})
+		sockCanvas.renderAll()
+	})
+
 	function showSockStripes() {
 		const obj = sockCanvas.getObjects().forEach(function(o) {
 			if (o.pathType == "stripe") { 
 				o.visible = false;
-			 }
+			}
 		})
 		const g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
 		if ($("#sockStripeCheck").is(":checked")) {
@@ -8806,59 +8829,73 @@
 				case "stLouis":
 					sockCanvas.getObjects().find(o => o.id === 'stLouis1').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'stLouis2').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'stLouis1').top)
 					break;
 				case "northwestern":
 					sockCanvas.getObjects().find(o => o.id === 'northwestern1').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'northwestern2').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'northwestern1').top)
 					break;
 				case "boston":
 					sockCanvas.getObjects().find(o => o.id === 'boston1').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'boston2').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'boston1').top)
 					break;
 				case "greenBay":
 					sockCanvas.getObjects().find(o => o.id === 'greenBay1').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'greenBay2').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'greenBay1').top)
 					break;
 				case "double1":
 					sockCanvas.getObjects().find(o => o.id === 'double1_1').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'double1_2').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'double1_1').top)
 					break;
 				case "double2":
 					sockCanvas.getObjects().find(o => o.id === 'double2_1').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'double2_2').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'double2_1').top)
 					break;
 				case "double3":
 					sockCanvas.getObjects().find(o => o.id === 'double3_1').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'double3_2').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'double3_1').top)
 					break;
 				case "triple1":
 					sockCanvas.getObjects().find(o => o.id === 'triple1_1').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'triple1_2').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'triple1_3').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'triple1_1').top)
 					break;
 				case "triple2":
 					sockCanvas.getObjects().find(o => o.id === 'triple2_1').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'triple2_2').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'triple2_1').top)
 					break;
 				case "quadruple":
 					sockCanvas.getObjects().find(o => o.id === 'quadruple_1').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'quadruple_2').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'quadruple_3').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'quadruple_4').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'quadruple_1').top)
 					break;
 				case "argyle":
 					sockCanvas.getObjects().find(o => o.id === 'argyle_1').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'argyle_2').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'argyle_3').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'argyle_1').top)
 					break;
 				case "vertical":
 					sockCanvas.getObjects().find(o => o.id === 'vertical').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'vertical').top)
 					break;
 				case "horizontal":
 					sockCanvas.getObjects().find(o => o.id === 'horizontal').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'horizontal').top)
 					break;
 				case "fakeStirrup":
 					sockCanvas.getObjects().find(o => o.id === 'fakeStirrup').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'fakeStirrup').top)
 					break;
 			}
 		}
