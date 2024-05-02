@@ -17,8 +17,8 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "electron": "^27.1.0",
-    "electron-builder": "^24.6.4"
+    "electron": "^30.0.2",
+    "electron-builder": "^24.13.3"
   },
   "dependencies": {
     "@alxcube/lens": "^2.0.1",
