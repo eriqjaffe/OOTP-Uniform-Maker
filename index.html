@@ -13582,35 +13582,35 @@
 			var canvas = capLogoCanvas
 			var canvasName = "capLogoCanvas"
 			var fuzz = parseInt($("#capColorFuzz").val());
-			var color = $("#capColorSquare").val();
+			//var color = $("#capColorSquare").val();
 			var colorSquare = "#capColorSquare"
 		}
 		if ($(this).data("canvas") == "jerseyLogoCanvas") {
 			var canvas = jerseyLogoCanvas
 			var canvasName = "jerseyLogoCanvas"
 			var fuzz = parseInt($("#jerseyColorFuzz").val());
-			var color = $("#jerseyColorSquare").val();
+			//var color = $("#jerseyColorSquare").val();
 			var colorSquare = "#jerseyColorSquare"
 		}
 		if ($(this).data("canvas") == "pantsLogoCanvas") {
 			var canvas = pantsLogoCanvas
 			var canvasName = "pantsLogoCanvas"
 			var fuzz = parseInt($("#pantsColorFuzz").val());
-			var color = $("#pantsColorSquare").val();
+			//var color = $("#pantsColorSquare").val();
 			var colorSquare = "#pantsColorSquare"
 		}
 		if ($(this).data("canvas") == "sockCanvas") {
 			var canvas = sockCanvas
 			var canvasName = "sockCanvas"
 			var fuzz = parseInt($("#sockColorFuzz").val());
-			var color = $("#sockColorSquare").val();
+			//var color = $("#sockColorSquare").val();
 			var colorSquare = "#sockColorSquare"
 		}
 		var x = $(this).data("x");
 		var y = $(this).data("y");
 		var action = $(this).attr("id");
 		var replacementColor = hexToRgb("#000000")
-		color = hexToRgb(color)
+		//color = hexToRgb(color)
 
 		if (canvas.getActiveObject()) {
 			var object = canvas.getActiveObject()
@@ -13635,6 +13635,12 @@
 					canvas.height = img.height;
 
 					ctx.drawImage(img, 0, 0);
+
+					const pixelData = ctx.getImageData(x, y, 1, 1).data; // Get pixel data at coordinates (x, y)
+					const color = { r: pixelData[0], g: pixelData[1], b: pixelData[2] }; // Extract RGB values from pixel data
+
+					// Now you can use the color variable for further processing
+					console.log("Color at coordinates (x, y):", color);
 
 					const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 					const pixels = imageData.data;
@@ -13746,6 +13752,7 @@
 			var object = canvas.getActiveObject()
 			var idx = canvas.getObjects().indexOf(object)
 			if (object.get('type') == "image") {
+				console.log(x, y)
 				showOverlay("Processing Image...")
 				var pictureName = object.get('name');
 				$(colorSquare).removeClass("colorSquareActive").removeClass("colorSquareSelected");
@@ -13814,6 +13821,13 @@
 
 						ctx.drawImage(img, 0, 0);
 
+						const pixelData = ctx.getImageData(x, y, 1, 1).data; // Get pixel data at coordinates (x, y)
+						const color = { r: pixelData[0], g: pixelData[1], b: pixelData[2] }; // Extract RGB values from pixel data
+
+						// Now you can use the color variable for further processing
+						console.log("Color at coordinates (x, y):", color);
+
+						// Continue with your existing code...
 						const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 						const pixels = imageData.data;
 
@@ -13823,7 +13837,7 @@
 							const b = pixels[i + 2];
 							const a = pixels[i + 3];
 
-							if (isColorWithinTolerance({ r, g, b }, hexToRgb(color), fuzz)) {
+							if (isColorWithinTolerance({ r, g, b }, color, fuzz)) {
 								pixels[i] = newcolor.r;
 								pixels[i + 1] = newcolor.g;
 								pixels[i + 2] = newcolor.b;
@@ -13837,12 +13851,6 @@
 					}
 					img.src = object._originalElement.currentSrc;
 				}
-
-				/* floodFill(object._originalElement.currentSrc, x, y, color, hexToRgb(newcolor), fuzz)
-				transparentFlood(object._originalElement.currentSrc, x, y, color, hexToRgb(newcolor), fuzz)
-				floodFillAll(object._originalElement.currentSrc, hexToRgb(color), hexToRgb(newcolor), fuzz, false)
-				floodFillAll(object._originalElement.currentSrc, hexToRgb(color), hexToRgb(newcolor), fuzz, true) */
-				
 				return false;
 			}
 		}	
