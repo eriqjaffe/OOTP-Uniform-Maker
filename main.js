@@ -768,52 +768,25 @@ ipcMain.on('save-font-position', (event, arg) => {
 
 ipcMain.on('warp-text', (event, arg) => {
 	let buffer = Buffer.from(arg.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	let imgdata = arg.imgdata;
 	let amount = arg.amount;
 	let deform = arg.deform;
-	let width;
-	let height;
-	let cmdLine;
 	let json = {}
 	try {
-/* 		let im = new Magick.Image()
-		let inBlob = new Magick.Blob
-		let outBlob = new Magick.Blob
-		inBlob.base64(imgdata)
-		im.read(inBlob) */
 		switch (deform) {
 			case "arch":
 				arch()
 				async function arch() {
 					try {
-						// Read the image from the base64 string
 						let image = await Jimp.read(buffer);
-				
 						const newImage = new Jimp(image.bitmap.width, image.bitmap.height);
-
-						// Apply wave effect
 						image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
-							// Convert degrees to radians
 							const radians = x / image.bitmap.width * 360 * Math.PI / 180;
-
-							// Calculate the offset for the wave effect
 							const offsetY = (amount * -1) * Math.cos(radians);
-
-							// Calculate the new y position based on the offset
 							const newY = Math.floor(y + offsetY);
-
-							// Ensure the new y position is within bounds
 							const clampedY = Math.max(0, Math.min(image.bitmap.height - 1, newY));
-
-							// Get the color at the original position
 							const color = image.getPixelColor(x, clampedY);
-
-							// Set the color at the new position in the new image
 							newImage.setPixelColor(color, x, y);
 						});
-
-				
-						// Get the resulting image as a base64 string
 						newImage.autocrop()
 						let b64 = await newImage.getBase64Async(Jimp.AUTO)
 						json.status = 'success'
@@ -824,17 +797,6 @@ ipcMain.on('warp-text', (event, arg) => {
 						return null;
 					}
 				}
-				/* im.trim()
-				im.backgroundColor("transparent");
-				im.wave((amount*-1),im.size().width()*2);
-				im.trim();
-				im.page(im.size())
-				im.magick("PNG")
-				im.write(outBlob)
-				var b64 = outBlob.base64()
-				json.status = 'success'
-				json.data = "data:image/png;base64,"+b64
-				event.sender.send('warp-text-response', json) */
 				break;
 			case "arc":
 				arc()
@@ -889,35 +851,18 @@ ipcMain.on('warp-text', (event, arg) => {
 				archUp()
 				async function archUp() {
 					try {
-						// Read the image from the base64 string
 						let image = await Jimp.read(buffer);
 						const tempImage = new Jimp(image.bitmap.width * 2, image.bitmap.height)
 						tempImage.blit(image, 0, 0, 0, 0, image.bitmap.width, image.bitmap.height);
 						const newImage = new Jimp(image.bitmap.width, image.bitmap.height);
-
-						// Apply wave effect
 						tempImage.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
-							// Convert degrees to radians
 							const radians = (x * 180) / image.bitmap.width * Math.PI / 180;
-				
-							// Calculate the offset for the arching effect
 							const offsetY = (amount*-1) * Math.cos(radians);
-				
-							// Calculate the new y position based on the offset
 							const newY = Math.floor(y + offsetY);
-				
-							// Ensure the new y position is within bounds
 							const clampedY = Math.max(0, Math.min(image.bitmap.height - 1, newY));
-				
-							// Get the color at the original position
 							const color = image.getPixelColor(x, clampedY);
-				
-							// Set the color at the new position in the new image
 							newImage.setPixelColor(color, x, y);
 						});
-
-				
-						// Get the resulting image as a base64 string
 						newImage.autocrop()
 						let b64 = await newImage.getBase64Async(Jimp.AUTO)
 						json.status = 'success'
@@ -928,54 +873,23 @@ ipcMain.on('warp-text', (event, arg) => {
 						return null;
 					}
 				}
-				break;
-				/* im.trim()
-				im.backgroundColor("transparent")
-				im.extent(im.size().width()+"x"+im.size().height(), MagickCore.WestGravity)
-				im.wave((amount*-1)*2,im.size().width()*4)
-				im.trim()
-				im.page(im.size())
-				im.magick("PNG")
-				im.write(outBlob)
-				var b64 = outBlob.base64()
-				json.status = 'success'
-				json.data = "data:image/png;base64,"+b64
-				event.sender.send('warp-text-response', json) */
 				break;
 			case "archDown":
 				archDown()
 				async function archDown() {
 					try {
-						// Read the image from the base64 string
 						let image = await Jimp.read(buffer);
 						const tempImage = new Jimp(image.bitmap.width * 2, image.bitmap.height)
-						//const xOffset = image.bitmap.width;
-        				tempImage.blit(image, image.bitmap.width, 0, 0, 0, image.bitmap.width, image.bitmap.height);
+						tempImage.blit(image, image.bitmap.width, 0, 0, 0, image.bitmap.width, image.bitmap.height);
 						const newImage = new Jimp(image.bitmap.width, image.bitmap.height);
-
-						// Apply wave effect
 						tempImage.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
-							// Convert degrees to radians
 							const radians = (x * 180) / image.bitmap.width * Math.PI / 180;
-				
-							// Calculate the offset for the arching effect (arching down)
 							const offsetY = amount * Math.cos(radians);
-				
-							// Calculate the new y position based on the offset
 							const newY = Math.floor(y + offsetY);
-				
-							// Ensure the new y position is within bounds
 							const clampedY = Math.max(0, Math.min(image.bitmap.height - 1, newY));
-				
-							// Get the color at the original position
 							const color = image.getPixelColor(x, clampedY);
-				
-							// Set the color at the new position in the new image
 							newImage.setPixelColor(color, x, y);
 						});
-
-				
-						// Get the resulting image as a base64 string
 						newImage.autocrop()
 						let b64 = await newImage.getBase64Async(Jimp.AUTO)
 						json.status = 'success'
@@ -987,19 +901,6 @@ ipcMain.on('warp-text', (event, arg) => {
 					}
 				}
 				break;
-				/* im.trim()
-				im.backgroundColor("transparent")
-				im.extent((im.size().width()*2)+"x"+im.size().height(), MagickCore.EastGravity)
-				im.wave(-15,im.size().width()*2)
-				im.trim()
-				im.page(im.size())
-				im.magick("PNG")
-				im.write(outBlob)
-				var b64 = outBlob.base64()
-				json.status = 'success'
-				json.data = "data:image/png;base64,"+b64
-				event.sender.send('warp-text-response', json)
-				break;	 */	
 			default:
 				Jimp.read(buffer, (err, image) => {
 					image.getBase64(Jimp.AUTO, (err, ret) => {
