@@ -1,6 +1,7 @@
 <p align="center">
   <!--<img src="https://i.imgur.com/rjXwOIg.gif">-->
-  <img src="https://i.imgur.com/Y9fxqom.gif">
+  <!--<img src="https://i.imgur.com/Y9fxqom.gif">-->
+  <img src="https://imgur.com/LWdCbMB.gif">
 </p>
 
 # OOTP Uniform Maker
