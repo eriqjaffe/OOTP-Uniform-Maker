@@ -16,7 +16,8 @@
 .skltbs-theme-light .skltbs-tab,.skltbs-theme-dark .skltbs-tab{
     display:block;
     padding:3px 10px;
-    width: 118.725px;
+    /* width: 118.725px; */
+    width: 94px;
     color:inherit;
     border:0;
     font-family:inherit;
