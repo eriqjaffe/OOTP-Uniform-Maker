@@ -9,7 +9,7 @@ An Electron-based dekstop app allowing users to make custom uniforms for [Out of
 
 # Pre-requisites
 
-Image processing (for uploaded logos and some of the jersey text effects) *requires* a working installation of [ImageMagick](https://imagemagick.org/script/download.php), version 7 is recommended as it's what I was developing against.  Please note that the app will still run without ImageMagick installed, but some things won't work properly and may cause errors.
+Image processing (for uploaded logos and some of the jersey text effects) *requires* a working installation of [ImageMagick](https://imagemagick.org/script/download.php), version 7 is recommended as it's what I was developing against.  Please note that the app will still run without ImageMagick installed, but some options will not be available if ImageMagick is not detected - specifically, the "magick" binary must be in your system path.
 
 # Installation notes
 

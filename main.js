@@ -4,20 +4,20 @@ const os = require('os');
 const fs = require('fs')
 const url = require('url');
 const Jimp = require('jimp')
+const { distortUnwrap } = require('@alxcube/lens')
+require('@alxcube/lens-jimp');
 const archiver = require('archiver');
-const imagemagickCli = require('imagemagick-cli')
-const font2base64 = require("node-font2base64")
 const Store = require("electron-store")
 const versionCheck = require('github-version-checker');
 const pkg = require('./package.json');
 const chokidar = require('chokidar')
 const { create } = require('xmlbuilder2')
 const increment = require('add-filename-increment');
-const hasbin = require('hasbin');
 const fontname = require('fontname')
 const { createWorker } = require('tesseract.js');
 const replaceColor = require('replace-color');
 const admzip = require('adm-zip');
+const semver = require('semver')
 
 const { log } = console;
 function proxiedLog(...args) {
@@ -30,6 +30,7 @@ console.info = proxiedLog;
 console.log = proxiedLog;
 
 const isMac = process.platform === 'darwin'
+const isWin = process.platform === 'win32'
 const tempDir = os.tmpdir()
 const store = new Store();
 const userFontsFolder = path.join(app.getPath('userData'),"fonts")
@@ -71,28 +72,58 @@ const options = {
 	currentVersion: pkg.version
 };
 
-const imInstalled = hasbin.sync('magick');
-
 ipcMain.on('check-for-update', (event, arg) => {
-	let json = {}
+	console.log(arg.type)
 	versionCheck(options, function (error, update) { // callback function
 		if (error) {
-			json.update = "error"
-			json.silent = arg
+			dialog.showMessageBox(null, {
+				type: 'error',
+				message: 'An error occurred checking for updates:\r\n\r\n'+error.message
+			});	
 		}
 		if (update) { // print some update info if an update is available
-			json.update = true,
-			json.currentVersion = pkg.version,
-			json.name = update.name,
-			json.url = update.url
-			json.silent = arg
+			dialog.showMessageBox(null, {
+				type: 'question',
+				message: "Current version: "+pkg.version+"\r\n\r\nVersion "+update.name+" is now availble.  Click 'OK' to go to the releases page.",
+				buttons: ['OK', 'Cancel'],
+			}).then(result => {
+				if (result.response === 0) {
+					shell.openExternal(update.url)
+				}
+			})	
 		} else {
-			json.update = false,
-			json.currentVersion = pkg.version
-			json.silent = arg
+			if (arg.type == "manual") {
+				dialog.showMessageBox(null, {
+					type: 'info',
+					message: "Current version: "+pkg.version+"\r\n\r\nThere is no update available at this time."
+				});	
+			}
 		}
-		event.sender.send('check-for-update-response', json)
 	});
+})
+ 
+ipcMain.on('show-alert', (event, arg) => {
+	dialog.showMessageBox(null, {
+		type: 'info',
+		message: arg
+	})
+})
+
+ipcMain.on('show-warning', (event, arg) => {
+	dialog.showMessageBox(null, {
+        type: 'warning',
+        title: 'WARNING',
+        message: arg,
+        buttons: [
+            'No, Thanks',
+            'Sure, Go Ahead'
+        ],
+		defaultId: 0,
+    })
+        // Dialog returns a promise so let's handle it correctly
+        .then((result) => {
+			console.log(result)
+        })
 })
 
 ipcMain.on('drop-image', (event, arg) => {
@@ -414,48 +445,131 @@ ipcMain.on('upload-texture', (event, arg) => {
 	  })
 })
 
+ipcMain.on('add-stroke', (event, arg) => {
+	let imgdata = arg.imgdata
+	let canvas = arg.canvas
+	let left = arg.left
+	let top = arg.top
+	let scaleX = arg.scaleX
+	let scaleY = arg.scaleY
+	let path = arg.path
+	let pictureName = arg.pictureName
+	let buffer = Buffer.from(imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	let json = {}
+
+	Jimp.read(buffer, (err, image) => {
+		if (err) {
+			json.status = 'error'
+			json.message = err.message
+			event.sender.send('add-stroke-response', json)
+		} else {
+			try {
+				image.autocrop()
+				image.getBase64(Jimp.AUTO, (err, ret) => {
+					json.status = 'success'
+					json.canvas = canvas
+					json.image = ret
+					json.imgTop = top
+					json.imgLeft = left
+					json.pictureName = pictureName
+					json.path = path
+					json.pScaleX = scaleX
+					json.pScaleY = scaleY
+					event.sender.send('add-stroke-response', json)
+				})
+			} catch (error) {
+				json.status = 'error'
+				json.message = error.message
+				console.log(error);
+				event.sender.send('add-stroke-response', json)
+			}
+		}
+	})
+})
+
+ipcMain.on('make-transparent', (event, arg) => {
+	let imgdata = arg.imgdata
+	let x = parseInt(arg.x);
+	let y = parseInt(arg.y);
+	let top = arg.pTop
+	let left = arg.pLeft
+	let scaleX = arg.pScaleX
+	let scaleY = arg.pScaleY
+	let pictureName = arg.pictureName
+	let canvas = arg.canvas
+	let path = arg.path
+	let json = {}
+	let buffer = Buffer.from(imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	Jimp.read(buffer, (err, image) => {
+		if (err) {
+			json.status = 'error'
+			json.message = err.message
+			event.sender.send('add-stroke-response', json)
+		} else {
+			try {
+				image.autocrop()
+				image.getBase64(Jimp.AUTO, (err, ret) => {
+					json.status = 'success'
+					json.data = ret
+					json.canvas = canvas
+					json.x = x
+					json.y = y
+					json.pTop = top
+					json.pLeft = left
+					json.pScaleX = scaleX
+					json.pScaleY = scaleY
+					json.pictureName = pictureName
+					json.path = path
+					event.sender.send('imagemagick-response', json)
+				})
+			} catch (error) {
+				json.status = 'error'
+				json.message = error.message
+				console.log(error);
+				event.sender.send('imagemagick-response', json)
+			}
+		}
+	})
+})
+
 ipcMain.on('remove-border', (event, arg) => {
 	//[theImage, 1, 1, "removeBorder", null, null, fuzz, pictureName]
-	let imgdata = arg[0]
-	let fuzz = parseInt(arg[6]);
-	let pictureName = arg[7]
-	let canvas = arg[8]
-	let imgLeft = arg[9]
-	let imgTop = arg[10]
+	let imgdata = arg.imgdata
+	let pictureName = arg.name
+	let filePath = arg.filePath
+	let canvas = arg.canvas
+	let top = arg.top
+	let left = arg.left
 	let json = {}
 	let buffer = Buffer.from(imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	
 	Jimp.read(buffer, (err, image) => {
 		if (err) {
-			console.log(err);
+			json.status = 'error'
+			json.message = err.message
+			event.sender.send('add-stroke-response', json)
 		} else {
 			try {
-				image.write(tempDir+"/temp.png");
-				imagemagickCli.exec('magick convert -trim -fuzz '+fuzz+'% '+tempDir+'/temp.png '+tempDir+'/temp.png').then(({ stdout, stderr }) => {
-					Jimp.read(tempDir+"/temp.png", (err, image) => {
-						if (err) {
-							json.status = 'error'
-							json.message = err
-							console.log(err);
-							event.sender.send('remove-border-response', json)
-						} else {
-							image.getBase64(Jimp.AUTO, (err, ret) => {
-								json.status = 'success'
-								json.image = ret
-								json.canvas = canvas
-								json.imgTop = imgTop
-								json.imgLeft = imgLeft
-								json.pictureName = pictureName
-								event.sender.send('remove-border-response', json)
-							})
-						}
-					})
+				image.autocrop()
+				image.getBase64(Jimp.AUTO, (err, ret) => {
+					json.status = 'success'
+					json.data = ret
+					json.canvas = canvas
+					json.x = 0
+					json.y = 0
+					json.pTop = top
+					json.pLeft = left
+					json.pScaleX = 1
+					json.pScaleY = 1
+					json.pictureName = pictureName
+					json.path = filePath
+					event.sender.send('imagemagick-response', json)
 				})
 			} catch (error) {
 				json.status = 'error'
-				json.message = "An error occurred - please make sure ImageMagick is installed"
-				console.log(err);
-				event.sender.send('remove-border-response', json)
+				json.message = error.message
+				console.log(error);
+				event.sender.send('imagemagick-response', json)
 			}
 		}
 	})
@@ -467,185 +581,42 @@ ipcMain.on('replace-color', (event, arg) => {
 	let pTop = arg[2]
 	let pScaleX = arg[3]
 	let pScaleY = arg[4]
-	let action = arg[5]
-	let color = arg[6]
-	let newcolor = arg[7]
-	let fuzz = arg[8]
 	let pictureName = arg[9]
 	let canvas = arg[10]
-	let x = arg[11]
-	let y = arg[12]
 	let colorSquare = arg[13]
 	let newColorSquare = arg[14]
 	let json = {}
-	var buffer = Buffer.from(imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	let buffer = Buffer.from(imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+
 	Jimp.read(buffer, (err, image) => {
 		if (err) {
-			json.result = "error"
-			json.message = err
+			json.status = 'error'
+			json.message = err.message
+			console.log(err);
 			event.sender.send('replace-color-response', json)
-		} else {
-			image.write(tempDir+"/temp.png");
-      if (action.slice(-17) == "ReplaceColorRange") {
-				cmdString = 'magick convert '+tempDir+'/temp.png -fuzz '+fuzz+'% -fill '+newcolor+' -draw "color '+x+','+y+' floodfill" '+tempDir+'/temp.png';		
-			} else {
-				cmdString = 'magick convert '+tempDir+'/temp.png -fuzz '+fuzz+'% -fill '+newcolor+' -opaque '+color+' '+tempDir+'/temp.png';	
-			}
-			try {
-				imagemagickCli.exec(cmdString).then(({ stdout, stderr }) => {
-					Jimp.read(tempDir+"/temp.png", (err, image) => {
-						if (err) {
-							json.result = "error"
-							json.message = err
-							event.sender.send('replace-color-response', json)
-						} else {
-							image.getBase64(Jimp.AUTO, (err, ret) => {
-								json.result = "success"
-								json.data = ret
-								json.pTop = pTop
-								json.pLeft = pLeft
-								json.x = pScaleX
-								json.y = pScaleY
-								json.pictureName = pictureName
-								json.canvas = canvas
-								json.colorSquare = colorSquare
-								json.newColorSquare = newColorSquare
-								json.pScaleX = pScaleX
-								json.pScaleY = pScaleY
-								event.sender.send('replace-color-response', json)
-							})
-						}
-					})
-				})
-			} catch (error) {
+		}
+		image.getBase64(Jimp.AUTO, (err, ret) => {
+			if (err) {
 				json.status = 'error'
-				json.message = "An error occurred - please make sure ImageMagick is installed"
+				json.message = err.message
 				console.log(err);
-				event.sender.send('remove-border-response', json)
+				event.sender.send('replace-color-response', json)
 			}
-		}
+			json.result = "success"
+			json.data = ret
+			json.pTop = pTop
+			json.pLeft = pLeft
+			json.x = pScaleX
+			json.y = pScaleY
+			json.pictureName = pictureName
+			json.canvas = canvas
+			json.colorSquare = colorSquare
+			json.newColorSquare = newColorSquare
+			json.pScaleX = pScaleX
+			json.pScaleY = pScaleY
+			event.sender.send('replace-color-response', json)
+		})
 	})
-})
-
-ipcMain.on('remove-color-range', (event, arg) => {
-	let buffer = Buffer.from(arg.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	let x = parseInt(arg.x);
-	let y = parseInt(arg.y);
-	let pTop = arg.pTop
-	let pLeft = arg.pLeft
-	let pScaleX = arg.pScaleX
-	let pScaleY = arg.pScaleY
-	let pictureName = arg.pictureName
-	let colorSquare = arg.colorSquare
-	let fuzz = parseInt(arg.fuzz);
-	let canvas = arg.canvas
-	let json = {}
-	Jimp.read(buffer, (err, image) => {
-		if (err) {
-			json.status = 'error'
-			json.message = "An error occurred - please make sure ImageMagick is installed"
-			console.log(err);
-			event.sender.send('remove-color-range-response', json)
-		} else {
-			image.write(tempDir+"/temp.png", (err) => {
-				try {
-					imagemagickCli.exec('magick convert '+tempDir+'/temp.png -fuzz '+fuzz+'% -fill none -draw "color '+x+','+y+' floodfill" '+tempDir+'/temp.png')
-					.then(({ stdout, stderr }) => {
-						Jimp.read(tempDir+"/temp.png", (err, image) => {
-							if (err) {
-								json.status = 'error'
-								json.message = "An error occurred - please make sure ImageMagick is installed"
-								console.log(err);
-								event.sender.send('remove-color-range-response', json)
-							} else {
-								image.getBase64(Jimp.AUTO, (err, ret) => {
-									json.status = 'success'
-									json.data = ret
-									json.canvas = canvas
-									json.x = x
-									json.y = y
-									json.pTop = pTop
-									json.pLeft = pLeft
-									json.pScaleX = pScaleX
-									json.pScaleY = pScaleY
-									json.pictureName = pictureName
-									json.colorSquare = colorSquare
-									event.sender.send('remove-color-range-response', json)
-								})
-							}
-						})
-					})
-				} catch (error) {
-					json.status = 'error'
-					json.message = "An error occurred - please make sure ImageMagick is installed"
-					console.log(err);
-					event.sender.send('remove-color-range-response', json)
-				}
-				
-			})
-		}
- 	})
-})
-
-ipcMain.on('remove-all-color', (event, arg) => {
-	let buffer = Buffer.from(arg.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	let x = parseInt(arg.x);
-	let y = parseInt(arg.y);
-	let pTop = arg.pTop
-	let pLeft = arg.pLeft
-	let pScaleX = arg.pScaleX
-	let pScaleY = arg.pScaleY
-	let pictureName = arg.pictureName
-	let colorSquare = arg.colorSquare
-	let fuzz = parseInt(arg.fuzz);
-	let canvas = arg.canvas
-	let color = arg.color
-	let json = {}
-	Jimp.read(buffer, (err, image) => {
-		if (err) {
-			json.status = 'error'
-			json.message = err
-			console.log(err);
-			event.sender.send('remove-all-color-response', json)
-		} else {
-			image.write(tempDir+"/temp.png", (err) => {
-				try {
-					imagemagickCli.exec('magick convert '+tempDir+'/temp.png -fuzz '+fuzz+'% -transparent '+color+' '+tempDir+'/temp.png')
-					.then(({ stdout, stderr }) => {
-						Jimp.read(tempDir+"/temp.png", (err, image) => {
-							if (err) {
-								json.status = 'error'
-								json.message = err
-								console.log(err);
-								event.sender.send('remove-all-color-response', json)
-							} else {
-								image.getBase64(Jimp.AUTO, (err, ret) => {
-									json.status = 'success'
-									json.data = ret
-									json.canvas = canvas
-									json.x = x
-									json.y = y
-									json.pTop = pTop
-									json.pLeft = pLeft
-									json.pScaleX = pScaleX
-									json.pScaleY = pScaleY
-									json.pictureName = pictureName
-									json.colorSquare = colorSquare
-									event.sender.send('remove-all-color-response', json)
-								})
-							}
-						})
-					})
-				} catch (error) {
-					json.status = 'error'
-					json.message = "An error occurred - please make sure ImageMagick is installed"
-					console.log(err);
-					event.sender.send('remove-all-color-response', json)
-				}
-				
-			})
-		}
- 	})
 })
 
 ipcMain.on('custom-font', (event, arg) => {
@@ -799,124 +770,153 @@ ipcMain.on('warp-text', (event, arg) => {
 	let buffer = Buffer.from(arg.imgdata.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	let amount = arg.amount;
 	let deform = arg.deform;
-	let width;
-	let height;
-	let cmdLine;
 	let json = {}
-	Jimp.read(buffer, (err, image) => {
-		if (err) {
-			json.status = 'error'
-			json.message = err
-			console.log(err);
-			event.sender.send('warp-text-response', json)
-		} else {
-			image.autocrop();
-			image.write(tempDir+"/temp.png");
-			width = image.bitmap.width;
-			height = image.bitmap.height;
-			switch (deform) {
-				case "arch":
-					cmdLine = 'magick convert -background transparent -wave -'+amount+'x'+width*2+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png'
-					break;
-				case "arc":
-					cmdLine = 'magick convert '+tempDir+'/temp.png -virtual-pixel Background -background transparent -distort Arc '+amount+' -trim +repage '+tempDir+'/'+deform+'.png'
-					break;
-				case "bilinearUp":
-					var y2=height*((100-amount)*0.01)
-					cmdLine = 'magick convert '+tempDir+'/temp.png -virtual-pixel transparent -interpolate Spline -distort BilinearForward "0,0 0,0 0,'+height+' 0,'+height+' '+width+',0 '+width+',0 '+width+','+height+' '+width+','+y2+'" '+tempDir+'/'+deform+'.png'
-					break;
-				case "bilinearDown":
-					var y2=height*((100-amount)*0.01)
-					cmdLine = 'magick convert '+tempDir+'/temp.png -virtual-pixel transparent -interpolate Spline -distort BilinearForward "0,0 0,0 0,'+height+' 0,'+y2+' '+width+',0 '+width+',0 '+width+','+height+' '+width+','+height+'" '+tempDir+'/'+deform+'.png'
-					break;
-				case "archUp":
+	try {
+		switch (deform) {
+			case "arch":
+				arch()
+				async function arch() {
 					try {
-						imagemagickCli.exec('magick convert '+tempDir+'/temp.png -gravity west -background transparent -extent '+width*2+'x'+height+' '+tempDir+'/temp.png').then(({stdout, stderr }) => {
-							imagemagickCli.exec('magick convert -background transparent -wave -'+amount*2+'x'+width*4+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png').then(({ stdout, stderr }) => {
-								Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
-									if (err) {
-										json.status = 'error'
-										json.message = err
-										console.log(err);
-										event.sender.send('warp-text-response', json)
-									} else {
-										image.getBase64(Jimp.AUTO, (err, ret) => {
-											json.status = 'success'
-											json.data = ret
-											event.sender.send('warp-text-response', json)
-											//res.end(ret);
-										})
-									}
-								})
-							})
-						})
-					} catch (err) {
-						json.status = 'error'
-						json.message = err
-						console.log(err);
+						let image = await Jimp.read(buffer);
+						const newImage = new Jimp(image.bitmap.width, image.bitmap.height);
+						image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
+							const radians = x / image.bitmap.width * 360 * Math.PI / 180;
+							const offsetY = (amount * -1) * Math.cos(radians);
+							const newY = Math.floor(y + offsetY);
+							const clampedY = Math.max(0, Math.min(image.bitmap.height - 1, newY));
+							const color = image.getPixelColor(x, clampedY);
+							newImage.setPixelColor(color, x, y);
+						});
+						newImage.autocrop()
+						let b64 = await newImage.getBase64Async(Jimp.AUTO)
+						json.status = 'success'
+						json.data = b64
 						event.sender.send('warp-text-response', json)
+					} catch (error) {
+						console.error('Error applying wave effect:', error);
+						return null;
 					}
-					break;
-				case "archDown":
+				}
+				break;
+			case "arc":
+				arc()
+				async function arc() {
+					let image = await Jimp.read(buffer)
+					image.autocrop()
+					let result = await distortUnwrap(image, "Arc", [parseInt(amount)])
+					let tempImg = await new Jimp(result.bitmap.width*4, result.bitmap.height*4)
+					await tempImg.blit(result, 5, 5)
+					await tempImg.autocrop()
+					let b64 = await tempImg.getBase64Async(Jimp.AUTO)
+					json.status = 'success'
+					json.data = b64
+					event.sender.send('warp-text-response', json)
+				}
+				break;
+			case "bilinearUp":
+				bilinearUp()
+				async function bilinearUp() {
+					let image = await Jimp.read(buffer)
+					await image.autocrop()
+					const y2=image.bitmap.height*((100-amount)*0.01)
+					const controlPoints = [1.5,0,0,0,0,0,image.bitmap.height,0,image.bitmap.height,image.bitmap.width,0,image.bitmap.width,0,image.bitmap.width,image.bitmap.height,image.bitmap.width,y2]
+					const result = await distortUnwrap(image, "Polynomial", controlPoints)
+					const tempImg = await new Jimp(result.bitmap.width*4, result.bitmap.height*4)
+					await tempImg.blit(result, 5, 5)
+					await tempImg.autocrop()
+					let b64 = await tempImg.getBase64Async(Jimp.AUTO)
+					json.status = 'success'
+					json.data = b64
+					event.sender.send('warp-text-response', json)
+				}
+				break;
+			case "bilinearDown":
+				bilinearDown()
+				async function bilinearDown() {
+					let image = await Jimp.read(buffer)
+					await image.autocrop()
+					const y2=image.bitmap.height*((100-amount)*0.01)
+					const controlPoints = [1.5,0,0,0,0,0,image.bitmap.height,0,y2,image.bitmap.width,0,image.bitmap.width,0,image.bitmap.width,image.bitmap.height,image.bitmap.width,image.bitmap.height]
+					const result = await distortUnwrap(image, "Polynomial", controlPoints)
+					const tempImg = await new Jimp(result.bitmap.width*4, result.bitmap.height*4)
+					await tempImg.blit(result, 5, 5)
+					await tempImg.autocrop()
+					let b64 = await tempImg.getBase64Async(Jimp.AUTO)
+					json.status = 'success'
+					json.data = b64
+					event.sender.send('warp-text-response', json)
+				}
+				break;
+			case "archUp":
+				archUp()
+				async function archUp() {
 					try {
-						imagemagickCli.exec('magick convert '+tempDir+'/temp.png -gravity east -background transparent -extent '+width*2+'x'+height+' '+tempDir+'/temp.png').then(({stdout, stderr }) => {
-							imagemagickCli.exec('magick convert -background transparent -wave -'+amount*2+'x'+width*4+' -trim +repage '+tempDir+'/temp.png '+tempDir+'/'+deform+'.png').then(({ stdout, stderr }) => {
-								Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
-									if (err) {
-										json.status = 'error'
-										json.message = err
-										console.log(err);
-										event.sender.send('warp-text-response', json)
-									} else {
-										image.getBase64(Jimp.AUTO, (err, ret) => {
-											json.status = 'success'
-											json.data = ret
-											event.sender.send('warp-text-response', json)
-										})
-									}
-								})
-							})
-						})
-					} catch (err) {
-						json.status = 'error'
-						json.message = err
-						console.log(err);
+						let image = await Jimp.read(buffer);
+						const tempImage = new Jimp(image.bitmap.width * 2, image.bitmap.height)
+						tempImage.blit(image, 0, 0, 0, 0, image.bitmap.width, image.bitmap.height);
+						const newImage = new Jimp(image.bitmap.width, image.bitmap.height);
+						tempImage.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
+							const radians = (x * 180) / image.bitmap.width * Math.PI / 180;
+							const offsetY = (amount*-1) * Math.cos(radians);
+							const newY = Math.floor(y + offsetY);
+							const clampedY = Math.max(0, Math.min(image.bitmap.height - 1, newY));
+							const color = image.getPixelColor(x, clampedY);
+							newImage.setPixelColor(color, x, y);
+						});
+						newImage.autocrop()
+						let b64 = await newImage.getBase64Async(Jimp.AUTO)
+						json.status = 'success'
+						json.data = b64
 						event.sender.send('warp-text-response', json)
+					} catch (error) {
+						console.error('Error applying wave effect:', error);
+						return null;
 					}
-					break;
-				default:
+				}
+				break;
+			case "archDown":
+				archDown()
+				async function archDown() {
+					try {
+						let image = await Jimp.read(buffer);
+						const tempImage = new Jimp(image.bitmap.width * 2, image.bitmap.height)
+						tempImage.blit(image, image.bitmap.width, 0, 0, 0, image.bitmap.width, image.bitmap.height);
+						const newImage = new Jimp(image.bitmap.width, image.bitmap.height);
+						tempImage.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
+							const radians = (x * 180) / image.bitmap.width * Math.PI / 180;
+							const offsetY = amount * Math.cos(radians);
+							const newY = Math.floor(y + offsetY);
+							const clampedY = Math.max(0, Math.min(image.bitmap.height - 1, newY));
+							const color = image.getPixelColor(x, clampedY);
+							newImage.setPixelColor(color, x, y);
+						});
+						newImage.autocrop()
+						let b64 = await newImage.getBase64Async(Jimp.AUTO)
+						json.status = 'success'
+						json.data = b64
+						event.sender.send('warp-text-response', json)
+					} catch (error) {
+						console.error('Error applying wave effect:', error);
+						return null;
+					}
+				}
+				break;
+			default:
+				Jimp.read(buffer, (err, image) => {
 					image.getBase64(Jimp.AUTO, (err, ret) => {
 						json.status = 'success'
 						json.data = ret
 						event.sender.send('warp-text-response', json)
 					})
-					break;
-			}
-			try {
-				imagemagickCli.exec(cmdLine).then(({ stdout, stderr }) => {
-					Jimp.read(tempDir+'/'+deform+'.png', (err, image) => {
-						if (err) {
-							json.status = 'error'
-							json.message = err
-							console.log(err);
-							event.sender.send('warp-text-response', json)
-						} else {
-							image.getBase64(Jimp.AUTO, (err, ret) => {
-								json.status = 'success'
-								json.data = ret
-								event.sender.send('warp-text-response', json)
-							})
-						}
-					})
 				})
-			} catch (err) {
-				json.status = 'error'
-				json.message = err
-				console.log(err);
-				event.sender.send('warp-text-response', json)
-			}
+				break;		
 		}
-	})
+	} catch (err) {
+		json.status = 'error'
+		json.message = err.message
+		console.log(err);
+		event.sender.send('warp-text-response', json)
+	}
 })
 
 ipcMain.on('save-wordmark', (event, arg) => {
@@ -969,78 +969,99 @@ ipcMain.on('save-swatches', (event, arg) => {
 	});
 })
 
+ipcMain.on('confirm-ocr-resize', (event, arg) => {
+	dialog.showMessageBox(null, {
+		type: 'question',
+		message: "Do you want to resize characters to fit?  This may result in some poor quality results.",
+		buttons: ['OK', 'Cancel'],
+	}).then(result => {
+		event.sender.send('ocr-resize-response', {response: result.response, numMax: arg.numMax, numScaleMod: arg.numScaleMod, letMax: arg.letMax, letScaleMod: arg.letScaleMod, data: arg.data})
+	})
+})
+
 ipcMain.on('load-swatches', (event, arg) => {
-	let jsonResponse = {}
-	const options = {
-		defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')),
-		properties: ['openFile'],
-		filters: [
-			{ name: 'Palette Files', extensions: ['pal', 'uni', 'zip'] }
-		]
-	}
-	dialog.showOpenDialog(null, options).then(result => {
-		if(!result.canceled) {
-			store.set("downloadSwatchPath", path.dirname(result.filePaths[0]))
-			switch (getExtension(result.filePaths[0])) {
-				case "pal":
-					jsonResponse.result = "success"
-					jsonResponse.json = JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
-					event.sender.send('load-swatches-response', jsonResponse)
-					break;
-				case "uni":
-					var json = JSON.parse(fs.readFileSync(result.filePaths[0]))
-					console.log(json.swatchSelectors)
-					var palette = {};
-					var commonPalette = []
-					palette.name = json.team.replace(/ /g, "_");
-					palette.swatch1 = json.swatchSelectors.swatch1Color.val
-					palette.swatch2 = json.swatchSelectors.swatch2Color.val
-					palette.swatch3 = json.swatchSelectors.swatch3Color.val
-					palette.swatch4 = json.swatchSelectors.swatch4Color.val
-					commonPalette.push(json.swatchSelectors.swatch1Color.val)
-					commonPalette.push(json.swatchSelectors.swatch2Color.val)
-					commonPalette.push(json.swatchSelectors.swatch3Color.val)
-					commonPalette.push(json.swatchSelectors.swatch4Color.val)
-					palette.commonPalette = commonPalette
-					jsonResponse.result = "success",
-					jsonResponse.json = JSON.stringify(palette)
-					event.sender.send('load-swatches-response', jsonResponse)
-					break;
-				case "zip":
-					var palFile = null;
-					var zip = new admzip(result.filePaths[0]);
-					var zipEntries = zip.getEntries()
-					zipEntries.forEach(function (zipEntry) {
-						if (zipEntry.entryName.slice(-4).toLowerCase() == '.pal') {
-							palFile = zipEntry
-						}
-					});
-					if (palFile != null) {
-						jsonResponse.result = "success"
-						jsonResponse.json = JSON.stringify(JSON.parse(palFile.getData().toString("utf8")))
-						event.sender.send('load-swatches-response', jsonResponse)
-					} else {
-						jsonResponse.result = "error",
-						jsonResponse.message = "No valid palette file was found in "+path.basename(result.filePaths[0])
-						event.sender.send('load-swatches-response', jsonResponse)
-					}
-					break;
-				default:
-					jsonResponse.result = "error"
-					jsonResponse.message = "Invalid file type: "+path.basename(result.filePaths[0])
-					event.sender.send('load-swatches-response', jsonResponse)
+	dialog.showMessageBox(null, {
+		type: 'question',
+		message: "Are you sure?\r\n\r\nThis will overwrite any non-default colors in the color picker palettes.",
+		buttons: ['OK', 'Cancel'],
+	}).then(result => {
+		if (result.response === 0) {
+			let jsonResponse = {}
+			const options = {
+				defaultPath: store.get("downloadSwatchPath", app.getPath('downloads')),
+				properties: ['openFile'],
+				filters: [
+					{ name: 'Palette Files', extensions: ['pal', 'uni', 'zip'] }
+				]
 			}
-			event.sender.send('hide-overlay', null)
+			dialog.showOpenDialog(null, options).then(result => {
+				if(!result.canceled) {
+					store.set("downloadSwatchPath", path.dirname(result.filePaths[0]))
+					switch (getExtension(result.filePaths[0])) {
+						case "pal":
+							jsonResponse.result = "success"
+							jsonResponse.json = JSON.stringify(JSON.parse(fs.readFileSync(result.filePaths[0]).toString()))
+							event.sender.send('load-swatches-response', jsonResponse)
+							break;
+						case "uni":
+							var json = JSON.parse(fs.readFileSync(result.filePaths[0]))
+							console.log(json.swatchSelectors)
+							var palette = {};
+							var commonPalette = []
+							palette.name = json.team.replace(/ /g, "_");
+							palette.swatch1 = json.swatchSelectors.swatch1Color.val
+							palette.swatch2 = json.swatchSelectors.swatch2Color.val
+							palette.swatch3 = json.swatchSelectors.swatch3Color.val
+							palette.swatch4 = json.swatchSelectors.swatch4Color.val
+							commonPalette.push(json.swatchSelectors.swatch1Color.val)
+							commonPalette.push(json.swatchSelectors.swatch2Color.val)
+							commonPalette.push(json.swatchSelectors.swatch3Color.val)
+							commonPalette.push(json.swatchSelectors.swatch4Color.val)
+							palette.commonPalette = commonPalette
+							jsonResponse.result = "success",
+							jsonResponse.json = JSON.stringify(palette)
+							event.sender.send('load-swatches-response', jsonResponse)
+							break;
+						case "zip":
+							var palFile = null;
+							var zip = new admzip(result.filePaths[0]);
+							var zipEntries = zip.getEntries()
+							zipEntries.forEach(function (zipEntry) {
+								if (zipEntry.entryName.slice(-4).toLowerCase() == '.pal') {
+									palFile = zipEntry
+								}
+							});
+							if (palFile != null) {
+								jsonResponse.result = "success"
+								jsonResponse.json = JSON.stringify(JSON.parse(palFile.getData().toString("utf8")))
+								event.sender.send('load-swatches-response', jsonResponse)
+							} else {
+								jsonResponse.result = "error",
+								jsonResponse.message = "No valid palette file was found in "+path.basename(result.filePaths[0])
+								event.sender.send('load-swatches-response', jsonResponse)
+							}
+							break;
+						default:
+							jsonResponse.result = "error"
+							jsonResponse.message = "Invalid file type: "+path.basename(result.filePaths[0])
+							event.sender.send('load-swatches-response', jsonResponse)
+					}
+					event.sender.send('hide-overlay', null)
+				} else {
+					event.sender.send('hide-overlay', null)
+					console.log("cancelled")
+				}
+			}).catch(err => {
+				jsonResponse.result = "error"
+				jsonResponse.message = err
+				console.log(err)
+				event.sender.send('load-swatches-response', jsonResponse)
+			})
 		} else {
 			event.sender.send('hide-overlay', null)
-			console.log("cancelled")
 		}
-	}).catch(err => {
-		jsonResponse.result = "error"
-		jsonResponse.message = err
-		console.log(err)
-		event.sender.send('load-swatches-response', jsonResponse)
-	})
+	})	
+	
 })
 
 ipcMain.on('save-pants', (event, arg) => {
@@ -1092,6 +1113,35 @@ ipcMain.on('save-pants', (event, arg) => {
 		}).catch((err) => {
 			console.log(err);
 			event.sender.send('save-pants-response', null)
+		});
+	}
+})
+
+ipcMain.on('save-socks', (event, arg) => {
+	const buffer = Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+
+    const options = {
+        defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.png',{fs: true})
+	}
+            
+	prepareImages()
+
+	async function prepareImages() {
+		let socks = await Jimp.read(buffer)
+		let socksTexture = await Jimp.read(__dirname+"/images/socks_texture.png")
+		await socks.crop(256,0,512,1024).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+		event.sender.send('save-socks-response', arg)
+ 		dialog.showSaveDialog(null, options).then((result) => {
+			if (!result.canceled) {
+				store.set("downloadPath", path.dirname(result.filePath))
+				socks.write(result.filePath)
+				event.sender.send('save-socks-response', arg)
+			} else {
+				event.sender.send('save-socks-response', arg)
+			}
+		}).catch((err) => {
+			console.log(err);
+			event.sender.send('save-socks-response', arg)
 		});
 	}
 })
@@ -1245,12 +1295,22 @@ ipcMain.on('generate-height-map', (event, arg) => {
 		await jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 		await jerseyHeightMap.write(tempDir+"/temp_height_map.jpg")
 		let base64 = await jerseyHeightMap.getBase64Async(Jimp.AUTO)
-		if (arg.type == "jersey") {
-			console.log('hello world')
+		switch (arg.type) {
+			case "jersey":
+				event.sender.send('save-jersey-response', {status: "success", "image": base64, args: arg})
+				break;
+			case "uniform":
+				event.sender.send('save-uniform-response', {status: "success", "image": base64, args: arg})
+				break;
+			case "install":
+				event.sender.send('install-uniform-response', {status: "success", "image": base64, args: arg})
+				break;
+		}
+/* 		if (arg.type == "jersey") {
 			event.sender.send('save-jersey-response', {status: "success", "image": base64, args: arg})
 		} else {
 			event.sender.send('save-uniform-response', {status: "success", "image": base64, args: arg})
-		}
+		} */
 	}
 })
 
@@ -1471,6 +1531,7 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 	const heightMap = Buffer.from(arg.heightMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const normalMap = Buffer.from(arg.normalMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const fontCanvas = Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const sockCanvas = Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const text = arg.text;
 	const tmpCapTexture = arg.capTexture
 	const tmpJerseyTexture = arg.jerseyTexture
@@ -1625,6 +1686,13 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 		archive.append(pantsBuffer, {name: "pants_"+arg.name+".png"})
 		//await pantsBase.write(app.getPath('downloads') + '/pants_' + arg.name+'.png')
 
+		// socks
+		let socks = await Jimp.read(sockCanvas)
+		let socksTexture = await Jimp.read(__dirname+"/images/socks_texture.png")
+		await socks.crop(256,0,512,1024).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+		let socksBuffer = await socks.getBufferAsync(Jimp.MIME_PNG)
+		archive.append(socksBuffer, {name: "socks_"+arg.name+".png"})
+
 		// font
 		let fontBase = await Jimp.read(fontCanvas)
 		let fontBuffer = await fontBase.getBufferAsync(Jimp.MIME_PNG)
@@ -1634,7 +1702,7 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 		let jerseyBase = await Jimp.read(jerseyBelow)
 		let jerseyTextureFile = await Jimp.read(jerseyTexture)
 		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
-		if (seamsOnDiffuse == "true") {
+		if (seamsOnDiffuse == "true" || seamsOnDiffuse == true) {
 			if (buttonType != "buttonsHenley") {
 				if (seamsOption == "seamsSixties") {
 					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_sixties.png"
@@ -1761,6 +1829,173 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 	}
 })
 
+ipcMain.on('install-uniform-zip', (event, arg) => {
+	const options = {
+		title: "Select OOTP Data Folder",
+		defaultPath: store.get("OOTPDataPath", app.getPath('desktop')),
+		properties: ['openDirectory']
+	}
+
+	const jerseyLogoCanvas = Buffer.from(arg.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const jerseyBelow = Buffer.from(arg.jerseyBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const pantsLogoCanvas = Buffer.from(arg.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const pantsBelow = Buffer.from(arg.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const capLogoCanvas = Buffer.from(arg.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const capBelow = Buffer.from(arg.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const nameCanvas = Buffer.from(arg.nameCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const heightMap = Buffer.from(arg.heightMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const normalMap = Buffer.from(arg.normalMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const fontCanvas = Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const sockCanvas = Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const text = arg.text;
+	const tmpCapTexture = arg.capTexture
+	const tmpJerseyTexture = arg.jerseyTexture
+	const tmpPantsTexture = arg.pantsTexture
+	const buttonType = arg.buttonType
+	const seamsOption = arg.seamsOption
+	const seamsOnDiffuse = arg.seamsOnDiffuse
+
+	if (tmpCapTexture.startsWith("data:image")) {
+		fs.writeFileSync(tempDir+"/tempCapTexture.png", tmpCapTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
+		var capTexture = tempDir+"/tempCapTexture.png"
+	} else {
+		var capTexture = __dirname+"/images/"+tmpCapTexture
+	}
+
+	if (tmpJerseyTexture.startsWith("data:image")) {
+		fs.writeFileSync(tempDir+"/tempJerseyTexture.png", tmpJerseyTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
+		var jerseyTexture = tempDir+"/tempJerseyTexture.png"
+	} else {
+		var jerseyTexture = __dirname+"/images/"+tmpJerseyTexture
+	}
+
+	if (tmpPantsTexture.startsWith("data:image")) {
+		fs.writeFileSync(tempDir+"/tempPantsTexture.png", tmpPantsTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
+		var pantsTexture = tempDir+"/tempPantsTexture.png"
+	} else {
+		var pantsTexture = __dirname+"/images/"+tmpPantsTexture
+	}
+
+	prepareImages()
+
+	async function prepareImages() {
+		let font = await Jimp.loadFont(__dirname+"/fonts/rowdies.fnt")
+
+		// cap
+		let capBase = await Jimp.read(capBelow)
+		let capOverlay = await Jimp.read(capLogoCanvas)
+		let capTextureFile = await Jimp.read(capTexture)
+		let blankCapImage = new Jimp(3000, 500)
+		await blankCapImage.print(font, 10, 10, text)
+		await blankCapImage.autocrop()
+		await blankCapImage.scaleToFit(500,15)
+		await blankCapImage.color([{ apply: "mix", params: [arg.capWatermarkColor, 100] }]);
+		let capWM = await Jimp.read(__dirname+"/images/cap_watermark.png")
+		await capWM.color([{ apply: "mix", params: [arg.capWatermarkColor, 100] }]);
+		await capBase.composite(capTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+		await capBase.composite(capOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await capBase.composite(capWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await capBase.blit(blankCapImage, 357-(blankCapImage.bitmap.width/2), 120-(blankCapImage.bitmap.height/2))
+		
+		// pants
+		let pantsBase = await Jimp.read(pantsBelow)
+		let pantsTextureFile = await Jimp.read(pantsTexture)
+		let pantsOverlay = await Jimp.read(pantsLogoCanvas)
+		let blankPantsImage = new Jimp(3000, 500)
+		await blankPantsImage.print(font, 10, 10, text)
+		await blankPantsImage.autocrop()
+		await blankPantsImage.scaleToFit(500,15)
+		await blankPantsImage.color([{ apply: "mix", params: [arg.pantsWatermarkColor, 100] }]);
+		await pantsBase.composite(pantsTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+		await pantsBase.composite(pantsOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		let pantsWM = await Jimp.read(__dirname+"/images/pants_watermark.png")
+		await pantsWM.color([{ apply: "mix", params: [arg.pantsWatermarkColor, 100] }]);
+		await pantsBase.composite(pantsWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		await pantsBase.blit(blankPantsImage, 256-(blankPantsImage.bitmap.width/2), 12.5-(blankPantsImage.bitmap.height/2))
+		
+		// socks
+		let socks = await Jimp.read(sockCanvas)
+		let socksTexture = await Jimp.read(__dirname+"/images/socks_texture.png")
+		await socks.crop(256,0,512,1024).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+		
+		// font
+		let fontBase = await Jimp.read(fontCanvas)
+		
+		// jersey diffuse map
+		let jerseyBase = await Jimp.read(jerseyBelow)
+		let jerseyTextureFile = await Jimp.read(jerseyTexture)
+		let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
+		if (seamsOnDiffuse == "true" || seamsOnDiffuse == true) {
+			if (buttonType != "buttonsHenley") {
+				if (seamsOption == "seamsSixties") {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_sixties.png"
+				} else {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+				}	
+			} else {
+				if (seamsOption == "seamsSixties") {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley_sixties.png"
+				} else {
+					var diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+				}
+			}
+			let diffuseSeamImg = await Jimp.read(diffuseSeamsSrc)
+			await diffuseSeamImg.opacity(.1)
+			await jerseyBase.composite(diffuseSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+			switch (seamsOption) {
+				case "seamsStandardToPiping":
+					var diffuseSeamSrc = __dirname+"/images/seams/seams_standard_to_piping.png"
+					break;
+				case "seamsStandardToCollar":
+					var diffuseSeamSrc = __dirname+"/images/seams/seams_standard_to_collar.png"
+					break;
+				case "seamsRaglanToPiping":
+					var diffuseSeamSrc = __dirname+"/images/seams/seams_raglan_to_piping.png"
+					break;
+				case "seamsRaglanToCollar":
+					var diffuseSeamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
+					break;
+				case "seamsSixties":
+					var diffuseSeamSrc = __dirname+"/images/seams/seams_sixties.png"
+					break;
+			}
+			let seamsDiffuseImg = await Jimp.read(diffuseSeamSrc)
+			await seamsDiffuseImg.opacity(.1)
+			await jerseyBase.composite(seamsDiffuseImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		}
+		await jerseyBase.composite(jerseyTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})	
+		await jerseyBase.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		let jerseyWM = await Jimp.read(__dirname+"/images/jersey_watermark.png")
+		await jerseyWM.color([{ apply: "mix", params: [arg.jerseyWatermarkColor, 100] }]);
+		await jerseyBase.composite(jerseyWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		let nameImage = await Jimp.read(nameCanvas)
+		await jerseyBase.composite(nameImage, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+		
+		// jersey height map
+		let jerseyHeightMap = await Jimp.read(heightMap)
+		
+		// jersey normal map
+		let jerseyNormalMap = await Jimp.read(normalMap)
+		
+		dialog.showOpenDialog(null, options).then((result) => {
+			if (!result.canceled) {
+				store.set("OOTPDataPath", result.filePaths[0])
+				jerseyHeightMap.write(result.filePaths[0]+"//jerseys//jerseys_"+arg.name+"_h.png")
+				jerseyNormalMap.write(result.filePaths[0]+"//jerseys//jerseys_"+arg.name+"_n.png")
+				jerseyBase.write(result.filePaths[0]+"//jerseys//jerseys_"+arg.name+".png")
+				capBase.write(result.filePaths[0]+"//ballcaps//caps_"+arg.name+".png")
+				pantsBase.write(result.filePaths[0]+"//pants//pants_"+arg.name+".png")
+				fontBase.write(result.filePaths[0]+"//jersey_fonts//"+arg.name+".png")
+				socks.write(result.filePaths[0]+"//socks//socks_"+arg.name+".png")
+				event.sender.send('save-uniform-zip-response', arg)
+			} else {
+				event.sender.send('save-uniform-zip-response', arg)
+			}
+			
+		})
+	}
+})
+
 ipcMain.on('load-uniform', (event, arg) => {
 	let json = {}
 	const options = {
@@ -1789,9 +2024,27 @@ ipcMain.on('load-uniform', (event, arg) => {
 						}
 					});
 					if (uniFile != null) {
-						json.result = "success"
-						json.json = JSON.stringify(JSON.parse(uniFile.getData().toString("utf8")))
-						event.sender.send('load-uniform-response', json)
+						let exportMeta = JSON.parse(uniFile.getData().toString("utf8"))
+						if (exportMeta.version == undefined || !semver.eq(pkg.version, exportMeta.version)) {
+							dialog.showMessageBox(null, {
+								noLink: true,
+								type: 'question',
+								message: "This save file appears to have been generated with a different version of Uniform Maker.  Some elements may not be load properly.\r\n\r\nContinue?",
+							    buttons: ['OK', 'Cancel'],
+							}).then(result => {
+								if (result.response === 0) {
+									json.result = "success"
+									json.json = JSON.stringify(exportMeta)
+									event.sender.send('load-uniform-response', json)
+								} else {
+									event.sender.send('hide-overlay', null)
+								}
+							})	
+						} else {
+							json.result = "success"
+							json.json = JSON.stringify(exportMeta)
+							event.sender.send('load-uniform-response', json)
+						}
 					} else {
 						json.result = "error",
 						json.message = "No valid uniform file was found in "+path.basename(result.filePaths[0])
@@ -1803,7 +2056,7 @@ ipcMain.on('load-uniform', (event, arg) => {
 					json.message = "Invalid file type: "+path.basename(result.filePaths[0])
 					event.sender.send('load-uniform-response', json)
 			}
-			event.sender.send('hide-overlay', null)
+			//event.sender.send('hide-overlay', null)
 		} else {
 			event.sender.send('hide-overlay', null)
 		}
@@ -1826,7 +2079,6 @@ ipcMain.on('local-font-folder', (event, arg) => {
 			try {
 				const fontMeta = fontname.parse(fs.readFileSync(filePath))[0];
 				var ext = getExtension(filePath)
-				const dataUrl = font2base64.encodeToDataUrlSync(filePath)
 				var fontPath = url.pathToFileURL(filePath)
 				var json = {
 					"status": "ok",
@@ -1836,7 +2088,6 @@ ipcMain.on('local-font-folder', (event, arg) => {
 					"fontFormat": ext,
 					"fontMimetype": 'font/' + ext,
 					"fontData": fontPath.href,
-					"fontBase64": dataUrl,
 					"fontPath": filePath,
 				};
 				jsonArr.push(json)
@@ -1919,6 +2170,11 @@ function createWindow () {
               accelerator: isMac ? 'Cmd+P' : 'Control+P',
               label: 'Save Pants Only',
           },
+		  {
+			  click: () => mainWindow.webContents.send('save-socks','click'),
+			  accelerator: isMac ? 'Cmd+O' : 'Control+O',
+			  label: 'Save Socks Only',
+		  },
           {
               click: () => mainWindow.webContents.send('save-jersey','click'),
               accelerator: isMac ? 'Cmd+J' : 'Control+J',
@@ -1929,6 +2185,26 @@ function createWindow () {
               accelerator: isMac ? 'Cmd+F' : 'Control+F',
               label: 'Save Font Only',
           },
+		  {
+			  click: () => dialog.showMessageBox(null, {
+				type: 'warning',
+				title: 'WARNING',
+				message: "Are you sure?\r\n\r\nThis will overwrite files with the same name without warning!",
+				buttons: [
+					'No, Thanks',
+					'Sure, Go Ahead'
+				],
+				defaultId: 0,
+			  })
+				.then((result) => {
+					if (result.response == 1) {
+						mainWindow.webContents.send('install-uniform','click')
+					}
+			  }),
+			  accelerator: 'Control+I',
+			  label: 'Install Uniform',
+			  visible: isWin
+		  },
 		  { type: 'separator' },
           {
               click: () => mainWindow.webContents.send('save-swatches','click'),
@@ -2038,7 +2314,7 @@ function createWindow () {
       const menu = Menu.buildFromTemplate(template)
       Menu.setApplicationMenu(menu)
   
-    mainWindow.loadURL(`file://${__dirname}/index.html?&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}&imagemagick=${imInstalled}`);
+	mainWindow.loadURL(`file://${__dirname}/index.html?&appVersion=${pkg.version}&preferredColorFormat=${preferredColorFormat}&preferredJerseyTexture=${preferredJerseyTexture}&preferredPantsTexture=${preferredPantsTexture}&preferredCapTexture=${preferredCapTexture}&gridsVisible=${gridsVisible}&checkForUpdates=${checkForUpdates}&preferredNameFont=${preferredNameFont}&preferredNumberFont=${preferredNumberFont}&preferredCapFont=${preferredCapFont}&preferredJerseyFont=${preferredJerseyFont}&seamsVisibleOnDiffuse=${seamsVisibleOnDiffuse}&preferredHeightMapBrightness=${preferredHeightMapBrightness}&preferredSeamOpacity=${preferredSeamOpacity}`);
     
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
       shell.openExternal(url);
@@ -2074,4 +2350,44 @@ function rgbToHex(r, g, b) {
 function componentToHex(c) {
 	var hex = c.toString(16);
 	return hex.length == 1 ? "0" + hex : hex;
+}
+
+function isColorWithinTolerance(pixelColor, targetColor, tolerance) {
+	const dr = Math.abs(pixelColor.r - targetColor.r);
+	const dg = Math.abs(pixelColor.g - targetColor.g);
+	const db = Math.abs(pixelColor.b - targetColor.b);
+
+	return (dr <= tolerance && dg <= tolerance && db <= tolerance);
+}
+
+function isColorMatch(pixels, index, baseColor, targetColor, tolerance) {
+	const dr = Math.abs(baseColor.r - pixels[index]);
+	const dg = Math.abs(baseColor.g - pixels[index + 1]);
+	const db = Math.abs(baseColor.b - pixels[index + 2]);
+
+	return (dr + dg + db) / 3 <= tolerance;
+}
+
+function isColorMatchAlpha(pixels, index, baseColor, targetColor, tolerance) {
+	const dr = Math.abs(baseColor.r - pixels[index]);
+	const dg = Math.abs(baseColor.g - pixels[index + 1]);
+	const db = Math.abs(baseColor.b - pixels[index + 2]);
+	const da = Math.abs(baseColor.a - pixels[index + 3]); // Include alpha channel difference
+
+	return (dr + dg + db + da) / 4 <= tolerance
+}
+
+function hexToRgb(hex) {
+	// Remove '#' if present
+	hex = hex.replace(/^#/, '');
+
+	// Parse hex values
+	const bigint = parseInt(hex, 16);
+
+	// Extract RGB components
+	const r = (bigint >> 16) & 255;
+	const g = (bigint >> 8) & 255;
+	const b = bigint & 255;
+
+	return { r, g, b };
 }

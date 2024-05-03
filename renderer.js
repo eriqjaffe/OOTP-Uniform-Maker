@@ -16,6 +16,10 @@ ipcRenderer.on('save-pants', (event, data) => {
     $("#savePants").trigger("click")
 });
 
+ipcRenderer.on('save-socks', (event, data) => {
+    $("#saveSocks").trigger("click")
+});
+
 ipcRenderer.on('save-jersey', (event, data) => {
     $("#saveJersey").trigger("click")
 });
@@ -58,4 +62,8 @@ ipcRenderer.on('updateFonts', (event, data) => {
 
 ipcRenderer.on('openFontFolder', (event, data) => {
     $("#openFontFolder").trigger("click")
+})
+
+ipcRenderer.on('install-uniform', (event, data) => {
+    $("#installUniform").trigger("click")
 })
