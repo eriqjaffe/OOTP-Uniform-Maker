@@ -8675,8 +8675,10 @@
 				$(this).data('changed', true);
 				const id = $(this).data('element');
 				var c = (color == null) ? 'transparent' : color.toHexString()
-				let o = sockCanvas.getObjects("path").find(o => o.id === id)
-				o.set("fill", c);
+				let l = sockCanvas.getObjects("path").find(o => o.id === id+"_left")
+				let r = sockCanvas.getObjects("path").find(o => o.id === id+"_right")
+				l.set("fill", c);
+				r.set("fill", c)
 				sockCanvas.renderAll()
 			},
 			change: function(color) {
@@ -8684,7 +8686,10 @@
 				const id = $(this).data('element');
 				var c = (color == null) ? 'transparent' : color.toHexString()
 				let o = sockCanvas.getObjects("path").find(o => o.id === id)
-				o.set("fill", c);
+				let l = sockCanvas.getObjects("path").find(o => o.id === id+"_left")
+				let r = sockCanvas.getObjects("path").find(o => o.id === id+"_right")
+				l.set("fill", c);
+				r.set("fill", c)
 				sockCanvas.renderAll()
 				if (color !=  null) {
 					if ($.inArray(color.toHexString(), commonPalette) < 0) {
@@ -8702,8 +8707,10 @@
 				$(this).data('changed', true);
 				const id = $(this).data('element');
 				var c = (color == null) ? 'transparent' : color.toHexString()
-				let o = sockCanvas.getObjects("path").find(o => o.id === id)
-				o.set("fill", c);
+				let l = sockCanvas.getObjects("path").find(o => o.id === id+"_left")
+				let r = sockCanvas.getObjects("path").find(o => o.id === id+"_right")
+				l.set("fill", c);
+				r.set("fill", c)
 				sockCanvas.renderAll()
 			}
 		})
@@ -8825,77 +8832,101 @@
 		})
 		const g = sockCanvas.getObjects('group').find(o => o.id === 'sockGroup')
 		if ($("#sockStripeCheck").is(":checked")) {
+			$("#sockStripeHeight").css("display","inline-block")
 			switch($("#sockStripeSelect").val()) {
 				case "stLouis":
-					sockCanvas.getObjects().find(o => o.id === 'stLouis1').visible = true;
-					sockCanvas.getObjects().find(o => o.id === 'stLouis2').visible = true;
-					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'stLouis1').top)
+					sockCanvas.getObjects().find(o => o.id === 'stLouis1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'stLouis2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'stLouis1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'stLouis2_right').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'stLouis1_left').top)
 					break;
 				case "northwestern":
-					sockCanvas.getObjects().find(o => o.id === 'northwestern1').visible = true;
-					sockCanvas.getObjects().find(o => o.id === 'northwestern2').visible = true;
-					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'northwestern1').top)
+					sockCanvas.getObjects().find(o => o.id === 'northwestern1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'northwestern2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'northwestern1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'northwestern2_right').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'northwestern1_left').top)
 					break;
 				case "boston":
-					sockCanvas.getObjects().find(o => o.id === 'boston1').visible = true;
-					sockCanvas.getObjects().find(o => o.id === 'boston2').visible = true;
-					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'boston1').top)
+					sockCanvas.getObjects().find(o => o.id === 'boston1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'boston2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'boston1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'boston2_right').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'boston1_left').top)
 					break;
 				case "greenBay":
-					sockCanvas.getObjects().find(o => o.id === 'greenBay1').visible = true;
-					sockCanvas.getObjects().find(o => o.id === 'greenBay2').visible = true;
-					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'greenBay1').top)
+					sockCanvas.getObjects().find(o => o.id === 'greenBay1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'greenBay2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'greenBay1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'greenBay2_right').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'greenBay1_left').top)
 					break;
 				case "double1":
-					sockCanvas.getObjects().find(o => o.id === 'double1_1').visible = true;
-					sockCanvas.getObjects().find(o => o.id === 'double1_2').visible = true;
-					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'double1_1').top)
+					sockCanvas.getObjects().find(o => o.id === 'double1_1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'double1_2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'double1_1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'double1_2_right').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'double1_1_left').top)
 					break;
 				case "double2":
-					sockCanvas.getObjects().find(o => o.id === 'double2_1').visible = true;
-					sockCanvas.getObjects().find(o => o.id === 'double2_2').visible = true;
-					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'double2_1').top)
+					sockCanvas.getObjects().find(o => o.id === 'double2_1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'double2_2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'double2_1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'double2_2_right').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'double2_1_left').top)
 					break;
 				case "double3":
-					sockCanvas.getObjects().find(o => o.id === 'double3_1').visible = true;
-					sockCanvas.getObjects().find(o => o.id === 'double3_2').visible = true;
-					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'double3_1').top)
+					sockCanvas.getObjects().find(o => o.id === 'double3_1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'double3_2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'double3_1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'double3_2_right').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'double3_1_left').top)
 					break;
 				case "triple1":
-					sockCanvas.getObjects().find(o => o.id === 'triple1_1').visible = true;
-					sockCanvas.getObjects().find(o => o.id === 'triple1_2').visible = true;
-					sockCanvas.getObjects().find(o => o.id === 'triple1_3').visible = true;
-					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'triple1_1').top)
+					sockCanvas.getObjects().find(o => o.id === 'triple1_1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple1_2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple1_3_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple1_1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple1_2_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple1_3_right').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'triple1_1_left').top)
 					break;
 				case "triple2":
-					sockCanvas.getObjects().find(o => o.id === 'triple2_1').visible = true;
-					sockCanvas.getObjects().find(o => o.id === 'triple2_2').visible = true;
-					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'triple2_1').top)
+					sockCanvas.getObjects().find(o => o.id === 'triple2_1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple2_2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple2_1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple2_2_right').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'triple2_1_left').top)
 					break;
 				case "quadruple":
-					sockCanvas.getObjects().find(o => o.id === 'quadruple_1').visible = true;
-					sockCanvas.getObjects().find(o => o.id === 'quadruple_2').visible = true;
-					sockCanvas.getObjects().find(o => o.id === 'quadruple_3').visible = true;
-					sockCanvas.getObjects().find(o => o.id === 'quadruple_4').visible = true;
-					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'quadruple_1').top)
+					sockCanvas.getObjects().find(o => o.id === 'quadruple_1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'quadruple_2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'quadruple_3_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'quadruple_4_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'quadruple_1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'quadruple_2_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'quadruple_3_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'quadruple_4_right').visible = true;
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'quadruple_1_left').top)
 					break;
 				case "argyle":
 					sockCanvas.getObjects().find(o => o.id === 'argyle_1').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'argyle_2').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'argyle_3').visible = true;
-					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'argyle_1').top)
+					$("#sockStripeHeight").css("display","none")
 					break;
 				case "vertical":
 					sockCanvas.getObjects().find(o => o.id === 'vertical').visible = true;
-					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'vertical').top)
+					$("#sockStripeHeight").css("display","none")
 					break;
 				case "horizontal":
 					sockCanvas.getObjects().find(o => o.id === 'horizontal').visible = true;
-					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'horizontal').top)
+					$("#sockStripeHeight").css("display","none")
 					break;
 				case "fakeStirrup":
 					sockCanvas.getObjects().find(o => o.id === 'fakeStirrup').visible = true;
-					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'fakeStirrup').top)
+					$("#sockStripeHeight").css("display","none")
 					break;
 			}
 		}
@@ -9106,188 +9137,372 @@
 			absolutePositioned: true
 		})
 
-		stLouis1 = new fabric.Path("M -0.12304688 143.9707 L -0.12304688 178.67969 L 1024.123 178.67969 L 1024.123 143.9707 L -0.12304688 143.9707 z M -0.12304688 194.71094 L -0.12304688 229.41797 L 1024.123 229.41797 L 1024.123 194.71094 L -0.12304688 194.71094 z M -0.12304688 245.45117 L -0.12304688 280.1582 L 1024.123 280.1582 L 1024.123 245.45117 L -0.12304688 245.45117 z M -0.12304688 656.67383 L -0.12304688 691.38281 L 1024.123 691.38281 L 1024.123 656.67383 L -0.12304688 656.67383 z M -0.12304688 707.41406 L -0.12304688 742.12109 L 1024.123 742.12109 L 1024.123 707.41406 L -0.12304688 707.41406 z M -0.12304688 758.1543 L -0.12304688 792.86133 L 1024.123 792.86133 L 1024.123 758.1543 L -0.12304688 758.1543 z ",{
+		stLouis1_l = new fabric.Path("M -0.12304688,245.45117 V 280.1582 H 1024.123 v -34.70703 z m 0,-50.74023 v 34.70703 H 1024.123 v -34.70703 z m 0,-50.74024 v 34.70899 H 1024.123 V 143.9707 Z",{
 			fill: initialSockColors['stLouis1'],
-			id: 'stLouis1',
+			id: 'stLouis1_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		stLouis2 = new fabric.Path("M -0.12304688 152.81055 L -0.12304688 169.83984 L 1024.123 169.83984 L 1024.123 152.81055 L -0.12304688 152.81055 z M -0.12304688 203.54883 L -0.12304688 220.58008 L 1024.123 220.58008 L 1024.123 203.54883 L -0.12304688 203.54883 z M -0.12304688 254.28906 L -0.12304688 271.32031 L 1024.123 271.32031 L 1024.123 254.28906 L -0.12304688 254.28906 z M -0.12304688 665.51367 L -0.12304688 682.54297 L 1024.123 682.54297 L 1024.123 665.51367 L -0.12304688 665.51367 z M -0.12304688 716.25195 L -0.12304688 733.2832 L 1024.123 733.2832 L 1024.123 716.25195 L -0.12304688 716.25195 z M -0.12304688 766.99219 L -0.12304688 784.02344 L 1024.123 784.02344 L 1024.123 766.99219 L -0.12304688 766.99219 z ",{
+		stLouis2_l = new fabric.Path("m -0.12304688,254.28906 v 17.03125 H 1024.123 v -17.03125 z m 0,-50.74023 v 17.03125 H 1024.123 v -17.03125 z m 0,-50.73828 v 17.02929 H 1024.123 v -17.02929 z ",{
 			fill: initialSockColors['stLouis2'],
-			id: 'stLouis2',
+			id: 'stLouis2_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		northwestern1 = new fabric.Path("M 0 117 L 0 142 L 1024 142 L 1024 117 L 0 117 z M 0 266.99805 L 0 267 L 0 292 L 1024 292 L 1024 267 L 1024 266.99805 L 0 266.99805 z M 0 512 L 0 537 L 1024 537 L 1024 512 L 0 512 z M 0 661.99805 L 0 662 L 0 687 L 1024 687 L 1024 662 L 1024 661.99805 L 0 661.99805 z ",{
+		stLouis1_r = fabric.util.object.clone(stLouis1_l);
+		stLouis1_r.set({
+			top: stLouis1_l.top + 512,
+			id: 'stLouis1_right',
+			clipPath: rightSockClippingPath
+		});
+
+		stLouis2_r = fabric.util.object.clone(stLouis2_l);
+		stLouis2_r.set({
+			top: stLouis2_l.top + 512,
+			id: 'stLouis2_right',
+			clipPath: rightSockClippingPath
+		});
+
+		northwestern1_l = new fabric.Path("m 0,117 v 25 H 1024 V 117 Z M 0,266.99805 V 267 292 h 1024 v -25 -0.002 z",{
 			fill: initialSockColors['northwestern1'],
-			id: 'northwestern1',
+			id: 'northwestern1_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		northwestern2 = new fabric.Path("M 0 167 L 0 190.57031 L 0 217 L 0 227.35742 L 0 241.99805 L 1024 241.99805 L 1024 227.35742 L 1024 217 L 1024 190.57031 L 1024 167 L 0 167 z M 0 562 L 0 585.57031 L 0 612 L 0 622.35742 L 0 636.99805 L 1024 636.99805 L 1024 622.35742 L 1024 612 L 1024 585.57031 L 1024 562 L 0 562 z  ",{
+		northwestern2_l = new fabric.Path("M 0,167 V 190.57031 217 227.35742 241.99805 H 1024 V 227.35742 217 190.57031 167 Z",{
 			fill: initialSockColors['northwestern2'],
-			id: 'northwestern2',
+			id: 'northwestern2_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		boston1 = new fabric.Path("M 0 0 L 0 0.009765625 L 0 141.70508 L 0 188.71484 L 0 235.06836 L 0 235.07031 L 0 281.41992 L 1024 281.41992 L 1024 235.07031 L 1024 235.06836 L 1024 188.71484 L 1024 141.70312 L 1024 0.009765625 L 1024 0 L 0 0 z M 0 512 L 0 512.00977 L 0 653.70312 L 0 700.71484 L 0 747.06836 L 0 747.07031 L 0 793.41992 L 1024 793.41992 L 1024 747.07031 L 1024 747.06836 L 1024 700.71484 L 1024 653.70312 L 1024 512.00781 L 1024 512 L 0 512 z ",{
+		northwestern1_r = fabric.util.object.clone(northwestern1_l);
+		northwestern1_r.set({
+			top: northwestern1_l.top + 512,
+			id: 'northwestern1_right',
+			clipPath: rightSockClippingPath
+		});
+
+		northwestern2_r = fabric.util.object.clone(northwestern2_l);
+		northwestern2_r.set({
+			top: northwestern2_l.top + 512,
+			id: 'northwestern2_right',
+			clipPath: rightSockClippingPath
+		});
+
+		boston1_l = new fabric.Path("M 0,0 V 0.00976563 141.70508 v 47.00976 46.35352 0.002 46.34961 h 1024 v -46.34961 -0.002 V 188.71484 141.70312 0.00976563 0 Z",{
 			fill: initialSockColors['boston1'],
-			id: 'boston1',
+			id: 'boston1_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		boston2 = new fabric.Path("M 0 188.91992 L 0 188.92188 L 0 228.91992 L 1024 228.91992 L 1024 188.92188 L 1024 188.91992 L 0 188.91992 z M 0 268.91992 L 0 268.92188 L 0 308.91992 L 1024 308.91992 L 1024 268.92188 L 1024 268.91992 L 0 268.91992 z M 0 700.91992 L 0 700.92188 L 0 740.91992 L 1024 740.91992 L 1024 700.92188 L 1024 700.91992 L 0 700.91992 z M 0 780.91992 L 0 780.92188 L 0 820.91992 L 1024 820.91992 L 1024 780.92188 L 1024 780.91992 L 0 780.91992 z ",{
+		boston2_l = new fabric.Path("m 0,188.91992 v 0.002 39.99804 h 1024 v -39.99804 -0.002 z m 0,80 v 0.002 39.99804 h 1024 v -39.99804 -0.002 z",{
 			fill: initialSockColors['boston2'],
-			id: 'boston2',
+			id: 'boston2_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		greenBay1 = new fabric.Path("M -0.12304688 119.18555 L -0.12304688 131.39453 L 1024.123 131.39453 L 1024.123 119.18555 L -0.12304688 119.18555 z M -0.12304688 180.68555 L -0.12304688 254.50195 L 1024.123 254.50195 L 1024.123 180.68555 L -0.12304688 180.68555 z M -0.12304688 303.79297 L -0.12304688 316.00195 L 1024.123 316.00195 L 1024.123 303.79297 L -0.12304688 303.79297 z M -0.12304688 631.88867 L -0.12304688 644.09766 L 1024.123 644.09766 L 1024.123 631.88867 L -0.12304688 631.88867 z M -0.12304688 693.38867 L -0.12304688 767.20508 L 1024.123 767.20508 L 1024.123 693.38867 L -0.12304688 693.38867 z M -0.12304688 816.49609 L -0.12304688 828.70508 L 1024.123 828.70508 L 1024.123 816.49609 L -0.12304688 816.49609 z ",{
+		boston1_r = fabric.util.object.clone(boston1_l);
+		boston1_r.set({
+			top: boston1_l.top + 512,
+			id: 'boston1_right',
+			clipPath: rightSockClippingPath
+		});
+
+		boston2_r = fabric.util.object.clone(boston2_l);
+		boston2_r.set({
+			top: boston2_l.top + 512,
+			id: 'boston2_right',
+			clipPath: rightSockClippingPath
+		});
+
+		greenBay1_l = new fabric.Path("m -0.12304688,119.18555 v 12.20898 H 1024.123 v -12.20898 z m 0,61.5 v 73.8164 H 1024.123 v -73.8164 z m 0,123.10742 v 12.20898 H 1024.123 v -12.20898 z",{
 			fill: initialSockColors['greenBay1'],
-			id: 'greenBay1',
+			id: 'greenBay1_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		greenBay2 = new fabric.Path("M -0.12304688 143.9707 L -0.12304688 168.14453 L 1024.123 168.14453 L 1024.123 143.9707 L -0.12304688 143.9707 z M -0.12304688 267.04297 L -0.12304688 291.2168 L 1024.123 291.2168 L 1024.123 267.04297 L -0.12304688 267.04297 z M -0.12304688 656.67383 L -0.12304688 680.84766 L 1024.123 680.84766 L 1024.123 656.67383 L -0.12304688 656.67383 z M -0.12304688 779.74609 L -0.12304688 803.91992 L 1024.123 803.91992 L 1024.123 779.74609 L -0.12304688 779.74609 z ",{
+		greenBay2_l = new fabric.Path("m -0.12304688,143.9707 v 24.17383 H 1024.123 V 143.9707 Z m 0,123.07227 V 291.2168 H 1024.123 v -24.17383 z",{
 			fill: initialSockColors['greenBay2'],
-			id: 'greenBay2',
+			id: 'greenBay2_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		double1_1 = new fabric.Path("M -0.12304688 143.9707 L -0.12304688 212.96484 L 1024.123 212.96484 L 1024.123 143.9707 L -0.12304688 143.9707 z M -0.12304688 243.9707 L -0.12304688 312.96484 L 1024.123 312.96484 L 1024.123 243.9707 L -0.12304688 243.9707 z M -0.12304688 656.67383 L -0.12304688 725.66797 L 1024.123 725.66797 L 1024.123 656.67383 L -0.12304688 656.67383 z M -0.12304688 756.67383 L -0.12304688 825.66797 L 1024.123 825.66797 L 1024.123 756.67383 L -0.12304688 756.67383 z ",{
+		greenBay1_r = fabric.util.object.clone(greenBay1_l);
+		greenBay1_r.set({
+			top: greenBay1_l.top + 512,
+			id: 'greenBay1_right',
+			clipPath: rightSockClippingPath
+		});
+
+		greenBay2_r = fabric.util.object.clone(greenBay2_l);
+		greenBay2_r.set({
+			top: greenBay2_l.top + 512,
+			id: 'greenBay2_right',
+			clipPath: rightSockClippingPath
+		});
+
+		double1_1_l = new fabric.Path("m -0.12304688,143.9707 v 68.99414 H 1024.123 V 143.9707 Z m 0,100 v 68.99414 H 1024.123 V 243.9707 Z",{
 			fill: initialSockColors['double1_1'],
-			id: 'double1_1',
+			id: 'double1_1_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		double1_2 = new fabric.Path("M -0.12304688 161.54297 L -0.12304688 195.39258 L 1024.123 195.39258 L 1024.123 161.54297 L -0.12304688 161.54297 z M -0.12304688 261.54297 L -0.12304688 295.39258 L 1024.123 295.39258 L 1024.123 261.54297 L -0.12304688 261.54297 z M -0.12304688 674.24609 L -0.12304688 708.0957 L 1024.123 708.0957 L 1024.123 674.24609 L -0.12304688 674.24609 z M -0.12304688 774.24609 L -0.12304688 808.0957 L 1024.123 808.0957 L 1024.123 774.24609 L -0.12304688 774.24609 z ",{
+		double1_2_l = new fabric.Path("m -0.12304688,161.54297 v 33.84961 H 1024.123 v -33.84961 z m 0,100 v 33.84961 H 1024.123 v -33.84961 z",{
 			fill: initialSockColors['double1_2'],
-			id: 'double1_2',
+			id: 'double1_2_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		double2_1 = new fabric.Path("M 0 0 L 0 0.009765625 L 0 133.11719 L 0 177.27734 L 0 220.82227 L 0 220.82422 L 0 264.36523 L 1024 264.36523 L 1024 220.82422 L 1024 220.82227 L 1024 177.27734 L 1024 133.11523 L 1024 0.009765625 L 1024 0 L 0 0 z M 0 512 L 0 512.00977 L 0 645.11719 L 0 689.27734 L 0 732.82227 L 0 732.82422 L 0 776.36523 L 1024 776.36523 L 1024 732.82422 L 1024 732.82227 L 1024 689.27734 L 1024 645.11523 L 1024 512.00977 L 1024 512 L 0 512 z ",{
+		double1_1_r = fabric.util.object.clone(double1_1_l);
+		double1_1_r.set({
+			top: double1_1_l.top + 512,
+			id: 'double1_1_right',
+			clipPath: rightSockClippingPath
+		});
+
+		double1_2_r = fabric.util.object.clone(double1_2_l);
+		double1_2_r.set({
+			top: double1_2_l.top + 512,
+			id: 'double1_2_right',
+			clipPath: rightSockClippingPath
+		});
+
+		double2_1_l = new fabric.Path("M 0,0 V 0.00976563 133.11719 v 44.16015 43.54493 0.002 43.54101 h 1024 v -43.54101 -0.002 V 177.27734 133.11523 0.00976563 0 Z",{
 			fill: initialSockColors['double2_1'],
-			id: 'double2_1',
+			id: 'double2_1_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		double2_2 = new fabric.Path("M 0 316.28711 L 0 367.08008 L 1024 367.08008 L 1024 316.28711 L 0 316.28711 z M 0 828.28711 L 0 879.08008 L 1024 879.08008 L 1024 828.28711 L 0 828.28711 z ",{
+		double2_2_l = new fabric.Path("m 0,316.28711 v 50.79297 h 1024 v -50.79297 z",{
 			fill: initialSockColors['double2_2'],
-			id: 'double2_2',
+			id: 'double2_2_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		double3_1 = new fabric.Path("m -0.12304688,143.9707 v 17.57227 H 1024.123 V 143.9707 Z m 0,151.42188 v 17.57226 H 1024.123 v -17.57226 z m 0,361.28125 v 17.57226 H 1024.123 v -17.57226 z m 0,151.42187 v 17.57227 H 1024.123 V 808.0957 Z",{
+		double2_1_r = fabric.util.object.clone(double2_1_l);
+		double2_1_r.set({
+			top: double2_1_l.top + 512,
+			id: 'double2_1_right',
+			clipPath: rightSockClippingPath
+		});
+
+		double2_2_r = fabric.util.object.clone(double2_2_l);
+		double2_2_r.set({
+			top: double2_2_l.top + 512,
+			id: 'double2_2_right',
+			clipPath: rightSockClippingPath
+		});
+
+		double3_1_l = new fabric.Path("m -0.12304688,143.9707 v 17.57227 H 1024.123 V 143.9707 Z m 0,151.42188 v 17.57226 H 1024.123 v -17.57226 z",{
 			fill: initialSockColors['double3_1'],
-			id: 'double3_1',
+			id: 'double3_1_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		double3_2 = new fabric.Path("m -0.12304688,195.39258 v 17.57226 H 1024.123 v -17.57226 z m 0,48.57812 v 17.57227 H 1024.123 V 243.9707 Z m 0,464.125 v 17.57227 H 1024.123 V 708.0957 Z m 0,48.57813 v 17.57226 H 1024.123 v -17.57226 z",{
+		double3_2_l = new fabric.Path("m -0.12304688,195.39258 v 17.57226 H 1024.123 v -17.57226 z m 0,48.57812 v 17.57227 H 1024.123 V 243.9707 Z",{
 			fill: initialSockColors['double3_2'],
-			id: 'double3_2',
+			id: 'double3_2_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		triple1_1 = new fabric.Path("M -0.12304688 152.81055 L -0.12304688 169.8418 L 1024.123 169.8418 L 1024.123 152.81055 L -0.12304688 152.81055 z M -0.12304688 664.81055 L -0.12304688 681.8418 L 1024.123 681.8418 L 1024.123 664.81055 L -0.12304688 664.81055 z ",{
+		double3_1_r = fabric.util.object.clone(double3_1_l);
+		double3_1_r.set({
+			top: double3_1_l.top + 512,
+			id: 'double3_1_right',
+			clipPath: rightSockClippingPath
+		});
+
+		double3_2_r = fabric.util.object.clone(double3_2_l);
+		double3_2_r.set({
+			top: double3_2_l.top + 512,
+			id: 'double3_2_right',
+			clipPath: rightSockClippingPath
+		});
+
+		triple1_1_l = new fabric.Path("M -0.12304688,152.81055 V 169.8418 H 1024.123 v -17.03125 z",{
 			fill: initialSockColors['triple1_1'],
-			id: 'triple1_1',
+			id: 'triple1_1_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		triple1_2 = new fabric.Path("M -0.12304688 188.38086 L -0.12304688 205.41211 L -0.12304688 205.41406 L 1024.123 205.41406 L 1024.123 205.41211 L 1024.123 188.38086 L -0.12304688 188.38086 z M -0.12304688 700.38086 L -0.12304688 717.41211 L -0.12304688 717.41406 L 1024.123 717.41406 L 1024.123 717.41211 L 1024.123 700.38086 L -0.12304688 700.38086 z ",{
+		triple1_2_l = new fabric.Path("m -0.12304688,188.38086 v 17.03125 0.002 H 1024.123 v -0.002 -17.03125 z",{
 			fill: initialSockColors['triple1_2'],
-			id: 'triple1_2',
+			id: 'triple1_2_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		triple1_3 = new fabric.Path("M -0.12304688 223.95312 L -0.12304688 240.98438 L 1024.123 240.98438 L 1024.123 223.95312 L -0.12304688 223.95312 z M -0.12304688 735.95312 L -0.12304688 752.98438 L 1024.123 752.98438 L 1024.123 735.95312 L -0.12304688 735.95312 z ",{
+		triple1_3_l = new fabric.Path("m -0.12304688,223.95312 v 17.03126 H 1024.123 v -17.03126 z",{
 			fill: initialSockColors['triple1_3'],
-			id: 'triple1_3',
+			id: 'triple1_3_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		triple2_1 = new fabric.Path("M -0.12304688 143.9707 L -0.12304688 169.81836 L 1024.123 169.81836 L 1024.123 143.9707 L -0.12304688 143.9707 z M -0.12304688 189.9707 L -0.12304688 215.81836 L 1024.123 215.81836 L 1024.123 189.9707 L -0.12304688 189.9707 z M -0.12304688 235.9707 L -0.12304688 261.81836 L 1024.123 261.81836 L 1024.123 235.9707 L -0.12304688 235.9707 z M -0.12304688 656.67383 L -0.12304688 682.52148 L 1024.123 682.52148 L 1024.123 656.67383 L -0.12304688 656.67383 z M -0.12304688 702.67383 L -0.12304688 728.52148 L 1024.123 728.52148 L 1024.123 702.67383 L -0.12304688 702.67383 z M -0.12304688 748.67383 L -0.12304688 774.52148 L 1024.123 774.52148 L 1024.123 748.67383 L -0.12304688 748.67383 z ",{
+		triple1_1_r = fabric.util.object.clone(triple1_1_l);
+		triple1_1_r.set({
+			top: triple1_1_l.top + 512,
+			id: 'triple1_1_right',
+			clipPath: rightSockClippingPath
+		});
+
+		triple1_2_r = fabric.util.object.clone(triple1_2_l);
+		triple1_2_r.set({
+			top: triple1_2_l.top + 512,
+			id: 'triple1_2_right',
+			clipPath: rightSockClippingPath
+		});
+		
+		triple1_3_r = fabric.util.object.clone(triple1_3_l);
+		triple1_3_r.set({
+			top: triple1_3_l.top + 512,
+			id: 'triple1_3_right',
+			clipPath: rightSockClippingPath
+		});
+
+		triple2_1_l = new fabric.Path("m -0.12304688,143.9707 v 25.84766 H 1024.123 V 143.9707 Z m 0,46 v 25.84766 H 1024.123 V 189.9707 Z m 0,46 v 25.84766 H 1024.123 V 235.9707 Z",{
 			fill: initialSockColors['triple2_1'],
-			id: 'triple2_1',
+			id: 'triple2_1_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		triple2_2 = new fabric.Path("M -0.12304688 146.82812 L -0.12304688 166.96094 L 1024.123 166.96094 L 1024.123 146.82812 L -0.12304688 146.82812 z M -0.12304688 192.82812 L -0.12304688 212.96094 L 1024.123 212.96094 L 1024.123 192.82812 L -0.12304688 192.82812 z M -0.12304688 238.82812 L -0.12304688 258.96094 L 1024.123 258.96094 L 1024.123 238.82812 L -0.12304688 238.82812 z M -0.12304688 659.53125 L -0.12304688 679.66406 L 1024.123 679.66406 L 1024.123 659.53125 L -0.12304688 659.53125 z M -0.12304688 705.53125 L -0.12304688 725.66406 L 1024.123 725.66406 L 1024.123 705.53125 L -0.12304688 705.53125 z M -0.12304688 751.53125 L -0.12304688 771.66406 L 1024.123 771.66406 L 1024.123 751.53125 L -0.12304688 751.53125 z ",{
+		triple2_2_l = new fabric.Path("m -0.12304688,146.82812 v 20.13282 H 1024.123 v -20.13282 z m 0,46 v 20.13282 H 1024.123 v -20.13282 z m 0,46 v 20.13282 H 1024.123 v -20.13282 z",{
 			fill: initialSockColors['triple2_2'],
-			id: 'triple2_2',
+			id: 'triple2_2_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		quadruple_1 = new fabric.Path("M -0.12304688 126.74414 L -0.12304688 143.77539 L 1024.123 143.77539 L 1024.123 126.74414 L -0.12304688 126.74414 z M -0.12304688 638.74414 L -0.12304688 655.77539 L 1024.123 655.77539 L 1024.123 638.74414 L -0.12304688 638.74414 z ",{
+		triple2_1_r = fabric.util.object.clone(triple2_1_l);
+		triple2_1_r.set({
+			top: triple2_1_l.top + 512,
+			id: 'triple2_1_right',
+			clipPath: rightSockClippingPath
+		});
+
+		triple2_2_r = fabric.util.object.clone(triple2_2_l);
+		triple2_2_r.set({
+			top: triple2_2_l.top + 512,
+			id: 'triple2_2_right',
+			clipPath: rightSockClippingPath
+		});
+
+		quadruple_1_l = new fabric.Path("M -0.12304688,152.81055 V 169.8418 H 1024.123 v -17.03125 z",{
 			fill: initialSockColors['quadruple_1'],
-			id: 'quadruple_1',
+			id: 'quadruple_1_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		quadruple_2 = new fabric.Path("M -0.12304688 162.31445 L -0.12304688 179.3457 L -0.12304688 179.34766 L 1024.123 179.34766 L 1024.123 179.3457 L 1024.123 162.31445 L -0.12304688 162.31445 z M -0.12304688 674.31445 L -0.12304688 691.3457 L -0.12304688 691.34766 L 1024.123 691.34766 L 1024.123 691.3457 L 1024.123 674.31445 L -0.12304688 674.31445 z ",{
+		quadruple_2_l = new fabric.Path("m -0.12304688,186.875 v 17.03125 0.002 H 1024.123 v -0.002 -17.03125 z",{
 			fill: initialSockColors['quadruple_2'],
-			id: 'quadruple_2',
+			id: 'quadruple_2_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		quadruple_3 = new fabric.Path("M -0.12304688 197.88672 L -0.12304688 214.91797 L 1024.123 214.91797 L 1024.123 197.88672 L -0.12304688 197.88672 z M -0.12304688 709.88672 L -0.12304688 726.91797 L 1024.123 726.91797 L 1024.123 709.88672 L -0.12304688 709.88672 z ",{
+		quadruple_3_l = new fabric.Path("m -0.12304688,220.94141 v 17.03125 0.002 H 1024.123 v -0.002 -17.03125 z",{
 			fill: initialSockColors['quadruple_3'],
-			id: 'quadruple_3',
+			id: 'quadruple_3_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
 		});
 
-		quadruple_4 = new fabric.Path("M -0.12304688 233.45898 L -0.12304688 250.49023 L 1024.123 250.49023 L 1024.123 233.45898 L -0.12304688 233.45898 z M -0.12304688 745.45898 L -0.12304688 762.49023 L 1024.123 762.49023 L 1024.123 745.45898 L -0.12304688 745.45898 z ",{
+		quadruple_4_l = new fabric.Path("m -0.12304688,255.00781 v 17.03125 0.002 H 1024.123 v -0.002 -17.03125 z",{
 			fill: initialSockColors['quadruple_4'],
-			id: 'quadruple_4',
+			id: 'quadruple_4_left',
 			visible: false,
 			selectable: false,
-			pathType: 'stripe'
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath
+		});
+
+		quadruple_1_r = fabric.util.object.clone(quadruple_1_l);
+		quadruple_1_r.set({
+			top: quadruple_1_l.top + 512,
+			id: 'quadruple_1_right',
+			clipPath: rightSockClippingPath
+		});
+
+		quadruple_2_r = fabric.util.object.clone(quadruple_2_l);
+		quadruple_2_r.set({
+			top: quadruple_2_l.top + 512,
+			id: 'quadruple_2_right',
+			clipPath: rightSockClippingPath
+		});
+		
+		quadruple_3_r = fabric.util.object.clone(quadruple_3_l);
+		quadruple_3_r.set({
+			top: quadruple_3_l.top + 512,
+			id: 'quadruple_3_right',
+			clipPath: rightSockClippingPath
+		});
+		
+		quadruple_4_r = fabric.util.object.clone(quadruple_4_l);
+		quadruple_4_r.set({
+			top: quadruple_4_l.top + 512,
+			id: 'quadruple_4_right',
+			clipPath: rightSockClippingPath
 		});
 
 		argyle_1 = new fabric.Path("m 320.12695,-0.00195313 -63.86914,63.84765613 -0.1289,0.128906 0.1289,0.160157 63.86914,63.847654 64,-64.007811 z m 255.87305,0 -63.86914,63.84765613 -0.12891,0.128906 0.12891,0.160157 L 576,127.98242 640.00195,63.974609 Z M 448.12891,128.01367 l -64.02539,63.97656 64,64.00782 L 512,192.11719 511.84766,191.95703 512,191.79688 Z m 255.99804,0 -64.02343,63.97656 63.99804,64.00782 L 768,192.11719 767.84766,191.95703 768,191.79688 Z m -384,127.98438 -63.86914,63.84765 -0.1289,0.12891 0.1289,0.16016 63.86914,63.84765 64,-64.00781 z m 255.87305,0 -63.86914,63.84765 -0.12891,0.12891 0.12891,0.16016 L 576,383.98242 640.00195,319.97461 Z m -127.87109,128.01562 -64.02539,63.97656 64,64.00782 L 512,448.11914 511.84766,447.95898 512,447.79883 Z m 255.99804,0 -64.02343,63.97656 63.99804,64.00782 L 768,448.11914 767.84766,447.95898 768,447.79883 Z m -384,127.98633 -63.86914,63.84766 -0.1289,0.12695 0.1289,0.16016 63.86914,63.84765 64,-64.00781 z M 576,512 l -63.86914,63.84766 -0.12891,0.12695 0.12891,0.16016 L 576,639.98242 640.00195,575.97461 Z m -127.87109,128.01562 -64.02539,63.97461 64,64.00782 L 512,704.11914 511.84766,703.95898 512,703.79883 Z m 255.99804,0 -64.02343,63.97461 63.99804,64.00782 L 768,704.11914 767.84766,703.95898 768,703.79883 Z m -384,127.98438 -63.86914,63.84766 -0.1289,0.1289 0.1289,0.16016 63.86914,63.84766 64,-64.00782 z M 576,768 l -63.86914,63.84766 -0.12891,0.1289 0.12891,0.16016 L 576,895.98438 640.00195,831.97656 Z m -127.87109,128.01562 -64.02539,63.97657 64,64.00781 L 512,960.11914 511.84766,959.95898 512,959.79883 Z m 255.99804,0 -64.02343,63.97657 L 704.10156,1024 768,960.11914 767.84766,959.95898 768,959.79883 Z",{
@@ -9338,29 +9553,52 @@
 			pathType: 'stripe'
 		});
 
-		sockCanvas.add(stLouis1) 
-		sockCanvas.add(stLouis2) 
-		sockCanvas.add(northwestern1) 
-		sockCanvas.add(northwestern2) 
-		sockCanvas.add(boston1) 
-		sockCanvas.add(boston2) 
-		sockCanvas.add(greenBay1) 
-		sockCanvas.add(greenBay2)
-		sockCanvas.add(double1_1) 
-		sockCanvas.add(double1_2)
-		sockCanvas.add(double2_1) 
-		sockCanvas.add(double2_2)
-		sockCanvas.add(double3_1) 
-		sockCanvas.add(double3_2)
-		sockCanvas.add(triple1_1) 
-		sockCanvas.add(triple1_2) 
-		sockCanvas.add(triple1_3) 
-		sockCanvas.add(triple2_1) 
-		sockCanvas.add(triple2_2) 
-		sockCanvas.add(quadruple_1) 
-		sockCanvas.add(quadruple_2) 
-		sockCanvas.add(quadruple_3) 
-		sockCanvas.add(quadruple_4) 
+		sockCanvas.add(stLouis1_l) 
+		sockCanvas.add(stLouis2_l) 
+		sockCanvas.add(stLouis1_r)
+		sockCanvas.add(stLouis2_r)
+		sockCanvas.add(northwestern1_l) 
+		sockCanvas.add(northwestern2_l) 
+		sockCanvas.add(northwestern1_r) 
+		sockCanvas.add(northwestern2_r) 
+		sockCanvas.add(boston1_l) 
+		sockCanvas.add(boston2_l) 
+		sockCanvas.add(boston1_r) 
+		sockCanvas.add(boston2_r) 
+		sockCanvas.add(greenBay1_l) 
+		sockCanvas.add(greenBay2_l)
+		sockCanvas.add(greenBay1_r) 
+		sockCanvas.add(greenBay2_r)
+		sockCanvas.add(double1_1_l) 
+		sockCanvas.add(double1_2_l)
+		sockCanvas.add(double1_1_r) 
+		sockCanvas.add(double1_2_r)
+		sockCanvas.add(double2_1_l) 
+		sockCanvas.add(double2_2_l)
+		sockCanvas.add(double2_1_r) 
+		sockCanvas.add(double2_2_r)
+		sockCanvas.add(double3_1_l) 
+		sockCanvas.add(double3_2_l)
+		sockCanvas.add(double3_1_r) 
+		sockCanvas.add(double3_2_r)
+		sockCanvas.add(triple1_1_l) 
+		sockCanvas.add(triple1_2_l) 
+		sockCanvas.add(triple1_3_l) 
+		sockCanvas.add(triple1_1_r) 
+		sockCanvas.add(triple1_2_r) 
+		sockCanvas.add(triple1_3_r) 
+		sockCanvas.add(triple2_1_l) 
+		sockCanvas.add(triple2_2_l) 
+		sockCanvas.add(triple2_1_r) 
+		sockCanvas.add(triple2_2_r) 
+		sockCanvas.add(quadruple_1_l) 
+		sockCanvas.add(quadruple_2_l) 
+		sockCanvas.add(quadruple_3_l) 
+		sockCanvas.add(quadruple_4_l) 
+		sockCanvas.add(quadruple_1_r) 
+		sockCanvas.add(quadruple_2_r) 
+		sockCanvas.add(quadruple_3_r) 
+		sockCanvas.add(quadruple_4_r) 
 		sockCanvas.add(argyle_1)
 		sockCanvas.add(argyle_2)
 		sockCanvas.add(argyle_3)
