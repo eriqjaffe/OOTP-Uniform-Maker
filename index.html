@@ -2036,6 +2036,7 @@
 													<td><center>
 														<input type="button" id="sockPlaceLeft" class="button sockPlace" data-loc="left" value="Place on Left Sock" data-canvas="sockCanvas">
 														<input type="button" id="sockPlaceRight" class="button sockPlace" data-loc="right" value="Place on Right Sock" data-canvas="sockCanvas">
+														<input type="button" id="sockImageClone" class="button" value="Duplicate on Other Sock" data-canvas="sockCanvas">
 														<input type="button" id="sockLogoReset" class="button sockPlace" data-loc="reset" value="Reset Image" data-canvas="sockCanvas">
 													</center></td>
 												</tr>
@@ -9138,6 +9139,27 @@
 			}
 		}
 		sockCanvas.renderAll();
+	})
+
+	$("#sockImageClone").on("click",function(e){
+		var object = sockCanvas.getActiveObject();
+		if (object.get('type') == "image") {
+			console.log(object)
+			const imageLeft = object.left
+			const imageTop = object.top
+			const offset = (imageTop < 513) ? 512 : -512;
+			const objID = object.id
+			const id = (getNumberAtEnd(object) == null) ? 1 : getNumberAtEnd(object)
+			object.clone(function(cloned) {
+				cloned.set("id", objID+"_"+id)
+				cloned.set("left", imageLeft)
+				cloned.set("top", imageTop + offset)
+				sockCanvas.add(cloned)
+				sockCanvas.renderAll()
+			});
+			
+		}
+		
 	})
 
 	function initializeSocks() {
@@ -16298,6 +16320,9 @@
 				break;
 			case "pantsLogoCanvas":
 				var canStr = "pants"
+				break;
+			case "sockCanvas":
+				var canStr = "socks"
 				break;
 		}
 		var id = (getNumberAtEnd(_clipboard) == null) ? 0 : getNumberAtEnd(_clipboard)
