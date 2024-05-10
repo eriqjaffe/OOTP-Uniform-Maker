@@ -1925,11 +1925,51 @@
 														<option value="triple2">Triple Stripe 2</option>
 														<option value="vertical">Vertical</option>
 													</select>
-													<input type="range" class="range" id="sockStripeHeight" value="0" min="-137" max="514" list="ssHeightMarkers" style="margin-top:5px; width: 100%;">
+													<input type="range" class="range" id="sockStripeHeight" value="143" min="-137" max="514" list="stLouisMarkers" style="margin-top:5px; width: 100%;">
+													<datalist id="stLouisMarkers">
+														<option value="0"></option>
+														<option value="80"></option>
+														<option value="143"></option>
+													</datalist>
+													<datalist id="northwesternMarkers">
+														<option value="0"></option>
+														<option value="80"></option>
+														<option value="117"></option>
+													</datalist>
+													<datalist id="greenBayMarkers">
+														<option value="0"></option>
+														<option value="80"></option>
+														<option value="119"></option>
+													</datalist>
+													<datalist id="double1Markers">
+														<option value="0"></option>
+														<option value="80"></option>
+														<option value="143"></option>
+													</datalist>
+													<datalist id="double3Markers">
+														<option value="0"></option>
+														<option value="80"></option>
+														<option value="143"></option>
+													</datalist>
+													<datalist id="triple1Markers">
+														<option value="0"></option>
+														<option value="80"></option>
+														<option value="152"></option>
+													</datalist>
+													<datalist id="triple2Markers">
+														<option value="0"></option>
+														<option value="80"></option>
+														<option value="143"></option>
+													</datalist>
+													<datalist id="quadrupleMarkers">
+														<option value="0"></option>
+														<option value="80"></option>
+														<option value="152"></option>
+													</datalist>
 													<datalist id="ssHeightMarkers">
 														<option value="0"></option>
 														<option value="80"></option>
-													  </datalist>
+													</datalist>
 												</td>
 												<td style="text-align:right;">
 													<span class="sockStripeSelectSpan" id="stLouisSelectors" style="display:inline-block">
@@ -8841,6 +8881,7 @@
 					sockCanvas.getObjects().find(o => o.id === 'stLouis2_left').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'stLouis1_right').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'stLouis2_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'stLouisMarkers')
 					$("#sockStripeHeight").attr('min', -137)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'stLouis1_left').top)
 					break;
@@ -8849,6 +8890,7 @@
 					sockCanvas.getObjects().find(o => o.id === 'northwestern2_left').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'northwestern1_right').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'northwestern2_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'northwesternMarkers')
 					$("#sockStripeHeight").attr('min', -176)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'northwestern1_left').top)
 					break;
@@ -8857,6 +8899,7 @@
 					sockCanvas.getObjects().find(o => o.id === 'boston2_left').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'boston1_right').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'boston2_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'ssHeightMarkers')
 					$("#sockStripeHeight").attr('min', -309)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'boston1_left').top)
 					break;
@@ -8865,6 +8908,7 @@
 					sockCanvas.getObjects().find(o => o.id === 'greenBay2_left').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'greenBay1_right').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'greenBay2_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'greenBayMarkers')
 					$("#sockStripeHeight").attr('min', -197)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'greenBay1_left').top)
 					break;
@@ -8873,6 +8917,7 @@
 					sockCanvas.getObjects().find(o => o.id === 'double1_2_left').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'double1_1_right').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'double1_2_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'double1Markers')
 					$("#sockStripeHeight").attr('min', -171)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'double1_1_left').top)
 					break;
@@ -8881,6 +8926,7 @@
 					sockCanvas.getObjects().find(o => o.id === 'double2_2_left').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'double2_1_right').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'double2_2_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'ssHeightMarkers')
 					$("#sockStripeHeight").attr('min', -368)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'double2_1_left').top)
 					break;
@@ -8889,6 +8935,7 @@
 					sockCanvas.getObjects().find(o => o.id === 'double3_2_left').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'double3_1_right').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'double3_2_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'double3Markers')
 					$("#sockStripeHeight").attr('min', -171)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'double3_1_left').top)
 					break;
@@ -8899,6 +8946,7 @@
 					sockCanvas.getObjects().find(o => o.id === 'triple1_1_right').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'triple1_2_right').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'triple1_3_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'triple1Markers')
 					$("#sockStripeHeight").attr('min', -90)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'triple1_1_left').top)
 					break;
@@ -8907,6 +8955,7 @@
 					sockCanvas.getObjects().find(o => o.id === 'triple2_2_left').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'triple2_1_right').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'triple2_2_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'triple2Markers')
 					$("#sockStripeHeight").attr('min', -118)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'triple2_1_left').top)
 					break;
@@ -8919,6 +8968,7 @@
 					sockCanvas.getObjects().find(o => o.id === 'quadruple_2_right').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'quadruple_3_right').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'quadruple_4_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'quadrupleMarkers')
 					$("#sockStripeHeight").attr('min', -120)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'quadruple_1_left').top)
 					break;
@@ -8929,24 +8979,28 @@
 					sockCanvas.getObjects().find(o => o.id === 'argyle_1_right').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'argyle_2_right').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'argyle_3_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'ssHeightMarkers')
 					$("#sockStripeHeight").attr('min', -512)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'argyle_1_left').top)
 					break;
 				case "vertical":
 					sockCanvas.getObjects().find(o => o.id === 'vertical_left').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'vertical_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'ssHeightMarkers')
 					$("#sockStripeHeight").attr('min', -514)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'vertical_left').top)
 					break;
 				case "horizontal":
 					sockCanvas.getObjects().find(o => o.id === 'horizontal_left').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'horizontal_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'ssHeightMarkers')
 					$("#sockStripeHeight").attr('min', -512)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'horizontal_left').top)
 					break;
 				case "fakeStirrup":
 					sockCanvas.getObjects().find(o => o.id === 'fakeStirrup_left').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'fakeStirrup_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'ssHeightMarkers')
 					$("#sockStripeHeight").attr('min', -449)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'fakeStirrup_left').top)
 					break;
@@ -14214,9 +14268,9 @@
 			var colorSquare = "#pantsColorSquare"
 			var newColorSquare = "#pantsReplacemenColor"
 		}
-		if ($(this).data("canvas") == "sockLogoCanvas") {
-			var canvas = sockLogoCanvas
-			var canvasName = "sockLogoCanvas"
+		if ($(this).data("canvas") == "sockCanvas") {
+			var canvas = sockCanvas
+			var canvasName = "sockCanvas"
 			var fuzz = parseInt($("#sockColorFuzz").val());
 			var color = $("#sockColorSquare").val();
 			var newcolor = $("#sockReplacementColor").spectrum("get").toHexString();
