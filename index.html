@@ -13267,11 +13267,16 @@
 				case "belt":
 					canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
 					break;
-				case "sock":
-					canvas.bringToFront(image)
+				case "button":
+					canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
+					break;
+				case "eyeletGroup":
+					console.log("hello")
+					canvas.bringToFront(canvas.getObjects().find(o => o.id == "individualEyelets"))
+					canvas.bringToFront(canvas.getObjects().find(o => o.id == "groupedEyelets"))
 					break;
 				default:
-					canvas.sendToBack(image)	
+					canvas.bringToFront(image)	
 					break;
 			}
 			canvas.setActiveObject(image)
