@@ -80,7 +80,7 @@
 		const validImageTypes = ["png","jpg","jpeg","bmp","gif","tiff"]
 		const validFontTypes = ["ttf", "otf"]
 
-		const initialSockColors = {sockColor:"#c85959",stirrupFill:"#ffffff",stLouis1:"#ffffff",stLouis2:"#0C2340",northwestern1:"#ffffff",northwestern2:"#4E2A84",boston1:"#0C2340",boston2:"#FFFFFF",greenBay1:"#FFFFFF",greenBay2:"#FFB612",double1_2:"#0C2340",double1_1:"#ffffff",double2_2:"#ffffff",double2_1:"#0C2340",double3_1:"#282828",double3_2:"#C8102E",triple1_1:"#FFFFFF",triple1_2:"#FFFFFF",triple1_3:"#FFFFFF",triple2_1:"#FFFFFF",triple2_2:"#0000FF",quadruple_1:"#00FF00",quadruple_2:"#00FF00",quadruple_3:"#00FF00",quadruple_4:"#00FF00",argyle_1:"#00FFFF",argyle_2:"#FFFF00",argyle_3:"#FFFFFF",vertical:"#FFFFFF",fakeStirrup:"#0C2340",horizontal:"#FFFFFF"}
+		const initialSockColors = {sockColor:"#c85959",stirrupFill:"#ffffff",stLouis1:"#ffffff",stLouis2:"#0C2340",stLouis3:"#ffffff",stLouis4:"#0C2340",northwestern1:"#ffffff",northwestern2:"#4E2A84",boston1:"#0C2340",boston2:"#FFFFFF",greenBay1:"#FFFFFF",greenBay2:"#FFB612",double1_2:"#0C2340",double1_1:"#ffffff",double2_2:"#ffffff",double2_1:"#0C2340",double3_1:"#282828",double3_2:"#C8102E",triple1_1:"#FFFFFF",triple1_2:"#FFFFFF",triple1_3:"#FFFFFF",triple2_1:"#FFFFFF",triple2_2:"#0000FF",quadruple_1:"#00FF00",quadruple_2:"#00FF00",quadruple_3:"#00FF00",quadruple_4:"#00FF00",argyle_1:"#00FFFF",argyle_2:"#FFFF00",argyle_3:"#FFFFFF",vertical:"#FFFFFF",fakeStirrup:"#0C2340",horizontal:"#FFFFFF",tequila_1:"#F3C500",tequila_2:"#F37200",tequila_3:"#E35814",tequila_4:"#CB0135",pittsburgh1:"#AC7E00",pittsburgh2:"#FFFFFF"}
 		
 		var capMakersMarkColor = initialCapColors['capMakersMarkColor']
 		var jerseyMakersMarkColor = initialJerseyColors['jerseyMakersMarkColor']
@@ -1919,8 +1919,11 @@
 														<option value="greenBay">Green Bay</option>
 														<option value="horizontal">Horizontal</option>
 														<option value="northwestern">Northwestern</option>
+														<option value="pittsburgh">Pittsburgh</option>
 														<option value="quadruple">Quadruple Stripe</option>
 														<option value="stLouis" selected>St. Louis</option>
+														<option value="stLouis2">St. Louis 2</option>
+														<option value="tequila">Tequila Sunrise</option>
 														<option value="triple1">Triple Stripe 1</option>
 														<option value="triple2">Triple Stripe 2</option>
 														<option value="vertical">Vertical</option>
@@ -1930,6 +1933,11 @@
 														<option value="0"></option>
 														<option value="80"></option>
 														<option value="143"></option>
+													</datalist>
+													<datalist id="stLouis2Markers">
+														<option value="0"></option>
+														<option value="80"></option>
+														<option value="102"></option>
 													</datalist>
 													<datalist id="northwesternMarkers">
 														<option value="0"></option>
@@ -1966,6 +1974,11 @@
 														<option value="80"></option>
 														<option value="152"></option>
 													</datalist>
+													<datalist id="tequilaMarkers">
+														<option value="0"></option>
+														<option value="80"></option>
+														<option value="117"></option>
+													</datalist>
 													<datalist id="ssHeightMarkers">
 														<option value="0"></option>
 														<option value="80"></option>
@@ -1976,6 +1989,10 @@
 														<input class="sockSelector selector" type="text" id="stLouis1" data-element="stLouis1">
 														<input class="sockSelector selector" type="text" id="stLouis2" data-element="stLouis2">
 													</span>
+													<span class="sockStripeSelectSpan" id="stLouis2Selectors" style="display:inline-block">
+														<input class="sockSelector selector" type="text" id="stLouis3" data-element="stLouis3">
+														<input class="sockSelector selector" type="text" id="stLouis4" data-element="stLouis4">
+													</span>
 													<span class="sockStripeSelectSpan" id="northwesternSelectors" style="display:none">
 														<input class="sockSelector selector" type="text" id="northwestern1" data-element="northwestern1">
 														<input class="sockSelector selector" type="text" id="northwestern2" data-element="northwestern2">
@@ -1983,6 +2000,10 @@
 													<span class="sockStripeSelectSpan" id="bostonSelectors" style="display:none">
 														<input class="sockSelector selector" type="text" id="boston1" data-element="boston1">
 														<input class="sockSelector selector" type="text" id="boston2" data-element="boston2">
+													</span>
+													<span class="sockStripeSelectSpan" id="pittsburghSelectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="pittsburgh1" data-element="pittsburgh1">
+														<input class="sockSelector selector" type="text" id="pittsburgh2" data-element="pittsburgh2">
 													</span>
 													<span class="sockStripeSelectSpan" id="greenBaySelectors" style="display:none">
 														<input class="sockSelector selector" type="text" id="greenBay1" data-element="greenBay1">
@@ -2014,6 +2035,12 @@
 														<input class="sockSelector selector" type="text" id="quadruple_2" data-element="quadruple_2">
 														<input class="sockSelector selector" type="text" id="quadruple_3" data-element="quadruple_3">
 														<input class="sockSelector selector" type="text" id="quadruple_4" data-element="quadruple_4">
+													</span>
+													<span class="sockStripeSelectSpan" id="tequilaSelectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="tequila_1" data-element="tequila_1">
+														<input class="sockSelector selector" type="text" id="tequila_2" data-element="tequila_2">
+														<input class="sockSelector selector" type="text" id="tequila_3" data-element="tequila_3">
+														<input class="sockSelector selector" type="text" id="tequila_4" data-element="tequila_4">
 													</span>
 													<span class="sockStripeSelectSpan" id="argyleSelectors" style="display:none">
 														<input class="sockSelector selector" type="text" id="argyle_1" data-element="argyle_1">
@@ -8885,6 +8912,15 @@
 					$("#sockStripeHeight").attr('min', -137)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'stLouis1_left').top)
 					break;
+				case "stLouis2":
+					sockCanvas.getObjects().find(o => o.id === 'stLouis3_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'stLouis4_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'stLouis3_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'stLouis4_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'stLouis2Markers')
+					$("#sockStripeHeight").attr('min', -157)
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'stLouis3_left').top)
+					break;
 				case "northwestern":
 					sockCanvas.getObjects().find(o => o.id === 'northwestern1_left').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'northwestern2_left').visible = true;
@@ -8902,6 +8938,17 @@
 					$("#sockStripeHeight").attr('list', 'ssHeightMarkers')
 					$("#sockStripeHeight").attr('min', -309)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'boston1_left').top)
+					break;
+				case "pittsburgh":
+					sockCanvas.getObjects().find(o => o.id === 'pittsburgh1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'pittsburgh2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'pittsburgh1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'pittsburgh2_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'ssHeightMarkers')
+					$("#sockStripeHeight").attr('min', -318)
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'pittsburgh1_left').top)
+					console.log(sockCanvas.getObjects().find(o => o.id === 'pittsburgh1_left').top)
+					console.log(sockCanvas.getObjects().find(o => o.id === 'pittsburgh2_left').top)
 					break;
 				case "greenBay":
 					sockCanvas.getObjects().find(o => o.id === 'greenBay1_left').visible = true;
@@ -8972,6 +9019,19 @@
 					$("#sockStripeHeight").attr('min', -120)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'quadruple_1_left').top)
 					break;
+				case "tequila":
+					sockCanvas.getObjects().find(o => o.id === 'tequila_1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'tequila_2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'tequila_3_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'tequila_4_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'tequila_1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'tequila_2_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'tequila_3_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'tequila_4_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'tequilaMarkers')
+					$("#sockStripeHeight").attr('min', -96)
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'tequila_1_left').top)
+					break;
 				case "argyle":
 					sockCanvas.getObjects().find(o => o.id === 'argyle_1_left').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'argyle_2_left').visible = true;
@@ -9020,11 +9080,17 @@
 			case "stLouis":
 				$("#stLouisSelectors").show()
 				break;
+			case "stLouis2":
+				$("#stLouis2Selectors").show()
+				break;
 			case "northwestern":
 				$("#northwesternSelectors").show()
 				break;
 			case "boston":
 				$("#bostonSelectors").show()
+				break;
+			case "pittsburgh":
+				$("#pittsburghSelectors").show()
 				break;
 			case "greenBay":
 				$("#greenBaySelectors").show()
@@ -9046,6 +9112,9 @@
 				break;
 			case "quadruple":
 				$("#quadrupleSelectors").show()
+				break;
+			case "tequila":
+				$("#tequilaSelectors").show()
 				break;
 			case "argyle":
 				$("#argyleSelectors").show()
@@ -9270,6 +9339,42 @@
 			offset: 520.83985
 		});
 
+		stLouis3_l = new fabric.Path("M -0.12304688 102.12109 L -0.12304688 170.70703 L 1024.123 170.70703 L 1024.123 102.12109 L -0.12304688 102.12109 z M -0.12304688 190.12109 L -0.12304688 258.70703 L 1024.123 258.70703 L 1024.123 190.12109 L -0.12304688 190.12109 z",{
+			fill: initialSockColors['stLouis3'],
+			id: 'stLouis3_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 0
+		});
+
+		stLouis4_l = new fabric.Path("M -0.12304688 121.39258 L -0.12304688 137.95508 L 1024.123 137.95508 L 1024.123 121.39258 L -0.12304688 121.39258 z M -0.12304688 222.87305 L -0.12304688 239.43555 L 1024.123 239.43555 L 1024.123 222.87305 L -0.12304688 222.87305 z",{
+			fill: initialSockColors['stLouis4'],
+			id: 'stLouis4_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 19.271
+		});
+
+		stLouis3_r = fabric.util.object.clone(stLouis3_l);
+		stLouis3_r.set({
+			top: stLouis3_l.top + 512,
+			id: 'stLouis3_right',
+			clipPath: rightSockClippingPath,
+			offset: 512
+		});
+
+		stLouis4_r = fabric.util.object.clone(stLouis4_l);
+		stLouis4_r.set({
+			top: stLouis4_l.top + 512,
+			id: 'stLouis4_right',
+			clipPath: rightSockClippingPath,
+			offset: 531.271
+		});
+
 		northwestern1_l = new fabric.Path("m 0,117 v 25 H 1024 V 117 Z M 0,266.99805 V 267 292 h 1024 v -25 -0.002 z",{
 			fill: initialSockColors['northwestern1'],
 			id: 'northwestern1_left',
@@ -9340,6 +9445,42 @@
 			id: 'boston2_right',
 			clipPath: rightSockClippingPath,
 			offset: 700.91992
+		});
+
+		pittsburgh1_l = new fabric.Path("M -0.12304688 0 L -0.12304688 215.78906 L 1024.123 215.78906 L 1024.123 0 L -0.12304688 0 z ",{
+			fill: initialSockColors['pittsburgh1'],
+			id: 'pittsburgh1_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 0
+		});
+
+		pittsburgh2_l = new fabric.Path("M -0.12304688 267.64258 L -0.12304688 317.7168 L 1024.123 317.7168 L 1024.123 267.64258 L -0.12304688 267.64258 z",{
+			fill: initialSockColors['pittsburgh2'],
+			id: 'pittsburgh2_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 267.14258
+		});
+
+		pittsburgh1_r = fabric.util.object.clone(pittsburgh1_l);
+		pittsburgh1_r.set({
+			top: pittsburgh1_l.top + 512,
+			id: 'pittsburgh1_right',
+			clipPath: rightSockClippingPath,
+			offset: 512
+		});
+
+		pittsburgh2_r = fabric.util.object.clone(pittsburgh2_l);
+		pittsburgh2_r.set({
+			top: pittsburgh2_l.top + 512,
+			id: 'pittsburgh2_right',
+			clipPath: rightSockClippingPath,
+			offset: 779.14258
 		});
 
 		greenBay1_l = new fabric.Path("m -0.12304688,119.18555 v 12.20898 H 1024.123 v -12.20898 z m 0,61.5 v 73.8164 H 1024.123 v -73.8164 z m 0,123.10742 v 12.20898 H 1024.123 v -12.20898 z",{
@@ -9648,6 +9789,78 @@
 			offset: 614.19726
 		});
 
+		tequila_1_l = new fabric.Path("M -0.12304688 117.92578 L -0.12304688 143.91797 L 1024.123 143.91797 L 1024.123 117.92578 L -0.12304688 117.92578 z ",{
+			fill: initialSockColors['tequila_1'],
+			id: 'tequila_1_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 0
+		});
+
+		tequila_2_l = new fabric.Path("M -0.12304688 141.69141 L -0.12304688 167.31055 L 1024.123 167.31055 L 1024.123 141.69141 L -0.12304688 141.69141 z ",{
+			fill: initialSockColors['tequila_2'],
+			id: 'tequila_2_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 23.393
+		});
+
+		tequila_3_l = new fabric.Path("M -0.12304688 165.45508 L -0.12304688 190.33398 L 1024.123 190.33398 L 1024.123 165.45508 L -0.12304688 165.45508 z ",{
+			fill: initialSockColors['tequila_3'],
+			id: 'tequila_3_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 46.786
+		});
+
+		tequila_4_l = new fabric.Path("M -0.12304688 189.2207 L -0.12304688 212.98438 L 1024.123 212.98438 L 1024.123 189.2207 L -0.12304688 189.2207 z ",{
+			fill: initialSockColors['tequila_4'],
+			id: 'tequila_4_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 70.179
+		});
+
+		tequila_1_r = fabric.util.object.clone(tequila_1_l);
+		tequila_1_r.set({
+			top: tequila_1_l.top + 512,
+			id: 'tequila_1_right',
+			clipPath: rightSockClippingPath,
+			offset: 512
+		});
+
+		tequila_2_r = fabric.util.object.clone(tequila_2_l);
+		tequila_2_r.set({
+			top: tequila_2_l.top + 512,
+			id: 'tequila_2_right',
+			clipPath: rightSockClippingPath,
+			offset: 535.393
+		});
+		
+		tequila_3_r = fabric.util.object.clone(tequila_3_l);
+		tequila_3_r.set({
+			top: tequila_3_l.top + 512,
+			id: 'tequila_3_right',
+			clipPath: rightSockClippingPath,
+			offset: 558.786
+		});
+		
+		tequila_4_r = fabric.util.object.clone(tequila_4_l);
+		tequila_4_r.set({
+			top: tequila_4_l.top + 512,
+			id: 'tequila_4_right',
+			clipPath: rightSockClippingPath,
+			offset: 582.179
+		});
+
 		argyle_1_l = new fabric.Path("M 320.12695 -0.001953125 L 256.25781 63.845703 L 256.12891 63.974609 L 256.25781 64.134766 L 320.12695 127.98242 L 384.12695 63.974609 L 320.12695 -0.001953125 z M 576 -0.001953125 L 512.13086 63.845703 L 512.00195 63.974609 L 512.13086 64.134766 L 576 127.98242 L 640.00195 63.974609 L 576 -0.001953125 z M 448.12891 128.01367 L 384.10352 191.99023 L 448.10352 255.99805 L 512 192.11719 L 511.84766 191.95703 L 512 191.79688 L 448.12891 128.01367 z M 704.12695 128.01367 L 640.10352 191.99023 L 704.10156 255.99805 L 768 192.11719 L 767.84766 191.95703 L 768 191.79688 L 704.12695 128.01367 z M 320.12695 255.99805 L 256.25781 319.8457 L 256.12891 319.97461 L 256.25781 320.13477 L 320.12695 383.98242 L 384.12695 319.97461 L 320.12695 255.99805 z M 576 255.99805 L 512.13086 319.8457 L 512.00195 319.97461 L 512.13086 320.13477 L 576 383.98242 L 640.00195 319.97461 L 576 255.99805 z M 448.12891 384.01367 L 384.10352 447.99023 L 448.10352 511.99805 L 512 448.11914 L 511.84766 447.95898 L 512 447.79883 L 448.12891 384.01367 z M 704.12695 384.01367 L 640.10352 447.99023 L 704.10156 511.99805 L 768 448.11914 L 767.84766 447.95898 L 768 447.79883 L 704.12695 384.01367 z",{
 			fill: initialSockColors['argyle_1'],
 			id: 'argyle_1_left',
@@ -9760,6 +9973,10 @@
 		sockCanvas.add(stLouis2_l) 
 		sockCanvas.add(stLouis1_r)
 		sockCanvas.add(stLouis2_r)
+		sockCanvas.add(stLouis3_l) 
+		sockCanvas.add(stLouis4_l) 
+		sockCanvas.add(stLouis3_r)
+		sockCanvas.add(stLouis4_r)
 		sockCanvas.add(northwestern1_l) 
 		sockCanvas.add(northwestern2_l) 
 		sockCanvas.add(northwestern1_r) 
@@ -9768,6 +9985,10 @@
 		sockCanvas.add(boston2_l) 
 		sockCanvas.add(boston1_r) 
 		sockCanvas.add(boston2_r) 
+		sockCanvas.add(pittsburgh1_l) 
+		sockCanvas.add(pittsburgh2_l) 
+		sockCanvas.add(pittsburgh1_r) 
+		sockCanvas.add(pittsburgh2_r) 
 		sockCanvas.add(greenBay1_l) 
 		sockCanvas.add(greenBay2_l)
 		sockCanvas.add(greenBay1_r) 
@@ -9802,6 +10023,14 @@
 		sockCanvas.add(quadruple_2_r) 
 		sockCanvas.add(quadruple_3_r) 
 		sockCanvas.add(quadruple_4_r) 
+		sockCanvas.add(tequila_1_l) 
+		sockCanvas.add(tequila_2_l) 
+		sockCanvas.add(tequila_3_l) 
+		sockCanvas.add(tequila_4_l) 
+		sockCanvas.add(tequila_1_r) 
+		sockCanvas.add(tequila_2_r) 
+		sockCanvas.add(tequila_3_r) 
+		sockCanvas.add(tequila_4_r) 
 		sockCanvas.add(argyle_1_l)
 		sockCanvas.add(argyle_2_l)
 		sockCanvas.add(argyle_3_l)
