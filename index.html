@@ -1055,9 +1055,9 @@
 												<td style="text-align:right;">
 													<input class="swashSelector" type="text" id="swashFillColor" data-element="">
 													<input class="swashSelector" type="text" id="swashStrokeColor" data-element="">
-													<input type="number" id="swashStrokeWidth" min="0" max="20" value="6" onkeypress="return isNumberKey(event)">
+													<input type="number" id="swashStrokeWidth" style="text-align:center;" min="0" max="20" value="4" onkeypress="return isNumberKey(event)">
 													<input class="swashSelector" type="text" id="swashStroke2Color" data-element="">
-													<input type="number" id="swashStroke2Width" min="0" max="20" value="10" onkeypress="return isNumberKey(event)">
+													<input type="number" id="swashStroke2Width" style="text-align:center;" min="0" max="20" value="8" onkeypress="return isNumberKey(event)">
 												</td>
 											</tr>
 										</table>
@@ -11971,21 +11971,23 @@
 			originY: 'center',
 		});
 
-		swash1Stroke = new fabric.Path("m 409.35183,364.97741 c 5.27,2.44 4.012,8.207 0.046,9.38 -17.49,5.188 -72.325,20.82 -88.221,24.345 -25.2,5.59 -32.419,12.51 -33.601,21.129 8.813,-9.825 19.099,-5.97 22.016,-4.212 0.712,-1.529 4.368,-6.77 13.221,-10.14 29.234,-11.134 65.513,-21.479 87.351,-28.972 7.643,-2.623 5.956,-11.825 -0.94,-14.343 l 0.128,2.813 z",{
+		swash1Stroke = fabric.util.object.clone(swash1);
+		swash1Stroke.set({
 			id: 'swash1Stroke',
 			fill: initialJerseyColors["swashStrokeColor"],
 			stroke: initialJerseyColors["swashStrokeColor"],
-			strokeWidth: 6,
+			strokeWidth: 4,
 			originX: 'center',
 			originY: 'center',
 			strokeLineCap: "round",
 		});
 
-		swash1Stroke2 = new fabric.Path("m 409.35183,364.97741 c 5.27,2.44 4.012,8.207 0.046,9.38 -17.49,5.188 -72.325,20.82 -88.221,24.345 -25.2,5.59 -32.419,12.51 -33.601,21.129 8.813,-9.825 19.099,-5.97 22.016,-4.212 0.712,-1.529 4.368,-6.77 13.221,-10.14 29.234,-11.134 65.513,-21.479 87.351,-28.972 7.643,-2.623 5.956,-11.825 -0.94,-14.343 l 0.128,2.813 z",{
+		swash1Stroke2 = fabric.util.object.clone(swash1);
+		swash1Stroke2.set({
 			id: 'swash1Stroke2',
 			fill: initialJerseyColors["swashStroke2Color"],
 			stroke: initialJerseyColors["swashStroke2Color"],
-			strokeWidth: 10,
+			strokeWidth: 8,
 			originX: 'center',
 			originY: 'center',
 			strokeLineCap: "round",
@@ -11999,21 +12001,23 @@
 			strokeLineCap: "round",
 		});
 
-		swash2Stroke = new fabric.Path("m 415.40209,378.93895 c 0,0.79956 -0.003,1.99178 -0.003,2.64478 -34.9704,4.51213 -78.08056,17.60727 -96.57627,36.86816 -14.75983,-9.90204 -27.05738,-9.01399 -29.5556,-8.70073 -0.13708,-0.66011 -0.36541,-1.74962 -0.49775,-2.38208 13.54667,-5.13589 76.62563,-23.17533 126.63238,-28.43013 z",{
+		swash2Stroke = fabric.util.object.clone(swash2);
+		swash2Stroke.set({
 			id: 'swash2Stroke',
 			fill: initialJerseyColors["swashStrokeColor"],
 			stroke: initialJerseyColors["swashStrokeColor"],
-			strokeWidth: 6,
+			strokeWidth: 4,
 			originX: 'center',
 			originY: 'center',
 			strokeLineCap: "round",
 		});
 
-		swash2Stroke2 = new fabric.Path("m 415.40209,378.93895 c 0,0.79956 -0.003,1.99178 -0.003,2.64478 -34.9704,4.51213 -78.08056,17.60727 -96.57627,36.86816 -14.75983,-9.90204 -27.05738,-9.01399 -29.5556,-8.70073 -0.13708,-0.66011 -0.36541,-1.74962 -0.49775,-2.38208 13.54667,-5.13589 76.62563,-23.17533 126.63238,-28.43013 z",{
+		swash2Stroke2 = fabric.util.object.clone(swash2);
+		swash2Stroke2.set({
 			id: 'swash2Stroke2',
 			fill: initialJerseyColors["swashStroke2Color"],
 			stroke: initialJerseyColors["swashStroke2Color"],
-			strokeWidth: 10,
+			strokeWidth: 8,
 			originX: 'center',
 			originY: 'center',
 			strokeLineCap: "round",
@@ -12026,21 +12030,23 @@
 			originY: 'center',
 		});
 		
-		swash3Stroke = new fabric.Path("m 408.22745,369.91607 c 2.65026,1.26172 3.23343,3.01214 3.20127,3.88366 -0.0984,2.68712 -2.76621,4.55498 -4.76464,5.72516 -2.0067,1.17481 -4.60386,2.0907 -6.00061,2.58264 -5.04524,1.77816 -39.73499,13.52716 -70.3407,23.89423 -22.15652,7.50333 -41.61016,14.09261 -46.37869,15.73439 l 0.65331,0.87012 c 9.96383,0.5021 14.3548,1.7273 18.5811,4.5277 5.49443,-5.44407 14.30072,-9.00593 21.95337,-12.45546 2.92016,-1.31675 39.2897,-15.61233 60.58343,-23.73334 10.49534,-4.00248 18.78181,-7.16397 20.32423,-7.83991 4.1576,-1.82117 8.00536,-4.18188 8.00536,-9.08823 0,-3.17444 -2.87729,-4.92209 -5.60356,-5.76447 l -0.21387,1.66351 z",{
+		swash3Stroke = fabric.util.object.clone(swash3);
+		swash3Stroke.set({
 			id: 'swash3Stroke',
 			fill: initialJerseyColors["swashStrokeColor"],
 			stroke: initialJerseyColors["swashStrokeColor"],
-			strokeWidth: 6,
+			strokeWidth: 4,
 			originX: 'center',
 			originY: 'center',
 			strokeLineCap: "round",
 		});
 
-		swash3Stroke2 = new fabric.Path("m 408.22745,369.91607 c 2.65026,1.26172 3.23343,3.01214 3.20127,3.88366 -0.0984,2.68712 -2.76621,4.55498 -4.76464,5.72516 -2.0067,1.17481 -4.60386,2.0907 -6.00061,2.58264 -5.04524,1.77816 -39.73499,13.52716 -70.3407,23.89423 -22.15652,7.50333 -41.61016,14.09261 -46.37869,15.73439 l 0.65331,0.87012 c 9.96383,0.5021 14.3548,1.7273 18.5811,4.5277 5.49443,-5.44407 14.30072,-9.00593 21.95337,-12.45546 2.92016,-1.31675 39.2897,-15.61233 60.58343,-23.73334 10.49534,-4.00248 18.78181,-7.16397 20.32423,-7.83991 4.1576,-1.82117 8.00536,-4.18188 8.00536,-9.08823 0,-3.17444 -2.87729,-4.92209 -5.60356,-5.76447 l -0.21387,1.66351 z",{
+		swash3Stroke2 = fabric.util.object.clone(swash3);
+		swash3Stroke2.set({
 			id: 'swash3Stroke2',
 			fill: initialJerseyColors["swashStroke2Color"],
 			stroke: initialJerseyColors["swashStroke2Color"],
-			strokeWidth: 10,
+			strokeWidth: 8,
 			originX: 'center',
 			originY: 'center',
 			strokeLineCap: "round",
@@ -12053,21 +12059,23 @@
 			originY: 'center',
 		});
 		
-		swash4Stroke = new fabric.Path("m 411.26486,376.43559 c 0,0 2.17235,-0.0857 2.58229,2.23163 0.40675,2.31919 -2.08115,2.71636 -2.08115,2.71636 L 284.34939,403.8764 c 0,0 5.09619,0.82398 15.17047,5.40809 10.0574,4.57453 14.21242,7.10165 14.21242,7.10165 0,0 3.43273,-8.26991 13.60185,-10.8636 15.25209,-3.891 84.31103,-18.74775 84.31103,-18.74775 4.17143,-1.11034 8.53119,-3.88415 7.5695,-9.33511 -0.86684,-4.91424 -4.65251,-6.6037 -7.39851,-6.26034 l -0.55129,5.25625 z",{
+		swash4Stroke = fabric.util.object.clone(swash4);
+		swash4Stroke.set({
 			id: 'swash4Stroke',
 			fill: initialJerseyColors["swashStrokeColor"],
 			stroke: initialJerseyColors["swashStrokeColor"],
-			strokeWidth: 6,
+			strokeWidth: 4,
 			originX: 'center',
 			originY: 'center',
 			strokeLineCap: "round",
 		});
 
-		swash4Stroke2 = new fabric.Path("m 411.26486,376.43559 c 0,0 2.17235,-0.0857 2.58229,2.23163 0.40675,2.31919 -2.08115,2.71636 -2.08115,2.71636 L 284.34939,403.8764 c 0,0 5.09619,0.82398 15.17047,5.40809 10.0574,4.57453 14.21242,7.10165 14.21242,7.10165 0,0 3.43273,-8.26991 13.60185,-10.8636 15.25209,-3.891 84.31103,-18.74775 84.31103,-18.74775 4.17143,-1.11034 8.53119,-3.88415 7.5695,-9.33511 -0.86684,-4.91424 -4.65251,-6.6037 -7.39851,-6.26034 l -0.55129,5.25625 z",{
+		swash4Stroke2 = fabric.util.object.clone(swash4);
+		swash4Stroke2.set({
 			id: 'swash4Stroke2',
 			fill: initialJerseyColors["swashStroke2Color"],
 			stroke: initialJerseyColors["swashStroke2Color"],
-			strokeWidth: 10,
+			strokeWidth: 8,
 			originX: 'center',
 			originY: 'center',
 			strokeLineCap: "round",
@@ -12080,21 +12088,23 @@
 			originY: 'center',
 		});
 		
-		swash5Stroke = new fabric.Path("m 418.17506,374.90088 c -1.12325,-4.48482 -5.92919,-3.50199 -5.92919,-3.50199 l -2.06758,0.77722 c -0.0616,0.94116 -0.15716,1.8923 -0.28806,2.82894 l 1.06165,-0.37502 c 0,0 3.58396,-1.33883 3.58758,1.47788 0.003,2.42086 -3.89828,4.29187 -8.46871,5.27154 -1.28629,0.27583 -52.46451,12.05131 -52.46451,12.05131 l -55.00902,12.05766 c -16.15115,3.43087 -15.29241,13.51107 -15.22447,14.03963 0.006,0.0231 0.0258,0.005 0.0258,0.005 0.30618,-0.29033 3.80997,-3.50697 9.86915,-3.37472 5.71449,0.1241 7.31512,3.63379 7.79023,4.09667 0.0548,0.053 0.0643,-0.0109 0.0643,-0.0109 0.1549,-0.62231 1.66494,-5.57002 16.12217,-9.50499 l 31.26737,-8.30928 61.15515,-18.07063 c 4.17774,-1.40451 9.72149,-4.59714 8.50812,-9.45879 z",{
+		swash5Stroke = fabric.util.object.clone(swash5);
+		swash5Stroke.set({
 			id: 'swash5Stroke',
 			fill: initialJerseyColors["swashStrokeColor"],
 			stroke: initialJerseyColors["swashStrokeColor"],
-			strokeWidth: 6,
+			strokeWidth: 4,
 			originX: 'center',
 			originY: 'center',
 			strokeLineCap: "round",
 		});
 
-		swash5Stroke2 = new fabric.Path("m 418.17506,374.90088 c -1.12325,-4.48482 -5.92919,-3.50199 -5.92919,-3.50199 l -2.06758,0.77722 c -0.0616,0.94116 -0.15716,1.8923 -0.28806,2.82894 l 1.06165,-0.37502 c 0,0 3.58396,-1.33883 3.58758,1.47788 0.003,2.42086 -3.89828,4.29187 -8.46871,5.27154 -1.28629,0.27583 -52.46451,12.05131 -52.46451,12.05131 l -55.00902,12.05766 c -16.15115,3.43087 -15.29241,13.51107 -15.22447,14.03963 0.006,0.0231 0.0258,0.005 0.0258,0.005 0.30618,-0.29033 3.80997,-3.50697 9.86915,-3.37472 5.71449,0.1241 7.31512,3.63379 7.79023,4.09667 0.0548,0.053 0.0643,-0.0109 0.0643,-0.0109 0.1549,-0.62231 1.66494,-5.57002 16.12217,-9.50499 l 31.26737,-8.30928 61.15515,-18.07063 c 4.17774,-1.40451 9.72149,-4.59714 8.50812,-9.45879 z",{
+		swash5Stroke2 = fabric.util.object.clone(swash5);
+		swash5Stroke2.set({
 			id: 'swash5Stroke2',
 			fill: initialJerseyColors["swashStroke2Color"],
 			stroke: initialJerseyColors["swashStroke2Color"],
-			strokeWidth: 10,
+			strokeWidth: 8,
 			originX: 'center',
 			originY: 'center',
 			strokeLineCap: "round",
@@ -12107,21 +12117,23 @@
 			originY: 'center',
 		});
 		
-		swash6Stroke = new fabric.Path("m 414.4249,370.69208 c -0.30503,-0.39281 -0.60617,-0.36892 -1.01399,-0.1739 -0.12112,0.055 -1.05399,0.7084 -1.72072,0.61228 0.3367,-0.69229 -1.24067,2.71636 -1.03176,2.22187 0.82008,-0.0906 1.41124,-0.4167 2.01352,-0.75896 0.38337,-0.21668 0.58228,-0.13112 0.59061,0.37726 0.46671,23.74447 -48.21178,20.2258 -69.37101,23.53667 -25.33073,3.96371 -53.30949,12.884 -63.15821,20.17247 -0.38448,0.28392 -0.21335,0.50449 0.18891,0.29836 11.94447,-6.19114 24.98959,-6.2267 33.04869,-0.40392 9.69425,-7.78852 20.18302,-10.54434 30.08951,-12.09782 16.05319,-2.51357 71.45733,-4.75101 71.45733,-29.37889 5.5e-4,-2.8536 -1.05066,-4.3493 -1.09288,-4.40542 z",{
+		swash6Stroke = fabric.util.object.clone(swash6);
+		swash6Stroke.set({
 			id: 'swash6Stroke',
 			fill: initialJerseyColors["swashStrokeColor"],
 			stroke: initialJerseyColors["swashStrokeColor"],
-			strokeWidth: 6,
+			strokeWidth: 4,
 			originX: 'center',
 			originY: 'center',
 			strokeLineCap: "round",
 		});
 
-		swash6Stroke2 = new fabric.Path("m 414.4249,370.69208 c -0.30503,-0.39281 -0.60617,-0.36892 -1.01399,-0.1739 -0.12112,0.055 -1.05399,0.7084 -1.72072,0.61228 0.3367,-0.69229 -1.24067,2.71636 -1.03176,2.22187 0.82008,-0.0906 1.41124,-0.4167 2.01352,-0.75896 0.38337,-0.21668 0.58228,-0.13112 0.59061,0.37726 0.46671,23.74447 -48.21178,20.2258 -69.37101,23.53667 -25.33073,3.96371 -53.30949,12.884 -63.15821,20.17247 -0.38448,0.28392 -0.21335,0.50449 0.18891,0.29836 11.94447,-6.19114 24.98959,-6.2267 33.04869,-0.40392 9.69425,-7.78852 20.18302,-10.54434 30.08951,-12.09782 16.05319,-2.51357 71.45733,-4.75101 71.45733,-29.37889 5.5e-4,-2.8536 -1.05066,-4.3493 -1.09288,-4.40542 z",{
+		swash6Stroke2 = fabric.util.object.clone(swash6);
+		swash6Stroke2.set({
 			id: 'swash6Stroke2',
 			fill: initialJerseyColors["swashStroke2Color"],
 			stroke: initialJerseyColors["swashStroke2Color"],
-			strokeWidth: 10,
+			strokeWidth: 8,
 			originX: 'center',
 			originY: 'center',
 			strokeLineCap: "round",
