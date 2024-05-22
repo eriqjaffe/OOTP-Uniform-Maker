@@ -1041,7 +1041,7 @@
 										</table>
 										<table style="width:482px;" class="ms-swash-container">
 											<tr>
-												<td class="checkCell"><input type="checkbox" id="swashCheck" class="swashToggle" data-id="swash" id="swashCheck"></td>
+												<td class="checkCell"><input type="checkbox" id="swashCheck" data-id="swash" id="swashCheck"></td>
 												<td>
 													<select id="swashCombo" class="msDropDown" style="width:100%;" is="ms-dropdown">
 														<option value="swash1" data-image="./images/swash1.png">Swash 1</option>
@@ -1052,12 +1052,25 @@
 														<option value="swash6" data-image="./images/swash7.png">Swash 6</option>
 													</select>
 												</td>
-												<td style="text-align:right;">
+											</tr>
+										</table>
+										<table style="width:482px;" class="ms-swash-container">
+											<tr>
+												<td style="text-align:center;">
+													<input type="checkbox" id="swashColorCheck" class="swashToggle swashVisible" data-id="2" checked disabled>
 													<input class="swashSelector" type="text" id="swashFillColor" data-element="">
+												</td>
+												<td style="text-align:center;">
+													<input type="checkbox" id="swashStrokeCheck" class="swashToggle swashVisible" data-id="1" checked disabled>
+													<label>Width:&nbsp;</label>
+													<input type="number" id="swashStrokeWidth" class="swashToggle" style="text-align:center;" min="0" max="20" value="4" onkeypress="return isNumberKey(event)" disabled>
 													<input class="swashSelector" type="text" id="swashStrokeColor" data-element="">
-													<input type="number" id="swashStrokeWidth" style="text-align:center;" min="0" max="20" value="4" onkeypress="return isNumberKey(event)">
+												</td>
+												<td style="text-align:center;">
+													<input type="checkbox" id="swashStroke2Check" class="swashToggle swashVisible" data-id="0" checked disabled>
+													<label>Width:&nbsp;</label>
+													<input type="number" id="swashStroke2Width" class="swashStrokeWidth" style="text-align:center;" min="0" max="20" value="8" onkeypress="return isNumberKey(event)" disabled>
 													<input class="swashSelector" type="text" id="swashStroke2Color" data-element="">
-													<input type="number" id="swashStroke2Width" style="text-align:center;" min="0" max="20" value="8" onkeypress="return isNumberKey(event)">
 												</td>
 											</tr>
 										</table>
@@ -4169,6 +4182,17 @@
 		})
 		jerseyLogoCanvas.renderAll();
 	})
+
+	$(".swashVisible").on("change",function(){
+		let id = parseInt($(this).data("id"))
+		let visible = $(this).is(":checked")
+		jerseyLogoCanvas.getObjects('group').forEach(function(o){
+			if (o.id.indexOf("swash") > -1) {
+				o._objects[id].set("visible", visible);
+			} 
+		})
+		jerseyLogoCanvas.renderAll();
+	})
 	
 	$(".swashSelector").each(function() {
 		$(this).spectrum({
@@ -5708,7 +5732,21 @@
 		})
 		$(".swashSelector").each(function() {
 			$(this).spectrum($("#swashCheck").is(":checked") ? 'enable' : 'disable')
+		})
+		$(".swashStrokeWidth").each(function() {
+			if (checked) {
+				$(this).prop('disabled', false);
+			} else {
+				$(this).prop('disabled', true);
+			}
 		})	
+		$(".swashToggle").each(function() {
+			if (checked) {
+				$(this).prop('disabled', false);
+			} else {
+				$(this).prop('disabled', true);
+			}
+		})
 		jerseyLogoCanvas.getObjects('group').forEach(function(o) {
 			if (o.id.indexOf("swash") > -1) {
 				if (state == true) {
@@ -5726,6 +5764,7 @@
 	})
 
 	$("#swashCombo").on("change",function() {
+		let state = $("#swashCheck").is(":checked")
 		if (!reloading) {
 			jerseyLogoCanvas.getObjects('group').forEach(function(o) {
 				if (o.id.indexOf("swash") > -1) {
@@ -5741,7 +5780,7 @@
 				}
 			})
 			jerseyLogoCanvas.renderAll();
-		}
+		} 
 	})
 
 	function jerseyWordmarkChange(data,newFont) {
