@@ -5794,7 +5794,7 @@
 
 			const path = font.getPath($("#wordmarkTextBox").val(),256,681,50,{letterSpacing:$("#wordmarkSpacing").val()/100})
 			const svgPath = path.toPathData(5)
-
+			
 			var grp = jerseyLogoCanvas.getObjects("group").find(o => o.id === "wordmark")
 
 			grp.getObjects('path').forEach(function(o) {
@@ -5810,7 +5810,8 @@
 				id: 'wordmarkText',
 				fill: ($("#wordmarkTextColor").spectrum("get") == null) ? 'transparent' : $("#wordmarkTextColor").spectrum("get").toHexString(),
 				stroke: ($("#wordmarkTextColor").spectrum("get") == null) ? 'transparent' : $("#wordmarkTextColor").spectrum("get").toHexString(),
-				strokeWidth: 0
+				strokeWidth: 0,
+				visible: $("#wordmarkTextColorCheck").is(":checked")
 			})
 		
 			wordmarkTextStroke1 = new fabric.Path(svgPath, {
@@ -5824,6 +5825,7 @@
 				strokeWidth: parseInt($("#wordmarkTextStroke1StrokeWidth").val()),
 				strokeLineCap: "round",
 				fill: ($("#wordmarkTextStroke1Color").spectrum("get") == null) ? 'transparent' : $("#wordmarkTextStroke1Color").spectrum("get").toHexString(),
+				visible: $("#wordmarkTextStroke1ColorCheck").is(":checked")
 			})
 		
 			wordmarkTextStroke2 = new fabric.Path(svgPath, {
@@ -5838,6 +5840,7 @@
 				strokeWidth: parseInt($("#wordmarkTextStroke2StrokeWidth").val()),
 				strokeLineCap: "round",
 				fill: ($("#wordmarkTextStroke2Color").spectrum("get") == null) ? 'transparent' : $("#wordmarkTextStroke2Color").spectrum("get").toHexString(),
+				visible: $("#wordmarkTextStroke2ColorCheck").is(":checked")
 			})
 
 			grp.addWithUpdate(wordmarkTextStroke2)
