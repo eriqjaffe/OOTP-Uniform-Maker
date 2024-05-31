@@ -28,6 +28,7 @@
     <link href='./scripts/skeletabs.css' rel='stylesheet' type='text/css'>
 	<script>
 		const { ipcRenderer } = require('electron');
+		const log = require('electron-log/renderer')
 		const params = new URLSearchParams(window.location.search)
 		const appVersion = params.get('appVersion')
 		const gridsVisible = (params.get('gridsVisible').toLowerCase() == "true") ? true : false
@@ -36,6 +37,8 @@
 		const preferredPlayerNumber = params.get('preferredPlayerNumber')
 		//const imageMagick = (params.get("imagemagick") == "true") ? true : false
 		const imWarning = (params.get("imWarning") == "true") ? true : false
+
+		log.initialize()
 
 		var prefs = {
 			appVersion: params.get('appVersion'),
@@ -3644,7 +3647,7 @@
 					const value = result.fontPath
 					opentype.load(result.fontPath, (err,font) => {
 						if (err || !font) {
-							console.log(err)
+							log.error(err)
 							return;
 						}
 						
@@ -5491,7 +5494,6 @@
 	})
 
 	$("#wordmarkTextBox").on("input",function() {
-		console.log($(this).val())
 		jerseyWordmarkChange($("#jerseyWordmarkSelect").val(),false)
 	})
 
@@ -5787,8 +5789,8 @@
 		var tmp = (data.fontPath == undefined) ? data : data.fontPath;
 		opentype.load(tmp, (err,font) => {
 			if (err || !font) {
-				console.log(data.fontPath)
-				console.log(err)
+				log.error(err)
+				log.error(data.fontPath)
 				return;
 			}
 
@@ -6718,21 +6720,18 @@
 	})
 
 	pantsLogoCanvas.on("selection:created",function(e) {
-		console.log("created")
 		activeCanvas = pantsLogoCanvas;
 		pantsTippy.setContent(getStackingOrder())
 		pantsTippy.show()
 	})
 
 	pantsLogoCanvas.on("selection:updated",function(e) {
-		console.log("changed")
 		activeCanvas = pantsLogoCanvas;
 		pantsTippy.setContent(getStackingOrder())
 		pantsTippy.show()
 	})
 
 	pantsLogoCanvas.on("selection:cleared",function(e) {
-		console.log('cleared')
 		pantsTippy.hide()
 	})
 
@@ -7523,7 +7522,7 @@
 		var tmp = (data.fontPath == undefined) ? data : data.fontPath;
 		opentype.load(tmp, (err,font) => {
 			if (err || !font) {
-				console.log(err)
+				log.error(err)
 				return;
 			}
 
@@ -8194,7 +8193,7 @@
 
 		opentype.load(font, (err,font) => {
 			if (err || !font) {
-				console.log(err)
+				log.error(err)
 				return;
 			}
 
@@ -8316,10 +8315,6 @@
 		ipcRenderer.send('upload-font-image', null)
 	})
 
-	ipcRenderer.on('upload-font-image-response', (event, data) => {
-		console.log(data)
-	})
-
 	$("#clearOCR").on("click",function() {
 		fontCanvas.getObjects('image').forEach(function(o) {
 			fontCanvas.remove(o)
@@ -8391,7 +8386,7 @@
 							
 					opentype.load(data.fontPath, (err,font) => {
 						if (err || !font) {
-							console.log(err)
+							log.error(err)
 							return;
 						}
 
@@ -8524,7 +8519,7 @@
 					fontList.push(data.fontName)
 					opentype.load(data.fontPath, (err,font) => {
 						if (err || !font) {
-							console.log(err)
+							log.error(err)
 							return;
 						}
 
@@ -8765,7 +8760,6 @@
 			$(this).data('changed', false);
 		},
 		move: function(color) {
-			console.log(color.toHexString())
 			$(this).data('changed', true);
 			sockCanvas.setBackgroundColor(color.toHexString(), sockCanvas.renderAll.bind(sockCanvas))
 		},
@@ -9015,8 +9009,6 @@
 					$("#sockStripeHeight").attr('list', 'ssHeightMarkers')
 					$("#sockStripeHeight").attr('min', -318)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'pittsburgh1_left').top)
-					console.log(sockCanvas.getObjects().find(o => o.id === 'pittsburgh1_left').top)
-					console.log(sockCanvas.getObjects().find(o => o.id === 'pittsburgh2_left').top)
 					break;
 				case "greenBay":
 					sockCanvas.getObjects().find(o => o.id === 'greenBay1_left').visible = true;
@@ -9201,21 +9193,18 @@
 	})
 
 	sockCanvas.on("selection:created",function(e) {
-		console.log("created")
 		activeCanvas = sockCanvas;
 		sockTippy.setContent(getStackingOrder())
 		sockTippy.show()
 	})
 
 	sockCanvas.on("selection:updated",function(e) {
-		console.log("changed")
 		activeCanvas = sockCanvas;
 		sockTippy.setContent(getStackingOrder())
 		sockTippy.show()
 	})
 
 	sockCanvas.on("selection:cleared",function(e) {
-		console.log('cleared')
 		sockTippy.hide()
 	})
 
@@ -9335,7 +9324,6 @@
 	$("#sockImageClone").on("click",function(e){
 		var object = sockCanvas.getActiveObject();
 		if (object.get('type') == "image") {
-			console.log(object)
 			const imageLeft = object.left
 			const imageTop = object.top
 			const offset = (imageTop < 513) ? 512 : -512;
@@ -10669,7 +10657,7 @@
 
 		opentype.load("./fonts/Graduate-Regular.ttf", (err,font) => {
 			if (err || !font) {
-				console.log(err)
+				log.error(err)
 				return;
 			}
 
@@ -12397,7 +12385,7 @@
 
 		opentype.load("./fonts/LeckerliOne-Regular.ttf", (err,font) => {
 			if (err || !font) {
-				console.log(err)
+				log.error(err)
 				return;
 			}
 
@@ -13009,7 +12997,7 @@
 
 		opentype.load("./fonts/MLBBlock.ttf", (err,font) => {
 			if (err || !font) {
-				console.log(err)
+				log.error(err)
 				return;
 			}
 
@@ -13236,7 +13224,7 @@
 
 		opentype.load(font, (err,font) => {
 			if (err || !font) {
-				console.log(err)
+				log.error(err)
 				return;
 			}
 
@@ -13683,7 +13671,6 @@
 					canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
 					break;
 				case "eyeletGroup":
-					console.log("hello")
 					canvas.bringToFront(canvas.getObjects().find(o => o.id == "individualEyelets"))
 					canvas.bringToFront(canvas.getObjects().find(o => o.id == "groupedEyelets"))
 					break;
@@ -13723,7 +13710,6 @@
 	})
 
 	ipcRenderer.on('local-font-response', (event, data) => {
-		console.log(data)
 		if (data.status != "cancelled") {
 			if (data.result == "error") {
 				ipcRenderer.send('show-alert',"An error occurred:\r\n\r\n"+data.message)
@@ -13879,8 +13865,7 @@
 					const canvas = document.createElement('canvas');
 					canvas.width = image.width + x * 2
 					canvas.height = image.height + y * 2
-					console.log(canvas)
-
+					
 					const ctx = canvas.getContext('2d');
 
 					for (let angle = 0; angle < 360; angle += 360 / 36) {
@@ -13979,11 +13964,7 @@
 						a: pixels[startIndex + 3] // Get alpha channel value
 					};
 
-					console.log(baseColor)
-
 					const stack = [{ x: x, y: y }];
-
-					console.log(stack)
 
 					while (stack.length) {
 						const { x, y } = stack.pop();
@@ -14589,9 +14570,6 @@
 					const pixelData = ctx.getImageData(x, y, 1, 1).data; // Get pixel data at coordinates (x, y)
 					const color = { r: pixelData[0], g: pixelData[1], b: pixelData[2] }; // Extract RGB values from pixel data
 
-					// Now you can use the color variable for further processing
-					console.log("Color at coordinates (x, y):", color);
-
 					const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 					const pixels = imageData.data;
 
@@ -14702,7 +14680,6 @@
 			var object = canvas.getActiveObject()
 			var idx = canvas.getObjects().indexOf(object)
 			if (object.get('type') == "image") {
-				console.log(x, y)
 				showOverlay("Processing Image...")
 				var pictureName = object.get('name');
 				$(colorSquare).removeClass("colorSquareActive").removeClass("colorSquareSelected");
@@ -14773,9 +14750,6 @@
 
 						const pixelData = ctx.getImageData(x, y, 1, 1).data; // Get pixel data at coordinates (x, y)
 						const color = { r: pixelData[0], g: pixelData[1], b: pixelData[2] }; // Extract RGB values from pixel data
-
-						// Now you can use the color variable for further processing
-						console.log("Color at coordinates (x, y):", color);
 
 						// Continue with your existing code...
 						const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -16944,12 +16918,6 @@
 					canvas.sendToBack(image)	
 				}
 				canvas.setActiveObject(image)
-				//console.log(image.getZIndex())
-				jerseyLogoCanvas.getObjects().forEach(function(o) {
-					if (o.selectable) {
-						//console.log(o.id)
-					}
-				})
 				canvas.requestRenderAll()
 				canvas.renderAll();
 				$("#tabContainer").skeletabs('goTo', tab)
@@ -16990,7 +16958,7 @@
 					case 3:
 						opentype.load(data.fontPath, (err,font) => {
 							if (err || !font) {
-								console.log(err)
+								log.error(err)
 								return;
 							}
 
@@ -17135,7 +17103,7 @@
 					case 3:
 						opentype.load(data.fontPath, (err,font) => {
 							if (err || !font) {
-								console.log(err)
+								log.error(err)
 								return;
 							}
 
@@ -17305,7 +17273,6 @@
 	}
 
 	ipcRenderer.on('ocr-resize-response', (event, response) => {
-		console.log(response)
 		for (obj of response.data) {
 			const char = chars.find(o => o.char === obj.char)
 			const src = obj
@@ -17522,37 +17489,6 @@
 		} else {
 			$("#tipSpan").html("");
 		}
-		/* if (obj.type == 'image') {
-			$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
-		} else {
-			console.log(obj.id)
-			switch (obj.id) {
-				case "wordmark":
-					$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
-					break;
-				case "swash1":
-					$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
-					break;
-				case "swash2":
-					$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
-					break;
-				case "swash3":
-					$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
-					break;
-				case "swash4":
-					$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
-					break;
-				case "swash5":
-					$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
-					break;
-				case "swash6":
-					$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
-					break;
-				default:
-					$("#tipSpan").html("");
-					$("#jerseyNumberCtl").css("display","none")
-			}
-		} */
 	}
 
 	function height2normal( canvas ) {
@@ -17688,7 +17624,6 @@
 	}
 
 	function refreshDropdowns(which,data,thumb) {
-		console.log("refreshing "+which)
 		data.thumb = thumb.toDataURL()
 		customFonts.push(data)
 

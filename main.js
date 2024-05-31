@@ -18,8 +18,11 @@ const { createWorker } = require('tesseract.js');
 const replaceColor = require('replace-color');
 const admzip = require('adm-zip');
 const semver = require('semver')
+const log = require('electron-log/main');
 
-const { log } = console;
+log.initialize();
+
+/* const { log } = console;
 function proxiedLog(...args) {
   const line = (((new Error('log'))
     .stack.split('\n')[2] || '…')
@@ -27,7 +30,7 @@ function proxiedLog(...args) {
   log.call(console, `${line}\n`, ...args);
 }
 console.info = proxiedLog;
-console.log = proxiedLog;
+console.log = proxiedLog; */
 
 const isMac = process.platform === 'darwin'
 const isWin = process.platform === 'win32'
@@ -73,7 +76,7 @@ const options = {
 };
 
 ipcMain.on('check-for-update', (event, arg) => {
-	console.log(arg.type)
+	log.info("Update Check: "+arg.type)
 	versionCheck(options, function (error, update) { // callback function
 		if (error) {
 			dialog.showMessageBox(null, {
@@ -122,7 +125,7 @@ ipcMain.on('show-warning', (event, arg) => {
     })
         // Dialog returns a promise so let's handle it correctly
         .then((result) => {
-			console.log(result)
+			log.info("Warning dialog '"+arg+"' returned "+result)
         })
 })
 
@@ -327,7 +330,7 @@ ipcMain.on('upload-image', (event, arg) => {
 			store.set("uploadImagePath", path.dirname(result.filePaths[0]))
 			Jimp.read(result.filePaths[0], (err, image) => {
 				if (err) {
-					console.log(err);
+					log.error(err);
 				} else {
 					if (type == "jersey") {
 						Jimp.read(__dirname+"/images/mask.png", (err, mask) => {
@@ -348,10 +351,10 @@ ipcMain.on('upload-image', (event, arg) => {
 			});
 		  } else {
 			  //res.end()
-			  console.log("cancelled")
+			  log.info("user cancelled uploading image")
 		  }
 	  }).catch(err => {
-		  console.log(err)
+		  log.error(err)
 	  })
 })
 
@@ -380,7 +383,7 @@ ipcMain.on('upload-layer', (event, arg) => {
 			store.set("uploadImagePath", path.dirname(result.filePaths[0]))
 			Jimp.read(result.filePaths[0], (err, image) => {
 				if (err) {
-					console.log(err);
+					log.error(err);
 				} else {
 					image.getBase64(Jimp.AUTO, (err, ret) => {
 						json.filename = path.basename(result.filePaths[0])
@@ -391,10 +394,10 @@ ipcMain.on('upload-layer', (event, arg) => {
 			});
 		  } else {
 			  res.end()
-			  console.log("cancelled")
+			  log.info("user cancelled uploading custom layer")
 		  }
 	  }).catch(err => {
-		  console.log(err)
+		  log.error(err)
 	  })
 })
 
@@ -412,11 +415,11 @@ ipcMain.on('upload-texture', (event, arg) => {
 			store.set("uploadImagePath", path.dirname(result.filePaths[0]))
 			Jimp.read(result.filePaths[0], (err, image) => {
 				if (err) {
-					console.log(err);
+					log.error(err);
 				} else {
 					if (arg == "jersey") {
 						Jimp.read(__dirname+"/images/mask.png", (err, mask) => {
-							if (err) { console.log(err) }
+							if (err) { log.error(err) }
 							image.mask(mask,0,0)
 							image.getBase64(Jimp.AUTO, (err, ret) => {
 								json.type = arg
@@ -438,10 +441,10 @@ ipcMain.on('upload-texture', (event, arg) => {
 				}
 			});
 		  } else {
-			  console.log("cancelled")
+			  log.info("user cancelled uploading custom texture")
 		  }
 	  }).catch(err => {
-		  console.log(err)
+		  log.error(err)
 	  })
 })
 
@@ -480,7 +483,7 @@ ipcMain.on('add-stroke', (event, arg) => {
 			} catch (error) {
 				json.status = 'error'
 				json.message = error.message
-				console.log(error);
+				log.error(error);
 				event.sender.send('add-stroke-response', json)
 			}
 		}
@@ -525,7 +528,7 @@ ipcMain.on('make-transparent', (event, arg) => {
 			} catch (error) {
 				json.status = 'error'
 				json.message = error.message
-				console.log(error);
+				log.error(error);
 				event.sender.send('imagemagick-response', json)
 			}
 		}
@@ -568,7 +571,7 @@ ipcMain.on('remove-border', (event, arg) => {
 			} catch (error) {
 				json.status = 'error'
 				json.message = error.message
-				console.log(error);
+				log.error(error);
 				event.sender.send('imagemagick-response', json)
 			}
 		}
@@ -592,14 +595,14 @@ ipcMain.on('replace-color', (event, arg) => {
 		if (err) {
 			json.status = 'error'
 			json.message = err.message
-			console.log(err);
+			log.error(err);
 			event.sender.send('replace-color-response', json)
 		}
 		image.getBase64(Jimp.AUTO, (err, ret) => {
 			if (err) {
 				json.status = 'error'
 				json.message = err.message
-				console.log(err);
+				log.error(err);
 				event.sender.send('replace-color-response', json)
 			}
 			json.result = "success"
@@ -657,10 +660,10 @@ ipcMain.on('custom-font', (event, arg) => {
 		} else {
 			json.status = "cancelled"
 			event.sender.send('custom-font-response', json)
-			console.log("cancelled")
+			log.info("User cancelled custom font dialog")
 		}
 	}).catch(err => {
-		console.log(err)
+		log.error(err)
 		json.status = "error",
 		json.message = err
 		event.sender.send('custom-font-response', json)
@@ -706,10 +709,10 @@ ipcMain.on('local-font', (event, arg) => {
 		} else {
 			json.status = "cancelled"
 			event.sender.send('local-font-response', json)
-			console.log("cancelled")
+			log.info("User cancelled custom font dialog")
 		}
 	}).catch(err => {
-		console.log(err)
+		log.error(err)
 		json.status = "error",
 		json.message = err
 		event.sender.send('local-font-response', json)
@@ -754,14 +757,14 @@ ipcMain.on('save-font-position', (event, arg) => {
 		if (!result.canceled) {
 			store.set("downloadPositionPath", path.dirname(result.filePath))
 			fs.writeFile(result.filePath, JSON.stringify(req.body.json, null, 2), 'utf8', function(err) {
-				console.log(err)
+				log.error(err)
 			})
 			event.sender.send('save-font-position-response', 'success')
 		} else {
 			event.sender.send('save-font-position-response', 'success')
 		}
 	}).catch((err) => {
-		console.log(err);
+		log.error(err);
 		event.sender.send('save-font-position-response', 'success')
 	});
 })
@@ -914,7 +917,7 @@ ipcMain.on('warp-text', (event, arg) => {
 	} catch (err) {
 		json.status = 'error'
 		json.message = err.message
-		console.log(err);
+		log.error(err);
 		event.sender.send('warp-text-response', json)
 	}
 })
@@ -931,7 +934,7 @@ ipcMain.on('save-wordmark', (event, arg) => {
 			store.set("downloadPath", path.dirname(result.filePath))
 			Jimp.read(buffer, (err, image) => {
 				if (err) {
-					console.log(err);
+					log.error(err);
 				} else {
 					image.autocrop();
 					image.write(result.filePath);
@@ -942,7 +945,7 @@ ipcMain.on('save-wordmark', (event, arg) => {
 			event.sender.send('hide-overlay', null)
 		}
 	}).catch((err) => {
-		console.log(err);
+		log.error(err);
 		event.sender.send('hide-overlay', null)
 	});
 })
@@ -957,14 +960,14 @@ ipcMain.on('save-swatches', (event, arg) => {
 		if (!result.canceled) {
 			store.set("downloadSwatchPath", path.dirname(result.filePath))
 			fs.writeFile(result.filePath, JSON.stringify(arg, null, 2), 'utf8', function(err) {
-				console.log(err)
+				log.error(err)
 			})
 			event.sender.send('hide-overlay', null)
 		} else {
 			event.sender.send('hide-overlay', null)
 		}
 	}).catch((err) => {
-		console.log(err);
+		log.error(err);
 		event.sender.send('hide-overlay', null)
 	});
 })
@@ -1005,7 +1008,7 @@ ipcMain.on('load-swatches', (event, arg) => {
 							break;
 						case "uni":
 							var json = JSON.parse(fs.readFileSync(result.filePaths[0]))
-							console.log(json.swatchSelectors)
+							//console.log(json.swatchSelectors)
 							var palette = {};
 							var commonPalette = []
 							palette.name = json.team.replace(/ /g, "_");
@@ -1049,12 +1052,12 @@ ipcMain.on('load-swatches', (event, arg) => {
 					event.sender.send('hide-overlay', null)
 				} else {
 					event.sender.send('hide-overlay', null)
-					console.log("cancelled")
+					log.info("user cancelled loading swatches")
 				}
 			}).catch(err => {
 				jsonResponse.result = "error"
 				jsonResponse.message = err
-				console.log(err)
+				log.error(err)
 				event.sender.send('load-swatches-response', jsonResponse)
 			})
 		} else {
@@ -1104,14 +1107,14 @@ ipcMain.on('save-pants', (event, arg) => {
 		dialog.showSaveDialog(null, options).then((result) => {
 			if (!result.canceled) {
 				fs.writeFile(result.filePath, finalImage, 'base64', function(err) {
-					console.log(err)
+					log.error(err)
 				})
 				event.sender.send('save-pants-response', null)
 			} else {
 				event.sender.send('save-pants-response', null)
 			}
 		}).catch((err) => {
-			console.log(err);
+			log.error(err);
 			event.sender.send('save-pants-response', null)
 		});
 	}
@@ -1140,7 +1143,7 @@ ipcMain.on('save-socks', (event, arg) => {
 				event.sender.send('save-socks-response', arg)
 			}
 		}).catch((err) => {
-			console.log(err);
+			log.error(err);
 			event.sender.send('save-socks-response', arg)
 		});
 	}
@@ -1186,14 +1189,14 @@ ipcMain.on('save-cap', (event, arg) => {
 		dialog.showSaveDialog(null, options).then((result) => {
 			if (!result.canceled) {
 				fs.writeFile(result.filePath, finalImage, 'base64', function(err) {
-					console.log(err)
+					log.error(err)
 				})
 				event.sender.send('save-cap-response', null)
 			} else {
 				event.sender.send('save-cap-response', null)
 			}
 		}).catch((err) => {
-			console.log(err);
+			log.error(err);
 			event.sender.send('save-cap-response', null)
 		});
 	}
@@ -1213,14 +1216,14 @@ ipcMain.on('save-font', (event, arg) => {
 			if (!result.canceled) {
 				store.set("downloadPath", path.dirname(result.filePath))
 				fs.writeFile(result.filePath, fontCanvas, 'base64', function(err) {
-					console.log(err)
+					log.error(err)
 				})
 				event.sender.send('save-font-response', null)
 			} else {
 				event.sender.send('save-font-response', null)
 			}
 		}).catch((err) => {
-			console.log(err);
+			log.error(err);
 			event.sender.send('save-font-response', null)
 		});
 	}
@@ -1349,11 +1352,11 @@ ipcMain.on('save-jersey-zip', (event, arg) => {
 			  if (err) {
 				fs.unlink(tempDir + '/'+arg.name+'.zip', (err) => {
 				  if (err) {
-					console.log(err)
+					log.error(err)
 					return
 				  }
 				})
-				console.log(err)
+				log.error(err)
 				json.result = "error"
 				json.errno = err.errno
 				event.sender.send('save-jersey-zip-response', arg)
@@ -1361,7 +1364,7 @@ ipcMain.on('save-jersey-zip', (event, arg) => {
 			  } else {
 				fs.unlink(tempDir + '/'+arg.name+'.zip', (err) => {
 				  if (err) {
-					console.log(err)
+					log.error(err)
 					return
 				  }
 				})
@@ -1371,7 +1374,7 @@ ipcMain.on('save-jersey-zip', (event, arg) => {
 		  } else {
 			fs.unlink(tempDir + '/'+arg.name+'.zip', (err) => {
 			  if (err) {
-				console.log(err)
+				log.error(err)
 				return
 			  }
 			})
@@ -1605,16 +1608,16 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 			  if (err) {
 				fs.unlink(tempDir + '/uniform_'+arg.name+'.zip', (err) => {
 				  if (err) {
-					console.log(err)
+					log.error(err)
 					return
 				  }
 				})
-				console.log(err)
+				log.error(err)
 				event.sender.send('save-uniform-zip-response', arg)
 			  } else {
 				fs.unlink(tempDir + '/uniform_'+arg.name+'.zip', (err) => {
 				  if (err) {
-					console.log(err)
+					log.error(err)
 					return
 				  }
 				})
@@ -1624,7 +1627,7 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 		  } else {
 			fs.unlink(tempDir + '/uniform_'+arg.name+'.zip', (err) => {
 			  if (err) {
-				console.log(err)
+				log.error(err)
 				return
 			  }
 			})
@@ -2064,7 +2067,7 @@ ipcMain.on('load-uniform', (event, arg) => {
 		json.result = "error",
 		json.message = err
 		event.sender.send('load-uniform-response', json)
-		console.log(err)
+		log.error(err)
 	})
 })
 
@@ -2328,7 +2331,7 @@ function createWindow () {
   
   app.whenReady().then(() => {
         createWindow()
-  
+		log.info("App Initialized")
         app.on('activate', function () {
           if (BrowserWindow.getAllWindows().length === 0) createWindow()
         })
