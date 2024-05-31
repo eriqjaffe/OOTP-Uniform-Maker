@@ -3238,6 +3238,8 @@
 		if (checkForUpdates) {
 			ipcRenderer.send('check-for-update', {type:"auto"})
 		}
+
+		log.info("Renderer process initialized")
 	})
 
 	$(document).keydown(function(e) {   

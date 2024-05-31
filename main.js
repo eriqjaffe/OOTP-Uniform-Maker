@@ -21,6 +21,8 @@ const semver = require('semver')
 const log = require('electron-log/main');
 
 log.initialize();
+log.eventLogger.startLogging
+log.errorHandler.startCatching();
 
 /* const { log } = console;
 function proxiedLog(...args) {
@@ -34,7 +36,7 @@ console.log = proxiedLog; */
 
 const isMac = process.platform === 'darwin'
 const isWin = process.platform === 'win32'
-const tempDir = os.tmpdir()
+const tempDir = app.getPath('userData')
 const store = new Store();
 const userFontsFolder = path.join(app.getPath('userData'),"fonts")
 
@@ -2309,7 +2311,12 @@ function createWindow () {
 		  {
 			  click: () => mainWindow.webContents.send('update','click'),
 			  label: 'Check For Updates',
-		  }
+		  },
+		  { type: 'separator' },
+		  {
+			click: () => shell.openExternal(tempDir+"/logs/main.log"),
+			label: 'Open Debugging Log',
+		}
           ]
       }
       ]
@@ -2331,7 +2338,7 @@ function createWindow () {
   
   app.whenReady().then(() => {
         createWindow()
-		log.info("App Initialized")
+		log.info("Main process initialized")
         app.on('activate', function () {
           if (BrowserWindow.getAllWindows().length === 0) createWindow()
         })
