@@ -3260,6 +3260,20 @@
 			if(e.key == "c" && e.ctrlKey) {
         		copy()
     		} else if(e.key == "v" && e.ctrlKey) {
+				/* switch(clipboard.availableFormats()[0]) {
+					case "image/png":
+						console.log("it's a png!")
+						break;
+					default: 
+						console.log(clipboard.availableFormats()[0])
+						break;
+				} */
+				//console.log(clipboard.availableFormats())
+				//let foo = clipboard.readImage()
+				//let bar = foo.toPNG()
+				//console.log(foo)
+				//console.log(bar)
+				//console.log(foo.toDataURL())
         		paste()
     		} else {
 				if (e.shiftKey) {
@@ -16825,57 +16839,172 @@
 	}
 
 	function paste() {
-		const objID = _clipboard.id
-		switch (activeCanvas.id) {
-			case "jerseyLogoCanvas":
-				var canStr = "jersey"
-				break;
-			case "capLogoCanvas":
-				var canStr = "cap"
-				break;
-			case "pantsLogoCanvas":
-				var canStr = "pants"
-				break;
-			case "sockCanvas":
-				var canStr = "socks"
-				break;
-		}
-		var id = (getNumberAtEnd(_clipboard) == null) ? 0 : getNumberAtEnd(_clipboard)
-		_clipboard.clone(function(clonedObj) {
-			activeCanvas.discardActiveObject();
-			clonedObj.set({
-				left: clonedObj.left + 10,
-				top: clonedObj.top + 10,
-				evented: true,
-				id: _clipboard.get("id")+"_"+(id+1)
-			});
-			clonedObj.on('selected',function() {
-				$("#"+canStr+"FileName").html(clonedObj.get('id'));
-				if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-					$("#"+canStr+"TrimImageDiv").css("display","block");
-					$("#"+canStr+"UploadImageDiv").css("display","none");
-					$("#"+canStr+"SelectedImageDiv").css("display","block");
+		if (_clipboard == null) {
+			//console.log("system clipboard")
+			const objID = "pastedImage_"+makeID(8)
+			if (clipboard.availableFormats()[0] == "image/png") {
+				switch (activeCanvas.id) {
+					case "jerseyLogoCanvas":
+						var canStr = "jersey"
+						break;
+					case "capLogoCanvas":
+						var canStr = "cap"
+						break;
+					case "pantsLogoCanvas":
+						var canStr = "pants"
+						break;
+					case "sockCanvas":
+						var canStr = "socks"
+						break;
 				}
-				$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-				$(".copypaste").each(function() {
-					$(this).css("display","inline-block")
-				})
-			})
-			if (clonedObj.type === 'activeSelection') {
-				// active selection needs a reference to the canvas.
-				clonedObj.canvas = activeCanvas;
-				clonedObj.forEachObject(function(obj) {
-					activeCanvas.add(obj);
-				});
-				// this should solve the unselectability
-				clonedObj.setCoords();
-			} else {
-				activeCanvas.add(clonedObj);
+				//var id = (getNumberAtEnd(objID) == null) ? 0 : getNumberAtEnd(objID)
+				let foo = clipboard.readImage()
+				var imgObj = new Image();
+				imgObj.src = foo.toDataURL();
+				$("#fileName").html("Pasted Image");
+				imgObj.onload = function () {
+					switch (activeCanvas.id) {
+						case "jerseyLogoCanvas":
+							var canvas = jerseyLogoCanvas
+							var imLeft = 256
+							var imTop = 512
+							var moveBelow = 'buttons'
+							var header = $("#jerseyImagesHeader")
+							break;
+						case "capLogoCanvas":
+							var canvas = capLogoCanvas
+							var imLeft = 256
+							var imTop = 256
+							var moveBelow = 'eyeletGroup'
+							var header = $("#capImagesHeader")
+							break;
+						case "pantsLogoCanvas":
+							var canvas = pantsLogoCanvas
+							var imLeft = 256
+							var imTop = 256
+							var moveBelow = 'belt'
+							var header = $("#pantsImagesHeader")
+							break;
+						case "sockCanvas":
+							var canvas = sockCanvas
+							var imLeft = 512
+							var imTop = 512
+							var moveBelow = 'sock'
+							var header = $("#sockImagesHeader")
+							break;
+					} 
+					var image = new fabric.Image(imgObj);
+					image.set({
+						originX: 'center',
+						originY: 'center',
+						perPixelTargetFind: true,
+						centeredScaling: true,
+						centeredRotation: true,
+						name: objID,
+						id: objID,
+					});
+					image.filters.push(new fabric.Image.filters.Resize({
+						resizeType: 'lanczos', // typo fixed
+						lanczosLobes: 2 // typo fixed
+					}));
+					image.on('object:modified',function() {
+						imLeft = image.get('left')
+						imTop = image.get('top');
+					})
+					image.on('selected',function() {
+						switch (activeCanvas.id) {
+							case "jerseyLogoCanvas":
+								var canStr = "jersey"
+								break;
+							case "capLogoCanvas":
+								var canStr = "cap"
+								break;
+							case "pantsLogoCanvas":
+								var canStr = "pants"
+								break;
+						} 
+						$("#"+canStr+"FileName").html(image.get('id'));
+						if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+							$("#"+canStr+"TrimImageDiv").css("display","block");
+							$("#"+canStr+"UploadImageDiv").css("display","none");
+							$("#"+canStr+"SelectedImageDiv").css("display","block");
+						}
+						$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+						$(".copypaste").each(function() {
+							$(this).css("display","inline-block")
+						})
+					})
+					var h = image.height;
+					var w = image.width;
+					canvas.add(image);
+					image.set({"left":imLeft,"top":imTop});
+					image.setCoords();
+					if (moveBelow != 'belt') {
+						canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
+					} else {
+						canvas.sendToBack(image)	
+					}
+					canvas.setActiveObject(image)
+					canvas.requestRenderAll()
+					canvas.renderAll();
+					//$("#tabContainer").skeletabs('goTo', tab)
+					header.click()
+				}
 			}
-			_clipboard.top += 10;
-			_clipboard.left += 10;
-			activeCanvas.requestRenderAll();
-		});
+		} else {
+			const objID = _clipboard.id
+			switch (activeCanvas.id) {
+				case "jerseyLogoCanvas":
+					var canStr = "jersey"
+					break;
+				case "capLogoCanvas":
+					var canStr = "cap"
+					break;
+				case "pantsLogoCanvas":
+					var canStr = "pants"
+					break;
+				case "sockCanvas":
+					var canStr = "socks"
+					break;
+			}
+			var id = (getNumberAtEnd(_clipboard) == null) ? 0 : getNumberAtEnd(_clipboard)
+			_clipboard.clone(function(clonedObj) {
+				activeCanvas.discardActiveObject();
+				clonedObj.set({
+					left: clonedObj.left + 10,
+					top: clonedObj.top + 10,
+					evented: true,
+					id: _clipboard.get("id")+"_"+(id+1)
+				});
+				clonedObj.on('selected',function() {
+					$("#"+canStr+"FileName").html(clonedObj.get('id'));
+					if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+						$("#"+canStr+"TrimImageDiv").css("display","block");
+						$("#"+canStr+"UploadImageDiv").css("display","none");
+						$("#"+canStr+"SelectedImageDiv").css("display","block");
+					}
+					$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+					$(".copypaste").each(function() {
+						$(this).css("display","inline-block")
+					})
+				})
+				if (clonedObj.type === 'activeSelection') {
+					// active selection needs a reference to the canvas.
+					clonedObj.canvas = activeCanvas;
+					clonedObj.forEachObject(function(obj) {
+						activeCanvas.add(obj);
+					});
+					// this should solve the unselectability
+					clonedObj.setCoords();
+				} else {
+					activeCanvas.add(clonedObj);
+				}
+				_clipboard.top += 10;
+				_clipboard.left += 10;
+				activeCanvas.requestRenderAll();
+			});
+		}
+		
 	}
 
 	function dropImage(dropCanvas, file, tab) {
@@ -17893,6 +18022,18 @@
   		const imageData = context.getImageData(x, y, 1, 1).data;
   		const rgbColor = [imageData[0], imageData[1], imageData[2]];
 		return rgbColor;
+	}
+
+	function makeID(length) {
+		let result = '';
+		const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		const charactersLength = characters.length;
+		let counter = 0;
+		while (counter < length) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+		counter += 1;
+		}
+		return result;
 	}
 </script>
 </html>
