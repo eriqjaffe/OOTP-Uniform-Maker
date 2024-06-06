@@ -67,3 +67,11 @@ ipcRenderer.on('openFontFolder', (event, data) => {
 ipcRenderer.on('install-uniform', (event, data) => {
     $("#installUniform").trigger("click")
 })
+
+ipcRenderer.on('show-spinner', (event, data) => {
+    showOverlay("TESTING 123")
+})
+
+ipcRenderer.on('close-spinner', (event, data) => {
+    hideOverlay()
+})

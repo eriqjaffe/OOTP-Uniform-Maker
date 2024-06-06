@@ -2266,7 +2266,15 @@ function createWindow () {
           { role: 'zoomin', accelerator: 'CommandOrControl+=' },
           { role: 'zoomout', accelerator: 'CommandOrControl+-' },
           { type: 'separator' },
-          { role: 'togglefullscreen' }
+          { role: 'togglefullscreen' },
+		  /* {
+			click: () => mainWindow.webContents.send('show-spinner','click'),
+				label: 'Show the spinner',
+		  }, */
+		  {
+			click: () => mainWindow.webContents.send('close-spinner','click'),
+				label: 'Close the spinner',
+		  }
           ]
       },
       {
