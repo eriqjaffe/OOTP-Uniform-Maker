@@ -28,6 +28,7 @@
     <link href='./scripts/skeletabs.css' rel='stylesheet' type='text/css'>
 	<script>
 		const { ipcRenderer } = require('electron');
+		const log = require('electron-log/renderer')
 		const params = new URLSearchParams(window.location.search)
 		const appVersion = params.get('appVersion')
 		const gridsVisible = (params.get('gridsVisible').toLowerCase() == "true") ? true : false
@@ -36,6 +37,8 @@
 		const preferredPlayerNumber = params.get('preferredPlayerNumber')
 		//const imageMagick = (params.get("imagemagick") == "true") ? true : false
 		const imWarning = (params.get("imWarning") == "true") ? true : false
+
+		log.initialize()
 
 		var prefs = {
 			appVersion: params.get('appVersion'),
@@ -80,7 +83,7 @@
 		const validImageTypes = ["png","jpg","jpeg","bmp","gif","tiff"]
 		const validFontTypes = ["ttf", "otf"]
 
-		const initialSockColors = {sockColor:"#c85959",stirrupFill:"#ffffff",stLouis1:"#ffffff",stLouis2:"#0C2340",stLouis3:"#ffffff",stLouis4:"#0C2340",northwestern1:"#ffffff",northwestern2:"#4E2A84",boston1:"#0C2340",boston2:"#FFFFFF",greenBay1:"#FFFFFF",greenBay2:"#FFB612",double1_2:"#0C2340",double1_1:"#ffffff",double2_2:"#ffffff",double2_1:"#0C2340",double3_1:"#282828",double3_2:"#C8102E",triple1_1:"#FFFFFF",triple1_2:"#FFFFFF",triple1_3:"#FFFFFF",triple2_1:"#FFFFFF",triple2_2:"#0000FF",quadruple_1:"#00FF00",quadruple_2:"#00FF00",quadruple_3:"#00FF00",quadruple_4:"#00FF00",argyle_1:"#00FFFF",argyle_2:"#FFFF00",argyle_3:"#FFFFFF",vertical:"#FFFFFF",fakeStirrup:"#0C2340",horizontal:"#FFFFFF",tequila_1:"#F3C500",tequila_2:"#F37200",tequila_3:"#E35814",tequila_4:"#CB0135",pittsburgh1:"#AC7E00",pittsburgh2:"#FFFFFF"}
+		const initialSockColors = {sockColor:"#c85959",stirrupFill:"#ffffff",stLouis1:"#ffffff",stLouis2:"#0C2340",stLouis3:"#ffffff",stLouis4:"#0C2340",northwestern1:"#ffffff",northwestern2:"#4E2A84",boston1:"#0C2340",boston2:"#FFFFFF",greenBay1:"#FFFFFF",greenBay2:"#FFB612",double1_2:"#0C2340",double1_1:"#ffffff",double2_2:"#ffffff",double2_1:"#0C2340",double3_1:"#282828",double3_2:"#C8102E",triple1_1:"#FFFFFF",triple1_2:"#FFFFFF",triple1_3:"#FFFFFF",triple2_1:"#FFFFFF",triple2_2:"#0000FF",quadruple_1:"#00FF00",quadruple_2:"#00FF00",quadruple_3:"#00FF00",quadruple_4:"#00FF00",argyle_1:"#00FFFF",argyle_2:"#FFFF00",argyle_3:"#FFFFFF",vertical:"#FFFFFF",fakeStirrup:"#0C2340",horizontal:"#FFFFFF",tequila_1:"#F3C500",tequila_2:"#F37200",tequila_3:"#E35814",tequila_4:"#CB0135",pittsburgh1:"#AC7E00",pittsburgh2:"#FFFFFF",atlanta1:"#FFFFFF",atlanta2:"#BA0C2F"}
 		
 		var capMakersMarkColor = initialCapColors['capMakersMarkColor']
 		var jerseyMakersMarkColor = initialJerseyColors['jerseyMakersMarkColor']
@@ -1927,6 +1930,7 @@
 													<label>Striping: </label>
 													<select id="sockStripeSelect">
 														<option value="argyle">Argyle</option>
+														<option value="atlanta">Atlanta</option>
 														<option value="boston">Boston</option>
 														<option value="double1">Double Stripe 1</option>
 														<option value="double2">Double Stripe 2</option>
@@ -1954,6 +1958,11 @@
 														<option value="0"></option>
 														<option value="80"></option>
 														<option value="102"></option>
+													</datalist>
+													<datalist id="atlantaMarkers">
+														<option value="0"></option>
+														<option value="80"></option>
+														<option value="134"></option>
 													</datalist>
 													<datalist id="northwesternMarkers">
 														<option value="0"></option>
@@ -2008,6 +2017,10 @@
 													<span class="sockStripeSelectSpan" id="stLouis2Selectors" style="display:inline-block">
 														<input class="sockSelector selector" type="text" id="stLouis3" data-element="stLouis3">
 														<input class="sockSelector selector" type="text" id="stLouis4" data-element="stLouis4">
+													</span>
+													<span class="sockStripeSelectSpan" id="atlantaSelectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="atlanta1" data-element="atlanta1">
+														<input class="sockSelector selector" type="text" id="atlanta2" data-element="atlanta2">
 													</span>
 													<span class="sockStripeSelectSpan" id="northwesternSelectors" style="display:none">
 														<input class="sockSelector selector" type="text" id="northwestern1" data-element="northwestern1">
@@ -3225,6 +3238,8 @@
 		if (checkForUpdates) {
 			ipcRenderer.send('check-for-update', {type:"auto"})
 		}
+
+		log.info("Renderer process initialized")
 	})
 
 	$(document).keydown(function(e) {   
@@ -3245,6 +3260,20 @@
 			if(e.key == "c" && e.ctrlKey) {
         		copy()
     		} else if(e.key == "v" && e.ctrlKey) {
+				/* switch(clipboard.availableFormats()[0]) {
+					case "image/png":
+						console.log("it's a png!")
+						break;
+					default: 
+						console.log(clipboard.availableFormats()[0])
+						break;
+				} */
+				//console.log(clipboard.availableFormats())
+				//let foo = clipboard.readImage()
+				//let bar = foo.toPNG()
+				//console.log(foo)
+				//console.log(bar)
+				//console.log(foo.toDataURL())
         		paste()
     		} else {
 				if (e.shiftKey) {
@@ -3644,7 +3673,7 @@
 					const value = result.fontPath
 					opentype.load(result.fontPath, (err,font) => {
 						if (err || !font) {
-							console.log(err)
+							log.error(err)
 							return;
 						}
 						
@@ -5491,7 +5520,6 @@
 	})
 
 	$("#wordmarkTextBox").on("input",function() {
-		console.log($(this).val())
 		jerseyWordmarkChange($("#jerseyWordmarkSelect").val(),false)
 	})
 
@@ -5787,14 +5815,14 @@
 		var tmp = (data.fontPath == undefined) ? data : data.fontPath;
 		opentype.load(tmp, (err,font) => {
 			if (err || !font) {
-				console.log(data.fontPath)
-				console.log(err)
+				log.error(err)
+				log.error(data.fontPath)
 				return;
 			}
 
 			const path = font.getPath($("#wordmarkTextBox").val(),256,681,50,{letterSpacing:$("#wordmarkSpacing").val()/100})
 			const svgPath = path.toPathData(5)
-
+			
 			var grp = jerseyLogoCanvas.getObjects("group").find(o => o.id === "wordmark")
 
 			grp.getObjects('path').forEach(function(o) {
@@ -5810,7 +5838,8 @@
 				id: 'wordmarkText',
 				fill: ($("#wordmarkTextColor").spectrum("get") == null) ? 'transparent' : $("#wordmarkTextColor").spectrum("get").toHexString(),
 				stroke: ($("#wordmarkTextColor").spectrum("get") == null) ? 'transparent' : $("#wordmarkTextColor").spectrum("get").toHexString(),
-				strokeWidth: 0
+				strokeWidth: 0,
+				visible: $("#wordmarkTextColorCheck").is(":checked")
 			})
 		
 			wordmarkTextStroke1 = new fabric.Path(svgPath, {
@@ -5824,6 +5853,7 @@
 				strokeWidth: parseInt($("#wordmarkTextStroke1StrokeWidth").val()),
 				strokeLineCap: "round",
 				fill: ($("#wordmarkTextStroke1Color").spectrum("get") == null) ? 'transparent' : $("#wordmarkTextStroke1Color").spectrum("get").toHexString(),
+				visible: $("#wordmarkTextStroke1ColorCheck").is(":checked")
 			})
 		
 			wordmarkTextStroke2 = new fabric.Path(svgPath, {
@@ -5838,6 +5868,7 @@
 				strokeWidth: parseInt($("#wordmarkTextStroke2StrokeWidth").val()),
 				strokeLineCap: "round",
 				fill: ($("#wordmarkTextStroke2Color").spectrum("get") == null) ? 'transparent' : $("#wordmarkTextStroke2Color").spectrum("get").toHexString(),
+				visible: $("#wordmarkTextStroke2ColorCheck").is(":checked")
 			})
 
 			grp.addWithUpdate(wordmarkTextStroke2)
@@ -6718,21 +6749,18 @@
 	})
 
 	pantsLogoCanvas.on("selection:created",function(e) {
-		console.log("created")
 		activeCanvas = pantsLogoCanvas;
 		pantsTippy.setContent(getStackingOrder())
 		pantsTippy.show()
 	})
 
 	pantsLogoCanvas.on("selection:updated",function(e) {
-		console.log("changed")
 		activeCanvas = pantsLogoCanvas;
 		pantsTippy.setContent(getStackingOrder())
 		pantsTippy.show()
 	})
 
 	pantsLogoCanvas.on("selection:cleared",function(e) {
-		console.log('cleared')
 		pantsTippy.hide()
 	})
 
@@ -6960,7 +6988,9 @@
 					break;
 				case "back":
 					$("#pantsLeagueLogoCheck").prop("checked",true)
-					pantsLogoCanvas.getObjects().find(o => o.id == 'atlBelt1').visible = true
+					let panel = pantsLogoCanvas.getObjects().find(o => o.id == 'atlBelt1')
+					panel.set("visible", true)
+					panel.bringToFront()
 					reRenderBG("pants")
 					pantsLogoCanvas.getObjects('group').find(o => o.id == 'mlbLogo').visible = false
 					pantsLogoCanvas.getObjects('group').find(o => o.id == 'milbLogo').visible = false
@@ -7523,7 +7553,7 @@
 		var tmp = (data.fontPath == undefined) ? data : data.fontPath;
 		opentype.load(tmp, (err,font) => {
 			if (err || !font) {
-				console.log(err)
+				log.error(err)
 				return;
 			}
 
@@ -8194,7 +8224,7 @@
 
 		opentype.load(font, (err,font) => {
 			if (err || !font) {
-				console.log(err)
+				log.error(err)
 				return;
 			}
 
@@ -8316,10 +8346,6 @@
 		ipcRenderer.send('upload-font-image', null)
 	})
 
-	ipcRenderer.on('upload-font-image-response', (event, data) => {
-		console.log(data)
-	})
-
 	$("#clearOCR").on("click",function() {
 		fontCanvas.getObjects('image').forEach(function(o) {
 			fontCanvas.remove(o)
@@ -8391,7 +8417,7 @@
 							
 					opentype.load(data.fontPath, (err,font) => {
 						if (err || !font) {
-							console.log(err)
+							log.error(err)
 							return;
 						}
 
@@ -8524,7 +8550,7 @@
 					fontList.push(data.fontName)
 					opentype.load(data.fontPath, (err,font) => {
 						if (err || !font) {
-							console.log(err)
+							log.error(err)
 							return;
 						}
 
@@ -8765,7 +8791,6 @@
 			$(this).data('changed', false);
 		},
 		move: function(color) {
-			console.log(color.toHexString())
 			$(this).data('changed', true);
 			sockCanvas.setBackgroundColor(color.toHexString(), sockCanvas.renderAll.bind(sockCanvas))
 		},
@@ -8989,6 +9014,16 @@
 					$("#sockStripeHeight").attr('min', -157)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'stLouis3_left').top)
 					break;
+				case "atlanta":
+					sockCanvas.getObjects().find(o => o.id === 'atlanta1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'atlanta2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'atlanta1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'atlanta2_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'atlantaMarkers')
+					$("#sockStripeHeight").attr('min', -117)
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'atlanta1_left').top)
+					console.log(sockCanvas.getObjects().find(o => o.id === 'atlanta1_left').top)
+					break;
 				case "northwestern":
 					sockCanvas.getObjects().find(o => o.id === 'northwestern1_left').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'northwestern2_left').visible = true;
@@ -9015,8 +9050,6 @@
 					$("#sockStripeHeight").attr('list', 'ssHeightMarkers')
 					$("#sockStripeHeight").attr('min', -318)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'pittsburgh1_left').top)
-					console.log(sockCanvas.getObjects().find(o => o.id === 'pittsburgh1_left').top)
-					console.log(sockCanvas.getObjects().find(o => o.id === 'pittsburgh2_left').top)
 					break;
 				case "greenBay":
 					sockCanvas.getObjects().find(o => o.id === 'greenBay1_left').visible = true;
@@ -9151,6 +9184,9 @@
 			case "stLouis2":
 				$("#stLouis2Selectors").show()
 				break;
+			case "atlanta":
+				$("#atlantaSelectors").show()
+				break;
 			case "northwestern":
 				$("#northwesternSelectors").show()
 				break;
@@ -9201,21 +9237,18 @@
 	})
 
 	sockCanvas.on("selection:created",function(e) {
-		console.log("created")
 		activeCanvas = sockCanvas;
 		sockTippy.setContent(getStackingOrder())
 		sockTippy.show()
 	})
 
 	sockCanvas.on("selection:updated",function(e) {
-		console.log("changed")
 		activeCanvas = sockCanvas;
 		sockTippy.setContent(getStackingOrder())
 		sockTippy.show()
 	})
 
 	sockCanvas.on("selection:cleared",function(e) {
-		console.log('cleared')
 		sockTippy.hide()
 	})
 
@@ -9335,7 +9368,6 @@
 	$("#sockImageClone").on("click",function(e){
 		var object = sockCanvas.getActiveObject();
 		if (object.get('type') == "image") {
-			console.log(object)
 			const imageLeft = object.left
 			const imageTop = object.top
 			const offset = (imageTop < 513) ? 512 : -512;
@@ -9477,6 +9509,42 @@
 			id: 'northwestern2_right',
 			clipPath: rightSockClippingPath,
 			offset: 562
+		});
+
+		atlanta1_l = new fabric.Path("m 0,134.71289 v 17.56836 h 1024 v -17.56836 z m 0,99.26172 v 17.56836 h 1024 v -17.56836 z",{
+			fill: initialSockColors['atlanta1'],
+			id: 'atlanta1_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 0
+		});
+
+		atlanta2_l = new fabric.Path("M 0,168.09766 V 218.1582 H 1024 V 168.09766 Z",{
+			fill: initialSockColors['atlanta2'],
+			id: 'atlanta2_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 33.385
+		});
+
+		atlanta1_r = fabric.util.object.clone(atlanta1_l);
+		atlanta1_r.set({
+			top: atlanta1_l.top + 512,
+			id: 'atlanta1_right',
+			clipPath: rightSockClippingPath,
+			offset: 512
+		});
+
+		atlanta2_r = fabric.util.object.clone(atlanta2_l);
+		atlanta2_r.set({
+			top: atlanta2_l.top + 512,
+			id: 'atlanta2_right',
+			clipPath: rightSockClippingPath,
+			offset: 545.385
 		});
 
 		boston1_l = new fabric.Path("M 0,0 V 0.00976563 141.70508 v 47.00976 46.35352 0.002 46.34961 h 1024 v -46.34961 -0.002 V 188.71484 141.70312 0.00976563 0 Z",{
@@ -10045,6 +10113,10 @@
 		sockCanvas.add(stLouis4_l) 
 		sockCanvas.add(stLouis3_r)
 		sockCanvas.add(stLouis4_r)
+		sockCanvas.add(atlanta1_l) 
+		sockCanvas.add(atlanta2_l) 
+		sockCanvas.add(atlanta1_r) 
+		sockCanvas.add(atlanta2_r) 
 		sockCanvas.add(northwestern1_l) 
 		sockCanvas.add(northwestern2_l) 
 		sockCanvas.add(northwestern1_r) 
@@ -10669,7 +10741,7 @@
 
 		opentype.load("./fonts/Graduate-Regular.ttf", (err,font) => {
 			if (err || !font) {
-				console.log(err)
+				log.error(err)
 				return;
 			}
 
@@ -12397,7 +12469,7 @@
 
 		opentype.load("./fonts/LeckerliOne-Regular.ttf", (err,font) => {
 			if (err || !font) {
-				console.log(err)
+				log.error(err)
 				return;
 			}
 
@@ -13009,7 +13081,7 @@
 
 		opentype.load("./fonts/MLBBlock.ttf", (err,font) => {
 			if (err || !font) {
-				console.log(err)
+				log.error(err)
 				return;
 			}
 
@@ -13236,7 +13308,7 @@
 
 		opentype.load(font, (err,font) => {
 			if (err || !font) {
-				console.log(err)
+				log.error(err)
 				return;
 			}
 
@@ -13683,7 +13755,6 @@
 					canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
 					break;
 				case "eyeletGroup":
-					console.log("hello")
 					canvas.bringToFront(canvas.getObjects().find(o => o.id == "individualEyelets"))
 					canvas.bringToFront(canvas.getObjects().find(o => o.id == "groupedEyelets"))
 					break;
@@ -13723,7 +13794,6 @@
 	})
 
 	ipcRenderer.on('local-font-response', (event, data) => {
-		console.log(data)
 		if (data.status != "cancelled") {
 			if (data.result == "error") {
 				ipcRenderer.send('show-alert',"An error occurred:\r\n\r\n"+data.message)
@@ -13879,8 +13949,7 @@
 					const canvas = document.createElement('canvas');
 					canvas.width = image.width + x * 2
 					canvas.height = image.height + y * 2
-					console.log(canvas)
-
+					
 					const ctx = canvas.getContext('2d');
 
 					for (let angle = 0; angle < 360; angle += 360 / 36) {
@@ -13979,11 +14048,7 @@
 						a: pixels[startIndex + 3] // Get alpha channel value
 					};
 
-					console.log(baseColor)
-
 					const stack = [{ x: x, y: y }];
-
-					console.log(stack)
 
 					while (stack.length) {
 						const { x, y } = stack.pop();
@@ -14589,9 +14654,6 @@
 					const pixelData = ctx.getImageData(x, y, 1, 1).data; // Get pixel data at coordinates (x, y)
 					const color = { r: pixelData[0], g: pixelData[1], b: pixelData[2] }; // Extract RGB values from pixel data
 
-					// Now you can use the color variable for further processing
-					console.log("Color at coordinates (x, y):", color);
-
 					const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 					const pixels = imageData.data;
 
@@ -14702,7 +14764,6 @@
 			var object = canvas.getActiveObject()
 			var idx = canvas.getObjects().indexOf(object)
 			if (object.get('type') == "image") {
-				console.log(x, y)
 				showOverlay("Processing Image...")
 				var pictureName = object.get('name');
 				$(colorSquare).removeClass("colorSquareActive").removeClass("colorSquareSelected");
@@ -14773,9 +14834,6 @@
 
 						const pixelData = ctx.getImageData(x, y, 1, 1).data; // Get pixel data at coordinates (x, y)
 						const color = { r: pixelData[0], g: pixelData[1], b: pixelData[2] }; // Extract RGB values from pixel data
-
-						// Now you can use the color variable for further processing
-						console.log("Color at coordinates (x, y):", color);
 
 						// Continue with your existing code...
 						const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -16655,6 +16713,11 @@
 
 // UTILITY FUNCTIONS
 
+	ipcRenderer.on('error-response', (event, response) => {
+		hideOverlay()
+		alert(response.error)
+	})
+
 	function showOverlay(text) {
 		jerseyTippy.hide()
 		jerseyOverlayActive = $("#jerseyOverlay").is(":visible")
@@ -16781,57 +16844,172 @@
 	}
 
 	function paste() {
-		const objID = _clipboard.id
-		switch (activeCanvas.id) {
-			case "jerseyLogoCanvas":
-				var canStr = "jersey"
-				break;
-			case "capLogoCanvas":
-				var canStr = "cap"
-				break;
-			case "pantsLogoCanvas":
-				var canStr = "pants"
-				break;
-			case "sockCanvas":
-				var canStr = "socks"
-				break;
-		}
-		var id = (getNumberAtEnd(_clipboard) == null) ? 0 : getNumberAtEnd(_clipboard)
-		_clipboard.clone(function(clonedObj) {
-			activeCanvas.discardActiveObject();
-			clonedObj.set({
-				left: clonedObj.left + 10,
-				top: clonedObj.top + 10,
-				evented: true,
-				id: _clipboard.get("id")+"_"+(id+1)
-			});
-			clonedObj.on('selected',function() {
-				$("#"+canStr+"FileName").html(clonedObj.get('id'));
-				if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
-					$("#"+canStr+"TrimImageDiv").css("display","block");
-					$("#"+canStr+"UploadImageDiv").css("display","none");
-					$("#"+canStr+"SelectedImageDiv").css("display","block");
+		if (_clipboard == null) {
+			//console.log("system clipboard")
+			const objID = "pastedImage_"+makeID(8)
+			if (clipboard.availableFormats()[0] == "image/png") {
+				switch (activeCanvas.id) {
+					case "jerseyLogoCanvas":
+						var canStr = "jersey"
+						break;
+					case "capLogoCanvas":
+						var canStr = "cap"
+						break;
+					case "pantsLogoCanvas":
+						var canStr = "pants"
+						break;
+					case "sockCanvas":
+						var canStr = "socks"
+						break;
 				}
-				$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
-				$(".copypaste").each(function() {
-					$(this).css("display","inline-block")
-				})
-			})
-			if (clonedObj.type === 'activeSelection') {
-				// active selection needs a reference to the canvas.
-				clonedObj.canvas = activeCanvas;
-				clonedObj.forEachObject(function(obj) {
-					activeCanvas.add(obj);
-				});
-				// this should solve the unselectability
-				clonedObj.setCoords();
-			} else {
-				activeCanvas.add(clonedObj);
+				//var id = (getNumberAtEnd(objID) == null) ? 0 : getNumberAtEnd(objID)
+				let foo = clipboard.readImage()
+				var imgObj = new Image();
+				imgObj.src = foo.toDataURL();
+				$("#fileName").html("Pasted Image");
+				imgObj.onload = function () {
+					switch (activeCanvas.id) {
+						case "jerseyLogoCanvas":
+							var canvas = jerseyLogoCanvas
+							var imLeft = 256
+							var imTop = 512
+							var moveBelow = 'buttons'
+							var header = $("#jerseyImagesHeader")
+							break;
+						case "capLogoCanvas":
+							var canvas = capLogoCanvas
+							var imLeft = 256
+							var imTop = 256
+							var moveBelow = 'eyeletGroup'
+							var header = $("#capImagesHeader")
+							break;
+						case "pantsLogoCanvas":
+							var canvas = pantsLogoCanvas
+							var imLeft = 256
+							var imTop = 256
+							var moveBelow = 'belt'
+							var header = $("#pantsImagesHeader")
+							break;
+						case "sockCanvas":
+							var canvas = sockCanvas
+							var imLeft = 512
+							var imTop = 512
+							var moveBelow = 'sock'
+							var header = $("#sockImagesHeader")
+							break;
+					} 
+					var image = new fabric.Image(imgObj);
+					image.set({
+						originX: 'center',
+						originY: 'center',
+						perPixelTargetFind: true,
+						centeredScaling: true,
+						centeredRotation: true,
+						name: objID,
+						id: objID,
+					});
+					image.filters.push(new fabric.Image.filters.Resize({
+						resizeType: 'lanczos', // typo fixed
+						lanczosLobes: 2 // typo fixed
+					}));
+					image.on('object:modified',function() {
+						imLeft = image.get('left')
+						imTop = image.get('top');
+					})
+					image.on('selected',function() {
+						switch (activeCanvas.id) {
+							case "jerseyLogoCanvas":
+								var canStr = "jersey"
+								break;
+							case "capLogoCanvas":
+								var canStr = "cap"
+								break;
+							case "pantsLogoCanvas":
+								var canStr = "pants"
+								break;
+						} 
+						$("#"+canStr+"FileName").html(image.get('id'));
+						if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+							$("#"+canStr+"TrimImageDiv").css("display","block");
+							$("#"+canStr+"UploadImageDiv").css("display","none");
+							$("#"+canStr+"SelectedImageDiv").css("display","block");
+						}
+						$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+						$(".copypaste").each(function() {
+							$(this).css("display","inline-block")
+						})
+					})
+					var h = image.height;
+					var w = image.width;
+					canvas.add(image);
+					image.set({"left":imLeft,"top":imTop});
+					image.setCoords();
+					if (moveBelow != 'belt') {
+						canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
+					} else {
+						canvas.sendToBack(image)	
+					}
+					canvas.setActiveObject(image)
+					canvas.requestRenderAll()
+					canvas.renderAll();
+					//$("#tabContainer").skeletabs('goTo', tab)
+					header.click()
+				}
 			}
-			_clipboard.top += 10;
-			_clipboard.left += 10;
-			activeCanvas.requestRenderAll();
-		});
+		} else {
+			const objID = _clipboard.id
+			switch (activeCanvas.id) {
+				case "jerseyLogoCanvas":
+					var canStr = "jersey"
+					break;
+				case "capLogoCanvas":
+					var canStr = "cap"
+					break;
+				case "pantsLogoCanvas":
+					var canStr = "pants"
+					break;
+				case "sockCanvas":
+					var canStr = "socks"
+					break;
+			}
+			var id = (getNumberAtEnd(_clipboard) == null) ? 0 : getNumberAtEnd(_clipboard)
+			_clipboard.clone(function(clonedObj) {
+				activeCanvas.discardActiveObject();
+				clonedObj.set({
+					left: clonedObj.left + 10,
+					top: clonedObj.top + 10,
+					evented: true,
+					id: _clipboard.get("id")+"_"+(id+1)
+				});
+				clonedObj.on('selected',function() {
+					$("#"+canStr+"FileName").html(clonedObj.get('id'));
+					if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+						$("#"+canStr+"TrimImageDiv").css("display","block");
+						$("#"+canStr+"UploadImageDiv").css("display","none");
+						$("#"+canStr+"SelectedImageDiv").css("display","block");
+					}
+					$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+					$(".copypaste").each(function() {
+						$(this).css("display","inline-block")
+					})
+				})
+				if (clonedObj.type === 'activeSelection') {
+					// active selection needs a reference to the canvas.
+					clonedObj.canvas = activeCanvas;
+					clonedObj.forEachObject(function(obj) {
+						activeCanvas.add(obj);
+					});
+					// this should solve the unselectability
+					clonedObj.setCoords();
+				} else {
+					activeCanvas.add(clonedObj);
+				}
+				_clipboard.top += 10;
+				_clipboard.left += 10;
+				activeCanvas.requestRenderAll();
+			});
+		}
+		
 	}
 
 	function dropImage(dropCanvas, file, tab) {
@@ -16944,12 +17122,6 @@
 					canvas.sendToBack(image)	
 				}
 				canvas.setActiveObject(image)
-				//console.log(image.getZIndex())
-				jerseyLogoCanvas.getObjects().forEach(function(o) {
-					if (o.selectable) {
-						//console.log(o.id)
-					}
-				})
 				canvas.requestRenderAll()
 				canvas.renderAll();
 				$("#tabContainer").skeletabs('goTo', tab)
@@ -16990,7 +17162,7 @@
 					case 3:
 						opentype.load(data.fontPath, (err,font) => {
 							if (err || !font) {
-								console.log(err)
+								log.error(err)
 								return;
 							}
 
@@ -17135,7 +17307,7 @@
 					case 3:
 						opentype.load(data.fontPath, (err,font) => {
 							if (err || !font) {
-								console.log(err)
+								log.error(err)
 								return;
 							}
 
@@ -17305,7 +17477,6 @@
 	}
 
 	ipcRenderer.on('ocr-resize-response', (event, response) => {
-		console.log(response)
 		for (obj of response.data) {
 			const char = chars.find(o => o.char === obj.char)
 			const src = obj
@@ -17522,37 +17693,6 @@
 		} else {
 			$("#tipSpan").html("");
 		}
-		/* if (obj.type == 'image') {
-			$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
-		} else {
-			console.log(obj.id)
-			switch (obj.id) {
-				case "wordmark":
-					$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
-					break;
-				case "swash1":
-					$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
-					break;
-				case "swash2":
-					$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
-					break;
-				case "swash3":
-					$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
-					break;
-				case "swash4":
-					$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
-					break;
-				case "swash5":
-					$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
-					break;
-				case "swash6":
-					$("#tipSpan").html("Press <b>+</b> to move object towards the front<br>Press <b>Shift +</b> to move the object all the way to the front");
-					break;
-				default:
-					$("#tipSpan").html("");
-					$("#jerseyNumberCtl").css("display","none")
-			}
-		} */
 	}
 
 	function height2normal( canvas ) {
@@ -17688,7 +17828,6 @@
 	}
 
 	function refreshDropdowns(which,data,thumb) {
-		console.log("refreshing "+which)
 		data.thumb = thumb.toDataURL()
 		customFonts.push(data)
 
@@ -17888,6 +18027,18 @@
   		const imageData = context.getImageData(x, y, 1, 1).data;
   		const rgbColor = [imageData[0], imageData[1], imageData[2]];
 		return rgbColor;
+	}
+
+	function makeID(length) {
+		let result = '';
+		const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		const charactersLength = characters.length;
+		let counter = 0;
+		while (counter < length) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+		counter += 1;
+		}
+		return result;
 	}
 </script>
 </html>
