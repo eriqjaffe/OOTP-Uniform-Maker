@@ -21,8 +21,8 @@ const semver = require('semver')
 const log = require('electron-log/main');
 
 log.initialize();
+log.transports.file.fileName = "uniform_maker.log"
 log.eventLogger.startLogging
-log.errorHandler.startCatching();
 
 /* const { log } = console;
 function proxiedLog(...args) {
@@ -2155,6 +2155,24 @@ function createWindow () {
 	watcher.on('add', (path, stats) => {
 		mainWindow.webContents.send('updateFonts','click')
 	})
+
+	log.errorHandler.startCatching({
+		showDialog: false,
+		onError({ createIssue, error, processType, versions }) {
+			if (processType === 'renderer') {
+				return;
+			}
+			dialog.showMessageBox({
+				title: 'An error occurred',
+				message: error.message,
+				detail: error.stack,
+				type: 'error'
+			})
+			.then((result) => {
+				mainWindow.webContents.send('hide-overlay', null)
+			});
+		}
+	});
     
     const template = [
       ...(isMac ? [{
@@ -2342,8 +2360,8 @@ function createWindow () {
 		  },
 		  { type: 'separator' },
 		  {
-			click: () => shell.openExternal(tempDir+"/logs/main.log"),
-			label: 'Open Debugging Log',
+			click: () => shell.openExternal(tempDir+"/logs/"),
+			label: 'Open Log Folder',
 		}
           ]
       }
