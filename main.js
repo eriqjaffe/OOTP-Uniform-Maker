@@ -2308,11 +2308,11 @@ function createWindow () {
 		  /* {
 			click: () => mainWindow.webContents.send('show-spinner','click'),
 				label: 'Show the spinner',
-		  }, */
+		  },
 		  {
 			click: () => mainWindow.webContents.send('close-spinner','click'),
 				label: 'Close the spinner',
-		  }
+		  } */
           ]
       },
       {
