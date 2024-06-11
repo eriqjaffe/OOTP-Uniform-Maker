@@ -75,3 +75,7 @@ ipcRenderer.on('show-spinner', (event, data) => {
 ipcRenderer.on('close-spinner', (event, data) => {
     hideOverlay()
 })
+
+ipcRenderer.on('error-message', (event, data) => {
+    hideOverlay()
+})

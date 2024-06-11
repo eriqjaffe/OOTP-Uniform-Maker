@@ -16713,6 +16713,11 @@
 
 // UTILITY FUNCTIONS
 
+	ipcRenderer.on('error-response', (event, response) => {
+		hideOverlay()
+		alert(response.error)
+	})
+
 	function showOverlay(text) {
 		jerseyTippy.hide()
 		jerseyOverlayActive = $("#jerseyOverlay").is(":visible")
