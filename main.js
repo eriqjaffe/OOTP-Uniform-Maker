@@ -19,6 +19,7 @@ const replaceColor = require('replace-color');
 const admzip = require('adm-zip');
 const semver = require('semver')
 const log = require('electron-log/main');
+const { Resvg } = require('@resvg/resvg-js')
 
 log.initialize();
 log.eventLogger.startLogging
@@ -324,40 +325,50 @@ ipcMain.on('upload-image', (event, arg) => {
 		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
 		properties: ['openFile'],
 		filters: [
-			{ name: 'Images', extensions: ['jpg', 'png'] }
+			{ name: 'Images', extensions: ['jpg', 'png','svg'] }
 		]
 	}
-	dialog.showOpenDialog(null, options).then(result => {
-		  if(!result.canceled) {
-			store.set("uploadImagePath", path.dirname(result.filePaths[0]))
-			Jimp.read(result.filePaths[0], (err, image) => {
-				if (err) {
-					log.error(err);
-				} else {
-					if (type == "jersey") {
-						Jimp.read(__dirname+"/images/mask.png", (err, mask) => {
-							image.mask(mask,0,0)
-							image.getBase64(Jimp.AUTO, (err, ret) => {
-								json.filename = path.basename(result.filePaths[0])
-								json.image = ret
-							})
-						})
-					} else {
-						image.getBase64(Jimp.AUTO, (err, ret) => {
-							json.filename = path.basename(result.filePaths[0])
-							json.image = ret
-						})
+
+	readImage()
+
+	async function readImage() {
+		const userFile = await dialog.showOpenDialog(null, options)
+		if (userFile.canceled) {
+			log.info("user cancelled uploading image")
+		} else {
+			store.set("uploadImagePath", path.dirname(userFile.filePaths[0]))
+			if (getExtension(userFile.filePaths[0]).toLowerCase() == "svg") {
+				const svg = fs.readFileSync(userFile.filePaths[0])
+				const opts = {
+					background: 'rgba(255, 255, 255, 0)',
+					fitTo: {
+					  mode: 'width',
+					  value: 512,
 					}
-					event.sender.send('upload-image-response', [type, canvas, imTop, imLeft, moveBelow, json])
 				}
-			});
-		  } else {
-			  //res.end()
-			  log.info("user cancelled uploading image")
-		  }
-	  }).catch(err => {
-		  log.error(err)
-	  })
+				const resvg = new Resvg(svg, opts)
+				const pngData = resvg.render()
+				fileToRead = pngData.asPng()	
+			} else {
+				fileToRead = userFile.filePaths[0]
+			}
+			const image = await Jimp.read(fileToRead)
+			if (type == "jersey") {
+				const mask = await Jimp.read(__dirname+"/images/mask.png")
+				image.mask(mask,0,0)
+				image.getBase64(Jimp.AUTO, (err, ret) => {
+					json.filename = path.basename(userFile.filePaths[0])
+					json.image = ret
+				})
+			} else {
+				image.getBase64(Jimp.AUTO, (err, ret) => {
+					json.filename = path.basename(userFile.filePaths[0])
+					json.image = ret
+				})
+			}
+			event.sender.send('upload-image-response', [type, canvas, imTop, imLeft, moveBelow, json])
+		}
+	}
 })
 
 ipcMain.on('upload-layer', (event, arg) => {
