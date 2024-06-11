@@ -20,6 +20,7 @@ const admzip = require('adm-zip');
 const semver = require('semver')
 const log = require('electron-log/main');
 const { Resvg } = require('@resvg/resvg-js')
+const PSD = require('psd');
 
 log.initialize();
 log.transports.file.fileName = "uniform_maker.log"
@@ -141,20 +142,30 @@ ipcMain.on('drop-image', (event, arg) => {
 	readImage()
 
 	async function readImage() {
-		if (getExtension(file).toLowerCase() == "svg") {
-			const svg = fs.readFileSync(file)
-			const opts = {
-				background: 'rgba(255, 255, 255, 0)',
-				fitTo: {
-				  mode: 'width',
-				  value: 512,
+		switch (getExtension(file).toLowerCase()) {
+			case "svg":
+				const svg = fs.readFileSync(file)
+				const opts = {
+					background: 'rgba(255, 255, 255, 0)',
+					fitTo: {
+					mode: 'width',
+					value: 512,
+					}
 				}
-			}
-			const resvg = new Resvg(svg, opts)
-			const pngData = resvg.render()
-			fileToRead = pngData.asPng()	
-		} else {
-			fileToRead = file
+				const resvg = new Resvg(svg, opts)
+				const pngData = resvg.render()
+				fileToRead = pngData.asPng()
+				break;
+			case "psd":
+				const psd = PSD.fromFile(file);
+				psd.parse()
+				const foob = psd.image.toPng()
+				await psd.image.saveAsPng(os.tmpdir()+"/psdParse.png")
+				fileToRead = os.tmpdir()+"/psdParse.png"
+				break;
+			default:
+				fileToRead = file;
+				break;
 		}
 		const image = await Jimp.read(fileToRead)
 		image.getBase64(Jimp.AUTO, (err, ret) => {
@@ -339,7 +350,7 @@ ipcMain.on('upload-image', (event, arg) => {
 		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
 		properties: ['openFile'],
 		filters: [
-			{ name: 'Images', extensions: ['jpg', 'png','svg'] }
+			{ name: 'Images', extensions: ['jpg','png','svg','psd'] }
 		]
 	}
 
@@ -351,20 +362,30 @@ ipcMain.on('upload-image', (event, arg) => {
 			log.info("user cancelled uploading image")
 		} else {
 			store.set("uploadImagePath", path.dirname(userFile.filePaths[0]))
-			if (getExtension(userFile.filePaths[0]).toLowerCase() == "svg") {
-				const svg = fs.readFileSync(userFile.filePaths[0])
-				const opts = {
-					background: 'rgba(255, 255, 255, 0)',
-					fitTo: {
-					  mode: 'width',
-					  value: 512,
+			switch (getExtension(userFile.filePaths[0]).toLowerCase()) {
+				case "svg":
+					const svg = fs.readFileSync(userFile.filePaths[0])
+					const opts = {
+						background: 'rgba(255, 255, 255, 0)',
+						fitTo: {
+							mode: 'width',
+							value: 512,
+						}
 					}
-				}
-				const resvg = new Resvg(svg, opts)
-				const pngData = resvg.render()
-				fileToRead = pngData.asPng()	
-			} else {
-				fileToRead = userFile.filePaths[0]
+					const resvg = new Resvg(svg, opts)
+					const pngData = resvg.render()
+					fileToRead = pngData.asPng()	
+					break;
+				case "psd":
+					const psd = PSD.fromFile(userFile.filePaths[0]);
+					psd.parse()
+					const foob = psd.image.toPng()
+					await psd.image.saveAsPng(os.tmpdir()+"/psdParse.png")
+					fileToRead = os.tmpdir()+"/psdParse.png"
+					break;
+				default:
+					fileToRead = userFile.filePaths[0]
+					break;
 			}
 			const image = await Jimp.read(fileToRead)
 			if (type == "jersey") {
