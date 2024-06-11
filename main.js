@@ -137,18 +137,32 @@ ipcMain.on('drop-image', (event, arg) => {
 	let file = arg[1]
 	let tab = arg[2]
 	let json = {}
-	Jimp.read(file, (err, image) => {
-		if (err) {
-			json.filename = "error not an image"
-			json.image = "error not an image"
+
+	readImage()
+
+	async function readImage() {
+		if (getExtension(file).toLowerCase() == "svg") {
+			const svg = fs.readFileSync(file)
+			const opts = {
+				background: 'rgba(255, 255, 255, 0)',
+				fitTo: {
+				  mode: 'width',
+				  value: 512,
+				}
+			}
+			const resvg = new Resvg(svg, opts)
+			const pngData = resvg.render()
+			fileToRead = pngData.asPng()	
 		} else {
-			image.getBase64(Jimp.AUTO, (err, ret) => {
-				json.filename = path.basename(file)
-				json.image = ret
-			})
+			fileToRead = file
 		}
+		const image = await Jimp.read(fileToRead)
+		image.getBase64(Jimp.AUTO, (err, ret) => {
+			json.filename = path.basename(file)
+			json.image = ret
+		})
 		event.sender.send('drop-image-response', [dropCanvas, json, tab])
-	})
+	}
 })
 
 ipcMain.on('drop-font-image', (event, file) => {
