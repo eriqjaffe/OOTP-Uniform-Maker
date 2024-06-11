@@ -13645,6 +13645,7 @@
 	})
 
 	$(".fakeImageButton").on("click",function() {
+		showOverlay("Processing Image")
 		switch ($(this).data("canvas")) {
 			case "cap":
 				var canvas = capLogoCanvas
@@ -13765,6 +13766,7 @@
 			canvas.setActiveObject(image)
 			canvas.requestRenderAll()
 			canvas.renderAll();
+			hideOverlay()
 		}
 	})
 
@@ -16844,6 +16846,7 @@
 	}
 
 	function paste() {
+		showOverlay("Processing Image")
 		if (_clipboard == null) {
 			//console.log("system clipboard")
 			const objID = "pastedImage_"+makeID(8)
@@ -16954,6 +16957,7 @@
 					canvas.renderAll();
 					//$("#tabContainer").skeletabs('goTo', tab)
 					header.click()
+					
 				}
 			}
 		} else {
@@ -17009,10 +17013,11 @@
 				activeCanvas.requestRenderAll();
 			});
 		}
-		
+		hideOverlay()
 	}
 
 	function dropImage(dropCanvas, file, tab) {
+		showOverlay("Processing Image")
 		if ($.inArray(getExtension(file).toLowerCase(), validFontTypes) > -1) {
 			ipcRenderer.send('drop-font', [file, tab])
 		} else {
@@ -17126,6 +17131,7 @@
 				canvas.renderAll();
 				$("#tabContainer").skeletabs('goTo', tab)
 				header.click()
+				hideOverlay()
 			}
 		}
 	})
