@@ -378,7 +378,6 @@ ipcMain.on('upload-image', (event, arg) => {
 				case "psd":
 					const psd = PSD.fromFile(userFile.filePaths[0]);
 					psd.parse()
-					const foob = psd.image.toPng()
 					await psd.image.saveAsPng(os.tmpdir()+"/psdParse.png")
 					fileToRead = os.tmpdir()+"/psdParse.png"
 					break;
