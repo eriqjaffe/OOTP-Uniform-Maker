@@ -19,6 +19,10 @@ const replaceColor = require('replace-color');
 const admzip = require('adm-zip');
 const semver = require('semver')
 const log = require('electron-log/main');
+const { Resvg } = require('@resvg/resvg-js')
+const PSD = require('psd');
+const webp = require('webp-converter')
+webp.grant_permission();
 
 log.initialize();
 log.transports.file.fileName = "uniform_maker.log"
@@ -136,18 +140,55 @@ ipcMain.on('drop-image', (event, arg) => {
 	let file = arg[1]
 	let tab = arg[2]
 	let json = {}
-	Jimp.read(file, (err, image) => {
-		if (err) {
-			json.filename = "error not an image"
-			json.image = "error not an image"
-		} else {
-			image.getBase64(Jimp.AUTO, (err, ret) => {
-				json.filename = path.basename(file)
-				json.image = ret
-			})
+
+	readImage()
+
+	async function readImage() {
+		switch (getExtension(file).toLowerCase()) {
+			case "gif":
+				let tmpGIF = await Jimp.read(file)
+				await tmpGIF.writeAsync(os.tmpdir()+"/gifParse.png")
+				fileToRead = os.tmpdir()+"/gifParse.png"
+				break;
+			case "tiff":
+				let tmpTIFF = await Jimp.read(file)
+				await tmpTIFF.writeAsync(os.tmpdir()+"/tiffParse.png")
+				fileToRead = os.tmpdir()+"/tiffParse.png"
+				break;
+			case "webp":
+				await webp.dwebp(file,os.tmpdir()+"/webpParse.png","-o",logging="-v");
+				fileToRead = os.tmpdir()+"/webpParse.png"
+				break;
+			case "svg":
+				const svg = fs.readFileSync(file)
+				const opts = {
+					background: 'rgba(255, 255, 255, 0)',
+					fitTo: {
+					mode: 'width',
+					value: 512,
+					}
+				}
+				const resvg = new Resvg(svg, opts)
+				const pngData = resvg.render()
+				fileToRead = pngData.asPng()
+				break;
+			case "psd":
+				const psd = PSD.fromFile(file);
+				psd.parse()
+				await psd.image.saveAsPng(os.tmpdir()+"/psdParse.png")
+				fileToRead = os.tmpdir()+"/psdParse.png"
+				break;
+			default:
+				fileToRead = file;
+				break;
 		}
+		const image = await Jimp.read(fileToRead)
+		image.getBase64(Jimp.AUTO, (err, ret) => {
+			json.filename = path.basename(file)
+			json.image = ret
+		})
 		event.sender.send('drop-image-response', [dropCanvas, json, tab])
-	})
+	}
 })
 
 ipcMain.on('drop-font-image', (event, file) => {
@@ -324,40 +365,78 @@ ipcMain.on('upload-image', (event, arg) => {
 		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
 		properties: ['openFile'],
 		filters: [
-			{ name: 'Images', extensions: ['jpg', 'png'] }
+			{ name: 'Images', extensions: ['jpg','png','gif','tiff','bmp','svg','psd','webp'] }
 		]
 	}
-	dialog.showOpenDialog(null, options).then(result => {
-		  if(!result.canceled) {
-			store.set("uploadImagePath", path.dirname(result.filePaths[0]))
-			Jimp.read(result.filePaths[0], (err, image) => {
-				if (err) {
-					log.error(err);
-				} else {
-					if (type == "jersey") {
-						Jimp.read(__dirname+"/images/mask.png", (err, mask) => {
-							image.mask(mask,0,0)
-							image.getBase64(Jimp.AUTO, (err, ret) => {
-								json.filename = path.basename(result.filePaths[0])
-								json.image = ret
-							})
-						})
-					} else {
-						image.getBase64(Jimp.AUTO, (err, ret) => {
-							json.filename = path.basename(result.filePaths[0])
-							json.image = ret
-						})
+
+	readImage()
+
+	async function readImage() {
+		const userFile = await dialog.showOpenDialog(null, options)
+		if (userFile.canceled) {
+			log.info("user cancelled uploading image")
+			event.sender.send('hide-overlay', null)
+		} else {
+			store.set("uploadImagePath", path.dirname(userFile.filePaths[0]))
+			switch (getExtension(userFile.filePaths[0]).toLowerCase()) {
+				case "gif":
+					let tmpGIF = await Jimp.read(userFile.filePaths[0])
+					await tmpGIF.writeAsync(os.tmpdir()+"/gifParse.png")
+					fileToRead = os.tmpdir()+"/gifParse.png"
+					break;
+				case "tiff":
+					let tmpTIFF = await Jimp.read(userFile.filePaths[0])
+					await tmpTIFF.writeAsync(os.tmpdir()+"/tiffParse.png")
+					fileToRead = os.tmpdir()+"/tiffParse.png"
+					break;
+				case "webp":
+					await webp.dwebp(userFile.filePaths[0],os.tmpdir()+"/webpParse.png","-o",logging="-v");
+					fileToRead = os.tmpdir()+"/webpParse.png"
+					break;
+				case "svg":
+					const svg = fs.readFileSync(userFile.filePaths[0])
+					const opts = {
+						background: 'rgba(255, 255, 255, 0)',
+						fitTo: {
+							mode: 'width',
+							value: 512,
+						}
 					}
-					event.sender.send('upload-image-response', [type, canvas, imTop, imLeft, moveBelow, json])
+					const resvg = new Resvg(svg, opts)
+					const pngData = resvg.render()
+					fileToRead = pngData.asPng()	
+					break;
+				case "psd":
+					const psd = PSD.fromFile(userFile.filePaths[0]);
+					psd.parse()
+					await psd.image.saveAsPng(os.tmpdir()+"/psdParse.png")
+					fileToRead = os.tmpdir()+"/psdParse.png"
+					break;
+				default:
+					fileToRead = userFile.filePaths[0]
+					break;
+			}
+			const image = await Jimp.read(fileToRead)
+			try {
+				if (type == "jersey") {
+					const mask = await Jimp.read(__dirname+"/images/mask.png")
+					image.mask(mask,0,0)
+					image.getBase64(Jimp.AUTO, (err, ret) => {
+						json.filename = path.basename(userFile.filePaths[0])
+						json.image = ret
+					})
+				} else {
+					image.getBase64(Jimp.AUTO, (err, ret) => {
+						json.filename = path.basename(userFile.filePaths[0])
+						json.image = ret
+					})
 				}
-			});
-		  } else {
-			  //res.end()
-			  log.info("user cancelled uploading image")
-		  }
-	  }).catch(err => {
-		  log.error(err)
-	  })
+				event.sender.send('upload-image-response', [type, canvas, imTop, imLeft, moveBelow, json])
+			} catch (err) {
+				log.error(err)
+			}
+		}
+	}
 })
 
 ipcMain.on('upload-layer', (event, arg) => {
@@ -395,6 +474,7 @@ ipcMain.on('upload-layer', (event, arg) => {
 				}
 			});
 		  } else {
+			  event.sender.send('hide-overlay', null)
 			  res.end()
 			  log.info("user cancelled uploading custom layer")
 		  }
@@ -444,6 +524,7 @@ ipcMain.on('upload-texture', (event, arg) => {
 			});
 		  } else {
 			  log.info("user cancelled uploading custom texture")
+			  event.sender.send('hide-overlay', null)
 		  }
 	  }).catch(err => {
 		  log.error(err)
