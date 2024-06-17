@@ -21,8 +21,6 @@ const semver = require('semver')
 const log = require('electron-log/main');
 const { Resvg } = require('@resvg/resvg-js')
 const PSD = require('psd');
-const webp = require('webp-converter')
-webp.grant_permission();
 
 log.initialize();
 log.transports.file.fileName = "uniform_maker.log"
@@ -154,10 +152,6 @@ ipcMain.on('drop-image', (event, arg) => {
 				let tmpTIFF = await Jimp.read(file)
 				await tmpTIFF.writeAsync(os.tmpdir()+"/tiffParse.png")
 				fileToRead = os.tmpdir()+"/tiffParse.png"
-				break;
-			case "webp":
-				await webp.dwebp(file,os.tmpdir()+"/webpParse.png","-o",logging="-v");
-				fileToRead = os.tmpdir()+"/webpParse.png"
 				break;
 			case "svg":
 				const svg = fs.readFileSync(file)
@@ -365,7 +359,7 @@ ipcMain.on('upload-image', (event, arg) => {
 		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
 		properties: ['openFile'],
 		filters: [
-			{ name: 'Images', extensions: ['jpg','png','gif','tiff','bmp','svg','psd','webp'] }
+			{ name: 'Images', extensions: ['jpg','png','gif','tiff','bmp','svg','psd'] }
 		]
 	}
 
@@ -388,10 +382,6 @@ ipcMain.on('upload-image', (event, arg) => {
 					let tmpTIFF = await Jimp.read(userFile.filePaths[0])
 					await tmpTIFF.writeAsync(os.tmpdir()+"/tiffParse.png")
 					fileToRead = os.tmpdir()+"/tiffParse.png"
-					break;
-				case "webp":
-					await webp.dwebp(userFile.filePaths[0],os.tmpdir()+"/webpParse.png","-o",logging="-v");
-					fileToRead = os.tmpdir()+"/webpParse.png"
 					break;
 				case "svg":
 					const svg = fs.readFileSync(userFile.filePaths[0])

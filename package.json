@@ -1,7 +1,7 @@
 {
   "name": "OOTP-Uniform-Maker",
   "productName": "OOTP Uniform Maker",
-  "version": "0.10.4",
+  "version": "0.10.5",
   "description": "OOTP Uniform Maker",
   "main": "main.js",
   "scripts": {
@@ -40,7 +40,6 @@
     "replace-color": "^2.3.0",
     "semver": "^7.5.2",
     "tesseract.js": "^4.0.3",
-    "webp-converter": "^2.3.3",
     "xmlbuilder2": "^3.0.2"
   },
   "build": {
