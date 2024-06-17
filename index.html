@@ -80,7 +80,7 @@
 		const chars = [{"bottom":63,"char":"A","left":7,"size":60,"stroke":4},{"bottom":63,"char":"B","left":47,"size":60,"stroke":4},{"bottom":63,"char":"C","left":86,"size":60,"stroke":4},{"bottom":63,"char":"D","left":125,"size":60,"stroke":4},{"bottom":63,"char":"E","left":164,"size":60,"stroke":4},{"bottom":63,"char":"F","left":203,"size":60,"stroke":4},{"bottom":63,"char":"G","left":243,"size":60,"stroke":4},{"bottom":63,"char":"H","left":282,"size":60,"stroke":4},{"bottom":63,"char":"I","left":322,"size":60,"stroke":4},{"bottom":63,"char":"J","left":360,"size":60,"stroke":4},{"bottom":63,"char":"K","left":400,"size":60,"stroke":4},{"bottom":63,"char":"L","left":439,"size":60,"stroke":4},{"bottom":63,"char":"M","left":478,"size":60,"stroke":4},{"bottom":131,"char":"N","left":7,"size":60,"stroke":4},{"bottom":131,"char":"O","left":47,"size":60,"stroke":4},{"bottom":131,"char":"P","left":86,"size":60,"stroke":4},{"bottom":131,"char":"Q","left":125,"size":60,"stroke":4},{"bottom":131,"char":"R","left":164,"size":60,"stroke":4},{"bottom":131,"char":"S","left":203,"size":60,"stroke":4},{"bottom":131,"char":"T","left":243,"size":60,"stroke":4},{"bottom":131,"char":"U","left":282,"size":60,"stroke":4},{"bottom":131,"char":"V","left":322,"size":60,"stroke":4},{"bottom":131,"char":"W","left":360,"size":60,"stroke":4},{"bottom":131,"char":"X","left":400,"size":60,"stroke":4},{"bottom":131,"char":"Y","left":439,"size":60,"stroke":4},{"bottom":131,"char":"Z","left":478,"size":60,"stroke":4},{"bottom":350,"char":"0","left":10,"size":168,"stroke":6},{"bottom":350,"char":"1","left":112,"size":168,"stroke":6},{"bottom":350,"char":"2","left":215,"size":168,"stroke":6},{"bottom":350,"char":"3","left":317,"size":168,"stroke":6},{"bottom":350,"char":"4","left":419,"size":168,"stroke":6},{"bottom":502,"char":"5","left":10,"size":168,"stroke":6},{"bottom":502,"char":"6","left":112,"size":168,"stroke":6},{"bottom":502,"char":"7","left":215,"size":168,"stroke":6},{"bottom":502,"char":"8","left":317,"size":168,"stroke":6},{"bottom":502,"char":"9","left":419,"size":168,"stroke":6},{"bottom":215,"char":"smallA","left":164,"size":60,"stroke":4,"type":"small"},{"bottom":215,"char":"smallC","left":203,"size":60,"stroke":4,"type":"small"},{"bottom":215,"char":"smallE","left":243,"size":60,"stroke":4,"type":"small"}]
 		const letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","smallA","smallC","smallE"]
 		const numbers = ["0","1","2","3","4","5","6","7","8","9"]
-		const validImageTypes = ['jpg','png','gif','tiff','bmp','svg','psd']
+		const validImageTypes = ['jpg','png','gif','tiff','bmp','svg','psd','webp']
 		const validFontTypes = ["ttf", "otf"]
 
 		const initialSockColors = {sockColor:"#c85959",stirrupFill:"#ffffff",stLouis1:"#ffffff",stLouis2:"#0C2340",stLouis3:"#ffffff",stLouis4:"#0C2340",northwestern1:"#ffffff",northwestern2:"#4E2A84",boston1:"#0C2340",boston2:"#FFFFFF",greenBay1:"#FFFFFF",greenBay2:"#FFB612",double1_2:"#0C2340",double1_1:"#ffffff",double2_2:"#ffffff",double2_1:"#0C2340",double3_1:"#282828",double3_2:"#C8102E",triple1_1:"#FFFFFF",triple1_2:"#FFFFFF",triple1_3:"#FFFFFF",triple2_1:"#FFFFFF",triple2_2:"#0000FF",quadruple_1:"#00FF00",quadruple_2:"#00FF00",quadruple_3:"#00FF00",quadruple_4:"#00FF00",argyle_1:"#00FFFF",argyle_2:"#FFFF00",argyle_3:"#FFFFFF",vertical:"#FFFFFF",fakeStirrup:"#0C2340",horizontal:"#FFFFFF",tequila_1:"#F3C500",tequila_2:"#F37200",tequila_3:"#E35814",tequila_4:"#CB0135",pittsburgh1:"#AC7E00",pittsburgh2:"#FFFFFF",atlanta1:"#FFFFFF",atlanta2:"#BA0C2F"}
@@ -13702,6 +13702,100 @@
 		ipcRenderer.send('upload-image', [null, canvas.id, imLeft, imTop, moveBelow])
 	})
 
+	ipcRenderer.on('webp-convert', (event, response) => {
+		const img = new Image();
+		img.onload = function() {
+			const tempCanvas = document.createElement('canvas');
+			const tempCtx = tempCanvas.getContext('2d');
+
+			tempCanvas.width = response[6];
+			tempCanvas.height = response[7];
+
+			tempCtx.drawImage(img, 0, 0);
+
+			let convertedImage = tempCanvas.toDataURL()
+
+			const imgObj = new Image()
+			imgObj.onload = function () {
+				let imLeft = 256
+				let imTop = (activeCanvas.id == "jersey") ? 512 : 256
+				var image = new fabric.Image(imgObj);
+				image.set({
+					originX: 'center',
+					originY: 'center',
+					perPixelTargetFind: true,
+					centeredScaling: true,
+					centeredRotation: true,
+					name: response[5],
+					id: response[5]
+				});
+				image.filters.push(new fabric.Image.filters.Resize({
+					resizeType: 'lanczos', // typo fixed
+					lanczosLobes: 2 // typo fixed
+				}));
+				image.on('object:modified',function() {
+					imLeft = image.get('left')
+					imTop = image.get('top');
+				})
+				image.on('selected',function() {
+					switch (image.canvas.id) {
+						case "jerseyLogoCanvas":
+							var canStr = "jersey"
+							break;
+						case "capLogoCanvas":
+							var canStr = "cap"
+							break;
+						case "pantsLogoCanvas":
+							var canStr = "pants"
+							break;
+						case "sockCanvas":
+							var canStr = "sock"
+							break;
+					} 
+					$("#"+canStr+"FileName").html(image.get('id'));
+					if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+						$("#"+canStr+"TrimImageDiv").css("display","block");
+						$("#"+canStr+"UploadImageDiv").css("display","none");
+						$("#"+canStr+"SelectedImageDiv").css("display","block");
+					}
+					$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+					$(".copypaste").each(function() {
+						$(this).css("display","inline-block")
+					})
+				})
+				var h = image.height;
+				var w = image.width;
+				activeCanvas.add(image);
+				image.set({"left":response[3],"top":response[2]});
+				image.setCoords();
+				switch (activeCanvas.id) {
+					case "pantsLogoCanvas":
+						activeCanvas.bringToFront(activeCanvas.getObjects().find(o => o.id == "belt"))
+						activeCanvas.bringToFront(activeCanvas.getObjects().find(o => o.id == "buckle"))
+						break;
+					case "jerseyLogoCanvas":
+						activeCanvas.bringToFront(activeCanvas.getObjects().find(o => o.id == "buttons"))
+						break;
+					case "capLogoCanvas":
+
+						activeCanvas.bringToFront(activeCanvas.getObjects().find(o => o.id == "individualEyelets"))
+						activeCanvas.bringToFront(activeCanvas.getObjects().find(o => o.id == "groupedEyelets"))
+						break;
+					default:
+						activeCanvas.bringToFront(image)	
+						break;
+				}
+				activeCanvas.setActiveObject(image)
+				activeCanvas.requestRenderAll()
+				activeCanvas.renderAll();
+				tempCanvas.remove()
+				hideOverlay()
+			}
+			imgObj.src = convertedImage
+		}
+		img.src = response[5]
+	})
+
 	ipcRenderer.on('upload-image-response', (event, response) => {
 		let canvas = null;
 		switch (response[1]) {
@@ -13778,6 +13872,7 @@
 			switch (moveBelow) {
 				case "belt":
 					canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
+					canvas.bringToFront(canvas.getObjects().find(o => o.id == "buckle"))
 					break;
 				case "button":
 					canvas.bringToFront(canvas.getObjects().find(o => o.id == moveBelow))
@@ -17050,7 +17145,102 @@
 			if ($.inArray(getExtension(file).toLowerCase(), validImageTypes) > -1) {
 				if (tab < 4) {
 					showOverlay("Processing Image")
-					ipcRenderer.send('drop-image', [dropCanvas.id, file, tab])
+					if (getExtension(file) == "webp") {
+						const img = new Image();
+						img.onload = function() {
+							const tempCanvas = document.createElement('canvas');
+							const tempCtx = tempCanvas.getContext('2d');
+
+							tempCanvas.width = img.width;
+							tempCanvas.height = img.height;
+
+							tempCtx.drawImage(img, 0, 0);
+
+							let convertedImage = tempCanvas.toDataURL()
+
+							const imgObj = new Image()
+							imgObj.onload = function () {
+								let imLeft = 256
+								let imTop = (activeCanvas.id == "jerseyLogoCanvas") ? 512 : 256
+								var image = new fabric.Image(imgObj);
+								image.set({
+									originX: 'center',
+									originY: 'center',
+									perPixelTargetFind: true,
+									centeredScaling: true,
+									centeredRotation: true,
+									name: file,
+									id: file
+								});
+								image.filters.push(new fabric.Image.filters.Resize({
+									resizeType: 'lanczos', // typo fixed
+									lanczosLobes: 2 // typo fixed
+								}));
+								image.on('object:modified',function() {
+									imLeft = image.get('left')
+									imTop = image.get('top');
+								})
+								image.on('selected',function() {
+									switch (image.canvas.id) {
+										case "jerseyLogoCanvas":
+											var canStr = "jersey"
+											break;
+										case "capLogoCanvas":
+											var canStr = "cap"
+											break;
+										case "pantsLogoCanvas":
+											var canStr = "pants"
+											break;
+										case "sockCanvas":
+											var canStr = "sock"
+											break;
+									} 
+									$("#"+canStr+"FileName").html(image.get('id'));
+									if ($("#"+canStr+"TrimImageDiv").css("display") == "none") {
+										$("#"+canStr+"TrimImageDiv").css("display","block");
+										$("#"+canStr+"UploadImageDiv").css("display","none");
+										$("#"+canStr+"SelectedImageDiv").css("display","block");
+									}
+									$("#tipSpan").html("Use Arrow keys to move image 1 pixel.<br>Use Shift + Arrow keys to move image 10 pixels.<br>Use Delete key to remove image.");
+									$(".copypaste").each(function() {
+										$(this).css("display","inline-block")
+									})
+								})
+								var h = image.height;
+								var w = image.width;
+								activeCanvas.add(image);
+								image.set({"left":imLeft,"top":imTop});
+								image.setCoords();
+								switch (activeCanvas.id) {
+									case "pantsLogoCanvas":
+										activeCanvas.bringToFront(activeCanvas.getObjects().find(o => o.id == "belt"))
+										activeCanvas.bringToFront(activeCanvas.getObjects().find(o => o.id == "buckle"))
+										break;
+									case "jerseyLogoCanvas":
+										activeCanvas.bringToFront(activeCanvas.getObjects().find(o => o.id == "buttons"))
+										break;
+									case "capLogoCanvas":
+
+										activeCanvas.bringToFront(activeCanvas.getObjects().find(o => o.id == "individualEyelets"))
+										activeCanvas.bringToFront(activeCanvas.getObjects().find(o => o.id == "groupedEyelets"))
+										break;
+									default:
+										activeCanvas.bringToFront(image)	
+										break;
+								}
+								activeCanvas.setActiveObject(image)
+								activeCanvas.requestRenderAll()
+								activeCanvas.renderAll();
+								tempCanvas.remove()
+								hideOverlay()
+							}
+							imgObj.src = convertedImage
+						}
+						img.src = file
+					} else {
+						ipcRenderer.send('drop-image', [dropCanvas.id, file, tab, null])
+					}
+					
 				} else {
 					if (getExtension(file) == "png" || getExtension(file) == "jpg") {
 						showOverlay("Detecting Characters...")

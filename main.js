@@ -21,6 +21,7 @@ const semver = require('semver')
 const log = require('electron-log/main');
 const { Resvg } = require('@resvg/resvg-js')
 const PSD = require('psd');
+const sizeOf = require("image-size")
 
 log.initialize();
 log.transports.file.fileName = "uniform_maker.log"
@@ -143,6 +144,9 @@ ipcMain.on('drop-image', (event, arg) => {
 
 	async function readImage() {
 		switch (getExtension(file).toLowerCase()) {
+			case "webp":
+				fileToRead = arg[3]
+				break;
 			case "gif":
 				let tmpGIF = await Jimp.read(file)
 				await tmpGIF.writeAsync(os.tmpdir()+"/gifParse.png")
@@ -359,7 +363,7 @@ ipcMain.on('upload-image', (event, arg) => {
 		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
 		properties: ['openFile'],
 		filters: [
-			{ name: 'Images', extensions: ['jpg','png','gif','tiff','bmp','svg','psd'] }
+			{ name: 'Images', extensions: ['jpg','png','gif','tiff','bmp','svg','psd','webp'] }
 		]
 	}
 
@@ -373,6 +377,11 @@ ipcMain.on('upload-image', (event, arg) => {
 		} else {
 			store.set("uploadImagePath", path.dirname(userFile.filePaths[0]))
 			switch (getExtension(userFile.filePaths[0]).toLowerCase()) {
+				case "webp":
+					const dimensions = sizeOf(userFile.filePaths[0])
+					event.sender.send('webp-convert',[type, canvas, imTop, imLeft, moveBelow, userFile.filePaths[0], dimensions.width, dimensions.height])
+					return false;
+					break;
 				case "gif":
 					let tmpGIF = await Jimp.read(userFile.filePaths[0])
 					await tmpGIF.writeAsync(os.tmpdir()+"/gifParse.png")
