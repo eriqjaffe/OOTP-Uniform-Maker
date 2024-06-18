@@ -184,8 +184,10 @@ ipcMain.on('drop-image', (event, arg) => {
 		image.getBase64(Jimp.AUTO, (err, ret) => {
 			json.filename = path.basename(file)
 			json.image = ret
+			json.canvas = dropCanvas
+			json.tab = tab
 		})
-		event.sender.send('drop-image-response', [dropCanvas, json, tab])
+		event.sender.send('drop-image-response', json)
 	}
 })
 
@@ -370,6 +372,7 @@ ipcMain.on('upload-image', (event, arg) => {
 	readImage()
 
 	async function readImage() {
+		let json = {}
 		const userFile = await dialog.showOpenDialog(null, options)
 		if (userFile.canceled) {
 			log.info("user cancelled uploading image")
@@ -430,6 +433,13 @@ ipcMain.on('upload-image', (event, arg) => {
 						json.image = ret
 					})
 				}
+				// here's one
+				json.type = type
+				json.canvas = canvas
+				json.imTop = imTop
+				json.imLeft = imLeft
+				json.moveBelow = moveBelow
+				json
 				event.sender.send('upload-image-response', [type, canvas, imTop, imLeft, moveBelow, json])
 			} catch (err) {
 				log.error(err)
@@ -468,6 +478,7 @@ ipcMain.on('upload-layer', (event, arg) => {
 					image.getBase64(Jimp.AUTO, (err, ret) => {
 						json.filename = path.basename(result.filePaths[0])
 						json.image = ret
+						// here's one
 						event.sender.send('upload-layer-response', [canvas, imLeft, imTop, canvasHeight, canvasWidth, span, id, loadButton, delButton, renderTarget, json])
 					})
 				}
@@ -867,10 +878,25 @@ ipcMain.on('warp-text', (event, arg) => {
 						image.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
 							const radians = x / image.bitmap.width * 360 * Math.PI / 180;
 							const offsetY = (amount * -1) * Math.cos(radians);
-							const newY = Math.floor(y + offsetY);
-							const clampedY = Math.max(0, Math.min(image.bitmap.height - 1, newY));
-							const color = image.getPixelColor(x, clampedY);
-							newImage.setPixelColor(color, x, y);
+							const newY = y + offsetY;
+						
+							const yFloor = Math.floor(newY);
+							const yCeil = Math.ceil(newY);
+							const yWeight = newY - yFloor;
+						
+							const clampedYFloor = Math.max(0, Math.min(image.bitmap.height - 1, yFloor));
+							const clampedYCeil = Math.max(0, Math.min(image.bitmap.height - 1, yCeil));
+						
+							const colorFloor = Jimp.intToRGBA(image.getPixelColor(x, clampedYFloor));
+							const colorCeil = Jimp.intToRGBA(image.getPixelColor(x, clampedYCeil));
+						
+							const r = colorFloor.r * (1 - yWeight) + colorCeil.r * yWeight;
+							const g = colorFloor.g * (1 - yWeight) + colorCeil.g * yWeight;
+							const b = colorFloor.b * (1 - yWeight) + colorCeil.b * yWeight;
+							const a = colorFloor.a * (1 - yWeight) + colorCeil.a * yWeight;
+						
+							const interpolatedColor = Jimp.rgbaToInt(r, g, b, a);
+							newImage.setPixelColor(interpolatedColor, x, y);
 						});
 						newImage.autocrop()
 						let b64 = await newImage.getBase64Async(Jimp.AUTO)
@@ -942,13 +968,30 @@ ipcMain.on('warp-text', (event, arg) => {
 						const newImage = new Jimp(image.bitmap.width, image.bitmap.height);
 						tempImage.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
 							const radians = (x * 180) / image.bitmap.width * Math.PI / 180;
-							const offsetY = (amount*-1) * Math.cos(radians);
-							const newY = Math.floor(y + offsetY);
-							const clampedY = Math.max(0, Math.min(image.bitmap.height - 1, newY));
-							const color = image.getPixelColor(x, clampedY);
-							newImage.setPixelColor(color, x, y);
+							const offsetY = (amount * -1) * Math.cos(radians);
+							const newY = y + offsetY;
+						
+							const yFloor = Math.floor(newY);
+							const yCeil = Math.ceil(newY);
+							const yWeight = newY - yFloor;
+						
+							const clampedYFloor = Math.max(0, Math.min(image.bitmap.height - 1, yFloor));
+							const clampedYCeil = Math.max(0, Math.min(image.bitmap.height - 1, yCeil));
+						
+							const colorFloor = Jimp.intToRGBA(image.getPixelColor(x, clampedYFloor));
+							const colorCeil = Jimp.intToRGBA(image.getPixelColor(x, clampedYCeil));
+						
+							const r = colorFloor.r * (1 - yWeight) + colorCeil.r * yWeight;
+							const g = colorFloor.g * (1 - yWeight) + colorCeil.g * yWeight;
+							const b = colorFloor.b * (1 - yWeight) + colorCeil.b * yWeight;
+							const a = colorFloor.a * (1 - yWeight) + colorCeil.a * yWeight;
+						
+							const interpolatedColor = Jimp.rgbaToInt(r, g, b, a);
+							newImage.setPixelColor(interpolatedColor, x, y);
 						});
-						newImage.autocrop()
+						
+						newImage.autocrop();
+						
 						let b64 = await newImage.getBase64Async(Jimp.AUTO)
 						json.status = 'success'
 						json.data = b64
@@ -970,11 +1013,26 @@ ipcMain.on('warp-text', (event, arg) => {
 						tempImage.scan(0, 0, image.bitmap.width, image.bitmap.height, function (x, y, idx) {
 							const radians = (x * 180) / image.bitmap.width * Math.PI / 180;
 							const offsetY = amount * Math.cos(radians);
-							const newY = Math.floor(y + offsetY);
-							const clampedY = Math.max(0, Math.min(image.bitmap.height - 1, newY));
-							const color = image.getPixelColor(x, clampedY);
-							newImage.setPixelColor(color, x, y);
-						});
+							const newY = y + offsetY;
+						
+							const yFloor = Math.floor(newY);
+							const yCeil = Math.ceil(newY);
+							const yWeight = newY - yFloor;
+						
+							const clampedYFloor = Math.max(0, Math.min(image.bitmap.height - 1, yFloor));
+							const clampedYCeil = Math.max(0, Math.min(image.bitmap.height - 1, yCeil));
+						
+							const colorFloor = Jimp.intToRGBA(image.getPixelColor(x, clampedYFloor));
+							const colorCeil = Jimp.intToRGBA(image.getPixelColor(x, clampedYCeil));
+						
+							const r = colorFloor.r * (1 - yWeight) + colorCeil.r * yWeight;
+							const g = colorFloor.g * (1 - yWeight) + colorCeil.g * yWeight;
+							const b = colorFloor.b * (1 - yWeight) + colorCeil.b * yWeight;
+							const a = colorFloor.a * (1 - yWeight) + colorCeil.a * yWeight;
+						
+							const interpolatedColor = Jimp.rgbaToInt(r, g, b, a);
+							newImage.setPixelColor(interpolatedColor, x, y);
+						});						
 						newImage.autocrop()
 						let b64 = await newImage.getBase64Async(Jimp.AUTO)
 						json.status = 'success'
