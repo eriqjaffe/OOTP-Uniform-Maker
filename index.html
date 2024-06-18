@@ -13703,13 +13703,14 @@
 	})
 
 	ipcRenderer.on('webp-convert', (event, response) => {
+		console.log(response)
 		const img = new Image();
 		img.onload = function() {
 			const tempCanvas = document.createElement('canvas');
 			const tempCtx = tempCanvas.getContext('2d');
 
-			tempCanvas.width = response[6];
-			tempCanvas.height = response[7];
+			tempCanvas.width = response.width;
+			tempCanvas.height = response.height;
 
 			tempCtx.drawImage(img, 0, 0);
 
@@ -13718,7 +13719,7 @@
 			const imgObj = new Image()
 			imgObj.onload = function () {
 				let imLeft = 256
-				let imTop = (activeCanvas.id == "jersey") ? 512 : 256
+				let imTop = (response.canvas == "jerseyLogoCanvas") ? 512 : 256
 				var image = new fabric.Image(imgObj);
 				image.set({
 					originX: 'center',
@@ -13726,8 +13727,8 @@
 					perPixelTargetFind: true,
 					centeredScaling: true,
 					centeredRotation: true,
-					name: response[5],
-					id: response[5]
+					name: response.file,
+					id: response.file
 				});
 				image.filters.push(new fabric.Image.filters.Resize({
 					resizeType: 'lanczos', // typo fixed
@@ -13766,7 +13767,7 @@
 				var h = image.height;
 				var w = image.width;
 				activeCanvas.add(image);
-				image.set({"left":response[3],"top":response[2]});
+				image.set({"left":imLeft,"top":imTop});
 				image.setCoords();
 				switch (activeCanvas.id) {
 					case "pantsLogoCanvas":
@@ -13793,7 +13794,7 @@
 			}
 			imgObj.src = convertedImage
 		}
-		img.src = response[5]
+		img.src = response.path
 	})
 
 	ipcRenderer.on('upload-image-response', (event, response) => {

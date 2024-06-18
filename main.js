@@ -379,7 +379,7 @@ ipcMain.on('upload-image', (event, arg) => {
 			switch (getExtension(userFile.filePaths[0]).toLowerCase()) {
 				case "webp":
 					const dimensions = sizeOf(userFile.filePaths[0])
-					event.sender.send('webp-convert',[type, canvas, imTop, imLeft, moveBelow, userFile.filePaths[0], dimensions.width, dimensions.height])
+					event.sender.send('webp-convert',{canvas: canvas, file: path.basename(userFile.filePaths[0]), path: userFile.filePaths[0], width: dimensions.width, height: dimensions.height})
 					return false;
 					break;
 				case "gif":
