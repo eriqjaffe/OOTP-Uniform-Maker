@@ -151,6 +151,12 @@ ipcMain.on('drop-image', (event, arg) => {
 				fs.writeFileSync(os.tmpdir()+"/heicParse.png", outputBuffer)
 				fileToRead = os.tmpdir()+"/heicParse.png"
 				break;
+			case "heif":
+				let inputBuffer2 = fs.readFileSync(file)
+				let outputBuffer2 = await heicConvert({buffer: inputBuffer2, format: 'PNG'})
+				fs.writeFileSync(os.tmpdir()+"/heifParse.png", outputBuffer2)
+				fileToRead = os.tmpdir()+"/heifParse.png"
+				break;
 			case "webp":
 				fileToRead = arg[3]
 				break;
@@ -373,7 +379,7 @@ ipcMain.on('upload-image', (event, arg) => {
 		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
 		properties: ['openFile'],
 		filters: [
-			{ name: 'Images', extensions: ['jpg','png','gif','tiff','bmp','svg','psd','webp','heic'] }
+			{ name: 'Images', extensions: ['jpg','png','gif','tiff','bmp','svg','psd','webp','heic','heif'] }
 		]
 	}
 
@@ -392,6 +398,12 @@ ipcMain.on('upload-image', (event, arg) => {
 					let inputBuffer = fs.readFileSync(userFile.filePaths[0])
 					let outputBuffer = await heicConvert({buffer: inputBuffer, format: 'PNG'})
 					fs.writeFileSync(os.tmpdir()+"/heicParse.png", outputBuffer)
+					fileToRead = os.tmpdir()+"/heicParse.png"
+					break;
+				case "heif":
+					let inputBuffer2 = fs.readFileSync(userFile.filePaths[0])
+					let outputBuffer2 = await heicConvert({buffer: inputBuffer2, format: 'PNG'})
+					fs.writeFileSync(os.tmpdir()+"/heicParse.png", outputBuffer2)
 					fileToRead = os.tmpdir()+"/heicParse.png"
 					break;
 				case "webp":
