@@ -637,12 +637,13 @@
 											<tr class="color_tr">
 												<td class="checkCell"><input type="checkbox" class="jerseyPanelToggle" id="boston1871toggle" data-id="boston1871" data-canvas="below"></td>
 												<td>
+													<label>Vintage Panels:&nbsp;</label>
 													<select id="vintagePanelSelect">
 														<option value="boston1871">Boston</option>
 														<option value="chicago1871">Chicago</option>
 														<option value="forestCity1871">Forest City</option>
 														<option value="ftWayne1871">Fort Wayne</option>
-														<option value="nyMutuals1871">New York Mutuals</option>
+														<option value="nyMutuals1871">New York</option>
 														<option value="troy1871">Troy</option>
 													</select>
 												</td>
@@ -11603,7 +11604,7 @@
 		});
 
 		nyMutuals1871fill = new fabric.Path("m 206.94141,544 c -0.44522,0 -4.15283,2.65579 -8.23829,5.90234 -6.69465,5.32 -15.60977,14.14255 -30.46679,30.15039 l -5.1543,5.55469 7.41602,82.94531 c 5.14127,57.50418 8.02128,85.40113 9.39062,90.94727 4.41733,17.89121 13.88564,35.35164 24.71094,45.57031 7.88717,7.4452 12.66858,10.06788 26.90039,14.75781 6.6,2.17497 14.7,5.53913 18,7.47461 3.3,1.93548 6.14719,3.55823 6.32812,3.60743 0.18095,0.0492 3.78094,-1.76419 8,-4.0293 4.21907,-2.26512 12.38424,-5.66296 18.14454,-7.55274 12.88025,-4.22563 19.9637,-8.17791 26.71484,-14.90429 10.66693,-10.62783 20.30278,-29.32083 24.38672,-47.31055 0.54777,-2.41293 4.35296,-41.95374 8.45703,-87.86914 l 7.46289,-83.48437 -5.66211,-6.11524 c -6.77335,-7.31602 -10.85915,-10.58277 -27.45312,-21.95312 l -12.62305,-8.64844 -3.21094,6.02539 c -3.83257,7.19063 -13.12518,15.3652 -23.39844,20.58203 -3.76987,1.91436 -9.68101,5.69986 -13.13476,8.41406 -3.45375,2.71419 -6.56728,4.93555 -6.91797,4.93555 -0.35069,0 -3.48622,-2.23975 -6.96875,-4.97656 -3.48252,-2.73681 -9.34472,-6.32819 -13.02734,-7.98047 -11.70121,-5.24998 -26.52068,-20.41201 -28.21094,-28.86328 C 208.03699,545.43102 207.38663,544 206.94141,544 Z",{
-			//fill: initialJerseyColors['nyMutuals1871fill'],
+			fill: initialJerseyColors['nyMutuals1871fill'],
 			id: 'nyMutuals1871fill',
 			visible: true,
 			selectable:false,
@@ -11722,7 +11723,7 @@
 
 		chicago1871 = new fabric.Group([chicago1871fill,chicago1871stroke1,chicago1871stroke2],{
 			id: 'chicago1871',
-			visible: true,
+			visible: false,
 			selectable: false,
 			evented: false,
 			type: 'vintageGroup'
