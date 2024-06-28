@@ -3885,6 +3885,32 @@
 					o.applyFilters()
 				}
 			})
+			const f = jerseyBelow.getObjects().find(f => f.id == "jerseyFrontColor")
+			const baseColor = (f.visible) ? f.fill : color.toHexString()
+			const chicagoGroup = jerseyBelow.getObjects().find(f => f.id == "chicago1871")
+			const chicagoPanel = chicagoGroup.getObjects().find(f => f.id == "chicago1871fill")
+			const c = ($("#chicago1871fill").spectrum("get") == null) ? 'transparent' : $("#chicago1871fill").spectrum("get").toHexString()
+			const gradient = new fabric.Gradient({
+				coords: {
+					x1: 0,
+					y1: 0,
+					x2: 1,
+					y2: .4
+				},
+				gradientUnits: 'percentage',
+				colorStops: [{
+					offset: '0',
+					color: c
+				}, {
+					offset: '0.575',
+					color: c
+				},
+				{
+					offset: '0.75',
+					color: baseColor
+				}]
+			});
+			chicagoPanel.set("fill", gradient)
 			$("#buttonSelector").spectrum("set",color)
 			jerseyLogoCanvas.requestRenderAll()
 			reRenderBG("jersey")
@@ -3898,6 +3924,32 @@
 					o.applyFilters()
 				}
 			})
+			const f = jerseyBelow.getObjects().find(f => f.id == "jerseyFrontColor")
+			const baseColor = (f.visible) ? f.fill : color.toHexString()
+			const chicagoGroup = jerseyBelow.getObjects().find(f => f.id == "chicago1871")
+			const chicagoPanel = chicagoGroup.getObjects().find(f => f.id == "chicago1871fill")
+			const c = ($("#chicago1871fill").spectrum("get") == null) ? 'transparent' : $("#chicago1871fill").spectrum("get").toHexString()
+			const gradient = new fabric.Gradient({
+				coords: {
+					x1: 0,
+					y1: 0,
+					x2: 1,
+					y2: .4
+				},
+				gradientUnits: 'percentage',
+				colorStops: [{
+					offset: '0',
+					color: c
+				}, {
+					offset: '0.575',
+					color: c
+				},
+				{
+					offset: '0.75',
+					color: baseColor
+				}]
+			});
+			chicagoPanel.set("fill", gradient)
 			$("#buttonSelector").spectrum("set",color)
 			jerseyLogoCanvas.requestRenderAll()
 			reRenderBG("jersey")
@@ -3922,6 +3974,32 @@
 					o.applyFilters()
 				}
 			})
+			const f = jerseyBelow.getObjects().find(f => f.id == "jerseyFrontColor")
+			const baseColor = (f.visible) ? f.fill : color.toHexString()
+			const chicagoGroup = jerseyBelow.getObjects().find(f => f.id == "chicago1871")
+			const chicagoPanel = chicagoGroup.getObjects().find(f => f.id == "chicago1871fill")
+			const c = ($("#chicago1871fill").spectrum("get") == null) ? 'transparent' : $("#chicago1871fill").spectrum("get").toHexString()
+			const gradient = new fabric.Gradient({
+				coords: {
+					x1: 0,
+					y1: 0,
+					x2: 1,
+					y2: .4
+				},
+				gradientUnits: 'percentage',
+				colorStops: [{
+					offset: '0',
+					color: c
+				}, {
+					offset: '0.575',
+					color: c
+				},
+				{
+					offset: '0.75',
+					color: baseColor
+				}]
+			});
+			chicagoPanel.set("fill", gradient)
 			$("#buttonSelector").spectrum("set",color)
 			jerseyLogoCanvas.requestRenderAll()
 			reRenderBG("jersey")
@@ -3978,6 +4056,34 @@
 						} 		
 						if (o.id == 'jerseyMakersMark') {
 							jerseyMakersMarkColor = c;						
+						}
+						if (o.id == "jerseyFrontColor") {
+							const f = jerseyBelow.getObjects().find(f => f.id == "jerseyFrontColor")
+							const baseColor = (f.visible) ? f.fill : jerseyBelow.backgroundColor
+							const chicagoGroup = jerseyBelow.getObjects().find(f => f.id == "chicago1871")
+							const chicagoPanel = chicagoGroup.getObjects().find(f => f.id == "chicago1871fill")
+							const c = ($("#chicago1871fill").spectrum("get") == null) ? 'transparent' : $("#chicago1871fill").spectrum("get").toHexString()
+							const gradient = new fabric.Gradient({
+								coords: {
+									x1: 0,
+									y1: 0,
+									x2: 1,
+									y2: .4
+								},
+								gradientUnits: 'percentage',
+								colorStops: [{
+									offset: '0',
+									color: c
+								}, {
+									offset: '0.575',
+									color: c
+								},
+								{
+									offset: '0.75',
+									color: baseColor
+								}]
+							});
+							chicagoPanel.set("fill", gradient)
 						}			
 					} 
                 });
@@ -4026,7 +4132,35 @@
 						} 		
 						if (o.id == 'jerseyMakersMark') {
 							jerseyMakersMarkColor = c;						
-						}				
+						}
+						if (o.id == "jerseyFrontColor") {
+							const f = jerseyBelow.getObjects().find(f => f.id == "jerseyFrontColor")
+							const baseColor = (f.visible) ? f.fill : jerseyBelow.backgroundColor
+							const chicagoGroup = jerseyBelow.getObjects().find(f => f.id == "chicago1871")
+							const chicagoPanel = chicagoGroup.getObjects().find(f => f.id == "chicago1871fill")
+							const c = ($("#chicago1871fill").spectrum("get") == null) ? 'transparent' : $("#chicago1871fill").spectrum("get").toHexString()
+							const gradient = new fabric.Gradient({
+								coords: {
+									x1: 0,
+									y1: 0,
+									x2: 1,
+									y2: .4
+								},
+								gradientUnits: 'percentage',
+								colorStops: [{
+									offset: '0',
+									color: c
+								}, {
+									offset: '0.575',
+									color: c
+								},
+								{
+									offset: '0.75',
+									color: baseColor
+								}]
+							});
+							chicagoPanel.set("fill", gradient)
+						}			
 					} 
                 });
                 canvas.renderAll()
@@ -4085,7 +4219,35 @@
 						} 		
 						if (o.id == 'jerseyMakersMark') {
 							jerseyMakersMarkColor = c;						
-						}				
+						}	
+						if (o.id == "jerseyFrontColor") {
+							const f = jerseyBelow.getObjects().find(f => f.id == "jerseyFrontColor")
+							const baseColor = (f.visible) ? f.fill : jerseyBelow.backgroundColor
+							const chicagoGroup = jerseyBelow.getObjects().find(f => f.id == "chicago1871")
+							const chicagoPanel = chicagoGroup.getObjects().find(f => f.id == "chicago1871fill")
+							const c = ($("#chicago1871fill").spectrum("get") == null) ? 'transparent' : $("#chicago1871fill").spectrum("get").toHexString()
+							const gradient = new fabric.Gradient({
+								coords: {
+									x1: 0,
+									y1: 0,
+									x2: 1,
+									y2: .4
+								},
+								gradientUnits: 'percentage',
+								colorStops: [{
+									offset: '0',
+									color: c
+								}, {
+									offset: '0.575',
+									color: c
+								},
+								{
+									offset: '0.75',
+									color: baseColor
+								}]
+							});
+							chicagoPanel.set("fill", gradient)
+						}			
 					} 
                 });
                 canvas.renderAll()
@@ -4190,7 +4352,34 @@
 				const c = (color == null) ? 'transparent' : color.toHexString()
 				const g = jerseyBelow.getObjects().find(o => o.id == $(this).data('group'))
 				const o = g.getObjects().find(o => o.id == $(this).data('element'))
-				o.set("fill", c)
+				if (g.id == "chicago1871") {
+					const frontPanel = jerseyBelow.getObjects().find(o => o.id == "jerseyFrontColor")
+					const baseColor = (frontPanel.visible) ? frontPanel.fill : jerseyBelow.backgroundColor
+					const gradient = new fabric.Gradient({
+						coords: {
+							x1: 0,
+							y1: 0,
+							x2: 1,
+							y2: .4
+						},
+						gradientUnits: 'percentage',
+						colorStops: [{
+							offset: '0',
+							color: c
+						}, {
+							offset: '0.575',
+							color: c
+						},
+						{
+							offset: '0.75',
+							color: baseColor
+						}]
+					});
+					o.set("fill", gradient)
+				} else {
+					o.set("fill", c)
+				}
+				
 				jerseyBelow.renderAll()
 				reRenderBG('jersey')
 			},
@@ -4199,7 +4388,33 @@
 				const c = (color == null) ? 'transparent' : color.toHexString()
 				const g = jerseyBelow.getObjects().find(o => o.id == $(this).data('group'))
 				const o = g.getObjects().find(o => o.id == $(this).data('element'))
-				o.set("fill", c)
+				if (g.id == "chicago1871") {
+					const frontPanel = jerseyBelow.getObjects().find(o => o.id == "jerseyFrontColor")
+					const baseColor = (frontPanel.visible) ? frontPanel.fill : jerseyBelow.backgroundColor
+					const gradient = new fabric.Gradient({
+						coords: {
+							x1: 0,
+							y1: 0,
+							x2: 1,
+							y2: .4
+						},
+						gradientUnits: 'percentage',
+						colorStops: [{
+							offset: '0',
+							color: c
+						}, {
+							offset: '0.575',
+							color: c
+						},
+						{
+							offset: '0.75',
+							color: baseColor
+						}]
+					});
+					o.set("fill", gradient)
+				} else {
+					o.set("fill", c)
+				}
 				jerseyBelow.renderAll()
 				reRenderBG('jersey')
 			},
@@ -4208,7 +4423,33 @@
 				const c = (color == null) ? 'transparent' : color.toHexString()
 				const g = jerseyBelow.getObjects().find(o => o.id == $(this).data('group'))
 				const o = g.getObjects().find(o => o.id == $(this).data('element'))
-				o.set("fill", c)
+				if (g.id == "chicago1871") {
+					const frontPanel = jerseyBelow.getObjects().find(o => o.id == "jerseyFrontColor")
+					const baseColor = (frontPanel.visible) ? frontPanel.fill : jerseyBelow.backgroundColor
+					const gradient = new fabric.Gradient({
+						coords: {
+							x1: 0,
+							y1: 0,
+							x2: 1,
+							y2: .4
+						},
+						gradientUnits: 'percentage',
+						colorStops: [{
+							offset: '0',
+							color: c
+						}, {
+							offset: '0.575',
+							color: c
+						},
+						{
+							offset: '0.75',
+							color: baseColor
+						}]
+					});
+					o.set("fill", gradient)
+				} else {
+					o.set("fill", c)
+				}
 				jerseyBelow.renderAll()
 				reRenderBG('jersey')
 			}
@@ -4718,6 +4959,34 @@
 				o.set("visible", state)
 			}
         });
+		if ($(this).data("id") == "jerseyFrontColor") {
+			const o = jerseyBelow.getObjects().find(o => o.id == "jerseyFrontColor")
+			const baseColor = (o.visible) ? o.fill : jerseyBelow.backgroundColor
+			const chicagoGroup = jerseyBelow.getObjects().find(o => o.id == "chicago1871")
+			const chicagoPanel = chicagoGroup.getObjects().find(o => o.id == "chicago1871fill")
+			const c = ($("#chicago1871fill").spectrum("get") == null) ? 'transparent' : $("#chicago1871fill").spectrum("get").toHexString()
+			const gradient = new fabric.Gradient({
+				coords: {
+					x1: 0,
+					y1: 0,
+					x2: 1,
+					y2: .4
+				},
+				gradientUnits: 'percentage',
+				colorStops: [{
+					offset: '0',
+					color: c
+				}, {
+					offset: '0.575',
+					color: c
+				},
+				{
+					offset: '0.75',
+					color: baseColor
+				}]
+			});
+			chicagoPanel.set("fill", gradient)
+		}
 		canvas.renderAll()
 		reRenderBG("jersey");
 	})
@@ -11398,8 +11667,30 @@
 			nyMutuals1871.bringToFront(oImg)
 		})
 
+		const gradient = new fabric.Gradient({
+			coords: {
+				x1: 0,
+				y1: 0,
+				x2: 1,
+				y2: .4
+			},
+			gradientUnits: 'percentage',
+			colorStops: [{
+				offset: '0',
+				color: initialJerseyColors['chicago1871fill']
+			}, {
+				offset: '0.575',
+				color: initialJerseyColors['chicago1871fill']
+			},
+			{
+				offset: '0.75',
+				color: initialJerseyColors['jerseyColor']
+			}]
+		});
+
 		chicago1871fill = new fabric.Path("m 214.50195,569.14844 c -26.44419,0.0151 -30.83078,0.4262 -38.70312,1.84375 C 169.66696,572.09632 164.31055,573 163.89648,573 c -0.41407,0 -0.54447,2.3625 -0.29101,5.25 0.25346,2.8875 1.38799,16.95 2.52148,31.25 1.13349,14.3 2.45576,30.5 2.9375,36 0.48174,5.5 1.34632,18.775 1.92188,29.5 0.57555,10.725 1.69836,26.025 2.49414,34 0.79577,7.975 1.68963,20.35 1.98828,27.5 0.29864,7.15 0.79497,14.8 1.10156,17 0.30659,2.2 0.68667,6.025 0.84571,8.5 0.15905,2.475 1.67508,22.95 3.36914,45.5 1.69406,22.55 3.80815,51.8 4.69726,65 0.8891,13.2 1.87662,25.90241 2.19531,28.22852 l 0.58008,4.23046 19.6211,0.31446 c 10.79161,0.1728 20.9229,0.29548 22.51367,0.27148 l 2.89258,-0.0449 39.12695,-168 39.12891,-168 -62.29688,-0.25781 c -14.66279,-0.0606 -25.92746,-0.0988 -34.74219,-0.0937 z",{
-			fill: initialJerseyColors['chicago1871fill'],
+			//fill: initialJerseyColors['chicago1871fill'],
+			fill: gradient,
 			id: 'chicago1871fill',
 			visible: true,
 			selectable:false,
@@ -11416,9 +11707,9 @@
 
 		chicago1871fill.set('shadow', new fabric.Shadow({
 			color: '#000000',
-			blur: 5,
-			offsetX: -2,
-			offsetY: -2
+			blur: 2,
+			offsetX: -3,
+			offsetY: 2
 		}))
 
 		chicago1871stroke2 = new fabric.Path("M 61.03125,209.17578 C 60.127351,208.97238 60,214.19122 60,236.93164 c 0,25.94312 0.172469,29.17011 1.5,28.06836 2.203377,-1.82864 2.174846,-52.52469 -0.03125,-55.44141 -0.162711,-0.21512 -0.308372,-0.35375 -0.4375,-0.38281 z M 310,568.96875 l -60.25,0.33984 c -33.1375,0.18679 -62.05,0.61462 -64.25,0.95118 -17.75276,2.71583 -21.62936,3.74008 -21.10547,5.57031 0.26297,0.9187 0.73916,5.94492 1.05859,11.16992 0.31946,5.225 0.96157,14.9 1.42774,21.5 0.46617,6.6 0.87385,13.8 0.90625,16 0.0979,6.65109 6.16371,90.85992 7.7793,108 1.74984,18.5643 11.07309,141.73945 11.95898,158 0.9374,17.20625 -0.92987,15.39605 16.23633,15.75195 8.1057,0.1681 17.77578,0.40575 21.48828,0.52735 3.7125,0.1216 6.75,-0.19227 6.75,-0.69727 0,-0.505 0.27357,-1.63 0.60742,-2.5 0.54074,-1.4091 -1.52705,-1.58203 -18.9414,-1.58203 -13.43712,0 -19.76668,-0.35324 -20.2461,-1.12891 -0.3836,-0.62067 -3.5496,-38.30817 -7.03711,-83.75 -3.4875,-45.44183 -6.77416,-84.87109 -7.30273,-87.62109 -0.52857,-2.75 -0.98673,-9.56552 -1.01953,-15.14453 -0.0328,-5.579 -1.17629,-24.254 -2.54102,-41.5 -2.5182,-31.82214 -4.33113,-57.85712 -5.03515,-72.35547 -0.21367,-4.4 -0.62675,-11.40103 -0.91797,-15.55859 l -0.5293,-7.56055 10.73242,-1.69922 c 9.23263,-1.46329 19.07377,-1.70041 70.48047,-1.69141 L 310,574 v -2.51562 z",{
@@ -11431,7 +11722,7 @@
 
 		chicago1871 = new fabric.Group([chicago1871fill,chicago1871stroke1,chicago1871stroke2],{
 			id: 'chicago1871',
-			visible: false,
+			visible: true,
 			selectable: false,
 			evented: false,
 			type: 'vintageGroup'
