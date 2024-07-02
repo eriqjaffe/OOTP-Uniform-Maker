@@ -22,6 +22,7 @@ const log = require('electron-log/main');
 const { Resvg } = require('@resvg/resvg-js')
 const PSD = require('psd');
 const sizeOf = require("image-size")
+const heicConvert = require("heic-convert")
 
 log.initialize();
 log.transports.file.fileName = "uniform_maker.log"
@@ -144,6 +145,18 @@ ipcMain.on('drop-image', (event, arg) => {
 
 	async function readImage() {
 		switch (getExtension(file).toLowerCase()) {
+			case "heic":
+				let inputBuffer = fs.readFileSync(file)
+				let outputBuffer = await heicConvert({buffer: inputBuffer, format: 'PNG'})
+				fs.writeFileSync(os.tmpdir()+"/heicParse.png", outputBuffer)
+				fileToRead = os.tmpdir()+"/heicParse.png"
+				break;
+			case "heif":
+				let inputBuffer2 = fs.readFileSync(file)
+				let outputBuffer2 = await heicConvert({buffer: inputBuffer2, format: 'PNG'})
+				fs.writeFileSync(os.tmpdir()+"/heifParse.png", outputBuffer2)
+				fileToRead = os.tmpdir()+"/heifParse.png"
+				break;
 			case "webp":
 				fileToRead = arg[3]
 				break;
@@ -187,6 +200,7 @@ ipcMain.on('drop-image', (event, arg) => {
 			json.canvas = dropCanvas
 			json.tab = tab
 		})
+		console.log(json)
 		event.sender.send('drop-image-response', json)
 	}
 })
@@ -365,7 +379,7 @@ ipcMain.on('upload-image', (event, arg) => {
 		defaultPath: store.get("uploadImagePath", app.getPath('pictures')),
 		properties: ['openFile'],
 		filters: [
-			{ name: 'Images', extensions: ['jpg','png','gif','tiff','bmp','svg','psd','webp'] }
+			{ name: 'Images', extensions: ['jpg','png','gif','tiff','bmp','svg','psd','webp','heic','heif'] }
 		]
 	}
 
@@ -380,6 +394,18 @@ ipcMain.on('upload-image', (event, arg) => {
 		} else {
 			store.set("uploadImagePath", path.dirname(userFile.filePaths[0]))
 			switch (getExtension(userFile.filePaths[0]).toLowerCase()) {
+				case "heic":
+					let inputBuffer = fs.readFileSync(userFile.filePaths[0])
+					let outputBuffer = await heicConvert({buffer: inputBuffer, format: 'PNG'})
+					fs.writeFileSync(os.tmpdir()+"/heicParse.png", outputBuffer)
+					fileToRead = os.tmpdir()+"/heicParse.png"
+					break;
+				case "heif":
+					let inputBuffer2 = fs.readFileSync(userFile.filePaths[0])
+					let outputBuffer2 = await heicConvert({buffer: inputBuffer2, format: 'PNG'})
+					fs.writeFileSync(os.tmpdir()+"/heicParse.png", outputBuffer2)
+					fileToRead = os.tmpdir()+"/heicParse.png"
+					break;
 				case "webp":
 					const dimensions = sizeOf(userFile.filePaths[0])
 					event.sender.send('webp-convert',{canvas: canvas, file: path.basename(userFile.filePaths[0]), path: userFile.filePaths[0], width: dimensions.width, height: dimensions.height})

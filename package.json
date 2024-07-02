@@ -1,7 +1,7 @@
 {
   "name": "OOTP-Uniform-Maker",
   "productName": "OOTP Uniform Maker",
-  "version": "0.10.6",
+  "version": "0.10.7",
   "description": "OOTP Uniform Maker",
   "main": "main.js",
   "scripts": {
@@ -33,6 +33,7 @@
     "electron-store": "^8.0.1",
     "fontname": "^1.0.1",
     "github-version-checker": "^2.3.0",
+    "heic-convert": "^2.1.0",
     "image-size": "^1.1.1",
     "jimp": "^0.22.12",
     "node-gyp": "^9.3.1",
