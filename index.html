@@ -72,7 +72,8 @@
         const beltObjects = ['belt', 'buckle']
 		const swashFills = ['swash1Fill', 'swash2Fill', 'swash3Fill', 'swash4Fill', 'swash5Fill', 'swash6Fill']
 		const swashStrokes = ['swash1Stroke', 'swash2Stroke', 'swash3Stroke', 'swash4Stroke', 'swash5Stroke', 'swash6Stroke']
-		
+		const vintageGroups = ['boston1871', 'forestCity1871', 'ftWayne1871', 'troy1871', 'nyMutuals1871', 'chicago1871']
+
 		const initialCapColors = {capColor:"#ba0c2f",underBrimColor:"#656765",topsideBrimColor:"#1d1654",squatcheeColor:"yellow",frontPanelColor:"#FFFFFF",smallFrontPanelColor:"yellow",capPinstripeColor:"blue",capPinstripe2Color:"cyan", horizontalPinstripeColor:"yellow",capLogoTextColor:"white",capLogoStroke1Color:"green",capLogoStroke2Color:"black",capLogo2TextColor:"white",capLogo2Stroke1Color:"green",capLogo2Stroke2Color:"black",bandBoxSingleThickColor:"orange",bandBoxDoubleThickColor:"greenyellow",jockeyColor:"gray",braidStripeInnerColor:"red",braidStripeOuterColor:"blue",soutache:"goldenrod",frontPanelBorderColor:"cyan",bostonColor:"yellowgreen",smallPanelBorderColor:"cyan",curvedBrimColor:"cyan",curvedBrimBorderColor:"blue",peakBandColor:"orange",stingyBrimColor:"red",lidPinstripesColor:"blue",stingyLidPinstripesColor:"yellow",eyeletFillColor:"black",eyelet1Color:"yellow",eyelet2Color:"yellow",eyelet3Color:"yellow",eyelet4Color:"yellow",eyelet5Color:"yellow",eyelet6Color:"yellow",eyeletGroupFillColor:"black",eyeletGroupColor:"yellow",snakeskinColor:"#000000",scrambledEggColor:"#FED141",capMakersMarkColor:"#FFFFFF",triColor:"#003087",halo:"#8D9093",mlbBaseColor:"#FFFFFF",mlb1Color:"#041e42",mlb2Color:"#bf0d3e",milbBaseColor:"#FFFFFF",milb1Color:"#041e42",milb2Color:"#bf0d3e"}
 
 		const initialTextColors = {fillColor: "#0C2340", stroke1Color: "#ffffff", stroke2Color: "#BA0C2F"}
@@ -5024,11 +5025,13 @@
 			$("#buttonsCheck").trigger("change")
 		}
 		const id = $("#vintagePanelSelect").val()
-		jerseyBelow.getObjects('vintageGroup').forEach(function(o){
+		for (object of vintageGroups) {
+			let o = jerseyBelow.getObjects('group').find(o => o.id == object)
 			o.set("visible", false)
-		})
+		}
+
 		if ($(this).is(":checked")) {
-			const g = jerseyBelow.getObjects('vintageGroup').find(o => o.id == id).set("visible",true)
+			const g = jerseyBelow.getObjects('group').find(o => o.id == id).set("visible",true)
 		}
 		jerseyBelow.renderAll()
 		reRenderBG("jersey")
@@ -5036,24 +5039,15 @@
 			$(this).css("display","none")
 		})
 		$("#"+id+"Selectors").css("display","inline-block")
-		/* const id = $(this).data("id");
-		const state = $(this).is(':checked') ? true : false
-		const canvas = $(this).data('canvas') == 'below' ? jerseyBelow : jerseyLogoCanvas
-		canvas.getObjects().forEach(function(o) {
-			if (o.id == id) {
-				o.set("visible", state)
-			}
-        });
-		canvas.renderAll()
-		reRenderBG("jersey"); */
 	})
 
 	$("#vintagePanelSelect").on("change",function() {
 		const id = $(this).val()
-		jerseyBelow.getObjects('vintageGroup').forEach(function(o){
+		for (object of vintageGroups) {
+			let o = jerseyBelow.getObjects('group').find(o => o.id == object)
 			o.set("visible", false)
-		})
-		const g = jerseyBelow.getObjects('vintageGroup').find(o => o.id == id).set("visible",true)
+		}
+		const g = jerseyBelow.getObjects('group').find(o => o.id == id).set("visible",true)
 		jerseyBelow.renderAll()
 		reRenderBG("jersey")
 		$(".vintagePanelSelectors").each(function() {
@@ -11367,8 +11361,7 @@
 			id: 'boston1871',
 			visible: false,
 			selectable: false,
-			evented: false,
-			type: 'vintageGroup'
+			evented: false
 		})
 
 		boston1871buttons = new fabric.Image.fromURL('./images/boston1871buttons.png', function(oImg) {
@@ -11432,8 +11425,7 @@
 			id: 'forestCity1871',
 			visible: false,
 			selectable: false,
-			evented: false,
-			type: 'vintageGroup'
+			evented: false
 		})
 
 		forestCity1871buttons = new fabric.Image.fromURL('./images/forestCity1871buttons.png', function(oImg) {
@@ -11497,8 +11489,7 @@
 			id: 'ftWayne1871',
 			visible: false,
 			selectable: false,
-			evented: false,
-			type: 'vintageGroup'
+			evented: false
 		})
 
 		ftWayne1871buttons = new fabric.Image.fromURL('./images/ftWayne1871buttons.png', function(oImg) {
@@ -11562,8 +11553,7 @@
 			id: 'troy1871',
 			visible: false,
 			selectable: false,
-			evented: false,
-			type: 'vintageGroup'
+			evented: false
 		})
 
 		troy1871buttons = new fabric.Image.fromURL('./images/troy1871buttons.png', function(oImg) {
@@ -11643,8 +11633,7 @@
 			id: 'nyMutuals1871',
 			visible: false,
 			selectable: false,
-			evented: false,
-			type: 'vintageGroup'
+			evented: false
 		})
 
 		nyMutuals1871buttons = new fabric.Image.fromURL('./images/nyMutuals1871buttons.png', function(oImg) {
@@ -11730,8 +11719,7 @@
 			id: 'chicago1871',
 			visible: false,
 			selectable: false,
-			evented: false,
-			type: 'vintageGroup'
+			evented: false
 		})
 
 		chicago1871buttons = new fabric.Image.fromURL('./images/chicago1871buttons.png', function(oImg) {
@@ -17225,7 +17213,10 @@
 				$("#"+key).spectrum("set",exportMeta.fontSelectors[key].val)
 			})
 
+			console.log(exportMeta.canvases.jerseyBelow)
+
 			jerseyBelow.loadFromJSON(exportMeta.canvases.jerseyBelow, jerseyBelow.renderAll.bind(jerseyBelow), function(o, object) {
+				console.log(object.id)
 				jerseyBelow.add(object)
 			})
 			jerseyLogoCanvas.loadFromJSON(exportMeta.canvases.jerseyLogoCanvas, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas), function(o, object) {
