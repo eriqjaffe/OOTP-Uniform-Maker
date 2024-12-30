@@ -84,7 +84,7 @@
 		const validImageTypes = ['jpg','png','gif','tiff','bmp','svg','psd','webp','heic','heif']
 		const validFontTypes = ["ttf", "otf"]
 
-		const initialSockColors = {sockColor:"#c85959",stirrupFill:"#ffffff",stLouis1:"#ffffff",stLouis2:"#0C2340",stLouis3:"#ffffff",stLouis4:"#0C2340",northwestern1:"#ffffff",northwestern2:"#4E2A84",boston1:"#0C2340",boston2:"#FFFFFF",greenBay1:"#FFFFFF",greenBay2:"#FFB612",double1_2:"#0C2340",double1_1:"#ffffff",double2_2:"#ffffff",double2_1:"#0C2340",double3_1:"#282828",double3_2:"#C8102E",triple1_1:"#FFFFFF",triple1_2:"#FFFFFF",triple1_3:"#FFFFFF",triple2_1:"#FFFFFF",triple2_2:"#0000FF",quadruple_1:"#00FF00",quadruple_2:"#00FF00",quadruple_3:"#00FF00",quadruple_4:"#00FF00",argyle_1:"#00FFFF",argyle_2:"#FFFF00",argyle_3:"#FFFFFF",vertical:"#FFFFFF",fakeStirrup:"#0C2340",horizontal:"#FFFFFF",tequila_1:"#F3C500",tequila_2:"#F37200",tequila_3:"#E35814",tequila_4:"#CB0135",pittsburgh1:"#AC7E00",pittsburgh2:"#FFFFFF",atlanta1:"#FFFFFF",atlanta2:"#BA0C2F",single:"#FFFFFF",thicknthin_1:"#0000FF",thicknthin_2:"#FF0000",thicknthin_3:"#FF0000",thicknthin_4:"#FFFFFF",thicknthin_5:"#FFFFFF",thicknthin_6:"#FFFFFF"}
+		const initialSockColors = {sockColor:"#c85959",stirrupFill:"#ffffff",stLouis1:"#ffffff",stLouis2:"#0C2340",stLouis3:"#ffffff",stLouis4:"#0C2340",northwestern1:"#ffffff",northwestern2:"#4E2A84",boston1:"#0C2340",boston2:"#FFFFFF",greenBay1:"#FFFFFF",greenBay2:"#FFB612",double1_2:"#0C2340",double1_1:"#ffffff",double2_2:"#ffffff",double2_1:"#0C2340",double3_1:"#282828",double3_2:"#C8102E",triple1_1:"#FFFFFF",triple1_2:"#FFFFFF",triple1_3:"#FFFFFF",triple2_1:"#FFFFFF",triple2_2:"#0000FF",quadruple_1:"#00FF00",quadruple_2:"#00FF00",quadruple_3:"#00FF00",quadruple_4:"#00FF00",argyle_1:"#00FFFF",argyle_2:"#FFFF00",argyle_3:"#FFFFFF",vertical:"#FFFFFF",fakeStirrup:"#0C2340",horizontal:"#FFFFFF",tequila_1:"#F3C500",tequila_2:"#F37200",tequila_3:"#E35814",tequila_4:"#CB0135",pittsburgh1:"#AC7E00",pittsburgh2:"#FFFFFF",atlanta1:"#FFFFFF",atlanta2:"#BA0C2F",single_1:"#FFFFFF",single_2:"#FFFFFF",thicknthin_1:"#0000FF",thicknthin_2:"#FF0000",thicknthin_3:"#FF0000",thicknthin_4:"#FFFFFF",thicknthin_5:"#FFFFFF",thicknthin_6:"#FFFFFF",houston_1:"#FFFFFF",houston_2:"#012169"}
 		
 		var capMakersMarkColor = initialCapColors['capMakersMarkColor']
 		var jerseyMakersMarkColor = initialJerseyColors['jerseyMakersMarkColor']
@@ -1993,10 +1993,12 @@
 														<option value="fakeStirrup">Fake Stirrup</option>
 														<option value="greenBay">Green Bay</option>
 														<option value="horizontal">Horizontal</option>
+														<option value="houston">Houston Vintage</option>
 														<option value="northwestern">Northwestern</option>
 														<option value="pittsburgh">Pittsburgh</option>
 														<option value="quadruple">Quadruple Stripe</option>
-														<option value="single">Single Thick Stripe</option>
+														<option value="single1">Single Stripe 1</option>
+														<option value="single2">Single Stripe 2</option>
 														<option value="stLouis" selected>St. Louis</option>
 														<option value="stLouis2">St. Louis 2</option>
 														<option value="tequila">Tequila Sunrise</option>
@@ -2067,6 +2069,14 @@
 													</datalist>
 													<datalist id="thicknthinMarkers">
 														<!--<option value="80"></option>-->
+													</datalist>
+													<datalist id="houstonMarkers">
+														<!--<option value="80"></option>-->
+													</datalist>
+													<datalist id="single2Markers">
+														<option value="0"></option>
+														<option value="80"></option>
+														<option value="152"></option>
 													</datalist>
 												</td>
 												<td style="text-align:right;">
@@ -2145,8 +2155,14 @@
 													<span class="sockStripeSelectSpan" id="horizontalSelectors" style="display:none">
 														<input class="sockSelector selector" type="text" id="horizontal" data-element="horizontal">
 													</span>
+													<span class="sockStripeSelectSpan" id="single1Selectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="single_1" data-element="single_1">
+													</span>
+													<span class="sockStripeSelectSpan" id="single2Selectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="single_2" data-element="single_2">
+													</span>
 													<span class="sockStripeSelectSpan" id="singleSelectors" style="display:none">
-														<input class="sockSelector selector" type="text" id="single" data-element="single">
+														<input class="sockSelector selector" type="text" id="single2" data-element="single2">
 													</span>
 													<span class="sockStripeSelectSpan" id="thicknthinSelectors" style="display:none">
 														<input class="sockSelector selector" type="text" id="thicknthin_1" data-element="thicknthin_1">
@@ -2156,6 +2172,10 @@
 														<input class="sockSelector selector" type="text" id="thicknthin_5" data-element="thicknthin_5">
 														<input class="sockSelector selector" type="text" id="thicknthin_6" data-element="thicknthin_6">
 													</span>	
+													<span class="sockStripeSelectSpan" id="houstonSelectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="houston_1" data-element="houston_1">
+														<input class="sockSelector selector" type="text" id="houston_2" data-element="houston_2">
+													</span>
 												</td>
 											</tr>
 										</table>
@@ -9587,12 +9607,19 @@
 					$("#sockStripeHeight").attr('min', -449)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'fakeStirrup_left').top)
 					break;
-				case "single":
-					sockCanvas.getObjects().find(o => o.id === 'single_left').visible = true;
-					sockCanvas.getObjects().find(o => o.id === 'single_right').visible = true;
+				case "single1":
+					sockCanvas.getObjects().find(o => o.id === 'single_1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'single_1_right').visible = true;
 					$("#sockStripeHeight").attr('list', 'northwesternMarkers')
 					$("#sockStripeHeight").attr('min', -176)
-					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'single_left').top)
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'single_1_left').top)
+					break;
+				case "single2":
+					sockCanvas.getObjects().find(o => o.id === 'single_2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'single_2_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'single2Markers')
+					$("#sockStripeHeight").attr('min', -82)
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'single_2_left').top)
 					break;
 				case "thicknthin":
 					sockCanvas.getObjects().find(o => o.id === 'thicknthin_1_left').visible = true;
@@ -9610,6 +9637,15 @@
 					$("#sockStripeHeight").attr('list', 'thicknthinMarkers')
 					$("#sockStripeHeight").attr('min', 0)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'thicknthin_1_left').top)
+					break;
+				case "houston":
+					sockCanvas.getObjects().find(o => o.id === 'houston_1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'houston_2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'houston_1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'houston_2_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'houstonMarkers')
+					$("#sockStripeHeight").attr('min', 0)
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'houston_1_left').top)
 					break;
 			}
 		}
@@ -9678,11 +9714,17 @@
 			case "fakeStirrup":
 				$("#fakeStirrupSelectors").show()
 				break;
-			case "single":
-				$("#singleSelectors").show()
+			case "single1":
+				$("#single1Selectors").show()
+				break;
+			case "single2":
+				$("#single2Selectors").show()
 				break;
 			case "thicknthin":
 				$("#thicknthinSelectors").show()
+				break;
+			case "houston":
+				$("#houstonSelectors").show()
 				break;
 		}
 		showSockStripes()
@@ -10557,9 +10599,9 @@
 			offset: 512
 		});
 
-		single_l = new fabric.Path("M -0.12304688,116.11328 V 292.75586 H 1024.123 V 116.11328 Z", {
-			fill: initialSockColors['single'],
-			id: 'single_left',
+		single1_l = new fabric.Path("M -0.12304688,116.11328 V 292.75586 H 1024.123 V 116.11328 Z", {
+			fill: initialSockColors['single_1'],
+			id: 'single_1_left',
 			visible: false,
 			selectable: false,
 			pathType: 'stripe',
@@ -10567,10 +10609,28 @@
 			offset: 0
 		})
 
-		single_r = fabric.util.object.clone(single_l);
-		single_r.set({
-			top: single_r.top + 512,
-			id: 'single_right',
+		single1_r = fabric.util.object.clone(single1_l);
+		single1_r.set({
+			top: single1_r.top + 512,
+			id: 'single_1_right',
+			clipPath: rightSockClippingPath,
+			offset: 512
+		});
+
+		single2_l = new fabric.Path("M 0,152.29883 V 233.7207 H 1024 V 152.29883 Z", {
+			fill: initialSockColors['single_1'],
+			id: 'single_2_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 0
+		})
+
+		single2_r = fabric.util.object.clone(single2_l);
+		single2_r.set({
+			top: single2_r.top + 512,
+			id: 'single_2_right',
 			clipPath: rightSockClippingPath,
 			offset: 512
 		});
@@ -10683,6 +10743,42 @@
 			offset: 777.28
 		});
 
+		houston_1_l = new fabric.Path("M 0,0 V 269.52539 H 1024 V 0 Z",{
+			fill: initialSockColors['houston_1'],
+			id: 'houston_1_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 0
+		});
+
+		houston_2_l = new fabric.Path("M 0,79.970703 V 97.292969 H 1024 V 79.970703 Z M 0,120.9707 v 20.69727 H 1024 V 120.9707 Z m 0,46 v 20.69727 H 1024 V 166.9707 Z m 0,46 v 20.69727 H 1024 V 212.9707 Z m 0,44.125 v 17.32227 H 1024 V 257.0957 Z",{
+			fill: initialSockColors['houston_2'],
+			id: 'houston_2_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 80
+		});
+
+		houston_1_r = fabric.util.object.clone(houston_1_l);
+		houston_1_r.set({
+			top: houston_1_l.top + 512,
+			id: 'houston_1_right',
+			clipPath: rightSockClippingPath,
+			offset: 512
+		});
+		
+		houston_2_r = fabric.util.object.clone(houston_2_l);
+		houston_2_r.set({
+			top: houston_2_l.top + 512,
+			id: 'houston_2_right',
+			clipPath: rightSockClippingPath,
+			offset: 592
+		});
+
 		sockCanvas.add(stLouis1_l) 
 		sockCanvas.add(stLouis2_l) 
 		sockCanvas.add(stLouis1_r)
@@ -10761,8 +10857,10 @@
 		sockCanvas.add(vertical_r)
 		sockCanvas.add(fakeStirrup_l)
 		sockCanvas.add(fakeStirrup_r)
-		sockCanvas.add(single_l)
-		sockCanvas.add(single_r)
+		sockCanvas.add(single1_l)
+		sockCanvas.add(single1_r)
+		sockCanvas.add(single2_l)
+		sockCanvas.add(single2_r)
 		sockCanvas.add(thicknthin_1_l) 
 		sockCanvas.add(thicknthin_2_l) 
 		sockCanvas.add(thicknthin_3_l) 
@@ -10775,6 +10873,10 @@
 		sockCanvas.add(thicknthin_4_r) 
 		sockCanvas.add(thicknthin_5_r) 
 		sockCanvas.add(thicknthin_6_r)
+		sockCanvas.add(houston_1_l)
+		sockCanvas.add(houston_2_l)
+		sockCanvas.add(houston_1_r)
+		sockCanvas.add(houston_2_r)
 
 		stirrupFillLeft = new fabric.Path("m 256,117 c -52.27632,0 -94.65625,42.37882 -94.65625,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 350.65625,159.37882 308.27635,117 256,117 Z m 257.64062,0 c -52.27629,0 -94.65626,42.37882 -94.65624,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 608.29688,159.37882 565.91702,117 513.64062,117 Z M 768,117 c -52.27635,0 -94.65625,42.37882 -94.65625,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 862.65625,159.37882 820.27635,117 768,117 Z",{
 			fill: initialSockColors['stirrupFill'],
