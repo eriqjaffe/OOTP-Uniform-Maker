@@ -84,7 +84,7 @@
 		const validImageTypes = ['jpg','png','gif','tiff','bmp','svg','psd','webp','heic','heif']
 		const validFontTypes = ["ttf", "otf"]
 
-		const initialSockColors = {sockColor:"#c85959",stirrupFill:"#ffffff",stLouis1:"#ffffff",stLouis2:"#0C2340",stLouis3:"#ffffff",stLouis4:"#0C2340",northwestern1:"#ffffff",northwestern2:"#4E2A84",boston1:"#0C2340",boston2:"#FFFFFF",greenBay1:"#FFFFFF",greenBay2:"#FFB612",double1_2:"#0C2340",double1_1:"#ffffff",double2_2:"#ffffff",double2_1:"#0C2340",double3_1:"#282828",double3_2:"#C8102E",triple1_1:"#FFFFFF",triple1_2:"#FFFFFF",triple1_3:"#FFFFFF",triple2_1:"#FFFFFF",triple2_2:"#0000FF",triple3_1:"#FFFFFF",triple3_2:"#FFFFFF",triple3_3:"#FFFFFF",triple4_1:"#003087",triple4_2:"#FFFFFF",triple4_3:"#C8102E",triple4_4:"#C8102E",quadruple_1:"#00FF00",quadruple_2:"#00FF00",quadruple_3:"#00FF00",quadruple_4:"#00FF00",argyle_1:"#00FFFF",argyle_2:"#FFFF00",argyle_3:"#FFFFFF",vertical:"#FFFFFF",fakeStirrup:"#0C2340",horizontal:"#FFFFFF",tequila_1:"#F3C500",tequila_2:"#F37200",tequila_3:"#E35814",tequila_4:"#CB0135",pittsburgh1:"#AC7E00",pittsburgh2:"#FFFFFF",atlanta1:"#FFFFFF",atlanta2:"#BA0C2F",single_1:"#FFFFFF",single_2:"#FFFFFF",thicknthin_1:"#0000FF",thicknthin_2:"#FF0000",thicknthin_3:"#FF0000",thicknthin_4:"#FFFFFF",thicknthin_5:"#FFFFFF",thicknthin_6:"#FFFFFF",houston_1:"#FFFFFF",houston_2:"#012169"}
+		const initialSockColors = {sockColor:"#c85959",stirrupBackground:"transparent",stirrupFill:"#ffffff",stLouis1:"#ffffff",stLouis2:"#0C2340",stLouis3:"#ffffff",stLouis4:"#0C2340",northwestern1:"#ffffff",northwestern2:"#4E2A84",boston1:"#0C2340",boston2:"#FFFFFF",greenBay1:"#FFFFFF",greenBay2:"#FFB612",double1_2:"#0C2340",double1_1:"#ffffff",double2_2:"#ffffff",double2_1:"#0C2340",double3_1:"#282828",double3_2:"#C8102E",triple1_1:"#FFFFFF",triple1_2:"#FFFFFF",triple1_3:"#FFFFFF",triple2_1:"#FFFFFF",triple2_2:"#0000FF",triple3_1:"#FFFFFF",triple3_2:"#FFFFFF",triple3_3:"#FFFFFF",triple4_1:"#003087",triple4_2:"#FFFFFF",triple4_3:"#C8102E",triple4_4:"#C8102E",quadruple_1:"#00FF00",quadruple_2:"#00FF00",quadruple_3:"#00FF00",quadruple_4:"#00FF00",argyle_1:"#00FFFF",argyle_2:"#FFFF00",argyle_3:"#FFFFFF",vertical:"#FFFFFF",fakeStirrup:"#0C2340",horizontal:"#FFFFFF",tequila_1:"#F3C500",tequila_2:"#F37200",tequila_3:"#E35814",tequila_4:"#CB0135",pittsburgh1:"#AC7E00",pittsburgh2:"#FFFFFF",atlanta1:"#FFFFFF",atlanta2:"#BA0C2F",single_1:"#FFFFFF",single_2:"#FFFFFF",thicknthin_1:"#0000FF",thicknthin_2:"#FF0000",thicknthin_3:"#FF0000",thicknthin_4:"#FFFFFF",thicknthin_5:"#FFFFFF",thicknthin_6:"#FFFFFF",houston_1:"#FFFFFF",houston_2:"#012169"}
 		
 		var capMakersMarkColor = initialCapColors['capMakersMarkColor']
 		var jerseyMakersMarkColor = initialJerseyColors['jerseyMakersMarkColor']
@@ -1976,7 +1976,8 @@
 													  </datalist>
 												</td>
                                                 <td style="text-align:right;">
-                                                    <input class="selector stirrupSelector" type="text" id="stirrupFill" data-element="stirrupFill">
+													<input class="selector stirrupSelector" type="text" id="stirrupBackground" data-element="stirrupBackground">
+													<input class="selector stirrupSelector" type="text" id="stirrupFill" data-element="stirrupFill">
                                                 </td>
                                             </tr>
 											<tr class="color_tr">
@@ -9392,6 +9393,65 @@
 		}
 	})
 
+	$("#stirrupBackground").spectrum({
+		type: "color",
+		showAlpha: false,
+		showInput: true,
+		preferredFormat: prefs['preferredColorFormat'],
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		color: initialSockColors['stirrupBackground'],
+		beforeShow: function(color) {
+			$(this).spectrum("option", "palette", commonPalette)
+		},
+		show: function(color) {
+			var original_color = color;
+			$(this).data('changed', false);
+		},
+		move: function(color) {
+			$(this).data('changed', true);
+			const id = $(this).data('element');
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			let g = sockCanvas.getObjects("group").find(o => o.id === 'stirrups')
+			g.getObjects("rect").forEach(function(o) {
+				o.set("fill", c)
+			})
+			sockCanvas.renderAll()
+		},
+		change: function(color) {
+			$(this).data('changed', true);
+			const id = $(this).data('element');
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			let g = sockCanvas.getObjects("group").find(o => o.id === 'stirrups')
+			g.getObjects("rect").forEach(function(o) {
+				o.set("fill", c)
+			})
+			sockCanvas.renderAll()
+			if (color !=  null) {
+				if ($.inArray(color.toHexString(), commonPalette) < 0) {
+					commonPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+					jerseyPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), capPalette) < 0) {
+					capPalette.push(color.toHexString())
+				}
+			}
+		},
+		hide: function(color) {
+			$(this).data('changed', true);
+			const id = $(this).data('element');
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			let g = sockCanvas.getObjects("group").find(o => o.id === 'stirrups')
+			g.getObjects("rect").forEach(function(o) {
+				o.set("fill", c)
+			})
+			sockCanvas.renderAll()
+		}
+	})
+
 	$("#toggleSockGuides").on("click",function() {
 		if($(this).is(':checked')){
 			sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
@@ -9410,12 +9470,16 @@
  	$("#sockHeight").on("input",function() {
 		let group = sockCanvas.getObjects("group").find(o => o.id === "stirrups")
 		let top = parseInt($(this).val())
+		let stirrupBGLeft = group.getObjects().find(o => o.id === "stirrupBGLeft")
+		let stirrupBGRight = group.getObjects().find(o => o.id === "stirrupBGRight")
 		let stirrupFillLeft = group.getObjects().find(o => o.id === "stirrupFillLeft")
 		let stirrupShadowLeft = group.getObjects().find(o => o.id === "stirrupShadowLeft")
 		let stirrupFillRight = group.getObjects().find(o => o.id === "stirrupFillRight")
 		let stirrupShadowRight = group.getObjects().find(o => o.id === "stirrupShadowRight")
+		stirrupBGLeft.set("top", -921.5 - top)
 		stirrupFillLeft.set("top", -883.5 - top)
 		stirrupShadowLeft.set("top", -1000 - top)
+		stirrupBGRight.set("top", -409.5 - top)
 		stirrupFillRight.set("top", -371.5 - top)
 		stirrupShadowRight.set("top", -1000 - top)
 		sockCanvas.renderAll()
@@ -11061,6 +11125,17 @@
 		sockCanvas.add(houston_1_r)
 		sockCanvas.add(houston_2_r)
 
+		stirrupBGLeft = new fabric.Rect({
+			fill: initialSockColors['stirrupBackground'],
+			id: 'stirrupBGLeft',
+			top: 80,
+			width: 1024,
+			height: 768,
+			visible: true,
+			selectable: false,
+			clipPath: leftSockClippingPath
+		})
+
 		stirrupFillLeft = new fabric.Path("m 256,117 c -52.27632,0 -94.65625,42.37882 -94.65625,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 350.65625,159.37882 308.27635,117 256,117 Z m 257.64062,0 c -52.27629,0 -94.65626,42.37882 -94.65624,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 608.29688,159.37882 565.91702,117 513.64062,117 Z M 768,117 c -52.27635,0 -94.65625,42.37882 -94.65625,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 862.65625,159.37882 820.27635,117 768,117 Z",{
 			fill: initialSockColors['stirrupFill'],
 			id: 'stirrupFillLeft',
@@ -11068,6 +11143,17 @@
 			selectable: false,
 			clipPath: leftSockClippingPath
 		});
+
+		stirrupBGRight = new fabric.Rect({
+			fill: initialSockColors['stirrupBackground'],
+			id: 'stirrupBGRight',
+			top: 592,
+			width: 1024,
+			height: 768,
+			visible: true,
+			selectable: false,
+			clipPath: rightSockClippingPath
+		})
 
 		stirrupFillRight = new fabric.Path("m 256,629 c -52.27632,0 -94.65625,42.37885 -94.65625,94.65625 V 1121 v 20 212.5137 h 189.3125 V 1141 1121 723.65625 C 350.65625,671.37885 308.27635,629 256,629 Z m 257.64062,0 c -52.27627,0 -94.65626,42.37885 -94.65624,94.65625 V 1121 v 20 212.5137 h 189.3125 V 1141 1121 723.65625 C 608.29688,671.37885 565.91702,629 513.64062,629 Z M 768,629 c -52.27635,0 -94.65625,42.37885 -94.65625,94.65625 V 1121 v 20 212.5137 h 189.3125 V 1141 1121 723.65625 C 862.65625,671.37885 820.27635,629 768,629 Z",{
 			fill: initialSockColors['stirrupFill'],
@@ -11077,7 +11163,7 @@
 			clipPath: rightSockClippingPath
 		});
 
-		stirrups = new fabric.Group([stirrupFillLeft, stirrupFillRight])
+		stirrups = new fabric.Group([stirrupBGLeft, stirrupBGRight, stirrupFillLeft, stirrupFillRight])
 		
 		stirrups.set({
 			visible:false,
