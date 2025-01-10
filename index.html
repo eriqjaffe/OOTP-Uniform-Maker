@@ -84,7 +84,7 @@
 		const validImageTypes = ['jpg','png','gif','tiff','bmp','svg','psd','webp','heic','heif']
 		const validFontTypes = ["ttf", "otf"]
 
-		const initialSockColors = {sockColor:"#c85959",stirrupFill:"#ffffff",stLouis1:"#ffffff",stLouis2:"#0C2340",stLouis3:"#ffffff",stLouis4:"#0C2340",northwestern1:"#ffffff",northwestern2:"#4E2A84",boston1:"#0C2340",boston2:"#FFFFFF",greenBay1:"#FFFFFF",greenBay2:"#FFB612",double1_2:"#0C2340",double1_1:"#ffffff",double2_2:"#ffffff",double2_1:"#0C2340",double3_1:"#282828",double3_2:"#C8102E",triple1_1:"#FFFFFF",triple1_2:"#FFFFFF",triple1_3:"#FFFFFF",triple2_1:"#FFFFFF",triple2_2:"#0000FF",quadruple_1:"#00FF00",quadruple_2:"#00FF00",quadruple_3:"#00FF00",quadruple_4:"#00FF00",argyle_1:"#00FFFF",argyle_2:"#FFFF00",argyle_3:"#FFFFFF",vertical:"#FFFFFF",fakeStirrup:"#0C2340",horizontal:"#FFFFFF",tequila_1:"#F3C500",tequila_2:"#F37200",tequila_3:"#E35814",tequila_4:"#CB0135",pittsburgh1:"#AC7E00",pittsburgh2:"#FFFFFF",atlanta1:"#FFFFFF",atlanta2:"#BA0C2F"}
+		const initialSockColors = {sockColor:"#c85959",stirrupBackground:"transparent",stirrupFill:"#ffffff",stLouis1:"#ffffff",stLouis2:"#0C2340",stLouis3:"#ffffff",stLouis4:"#0C2340",northwestern1:"#ffffff",northwestern2:"#4E2A84",boston1:"#0C2340",boston2:"#FFFFFF",greenBay1:"#FFFFFF",greenBay2:"#FFB612",double1_2:"#0C2340",double1_1:"#ffffff",double2_2:"#ffffff",double2_1:"#0C2340",double3_1:"#282828",double3_2:"#C8102E",triple1_1:"#FFFFFF",triple1_2:"#FFFFFF",triple1_3:"#FFFFFF",triple2_1:"#FFFFFF",triple2_2:"#0000FF",triple3_1:"#FFFFFF",triple3_2:"#FFFFFF",triple3_3:"#FFFFFF",triple4_1:"#003087",triple4_2:"#FFFFFF",triple4_3:"#C8102E",triple4_4:"#C8102E",quadruple_1:"#00FF00",quadruple_2:"#00FF00",quadruple_3:"#00FF00",quadruple_4:"#00FF00",argyle_1:"#00FFFF",argyle_2:"#FFFF00",argyle_3:"#FFFFFF",vertical:"#FFFFFF",fakeStirrup:"#0C2340",horizontal:"#FFFFFF",tequila_1:"#F3C500",tequila_2:"#F37200",tequila_3:"#E35814",tequila_4:"#CB0135",pittsburgh1:"#AC7E00",pittsburgh2:"#FFFFFF",atlanta1:"#FFFFFF",atlanta2:"#BA0C2F",single_1:"#FFFFFF",single_2:"#FFFFFF",thicknthin_1:"#0000FF",thicknthin_2:"#FF0000",thicknthin_3:"#FF0000",thicknthin_4:"#FFFFFF",thicknthin_5:"#FFFFFF",thicknthin_6:"#FFFFFF",houston_1:"#FFFFFF",houston_2:"#012169"}
 		
 		var capMakersMarkColor = initialCapColors['capMakersMarkColor']
 		var jerseyMakersMarkColor = initialJerseyColors['jerseyMakersMarkColor']
@@ -1976,7 +1976,8 @@
 													  </datalist>
 												</td>
                                                 <td style="text-align:right;">
-                                                    <input class="selector stirrupSelector" type="text" id="stirrupFill" data-element="stirrupFill">
+													<input class="selector stirrupSelector" type="text" id="stirrupBackground" data-element="stirrupBackground">
+													<input class="selector stirrupSelector" type="text" id="stirrupFill" data-element="stirrupFill">
                                                 </td>
                                             </tr>
 											<tr class="color_tr">
@@ -1993,14 +1994,20 @@
 														<option value="fakeStirrup">Fake Stirrup</option>
 														<option value="greenBay">Green Bay</option>
 														<option value="horizontal">Horizontal</option>
+														<option value="houston">Houston Vintage</option>
 														<option value="northwestern">Northwestern</option>
 														<option value="pittsburgh">Pittsburgh</option>
 														<option value="quadruple">Quadruple Stripe</option>
+														<option value="single1">Single Stripe 1</option>
+														<option value="single2">Single Stripe 2</option>
 														<option value="stLouis" selected>St. Louis</option>
 														<option value="stLouis2">St. Louis 2</option>
 														<option value="tequila">Tequila Sunrise</option>
+														<option value="thicknthin">Thick & Thin</option>
 														<option value="triple1">Triple Stripe 1</option>
 														<option value="triple2">Triple Stripe 2</option>
+														<option value="triple3">Triple Stripe 3</option>
+														<option value="triple4">Triple Stripe 4</option>
 														<option value="vertical">Vertical</option>
 													</select>
 													<input type="range" class="range" id="sockStripeHeight" value="143" min="-137" max="514" list="stLouisMarkers" style="margin-top:5px; width: 100%;">
@@ -2049,6 +2056,11 @@
 														<option value="80"></option>
 														<option value="143"></option>
 													</datalist>
+													<datalist id="triple3Markers">
+														<option value="0"></option>
+														<option value="46"></option>
+														<option value="143"></option>
+													</datalist>
 													<datalist id="quadrupleMarkers">
 														<option value="0"></option>
 														<option value="80"></option>
@@ -2063,6 +2075,12 @@
 														<option value="0"></option>
 														<option value="80"></option>
 													</datalist>
+													<datalist id="single2Markers">
+														<option value="0"></option>
+														<option value="80"></option>
+														<option value="152"></option>
+													</datalist>
+													<datalist id="noMarkers"></datalist>
 												</td>
 												<td style="text-align:right;">
 													<span class="sockStripeSelectSpan" id="stLouisSelectors" style="display:inline-block">
@@ -2114,6 +2132,17 @@
 														<input class="sockSelector selector" type="text" id="triple2_1" data-element="triple2_1">
 														<input class="sockSelector selector" type="text" id="triple2_2" data-element="triple2_2">
 													</span>
+													<span class="sockStripeSelectSpan" id="triple3Selectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="triple3_1" data-element="triple3_1">
+														<input class="sockSelector selector" type="text" id="triple3_2" data-element="triple3_2">
+														<input class="sockSelector selector" type="text" id="triple3_3" data-element="triple3_3">
+													</span>
+													<span class="sockStripeSelectSpan" id="triple4Selectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="triple4_1" data-element="triple4_1">
+														<input class="sockSelector selector" type="text" id="triple4_2" data-element="triple4_2"><br/>
+														<input class="sockSelector selector" type="text" id="triple4_3" data-element="triple4_3">
+														<input class="sockSelector selector" type="text" id="triple4_4" data-element="triple4_4">
+													</span>
 													<span class="sockStripeSelectSpan" id="quadrupleSelectors" style="display:none">
 														<input class="sockSelector selector" type="text" id="quadruple_1" data-element="quadruple_1">
 														<input class="sockSelector selector" type="text" id="quadruple_2" data-element="quadruple_2">
@@ -2139,6 +2168,27 @@
 													</span>
 													<span class="sockStripeSelectSpan" id="horizontalSelectors" style="display:none">
 														<input class="sockSelector selector" type="text" id="horizontal" data-element="horizontal">
+													</span>
+													<span class="sockStripeSelectSpan" id="single1Selectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="single_1" data-element="single_1">
+													</span>
+													<span class="sockStripeSelectSpan" id="single2Selectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="single_2" data-element="single_2">
+													</span>
+													<span class="sockStripeSelectSpan" id="singleSelectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="single2" data-element="single2">
+													</span>
+													<span class="sockStripeSelectSpan" id="thicknthinSelectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="thicknthin_1" data-element="thicknthin_1">
+														<input class="sockSelector selector" type="text" id="thicknthin_2" data-element="thicknthin_2">
+														<input class="sockSelector selector" type="text" id="thicknthin_3" data-element="thicknthin_3"><br/>
+														<input class="sockSelector selector" type="text" id="thicknthin_4" data-element="thicknthin_4">
+														<input class="sockSelector selector" type="text" id="thicknthin_5" data-element="thicknthin_5">
+														<input class="sockSelector selector" type="text" id="thicknthin_6" data-element="thicknthin_6">
+													</span>	
+													<span class="sockStripeSelectSpan" id="houstonSelectors" style="display:none">
+														<input class="sockSelector selector" type="text" id="houston_1" data-element="houston_1">
+														<input class="sockSelector selector" type="text" id="houston_2" data-element="houston_2">
 													</span>
 												</td>
 											</tr>
@@ -9343,6 +9393,65 @@
 		}
 	})
 
+	$("#stirrupBackground").spectrum({
+		type: "color",
+		showAlpha: false,
+		showInput: true,
+		preferredFormat: prefs['preferredColorFormat'],
+		showInitial: true,
+		showPalette: true,
+		showButtons: true,
+		color: initialSockColors['stirrupBackground'],
+		beforeShow: function(color) {
+			$(this).spectrum("option", "palette", commonPalette)
+		},
+		show: function(color) {
+			var original_color = color;
+			$(this).data('changed', false);
+		},
+		move: function(color) {
+			$(this).data('changed', true);
+			const id = $(this).data('element');
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			let g = sockCanvas.getObjects("group").find(o => o.id === 'stirrups')
+			g.getObjects("rect").forEach(function(o) {
+				o.set("fill", c)
+			})
+			sockCanvas.renderAll()
+		},
+		change: function(color) {
+			$(this).data('changed', true);
+			const id = $(this).data('element');
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			let g = sockCanvas.getObjects("group").find(o => o.id === 'stirrups')
+			g.getObjects("rect").forEach(function(o) {
+				o.set("fill", c)
+			})
+			sockCanvas.renderAll()
+			if (color !=  null) {
+				if ($.inArray(color.toHexString(), commonPalette) < 0) {
+					commonPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), jerseyPalette) < 0) {
+					jerseyPalette.push(color.toHexString())
+				}
+				if ($.inArray(color.toHexString(), capPalette) < 0) {
+					capPalette.push(color.toHexString())
+				}
+			}
+		},
+		hide: function(color) {
+			$(this).data('changed', true);
+			const id = $(this).data('element');
+			var c = (color == null) ? 'transparent' : color.toHexString()
+			let g = sockCanvas.getObjects("group").find(o => o.id === 'stirrups')
+			g.getObjects("rect").forEach(function(o) {
+				o.set("fill", c)
+			})
+			sockCanvas.renderAll()
+		}
+	})
+
 	$("#toggleSockGuides").on("click",function() {
 		if($(this).is(':checked')){
 			sockCanvas.setOverlayImage('./images/sock_overlay.png',sockCanvas.renderAll.bind(sockCanvas));
@@ -9361,12 +9470,16 @@
  	$("#sockHeight").on("input",function() {
 		let group = sockCanvas.getObjects("group").find(o => o.id === "stirrups")
 		let top = parseInt($(this).val())
+		let stirrupBGLeft = group.getObjects().find(o => o.id === "stirrupBGLeft")
+		let stirrupBGRight = group.getObjects().find(o => o.id === "stirrupBGRight")
 		let stirrupFillLeft = group.getObjects().find(o => o.id === "stirrupFillLeft")
 		let stirrupShadowLeft = group.getObjects().find(o => o.id === "stirrupShadowLeft")
 		let stirrupFillRight = group.getObjects().find(o => o.id === "stirrupFillRight")
 		let stirrupShadowRight = group.getObjects().find(o => o.id === "stirrupShadowRight")
+		stirrupBGLeft.set("top", -921.5 - top)
 		stirrupFillLeft.set("top", -883.5 - top)
 		stirrupShadowLeft.set("top", -1000 - top)
+		stirrupBGRight.set("top", -409.5 - top)
 		stirrupFillRight.set("top", -371.5 - top)
 		stirrupShadowRight.set("top", -1000 - top)
 		sockCanvas.renderAll()
@@ -9513,6 +9626,30 @@
 					$("#sockStripeHeight").attr('min', -118)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'triple2_1_left').top)
 					break;
+				case "triple3":
+					sockCanvas.getObjects().find(o => o.id === 'triple3_1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple3_2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple3_3_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple3_1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple3_2_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple3_3_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'triple3Markers')
+					$("#sockStripeHeight").attr('min', -46)
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'triple3_1_left').top)
+					break;
+				case "triple4":
+					sockCanvas.getObjects().find(o => o.id === 'triple4_1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple4_2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple4_3_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple4_4_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple4_1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple4_2_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple4_3_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'triple4_4_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'noMarkers')
+					$("#sockStripeHeight").attr('min', 0)
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'triple4_1_left').top)
+					break;
 				case "quadruple":
 					sockCanvas.getObjects().find(o => o.id === 'quadruple_1_left').visible = true;
 					sockCanvas.getObjects().find(o => o.id === 'quadruple_2_left').visible = true;
@@ -9571,6 +9708,46 @@
 					$("#sockStripeHeight").attr('min', -449)
 					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'fakeStirrup_left').top)
 					break;
+				case "single1":
+					sockCanvas.getObjects().find(o => o.id === 'single_1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'single_1_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'northwesternMarkers')
+					$("#sockStripeHeight").attr('min', -176)
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'single_1_left').top)
+					break;
+				case "single2":
+					sockCanvas.getObjects().find(o => o.id === 'single_2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'single_2_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'single2Markers')
+					$("#sockStripeHeight").attr('min', -82)
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'single_2_left').top)
+					break;
+				case "thicknthin":
+					sockCanvas.getObjects().find(o => o.id === 'thicknthin_1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'thicknthin_2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'thicknthin_3_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'thicknthin_4_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'thicknthin_5_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'thicknthin_6_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'thicknthin_1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'thicknthin_2_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'thicknthin_3_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'thicknthin_4_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'thicknthin_5_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'thicknthin_6_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'noMarkers')
+					$("#sockStripeHeight").attr('min', 0)
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'thicknthin_1_left').top)
+					break;
+				case "houston":
+					sockCanvas.getObjects().find(o => o.id === 'houston_1_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'houston_2_left').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'houston_1_right').visible = true;
+					sockCanvas.getObjects().find(o => o.id === 'houston_2_right').visible = true;
+					$("#sockStripeHeight").attr('list', 'noMarkers')
+					$("#sockStripeHeight").attr('min', 0)
+					$("#sockStripeHeight").val(sockCanvas.getObjects().find(o => o.id === 'houston_1_left').top)
+					break;
 			}
 		}
 		sockCanvas.renderAll()
@@ -9620,6 +9797,12 @@
 			case "triple2":
 				$("#triple2Selectors").show()
 				break;
+			case "triple3":
+				$("#triple3Selectors").show()
+				break;
+			case "triple4":
+				$("#triple4Selectors").show()
+				break;
 			case "quadruple":
 				$("#quadrupleSelectors").show()
 				break;
@@ -9637,6 +9820,18 @@
 				break;
 			case "fakeStirrup":
 				$("#fakeStirrupSelectors").show()
+				break;
+			case "single1":
+				$("#single1Selectors").show()
+				break;
+			case "single2":
+				$("#single2Selectors").show()
+				break;
+			case "thicknthin":
+				$("#thicknthinSelectors").show()
+				break;
+			case "houston":
+				$("#houstonSelectors").show()
 				break;
 		}
 		showSockStripes()
@@ -10259,6 +10454,132 @@
 			offset: 514.85742
 		});
 
+		triple3_1_l = new fabric.Path("M 0,45.451172 V 80.523438 H 1024 V 45.451172 Z",{
+			fill: initialSockColors['triple3_1'],
+			id: 'triple3_1_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 45.45
+		});
+
+		triple3_2_l = new fabric.Path("m 0,145.45117 v 35.07227 h 1024 v -35.07227 z",{
+			fill: initialSockColors['triple3_2'],
+			id: 'triple3_2_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 145.45
+		});
+
+		triple3_3_l = new fabric.Path("m 0,245.45117 v 35.07227 h 1024 v -35.07227 z",{
+			fill: initialSockColors['triple3_3'],
+			id: 'triple3_3_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 245.45
+		});
+
+		triple3_1_r = fabric.util.object.clone(triple3_1_l);
+		triple3_1_r.set({
+			top: triple3_1_l.top + 512,
+			id: 'triple3_1_right',
+			clipPath: rightSockClippingPath,
+			offset: 557.45
+		});
+
+		triple3_2_r = fabric.util.object.clone(triple3_2_l);
+		triple3_2_r.set({
+			top: triple3_2_l.top + 512,
+			id: 'triple3_2_right',
+			clipPath: rightSockClippingPath,
+			offset: 657.45
+		});
+		
+		triple3_3_r = fabric.util.object.clone(triple3_3_l);
+		triple3_3_r.set({
+			top: triple3_3_l.top + 512,
+			id: 'triple3_3_right',
+			clipPath: rightSockClippingPath,
+			offset: 757.45
+		});
+
+		triple4_1_l = new fabric.Path("M 0,0 V 306.85742 H 1024 V 0 Z",{
+			fill: initialSockColors['triple4_1'],
+			id: 'triple4_1_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 0
+		});
+
+		triple4_2_l = new fabric.Path("m 0,166.60742 v 75.14844 h 1024 v -75.14844 z",{
+			fill: initialSockColors['triple4_2'],
+			id: 'triple4_2_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 166.61
+		});
+
+		triple4_3_l = new fabric.Path("m 0,150.03516 v 17.57226 h 1024 v -17.57226 z",{
+			fill: initialSockColors['triple4_3'],
+			id: 'triple4_3_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 150.04
+		});
+		
+		triple4_4_l = new fabric.Path("m 0,240.75586 v 17.57226 h 1024 v -17.57226 z",{
+			fill: initialSockColors['triple4_4'],
+			id: 'triple4_4_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 240.76
+		});
+
+		triple4_1_r = fabric.util.object.clone(triple4_1_l);
+		triple4_1_r.set({
+			top: triple4_1_l.top + 512,
+			id: 'triple4_1_right',
+			clipPath: rightSockClippingPath,
+			offset: 512
+		});
+
+		triple4_2_r = fabric.util.object.clone(triple4_2_l);
+		triple4_2_r.set({
+			top: triple4_2_l.top + 512,
+			id: 'triple4_2_right',
+			clipPath: rightSockClippingPath,
+			offset: 678.61
+		});
+		
+		triple4_3_r = fabric.util.object.clone(triple4_3_l);
+		triple4_3_r.set({
+			top: triple4_3_l.top + 512,
+			id: 'triple4_3_right',
+			clipPath: rightSockClippingPath,
+			offset: 662.04
+		});
+		
+		triple4_4_r = fabric.util.object.clone(triple4_4_l);
+		triple4_4_r.set({
+			top: triple4_4_l.top + 512,
+			id: 'triple4_4_right',
+			clipPath: rightSockClippingPath,
+			offset: 752.76
+		});
+
 		quadruple_1_l = new fabric.Path("M -0.12304688,152.81055 V 169.8418 H 1024.123 v -17.03125 z",{
 			fill: initialSockColors['quadruple_1'],
 			id: 'quadruple_1_left',
@@ -10511,6 +10832,186 @@
 			offset: 512
 		});
 
+		single1_l = new fabric.Path("M -0.12304688,116.11328 V 292.75586 H 1024.123 V 116.11328 Z", {
+			fill: initialSockColors['single_1'],
+			id: 'single_1_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 0
+		})
+
+		single1_r = fabric.util.object.clone(single1_l);
+		single1_r.set({
+			top: single1_r.top + 512,
+			id: 'single_1_right',
+			clipPath: rightSockClippingPath,
+			offset: 512
+		});
+
+		single2_l = new fabric.Path("M 0,152.29883 V 233.7207 H 1024 V 152.29883 Z", {
+			fill: initialSockColors['single_1'],
+			id: 'single_2_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 0
+		})
+
+		single2_r = fabric.util.object.clone(single2_l);
+		single2_r.set({
+			top: single2_r.top + 512,
+			id: 'single_2_right',
+			clipPath: rightSockClippingPath,
+			offset: 512
+		});
+
+		thicknthin_1_l = new fabric.Path("M 0,-0.28515625 V 292.57227 H 1024 V -0.28515625 Z M 0,512 V 804.85742 H 1024 V 512 Z",{
+			fill: initialSockColors['thicknthin_1'],
+			id: 'thicknthin_1_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 0
+		});
+		
+		thicknthin_2_l = new fabric.Path("M -0.12304688,81.005859 V 116.88672 H 1024.123 V 81.005859 Z m 0,512.000001 v 35.88086 H 1024.123 v -35.88086 z",{
+			fill: initialSockColors['thicknthin_2'],
+			id: 'thicknthin_2_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 81.29
+		});
+
+		thicknthin_3_l = new fabric.Path("m -0.21289062,132.07617 v 35.88281 H 1024.0332 v -35.88281 z m 0,512 v 35.88281 H 1024.0332 v -35.88281 z",{
+			fill: initialSockColors['thicknthin_3'],
+			id: 'thicknthin_3_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 132.36
+		});
+
+		thicknthin_4_l = new fabric.Path("m -0.12304688,193.75 v 13.28711 H 1024.123 V 193.75 Z m 0,512 v 13.28711 H 1024.123 V 705.75 Z",{
+			fill: initialSockColors['thicknthin_4'],
+			id: 'thicknthin_4_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 194.04
+		});
+
+		thicknthin_5_l = new fabric.Path("M -0.12304688,229.37109 V 242.6582 H 1024.123 v -13.28711 z m 0,512 V 754.6582 H 1024.123 v -13.28711 z",{
+			fill: initialSockColors['thicknthin_5'],
+			id: 'thicknthin_5_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 229.66
+		});
+		
+		thicknthin_6_l = new fabric.Path("M 8.4492188,264.99219 V 278.2793 H 1032.6953 v -13.28711 z m 0,512 V 790.2793 H 1032.6953 v -13.28711 z",{
+			fill: initialSockColors['thicknthin_6'],
+			id: 'thicknthin_6_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 265.28
+		});
+		
+		thicknthin_1_r = fabric.util.object.clone(thicknthin_1_l);
+		thicknthin_1_r.set({
+			top: thicknthin_1_l.top + 512,
+			id: 'thicknthin_1_right',
+			clipPath: rightSockClippingPath,
+			offset: 512
+		});
+		
+		thicknthin_2_r = fabric.util.object.clone(thicknthin_2_l);
+		thicknthin_2_r.set({
+			top: thicknthin_2_l.top + 512,
+			id: 'thicknthin_2_right',
+			clipPath: rightSockClippingPath,
+			offset: 593.29
+		});
+
+		thicknthin_3_r = fabric.util.object.clone(thicknthin_3_l);
+		thicknthin_3_r.set({
+			top: thicknthin_3_l.top + 512,
+			id: 'thicknthin_3_right',
+			clipPath: rightSockClippingPath,
+			offset: 644.36
+		});
+		
+		thicknthin_4_r = fabric.util.object.clone(thicknthin_4_l);
+		thicknthin_4_r.set({
+			top: thicknthin_4_l.top + 512,
+			id: 'thicknthin_4_right',
+			clipPath: rightSockClippingPath,
+			offset: 706.04
+		});
+		
+		thicknthin_5_r = fabric.util.object.clone(thicknthin_5_l);
+		thicknthin_5_r.set({
+			top: thicknthin_5_l.top + 512,
+			id: 'thicknthin_5_right',
+			clipPath: rightSockClippingPath,
+			offset: 741.66
+		});
+		
+		thicknthin_6_r = fabric.util.object.clone(thicknthin_6_l);
+		thicknthin_6_r.set({
+			top: thicknthin_6_l.top + 512,
+			id: 'thicknthin_6_right',
+			clipPath: rightSockClippingPath,
+			offset: 777.28
+		});
+
+		houston_1_l = new fabric.Path("M 0,0 V 269.52539 H 1024 V 0 Z",{
+			fill: initialSockColors['houston_1'],
+			id: 'houston_1_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 0
+		});
+
+		houston_2_l = new fabric.Path("M 0,79.970703 V 97.292969 H 1024 V 79.970703 Z M 0,120.9707 v 20.69727 H 1024 V 120.9707 Z m 0,46 v 20.69727 H 1024 V 166.9707 Z m 0,46 v 20.69727 H 1024 V 212.9707 Z m 0,44.125 v 17.32227 H 1024 V 257.0957 Z",{
+			fill: initialSockColors['houston_2'],
+			id: 'houston_2_left',
+			visible: false,
+			selectable: false,
+			pathType: 'stripe',
+			clipPath: leftSockClippingPath,
+			offset: 80
+		});
+
+		houston_1_r = fabric.util.object.clone(houston_1_l);
+		houston_1_r.set({
+			top: houston_1_l.top + 512,
+			id: 'houston_1_right',
+			clipPath: rightSockClippingPath,
+			offset: 512
+		});
+		
+		houston_2_r = fabric.util.object.clone(houston_2_l);
+		houston_2_r.set({
+			top: houston_2_l.top + 512,
+			id: 'houston_2_right',
+			clipPath: rightSockClippingPath,
+			offset: 592
+		});
+
 		sockCanvas.add(stLouis1_l) 
 		sockCanvas.add(stLouis2_l) 
 		sockCanvas.add(stLouis1_r)
@@ -10561,6 +11062,20 @@
 		sockCanvas.add(triple2_2_l) 
 		sockCanvas.add(triple2_1_r) 
 		sockCanvas.add(triple2_2_r) 
+		sockCanvas.add(triple3_1_l) 
+		sockCanvas.add(triple3_2_l) 
+		sockCanvas.add(triple3_3_l) 
+		sockCanvas.add(triple3_1_r) 
+		sockCanvas.add(triple3_2_r) 
+		sockCanvas.add(triple3_3_r) 
+		sockCanvas.add(triple4_1_l) 
+		sockCanvas.add(triple4_2_l) 
+		sockCanvas.add(triple4_3_l)
+		sockCanvas.add(triple4_4_l) 
+		sockCanvas.add(triple4_1_r) 
+		sockCanvas.add(triple4_2_r) 
+		sockCanvas.add(triple4_3_r)
+		sockCanvas.add(triple4_4_r)
 		sockCanvas.add(quadruple_1_l) 
 		sockCanvas.add(quadruple_2_l) 
 		sockCanvas.add(quadruple_3_l) 
@@ -10589,6 +11104,37 @@
 		sockCanvas.add(vertical_r)
 		sockCanvas.add(fakeStirrup_l)
 		sockCanvas.add(fakeStirrup_r)
+		sockCanvas.add(single1_l)
+		sockCanvas.add(single1_r)
+		sockCanvas.add(single2_l)
+		sockCanvas.add(single2_r)
+		sockCanvas.add(thicknthin_1_l) 
+		sockCanvas.add(thicknthin_2_l) 
+		sockCanvas.add(thicknthin_3_l) 
+		sockCanvas.add(thicknthin_4_l) 
+		sockCanvas.add(thicknthin_5_l)
+		sockCanvas.add(thicknthin_6_l)
+		sockCanvas.add(thicknthin_1_r) 
+		sockCanvas.add(thicknthin_2_r) 
+		sockCanvas.add(thicknthin_3_r) 
+		sockCanvas.add(thicknthin_4_r) 
+		sockCanvas.add(thicknthin_5_r) 
+		sockCanvas.add(thicknthin_6_r)
+		sockCanvas.add(houston_1_l)
+		sockCanvas.add(houston_2_l)
+		sockCanvas.add(houston_1_r)
+		sockCanvas.add(houston_2_r)
+
+		stirrupBGLeft = new fabric.Rect({
+			fill: initialSockColors['stirrupBackground'],
+			id: 'stirrupBGLeft',
+			top: 80,
+			width: 1024,
+			height: 768,
+			visible: true,
+			selectable: false,
+			clipPath: leftSockClippingPath
+		})
 
 		stirrupFillLeft = new fabric.Path("m 256,117 c -52.27632,0 -94.65625,42.37882 -94.65625,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 350.65625,159.37882 308.27635,117 256,117 Z m 257.64062,0 c -52.27629,0 -94.65626,42.37882 -94.65624,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 608.29688,159.37882 565.91702,117 513.64062,117 Z M 768,117 c -52.27635,0 -94.65625,42.37882 -94.65625,94.65625 V 561 629 793.51367 h 189.3125 V 629 561 211.65625 C 862.65625,159.37882 820.27635,117 768,117 Z",{
 			fill: initialSockColors['stirrupFill'],
@@ -10598,6 +11144,17 @@
 			clipPath: leftSockClippingPath
 		});
 
+		stirrupBGRight = new fabric.Rect({
+			fill: initialSockColors['stirrupBackground'],
+			id: 'stirrupBGRight',
+			top: 592,
+			width: 1024,
+			height: 768,
+			visible: true,
+			selectable: false,
+			clipPath: rightSockClippingPath
+		})
+
 		stirrupFillRight = new fabric.Path("m 256,629 c -52.27632,0 -94.65625,42.37885 -94.65625,94.65625 V 1121 v 20 212.5137 h 189.3125 V 1141 1121 723.65625 C 350.65625,671.37885 308.27635,629 256,629 Z m 257.64062,0 c -52.27627,0 -94.65626,42.37885 -94.65624,94.65625 V 1121 v 20 212.5137 h 189.3125 V 1141 1121 723.65625 C 608.29688,671.37885 565.91702,629 513.64062,629 Z M 768,629 c -52.27635,0 -94.65625,42.37885 -94.65625,94.65625 V 1121 v 20 212.5137 h 189.3125 V 1141 1121 723.65625 C 862.65625,671.37885 820.27635,629 768,629 Z",{
 			fill: initialSockColors['stirrupFill'],
 			id: 'stirrupFillRight',
@@ -10606,7 +11163,7 @@
 			clipPath: rightSockClippingPath
 		});
 
-		stirrups = new fabric.Group([stirrupFillLeft, stirrupFillRight])
+		stirrups = new fabric.Group([stirrupBGLeft, stirrupBGRight, stirrupFillLeft, stirrupFillRight])
 		
 		stirrups.set({
 			visible:false,
