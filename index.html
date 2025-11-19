@@ -2570,6 +2570,7 @@
 						<input type="button" class="button" id="installUniform" value="Install Uniform" style="display:none;">
 						<input type="button" class="button" id="save" value="Save Uniform">
                         <input type="button" class="button" id="load" value="Load Uniform">
+						<input type="button" class="button" id="generatePreview" value="Generate Preview">
 						<input type="button" class="button" id="localFontFolder" value="Refresh User Fonts">
 						<input type="button" class="button" id="openFontFolder" value="Open User Fonts Folder">
 						<!--<input type="button" class="button" id="eyedropper" value="Eyedropper">-->
@@ -17101,6 +17102,406 @@
 			fileName: fileName,
 			textLine: textLine,
 		})
+	})
+
+	$("#generatePreview").on("click",function(e) {
+		showOverlay("Generating Uniform...");
+		var showPlanket = false
+		var buttonStyle = "blank"
+		var buttonPadStyle = "blank"
+		var seamStyle = "blank"
+
+		const buttonGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons')
+		const seamsGroup = jerseyLogoCanvas.getObjects('group').find(o => o.id == 'seams')
+		const buttonPadSeams = (jerseyLogoCanvas.backgroundImage != null)
+		const seamsVisible = seamsGroup.visible
+		const seamsOption = $("#seamsType").val()
+
+		const exportMeta = {}
+		const checkboxes = {}
+		const selects = {}
+		const ranges = {}
+		const capSelectors = {}
+		const jerseySelectors = {}
+		const pantsSelectors = {}
+		const swatchSelectors = {}
+		const textBoxes = {}
+		const buttons = {}
+		const fontSelectors = {}
+
+		exportMeta.version = appVersion
+		exportMeta.team = $("#teamName").val()
+		exportMeta.start = parseInt($("#startYear").val());
+		exportMeta.end = parseInt($("#endYear").val());
+		exportMeta.type = $("#uniformType").val()
+		exportMeta.backgroundColor = $("#teamBGColor").spectrum("get").toHexString()
+		exportMeta.textColor = $("#teamTextColor").spectrum("get").toHexString()
+		exportMeta.jerseyColor1 = $("#jerseyColor").spectrum("get").toHexString()
+		exportMeta.jerseyColor2 = $("#collarColor").spectrum("get").toHexString()
+		exportMeta.jerseyColor3 = $("#jerseyPinstripesColor").spectrum("get").toHexString()
+		exportMeta.capColor1 = $("#capColor").spectrum("get").toHexString()
+		exportMeta.capColor2 = $("#topsideBrimColor").spectrum("get").toHexString()
+		exportMeta.capColor2 = $("#squatcheeColor").spectrum("get").toHexString()
+		exportMeta.pantsColor1 = $("#pantsColor").spectrum("get").toHexString()
+		exportMeta.pantsColor2 = $("#belt").spectrum("get").toHexString()
+		exportMeta.pantsColor3 = $("#pantsPinstripes").spectrum("get").toHexString()
+
+		jerseySelectors.jerseyColor = { "disabled": $("#jerseyColor").prop("disabled"), "val": $("#jerseyColor").spectrum("get").toHexString() }
+		jerseySelectors.buttonSelector = { "disabled": $("#buttonSelector").prop("disabled"), "val": $("#buttonSelector").spectrum("get").toHexString() }
+		capSelectors.jerseyColor = { "disabled": $("#capColor").prop("disabled"), "val": $("#capColor").spectrum("get").toHexString() }
+		pantsSelectors.jerseyColor = { "disabled": $("#pantsColor").prop("disabled"), "val": $("#pantsColor").spectrum("get").toHexString() }
+
+		/* fontSelectors.jersey = $('#jerseyWordmarkSelect').data('ddslick');
+		fontSelectors.cap = $("#capTextSelect").data('ddslick');
+		fontSelectors.name = $("#letterDropdown").data('ddslick');
+		fontSelectors.number = $("#numberDropdown").data('ddslick'); */
+		
+
+		$("input[type=checkbox]").each(function() {
+			checkboxes[$(this).attr("id")] = { "checked": $(this).is(":checked"), "val": $(this).val() }
+		})
+		$("select").each(function() {
+			selects[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).val() }
+		})
+		$("input[type=range]").each(function(){
+			ranges[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).val() }
+		})
+		$("input[type=button]").each(function(){
+			buttons[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).val() }
+		})
+		$(".capSelector").each(function(){
+			if ($(this).spectrum("get") == null) {
+				capSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": 'transparent' }
+			} else {
+				capSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			}
+		})
+		$(".pantsSelector").each(function(){
+			if ($(this).spectrum("get") == null) {
+				pantsSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": 'transparent' }
+			} else {
+				pantsSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			}
+		})
+		$(".jerseySelector").each(function(){
+			if ($(this).spectrum("get") == null) {
+				jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": 'transparent' }
+			} else {
+				jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			}	
+		})
+		
+		$(".sleeveSelector").each(function(){
+			if ($(this).spectrum("get") == null) {
+				jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": 'transparent' }
+			} else {
+				jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			}
+		})
+
+		$(".swashSelector").each(function(){
+			if ($(this).spectrum("get") == null) {
+				jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": 'transparent' }
+			} else {
+				jerseySelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			}
+		})
+
+		$(".swatchSelector").each(function(){
+			if ($(this).spectrum("get") == null) {
+				swatchSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": 'transparent' }
+			} else {
+				swatchSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			}
+		})
+
+		$(".fontSelector").each(function(){
+			if ($(this).spectrum("get") == null) {
+				fontSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": 'transparent' }
+			} else {
+				fontSelectors[$(this).attr("id")] = { "disabled": $(this).prop("disabled"), "val": $(this).spectrum("get").toHexString() }
+			}
+		})
+
+		textBoxes.wordmarkTextBox = { "disabled": $("#wordmarkTextBox").prop("disabled"), "val": $("#wordmarkTextBox").val() }
+		textBoxes.capText = { "disabled": $("#capText").prop("disabled"), "val": $("#capText").val() }
+		textBoxes.capText2 = { "disabled": $("#capText2").prop("disabled"), "val": $("#capText2").val() }
+
+		pantsBelow.setOverlayImage(null,pantsBelow.renderAll.bind(pantsBelow));
+		jerseyBelow.setOverlayImage(null,jerseyBelow.renderAll.bind(jerseyBelow));
+		jerseyLogoCanvas.setBackgroundImage(null, jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		seamsGroup.visible = false;
+
+		const jsonExport = {
+			'jerseyBelow': jerseyBelow.toDatalessJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
+			'jerseyLogoCanvas': jerseyLogoCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
+			'pantsBelow': pantsBelow.toDatalessJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
+			'pantsLogoCanvas': pantsLogoCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
+			'capBelow': capBelow.toDatalessJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
+			'capLogoCanvas': capLogoCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
+			'fontCanvas': fontCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners']),
+			'sockCanvas': sockCanvas.toJSON(['id','visible','selectable','perPixelTargetFind','centeredScaling','centeredRotation','borderColor','cornerColor','cornerSize','name','transparentCorners','pathType'])
+		}
+
+		if (buttonGroup.visible == true) {
+			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons').getObjects().forEach(function(o) {
+				if (o.id != "zipper" && o.visible == true) {
+					showPlanket = true
+				}		
+			})
+			jerseyLogoCanvas.getObjects('group').find(o => o.id == 'buttons').getObjects().forEach(function(o) {
+				if (o.visible == true) {
+					buttonStyle = o.id
+				}		
+			})
+		} else {
+			showPlanket = false
+			buttonStyle = "blank"
+		}
+
+		switch ($("#buttonsType").val()) {
+			case "buttonsScript":
+				buttonPadStyle = "buttonpad"
+				break;
+			case "buttonsNoScript":
+				buttonPadStyle = "buttonpad"
+				break;
+			case "buttonsHenley":
+				buttonPadStyle = "henley"
+				break;
+			case "zipper":
+				buttonPadStyle = "blank"
+		}
+
+		if (showPlanket == false) { buttonPadStyle = "blank" }
+
+		var normalMap = buttonPadStyle+"_"+buttonStyle+"_"+$("#sleeveType").val()+"_n.png"
+
+		exportMeta.checkboxes = checkboxes
+		exportMeta.selects = selects
+		exportMeta.ranges = ranges
+		exportMeta.buttons = buttons
+		exportMeta.capSelectors = capSelectors
+		exportMeta.jerseySelectors = jerseySelectors
+		exportMeta.pantsSelectors = pantsSelectors
+		exportMeta.swatchSelectors = swatchSelectors
+		exportMeta.textBoxes = textBoxes
+		exportMeta.canvases = jsonExport
+		exportMeta.customFonts = customFonts
+		//exportMeta.jerseyddData = jerseyddData
+		//exportMeta.capddData = capddData
+		//exportMeta.fontddData = fontddData
+		exportMeta.fontSelectors = fontSelectors
+		exportMeta.commonPalette = commonPalette
+		exportMeta.selectedJerseyFont = $("#jerseyFontTypeCombo").val()
+		exportMeta.capSelectedFont = $("#capFontTypeCombo").val()
+		exportMeta.customJerseyTexture = customJerseyTexture
+		exportMeta.customCapTexture = customCapTexture
+		exportMeta.customPantsTexture = customPantsTexture
+		exportMeta.fontOverlayImage = fontOverlayImage
+
+		var startYear = parseInt($("#startYear").val());
+		var endYear = parseInt($("#endYear").val())
+		var yearRange = "";
+		var teamName = "";
+		if (startYear > endYear && endYear > 0) {
+			ipcRenderer.send('show-alert',"The start year has to be before the end year!")
+			return false;
+		}
+		if (startYear == endYear && startYear > 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear == 0 && endYear > 0) {
+			yearRange = $("#endYear").val();
+		} else if (startYear > 0 && endYear == 0) {
+			yearRange = $("#startYear").val();
+		} else if (startYear > 0 && endYear > 0) {
+			yearRange = $("#startYear").val()+"-"+$("#endYear").val()
+		} else {
+			yearRange = ""
+		}
+		if (yearRange.length > 0) {
+			yearRange = "_"+yearRange;
+		}
+		if ($("#teamName").val().length == 0) {
+			teamName = "Unknown_Team";
+		} else {
+			teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
+		}
+		teamName = teamName.split(' ').join('_');
+		if ($("#uniformType").val().toLowerCase() != "home") {
+			var fileName = teamName+"_"+$("#uniformType").val().split(' ').join('_').toLowerCase()+yearRange;
+		} else {
+			var fileName = teamName+yearRange;
+		}
+		
+		if ($("#toggleCapGuides").is(":checked")) {
+			capLogoCanvas.setOverlayImage(null,capLogoCanvas.renderAll.bind(capLogoCanvas));
+		}
+
+		if ($("#toggleJerseyGrid").is(':checked')){
+			jerseyLogoCanvas.setOverlayImage(null,jerseyLogoCanvas.renderAll.bind(jerseyLogoCanvas));
+		}
+
+		if ($("#togglePantsGrid").is(':checked')){
+			pantsLogoCanvas.setOverlayImage(null,pantsLogoCanvas.renderAll.bind(pantsLogoCanvas));
+		}
+
+		//if($("#toggleSockGuides").is(":checked")){
+			sockCanvas.setOverlayImage(null,sockCanvas.renderAll.bind(sockCanvas));
+		//}
+
+		jerseyBelow.setDimensions({ width: 512, height: 1024 });
+    	jerseyBelow.setZoom(1)
+		jerseyLogoCanvas.setDimensions({ width: 512, height: 1024 });
+    	jerseyLogoCanvas.setZoom(1)
+
+		pantsBelow.setDimensions({ width: 512, height: 512 });
+    	pantsBelow.setZoom(1)
+		pantsLogoCanvas.setDimensions({ width: 512, height: 512 });
+    	pantsLogoCanvas.setZoom(1)
+
+		capBelow.setDimensions({ width: 512, height: 512 });
+    	capBelow.setZoom(1)
+		capLogoCanvas.setDimensions({ width: 512, height: 512 });
+    	capLogoCanvas.setZoom(1)
+
+		fontCanvas.set({backgroundColor: null});
+		fontCanvas.setBackgroundImage(null, fontCanvas.renderAll.bind(fontCanvas));
+		fontCanvas.setDimensions({ width: 1024, height: 1024 });
+    	fontCanvas.setZoom(1)
+
+		sockCanvas.setDimensions({ width: 1024, height: 1024 });
+    	sockCanvas.setZoom(1)
+
+		nameCanvas.clear()
+
+		var text = new fabric.Text(teamName.split('_').join(' '), {
+			fill: idealTextColor(jerseyBelow.backgroundColor),
+			fontFamily: "Rowdies",
+			fontsize: 20,
+			originX: 'center',
+			originY: 'center',
+			textAlign: 'center',
+			left: 17,
+			top: 830,
+			angle: 270
+		})
+
+		var text2 = new fabric.Text((yearRange.length > 0) ? $("#uniformType").val()+" "+yearRange : $("#uniformType").val(), {
+			fill: idealTextColor(jerseyBelow.backgroundColor),
+			fontFamily: "Rowdies",
+			fontsize: 20,
+			originX: 'center',
+			originY: 'center',
+			textAlign: 'center',
+			left: 495,
+			top: 830,
+			angle: 270
+		})
+
+		if (text.width > 225) {
+			text.scaleToHeight(225)
+		}
+		
+		if (text2.width > 225) {
+			text2.scaleToHeight(225)
+		}
+
+		nameCanvas.add(text)
+		nameCanvas.add(text2)
+
+		var textLine = teamName.split('_').join(' ')+" "+$("#uniformType").val()
+		
+		if (yearRange.length > 0) {
+			textLine += yearRange.split('_').join(' ')
+		}
+
+		ipcRenderer.send('generate-height-map', {
+			type: 'preview',
+			nameCanvas: nameCanvas.toDataURL(),
+			normalMap: normalMap,
+			jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
+			jerseyBelow: jerseyBelow.toDataURL(),
+			name: fileName.split(' ').join('_'),
+			jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
+			jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
+			showPlanket: showPlanket,
+			buttonPadSeams: buttonPadSeams,
+			buttonType: $("#buttonsType").val(),
+			seamsVisible: seamsVisible,
+			seamsOption: $("#seamsType").val(),
+			seamsOnDiffuse: ($("#toggleDiffuseSeams").is(":checked")) ? true : false,
+			brightness: $("#preferredHeightMapBrightness").val(),
+			fileName: fileName,
+			textLine: textLine,
+			exportMeta: exportMeta
+		})
+	})
+
+	ipcRenderer.on('generate-preview-response', (event, response) => {
+		var imgObj = new Image();
+		var normalMap = document.getElementById('normalMapCanvas');
+		imgObj.src = response.image;
+		imgObj.onload = function () {
+			var heightMap = document.getElementById('heightMapSrc');
+			heightMap.src = imgObj.src;
+			var normalMapCTX = normalMap.getContext('2d')
+			normalMapCTX.clearRect(0, 0, 512, 1024);
+			normalMapCTX.drawImage( heightMap, 0, 0 );
+
+			height2normal(normalMap)
+
+			let data = {
+				text: response.args.textLine,
+				nameCanvas: nameCanvas.toDataURL(),
+				capLogoCanvas: capLogoCanvas.toDataURL(),
+				capBelow: capBelow.toDataURL(),
+				jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
+				jerseyBelow: jerseyBelow.toDataURL(),
+				pantsLogoCanvas: pantsLogoCanvas.toDataURL(),
+				pantsBelow: pantsBelow.toDataURL(),
+				fontCanvas: fontCanvas.toDataURL(),
+				sockCanvas: sockCanvas.toDataURL(),
+				name: response.args.fileName.toLowerCase(),
+				showPlanket: response.args.showPlanket,
+				buttonPadSeams: response.args.buttonPadSeams,
+				seamsVisible: response.args.seamsVisible,
+				buttonType: $("#buttonsType").val(),
+				seamsOption: $("#seamsType").val(),
+				seamsOnDiffuse: ($("#toggleDiffuseSeams").is(":checked")) ? true : false,
+				jerseyWatermarkColor: idealTextColor(jerseyBelow.backgroundColor),
+				capWatermarkColor: idealTextColor(capBelow.backgroundColor),
+				pantsWatermarkColor: idealTextColor(pantsBelow.backgroundColor),
+				capTexture: ($("#capTextureSelect").val() == "custom") ? customCapTexture : $("#capTextureSelect").val(),
+				jerseyTexture: ($("#jerseyTextureSelect").val() == "custom") ? customJerseyTexture : $("#jerseyTextureSelect").val(),
+				pantsTexture: ($("#pantsTextureSelect").val() == "custom") ? customPantsTexture : $("#pantsTextureSelect").val(),
+				json: JSON.stringify(response.args.exportMeta,null,2),
+				swatch1: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch1')._objects[1].text, 
+				swatch2: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch2')._objects[1].text, 
+				swatch3: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch3')._objects[1].text, 
+				swatch4: jerseyLogoCanvas.getObjects('group').find(o => o.id === 'swatch4')._objects[1].text,
+				commonPalette: commonPalette,
+				brightness: $("#preferredHeightMapBrightness").val(),
+				heightMap: heightMap.src,		
+				normalMap: normalMap.toDataURL(),
+				backgroundColor: $("#teamBGColor").spectrum("get").toHexString().slice(-6),
+				textColor: $("#teamTextColor").spectrum("get").toHexString().slice(-6),
+				jerseyColor1: $("#jerseyColor").spectrum("get").toHexString().slice(-6),
+				jerseyColor2:  $("#collarColor").spectrum("get").toHexString().slice(-6),
+				jerseyColor3: $("#jerseyPinstripesColor").spectrum("get").toHexString().slice(-6),
+				capColor1: $("#capColor").spectrum("get").toHexString().slice(-6),
+				capColor2: $("#topsideBrimColor").spectrum("get").toHexString().slice(-6),
+				capColor3: $("#squatcheeColor").spectrum("get").toHexString().slice(-6),
+				pantsColor1: $("#pantsColor").spectrum("get").toHexString().slice(-6),
+				pantsColor2: $("#belt").spectrum("get").toHexString().slice(-6),
+				pantsColor3: $("#pantsPinstripes").spectrum("get").toHexString().slice(-6),
+				type: $("#uniformType").val(),
+				lettersVisible: $("#lettersVisible").is(":checked") ? "y" : "n",
+				numbersVisible: $("#numbersVisible").is(":checked") ? "y" : "n"
+			}
+			
+			ipcRenderer.send('generate-preview-png', data)
+		}
 	})
 
 	ipcRenderer.on('install-warning-response', (event, response) => {
