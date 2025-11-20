@@ -153,6 +153,7 @@
         <div class="section group" style="position:relative;">
             <div class="col span_3_of_5">
                 <div id="hiddenContainer" style="display:none;">
+					<canvas id="previewNameCanvas" width="1536" height="100"></canvas>
 					<canvas id="nameCanvas" width="512" height="1024"></canvas>
                     <canvas id="jerseyTexture" width="512" height="1024"></canvas>
                     <canvas id="jerseyBelow" width="512" height="1024"></canvas>
@@ -3107,6 +3108,11 @@
 	});
 
 	var nameCanvas = new fabric.Canvas('nameCanvas',{
+		selection:false,
+		enableRetinaScaling:false
+	})
+
+	var previewNameCanvas = new fabric.Canvas('previewNameCanvas',{
 		selection:false,
 		enableRetinaScaling:false
 	})
@@ -17105,7 +17111,7 @@
 	})
 
 	$("#generatePreview").on("click",function(e) {
-		showOverlay("Generating Uniform...");
+		showOverlay("Generating Preview...");
 		var showPlanket = false
 		var buttonStyle = "blank"
 		var buttonPadStyle = "blank"
@@ -17451,9 +17457,57 @@
 
 			height2normal(normalMap)
 
+			var startYear = parseInt($("#startYear").val());
+			var endYear = parseInt($("#endYear").val())
+			var yearRange = "";
+			var teamName = "";
+			if (startYear > endYear && endYear > 0) {
+				ipcRenderer.send('show-alert',"The start year has to be before the end year!")
+				return false;
+			}
+			if (startYear == endYear && startYear > 0) {
+				yearRange = $("#startYear").val();
+			} else if (startYear == 0 && endYear > 0) {
+				yearRange = $("#endYear").val();
+			} else if (startYear > 0 && endYear == 0) {
+				yearRange = $("#startYear").val();
+			} else if (startYear > 0 && endYear > 0) {
+				yearRange = $("#startYear").val()+"-"+$("#endYear").val()
+			} else {
+				yearRange = ""
+			}
+			if ($("#teamName").val().length == 0) {
+				teamName = "Unknown Team";
+			} else {
+				teamName = $("#teamName").val().replace(/[|&;$%@"<>()+,]/g, "");
+			}
+			
+			var headerText = teamName+" "+$("#uniformType").val()+" "+yearRange;
+
+			console.log(headerText)
+
+			previewNameCanvas.clear()
+
+			var text = new fabric.Text(headerText, {
+				fill: "#000000",
+				fontFamily: "Rowdies",
+				fontsize: 20,
+				originX: 'center',
+				originY: 'center',
+				textAlign: 'center',
+				left: 768,
+				top: 50,
+				angle: 0
+			})
+
+			previewNameCanvas.add(text).renderAll()
+
+			fitTextToBox(text, 1400, 80);
+
 			let data = {
+				fileName: headerText.trim().split(" ").join("_"),
 				text: response.args.textLine,
-				nameCanvas: nameCanvas.toDataURL(),
+				nameCanvas: previewNameCanvas.toDataURL(),
 				capLogoCanvas: capLogoCanvas.toDataURL(),
 				capBelow: capBelow.toDataURL(),
 				jerseyLogoCanvas: jerseyLogoCanvas.toDataURL(),
@@ -17503,6 +17557,28 @@
 			ipcRenderer.send('generate-preview-png', data)
 		}
 	})
+
+	function fitTextToBox(textObj, maxWidth, maxHeight) {
+		// Reset any previous scaling
+		textObj.scaleX = 1;
+		textObj.scaleY = 1;
+
+		// Let Fabric compute natural width/height
+		textObj.canvas && textObj.canvas.renderAll();
+
+		const textWidth = textObj.width;
+		const textHeight = textObj.height;
+
+		// Compute scale factors
+		const scaleX = maxWidth / textWidth;
+		const scaleY = maxHeight / textHeight;
+
+		// Choose smallest so the text fits entirely inside the box
+		const finalScale = Math.min(scaleX, scaleY);
+
+		textObj.scale(finalScale);
+		textObj.canvas && textObj.canvas.renderAll();
+	}
 
 	ipcRenderer.on('install-warning-response', (event, response) => {
 
