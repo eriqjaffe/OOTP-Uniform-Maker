@@ -17890,6 +17890,26 @@
 		nameCanvas.add(text)
 		nameCanvas.add(text2)
 
+		var headerText = teamName+" "+$("#uniformType").val()+" "+yearRange;
+
+		previewNameCanvas.clear()
+
+		var headerText = new fabric.Text(headerText.split("_").join(" "), {
+			fill: "#000000",
+			fontFamily: "Rowdies",
+			fontsize: 20,
+			originX: 'center',
+			originY: 'center',
+			textAlign: 'center',
+			left: 768,
+			top: 50,
+			angle: 0
+		})
+
+		previewNameCanvas.add(headerText).renderAll()
+
+		fitTextToBox(headerText, 1400, 80);
+
 		var textLine = teamName.split('_').join(' ')+" "+$("#uniformType").val()
 		
 		if (yearRange.length > 0) {
@@ -17914,6 +17934,7 @@
 			brightness: $("#preferredHeightMapBrightness").val(),
 			fileName: fileName,
 			textLine: textLine,
+			headerText: previewNameCanvas.toDataURL(),
 			exportMeta: exportMeta
 		})
 	})
@@ -17977,7 +17998,8 @@
 				pantsColor3: $("#pantsPinstripes").spectrum("get").toHexString().slice(-6),
 				type: $("#uniformType").val(),
 				lettersVisible: $("#lettersVisible").is(":checked") ? "y" : "n",
-				numbersVisible: $("#numbersVisible").is(":checked") ? "y" : "n"
+				numbersVisible: $("#numbersVisible").is(":checked") ? "y" : "n",
+				headerText: response.args.headerText
 			}
 			
 			ipcRenderer.send('save-uniform-zip', data)

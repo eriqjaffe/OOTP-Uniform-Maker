@@ -200,7 +200,6 @@ ipcMain.on('drop-image', (event, arg) => {
 			json.canvas = dropCanvas
 			json.tab = tab
 		})
-		console.log(json)
 		event.sender.send('drop-image-response', json)
 	}
 })
@@ -1174,7 +1173,6 @@ ipcMain.on('load-swatches', (event, arg) => {
 							break;
 						case "uni":
 							var json = JSON.parse(fs.readFileSync(result.filePaths[0]))
-							//console.log(json.swatchSelectors)
 							var palette = {};
 							var commonPalette = []
 							palette.name = json.team.replace(/ /g, "_");
@@ -1893,6 +1891,7 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 	const normalMap = Buffer.from(arg.normalMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const fontCanvas = Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const sockCanvas = Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+	const header = Buffer.from(arg.headerText.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const text = arg.text;
 	const tmpCapTexture = arg.capTexture
 	const tmpJerseyTexture = arg.jerseyTexture
@@ -2010,6 +2009,16 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 
 	async function prepareImages() {
 		try {
+			let previewImage = new Jimp(1536, 1224, "white")
+
+			let headerImg = await Jimp.read(header)
+
+			await previewImage.blit(headerImg, 0, 0)
+
+			let watermark = await Jimp.read(__dirname+"/images/preview_watermark.jpg")
+
+			await previewImage.blit(watermark, 0, 1124)
+
 			let font = await Jimp.loadFont(__dirname+"/fonts/rowdies.fnt")
 
 			// cap
@@ -2029,7 +2038,19 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 			await capBase.blit(blankCapImage, 357-(blankCapImage.bitmap.width/2), 120-(blankCapImage.bitmap.height/2))
 			let capBuffer = await capBase.getBufferAsync(Jimp.MIME_PNG)
 			archive.append(capBuffer, {name: "caps_"+arg.name+".png"})
-			//await capBase.write(app.getPath('desktop') + '/uniform_Unknown_Team_Home/caps_' + arg.name+'.png')
+
+			// cap second pass for preview image
+			capBase = await Jimp.read(capBelow)
+			capOverlay = await Jimp.read(capLogoCanvas)
+			capTextureFile = await Jimp.read(capTexture)
+			blankCapImage = new Jimp(3000, 500)
+			await blankCapImage.autocrop()
+			await blankCapImage.scaleToFit(500,15)
+			await blankCapImage.color([{ apply: "mix", params: [arg.capWatermarkColor, 100] }]);
+			await capBase.composite(capTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+			await capBase.composite(capOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+			await capBase.blit(blankCapImage, 357-(blankCapImage.bitmap.width/2), 120-(blankCapImage.bitmap.height/2))
+			await previewImage.blit(capBase, 0, 100)
 
 			// pants
 			let pantsBase = await Jimp.read(pantsBelow)
@@ -2048,19 +2069,38 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 			await pantsBase.blit(blankPantsImage, 256-(blankPantsImage.bitmap.width/2), 12.5-(blankPantsImage.bitmap.height/2))
 			let pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
 			archive.append(pantsBuffer, {name: "pants_"+arg.name+".png"})
-			//await pantsBase.write(app.getPath('downloads') + '/pants_' + arg.name+'.png')
+
+			// pants second pass for preview image
+			pantsBase = await Jimp.read(pantsBelow)
+			pantsTextureFile = await Jimp.read(pantsTexture)
+			pantsOverlay = await Jimp.read(pantsLogoCanvas)
+			blankPantsImage = new Jimp(3000, 500)
+			let pantsBakedTexture = await Jimp.read(__dirname+"/images/texture_pants_default.png")
+			await blankPantsImage.print(font, 10, 10, text)
+			await blankPantsImage.autocrop()
+			await blankPantsImage.scaleToFit(500,15)
+			await blankPantsImage.color([{ apply: "mix", params: [arg.pantsWatermarkColor, 100] }]);
+			await pantsBase.composite(pantsTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+			await pantsBase.composite(pantsBakedTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+			await pantsBase.composite(pantsOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+			await pantsBase.blit(blankPantsImage, 256-(blankPantsImage.bitmap.width/2), 12.5-(blankPantsImage.bitmap.height/2))
+			await previewImage.blit(pantsBase, 0, 612)
 
 			// socks
 			let socks = await Jimp.read(sockCanvas)
 			let socksTexture = await Jimp.read(__dirname+"/images/socks_texture.png")
 			await socks.crop(256,0,512,1024).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 			let socksBuffer = await socks.getBufferAsync(Jimp.MIME_PNG)
+			await socks.crop(0,0,512,512)
+			await previewImage.blit(socks, 1024, 100)
 			archive.append(socksBuffer, {name: "socks_"+arg.name+".png"})
 
 			// font
 			let fontBase = await Jimp.read(fontCanvas)
 			let fontBuffer = await fontBase.getBufferAsync(Jimp.MIME_PNG)
 			archive.append(fontBuffer, {name: arg.name+".png"})
+			await fontBase.resize(512, 512)
+			await previewImage.blit(fontBase, 1024, 612)
 
 			// jersey diffuse map
 			let jerseyBase = await Jimp.read(jerseyBelow)
@@ -2182,7 +2222,64 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 			await jerseyBakedBase.composite(nameImageBaked, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 			let jerseyBakedBuffer = await jerseyBakedBase.getBufferAsync(Jimp.MIME_PNG)
 			archive.append(jerseyBakedBuffer, {name: "jerseys_"+arg.name+"_textured.png"})
-			//await jerseyBakedBase.write(app.getPath('downloads') + '/jerseys_' + arg.name+'_textured.png')
+
+			// jersey with baked texture second pass for preview image
+			jerseyBakedBase = await Jimp.read(jerseyBelow)
+			jerseyBakedOverlay = await Jimp.read(jerseyLogoCanvas)
+			jerseyBakedTexture = await Jimp.read(jerseyTexture)
+			jerseyBakedTexture2 = await Jimp.read(__dirname+"/images/texture_jersey_default.png")
+			if (buttonPadSeams == "true") {
+				if (buttonType != "buttonsHenley") {
+					if (seamsOption == "seamsSixties") {
+						var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_sixties.png"
+					} else {
+						var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+					}
+				} else {
+					if (seamsOption == "seamsSixties") {
+						var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley_sixties.png"
+					} else {
+						var bakedSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+					}
+				}
+				let bpBakedSeamImg = await Jimp.read(bakedSeamsSrc)
+				await bpBakedSeamImg.opacity(.1)
+				await jerseyBakedBase.composite(bpBakedSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+			}
+			if (seamsVisible == "true") {
+				switch (seamsOption) {
+					case "seamsStandardToPiping":
+						var seamSrc = __dirname+"/images/seams/seams_standard_to_piping.png"
+						break;
+					case "seamsStandardToCollar":
+						var seamSrc = __dirname+"/images/seams/seams_standard_to_collar.png"
+						break;
+					case "seamsRaglanToPiping":
+						var seamSrc = __dirname+"/images/seams/seams_raglan_to_piping.png"
+						break;
+					case "seamsRaglanToCollar":
+						var seamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
+						break;
+					case "seamsSixties":
+						var seamSrc = __dirname+"/images/seams/seams_sixties.png"
+						break;
+				}
+				let seamsBakedImg = await Jimp.read(seamSrc)
+				await seamsBakedImg.opacity(.1)
+				await jerseyBakedBase.composite(seamsBakedImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+			}
+			await jerseyBakedBase.composite(jerseyBakedTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+			await jerseyBakedBase.composite(jerseyBakedTexture2, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
+			await jerseyBakedBase.composite(jerseyBakedOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+			jerseyBakedBuffer = await jerseyBakedBase.getBufferAsync(Jimp.MIME_PNG)
+			await previewImage.blit(jerseyBakedBase, 512, 100)
+
+			let previewBuffer = await previewImage.getBufferAsync(Jimp.MIME_JPEG)
+
+			const { compressToSize } = await import("./scripts/compressor.mjs");
+			const finalPreview = await compressToSize(previewBuffer, 475);
+
+			archive.append(Buffer.from(finalPreview), {name: arg.name+"_preview.jpg"})
 			
 			archive.append(xml, {name: arg.name+".xml"});
 			archive.append(JSON.stringify(swatchJSON, null, 2), {name: arg.name+".pal"});
@@ -2366,7 +2463,7 @@ ipcMain.on('install-uniform-zip', (event, arg) => {
 })
 
 ipcMain.on('generate-preview', (event, arg) => {
-	console.log(arg)
+	
 })
 
 ipcMain.on('load-uniform', (event, arg) => {
