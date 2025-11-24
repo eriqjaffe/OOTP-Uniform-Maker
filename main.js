@@ -1632,8 +1632,7 @@ ipcMain.on('generate-preview-png', (event, arg) => {
 			
 			let previewBuffer = await previewImage.getBufferAsync(Jimp.MIME_JPEG)
 
-			const { compressToSize } = await import("./scripts/compressor.mjs");
-			const finalPreview = await compressToSize(previewBuffer, 475);
+			const finalPreview = await compressToSize(previewBuffer, 495);
 
 			var saveOptions = {
 				defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.fileName+'_preview.jpg',{fs: true})
@@ -1662,6 +1661,36 @@ ipcMain.on('generate-preview-png', (event, arg) => {
 		
 	}
 })
+
+async function compressToSize(inputBuffer, maxKB = 495) {
+	const maxBytes = maxKB * 1024;
+  
+	const baseImage = await Jimp.read(inputBuffer);
+  
+	// Attempt binary search for JPEG quality
+	let low = 1;
+	let high = 100;
+	let bestBuffer = null;
+  
+	while (low <= high) {
+	  const mid = Math.floor((low + high) / 2);
+  
+	  const buf = await baseImage
+		.clone()
+		.quality(mid)
+		.getBufferAsync(Jimp.MIME_JPEG);
+  
+	  if (buf.length <= maxBytes) {
+		bestBuffer = buf;
+		low = mid + 1;       // try higher quality
+	  } else {
+		high = mid - 1;      // reduce quality
+	  }
+	}
+  
+	// If we never got under the size, return the original JPEG buffer
+	return bestBuffer || inputBuffer;
+}
 
 ipcMain.on('save-jersey-zip', (event, arg) => {
 	log.info("Creating jersey zip file")
@@ -2276,8 +2305,7 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 
 			let previewBuffer = await previewImage.getBufferAsync(Jimp.MIME_JPEG)
 
-			const { compressToSize } = await import("./scripts/compressor.mjs");
-			const finalPreview = await compressToSize(previewBuffer, 475);
+			const finalPreview = await compressToSize(previewBuffer, 495);
 
 			archive.append(Buffer.from(finalPreview), {name: arg.name+"_preview.jpg"})
 			
