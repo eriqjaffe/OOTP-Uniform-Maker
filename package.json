@@ -10,7 +10,7 @@
     "dist": "electron-builder",
     "build:win64": "node build-win.js",
     "build:linux": "node build-linux.js",
-    "build:macos": "./node_modules/.bin/electron-builder -m",
+    "build:macos": "node build-macos.js",
     "build:all": "./node_modules/.bin/electron-builder -mwl"
   },
   "repository": "https://github.com/eriqjaffe/OOTP-Uniform-Maker",
