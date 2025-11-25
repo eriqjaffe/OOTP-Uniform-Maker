@@ -1,16 +1,16 @@
 {
   "name": "OOTP-Uniform-Maker",
   "productName": "OOTP Uniform Maker",
-  "version": "0.10.9",
+  "version": "0.10.11",
   "description": "OOTP Uniform Maker",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
-    "build:win64": "./node_modules/.bin/electron-builder -w",
-    "build:linux": "./node_modules/.bin/electron-builder -l",
-    "build:macos": "./node_modules/.bin/electron-builder -m",
+    "build:win64": "node build-win.js",
+    "build:linux": "node build-linux.js",
+    "build:macos": "node build-macos.js",
     "build:all": "./node_modules/.bin/electron-builder -mwl"
   },
   "repository": "https://github.com/eriqjaffe/OOTP-Uniform-Maker",
