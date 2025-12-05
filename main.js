@@ -1532,6 +1532,8 @@ ipcMain.on('generate-preview-png', (event, arg) => {
 		try {
 			let previewImage = new Jimp(1536, 1224, "white")
 
+			let checkerboard = await makeCheckerboard()
+
 			let name = await Jimp.read(nameCanvas)
 
 			await previewImage.blit(name, 0, 0)
@@ -1578,6 +1580,7 @@ ipcMain.on('generate-preview-png', (event, arg) => {
 			// font
 			let fontBase = await Jimp.read(fontCanvas)
 			await fontBase.resize(512, 512)
+			await previewImage.blit(checkerboard, 1024, 612)
 			await previewImage.blit(fontBase, 1024, 612)
 
 			// jersey with baked texture
@@ -1645,13 +1648,13 @@ ipcMain.on('generate-preview-png', (event, arg) => {
 						log.error(err)
 						json.result = "error"
 						json.errno = err.errno
-						event.sender.send('save-jersey-zip-response', arg)
+						event.sender.send('save-uniform-zip-response', arg)
 					} else {
-						event.sender.send('save-jersey-zip-response', arg)
+						event.sender.send('save-uniform-zip-response', arg)
 					};
 					})
 				} else {
-					event.sender.send('save-jersey-zip-response', arg)
+					event.sender.send('save-uniform-zip-response', arg)
 				}
 			})
 		} catch (error) {
@@ -1661,6 +1664,26 @@ ipcMain.on('generate-preview-png', (event, arg) => {
 		
 	}
 })
+
+async function makeCheckerboard(size = 512, square = 32) {
+	const img = new Jimp(size, size);
+  
+	const light = Jimp.rgbaToInt(0xCC, 0xCC, 0xCC, 255); // #CCCCCC
+	const dark  = Jimp.rgbaToInt(0x99, 0x99, 0x99, 255); // #999999
+  
+	for (let y = 0; y < size; y += square) {
+	  for (let x = 0; x < size; x += square) {
+		const isDark = ((x / square) + (y / square)) % 2 === 0;
+		const color = isDark ? dark : light;
+  
+		img.scan(x, y, square, square, function(px, py, idx) {
+		  this.bitmap.data.writeUInt32BE(color, idx);
+		});
+	  }
+	}
+  
+	return img;
+  }
 
 async function compressToSize(inputBuffer, maxKB = 495) {
 	const maxBytes = maxKB * 1024;
@@ -2040,6 +2063,8 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 		try {
 			let previewImage = new Jimp(1536, 1224, "white")
 
+			let checkerboard = await makeCheckerboard()
+
 			let headerImg = await Jimp.read(header)
 
 			await previewImage.blit(headerImg, 0, 0)
@@ -2129,6 +2154,7 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 			let fontBuffer = await fontBase.getBufferAsync(Jimp.MIME_PNG)
 			archive.append(fontBuffer, {name: arg.name+".png"})
 			await fontBase.resize(512, 512)
+			await previewImage.blit(checkerboard, 1024, 612)
 			await previewImage.blit(fontBase, 1024, 612)
 
 			// jersey diffuse map
