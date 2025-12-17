@@ -27,7 +27,7 @@
 	<link href='./scripts/jquery.range.css' rel='stylesheet' type='text/css'>
     <link href='./scripts/skeletabs.css' rel='stylesheet' type='text/css'>
 	<script>
-		const { ipcRenderer } = require('electron');
+		const { ipcRenderer, webUtils } = require('electron');
 		const log = require('electron-log/renderer')
 		const params = new URLSearchParams(window.location.search)
 		const appVersion = params.get('appVersion')
@@ -3673,8 +3673,11 @@
 		$("#fontContainer").removeClass('hover');
 		e.stopPropagation();
 		e.preventDefault();
-		var files = e.originalEvent.dataTransfer.files;
-		dropImage(fontCanvas, files[0].path, 4)
+		const files = e.originalEvent.dataTransfer.files;
+		const file = files[0];
+
+		const filePath = webUtils.getPathForFile(file)
+		dropImage(fontCanvas, filePath, 4)
 		return false;
 	});
 
@@ -3689,13 +3692,18 @@
 		return false;
 	});
 
-	$("#jerseyContainer").on('drop', function(e) {
+	$("#jerseyContainer").on('drop', function (e) {
 		activeCanvas = jerseyLogoCanvas;
 		$("#jerseyContainer").removeClass('hover');
-		e.stopPropagation();
 		e.preventDefault();
-		var files = e.originalEvent.dataTransfer.files;
-		dropImage(jerseyLogoCanvas, files[0].path, 0)
+		e.stopPropagation();
+
+		const files = e.originalEvent.dataTransfer.files;
+		const file = files[0];
+
+		const filePath = webUtils.getPathForFile(file);
+
+		dropImage(jerseyLogoCanvas, filePath, 0);
 		return false;
 	});
 
@@ -3713,8 +3721,11 @@
 		$("#capContainer").removeClass('hover');
 		e.stopPropagation();
 		e.preventDefault();
-		var files = e.originalEvent.dataTransfer.files;
-		dropImage(capLogoCanvas, files[0].path, 2)
+		const files = e.originalEvent.dataTransfer.files;
+		const file = files[0];
+
+		const filePath = webUtils.getPathForFile(file)
+		dropImage(capLogoCanvas, filePath, 2)
 		return false;
 	});
 
@@ -3732,8 +3743,11 @@
 		$("#pantsContainer").removeClass('hover');
 		e.stopPropagation();
 		e.preventDefault();
-		var files = e.originalEvent.dataTransfer.files;
-		dropImage(pantsLogoCanvas, files[0].path, 1)
+		const files = e.originalEvent.dataTransfer.files;
+		const file = files[0];
+
+		const filePath = webUtils.getPathForFile(file)
+		dropImage(pantsLogoCanvas, filePath, 1)
 		return false;
 	});
 
@@ -3751,8 +3765,11 @@
 		$("#sockContainer").removeClass('hover');
 		e.stopPropagation();
 		e.preventDefault();
-		var files = e.originalEvent.dataTransfer.files;
-		dropImage(sockCanvas, files[0].path, 3)
+		const files = e.originalEvent.dataTransfer.files;
+		const file = files[0];
+
+		const filePath = webUtils.getPathForFile(file)
+		dropImage(sockCanvas, filePath, 3)
 		return false;
 	});
 
@@ -18971,6 +18988,7 @@
 	}
 
 	function dropImage(dropCanvas, file, tab) {
+		console.log(file)
 		if ($.inArray(getExtension(file).toLowerCase(), validFontTypes) > -1) {
 			ipcRenderer.send('drop-font', [file, tab])
 		} else {
