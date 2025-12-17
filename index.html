@@ -19747,72 +19747,60 @@
 		}
 	}
 
-	function height2normal( canvas ) {
+	function height2normal(canvas, strength = 10, step = 4, blurRadius = 5) {
+		const ctx = canvas.getContext("2d");
+		const { width, height } = canvas;
+		const img = ctx.getImageData(0, 0, width, height);
+		const data = img.data;
 
-		var context = canvas.getContext( '2d' );
-
-		var width = canvas.width;
-		var height = canvas.height;
-
-		var src = context.getImageData( 0, 0, width, height );
-		var dst = context.createImageData( width, height );
-
-		for ( var i = 0, l = width * height * 4; i < l; i += 4 ) {
-
-			var x1, x2, y1, y2;
-
-			if ( i % ( width * 4 ) == 0 ) {
-
-				// left edge
-
-				x1 = src.data[ i ];
-				x2 = src.data[ i + 4 ];
-
-			} else if ( i % ( width * 4 ) == ( width - 1 ) * 4 ) {
-
-				// right edge
-
-				x1 = src.data[ i - 4 ];
-				x2 = src.data[ i ];
-
-			} else {
-
-				x1 = src.data[ i - 4 ];
-				x2 = src.data[ i + 4 ];
-
+		// --- HEAVY blur (very important) ---
+		for (let pass = 0; pass < blurRadius; pass++) {
+			const temp = new Uint8ClampedArray(data);
+			for (let y = 1; y < height - 1; y++) {
+				for (let x = 1; x < width - 1; x++) {
+					let sum = 0;
+					for (let dy = -1; dy <= 1; dy++) {
+						for (let dx = -1; dx <= 1; dx++) {
+							sum += temp[((y + dy) * width + (x + dx)) * 4];
+						}
+					}
+					data[(y * width + x) * 4] = sum / 9;
+				}
 			}
+		}
 
-			if ( i < width * 4 ) {
+		const dst = ctx.createImageData(width, height);
+		const out = dst.data;
 
-				// top edge
+		const getH = (x, y) => {
+			x = Math.max(0, Math.min(width - 1, x));
+			y = Math.max(0, Math.min(height - 1, y));
+			return data[(y * width + x) * 4] / 255;
+		};
 
-				y1 = src.data[ i ];
-				y2 = src.data[ i - width * 4 ];
+		for (let y = 0; y < height; y++) {
+			for (let x = 0; x < width; x++) {
 
-			} else if ( i > width * ( height - 1 ) * 4) {
+				const dx = (getH(x + step, y) - getH(x - step, y)) * strength;
+				const dy = (getH(x, y + step) - getH(x, y - step)) * strength;
 
-				// bottom edge
+				// Z bias like Materialize
+				let nx = -dx;
+				let ny = -dy;
+				let nz = 1.0;
 
-				y1 = src.data[ i + width * 4 ];
-				y2 = src.data[ i ];
+				const len = Math.sqrt(nx*nx + ny*ny + nz*nz);
+				nx /= len; ny /= len; nz /= len;
 
-			} else {
-
-				y1 = src.data[ i + width * 4 ];
-				y2 = src.data[ i - width * 4 ];
-
+				// Maya-style tangent space
+				out[(y * width + x) * 4 + 0] = ((nx * 0.5 + 0.5) * 255);
+				out[(y * width + x) * 4 + 1] = (1 - (ny * 0.5 + 0.5)) * 255;
+				out[(y * width + x) * 4 + 2] = ((nz * 0.5 + 0.5) * 255);
+				out[(y * width + x) * 4 + 3] = 255;
 			}
+		}
 
-				dst.data[ i ] = ( x1 - x2 ) + 127;
-				dst.data[ i + 1 ] = ( y1 - y2 ) + 127;
-				dst.data[ i + 2 ] = 255;
-				dst.data[ i + 3 ] = 255;
-
-
-			}
-
-			context.putImageData( dst, 0, 0 );
-
+		ctx.putImageData(dst, 0, 0);
 	}
 
 	function isNumeric(n) {
