@@ -18736,11 +18736,11 @@
 			$("#capOverlay").css("display","none");
 			$("#pantsOverlay").css("display","none");
 			$("#eyedropper").css("display","none")
-			$("#fontContainer").css("display","none")
+			$("#fontContainer").css("display","inline-block")
 			$("#jerseyContainer").css("display","none")
 			$("#pantsContainer").css("display","none")
 			$("#capContainer").css("display","none")
-			$("#sockContainer").css("display","inline-block")
+			$("#sockContainer").css("display","none")
 			$("#sockContainer").css("z-index", 50)
 			$("#notSockContainer").css("z-index", 0)
 		}
@@ -19765,7 +19765,7 @@
 		}
 	}
 
-	function height2normal(canvas, strength = 10, step = 4, blurRadius = 5) {
+	function height2normal(canvas, strength = 10, step = 2, blurRadius = 5) {
 		const ctx = canvas.getContext("2d");
 		const { width, height } = canvas;
 		const img = ctx.getImageData(0, 0, width, height);
