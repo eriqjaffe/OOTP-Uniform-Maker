@@ -2091,7 +2091,7 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 			await capBase.composite(capWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 			await capBase.blit(blankCapImage, 357-(blankCapImage.bitmap.width/2), 120-(blankCapImage.bitmap.height/2))
 			let capBuffer = await capBase.getBufferAsync(Jimp.MIME_PNG)
-			archive.append(capBuffer, {name: "caps_"+arg.name+".png"})
+			archive.append(capBuffer, {name: "ballcaps/caps_"+arg.name+".png"})
 
 			// cap second pass for preview image
 			capBase = await Jimp.read(capBelow)
@@ -2122,7 +2122,7 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 			await pantsBase.composite(pantsWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 			await pantsBase.blit(blankPantsImage, 256-(blankPantsImage.bitmap.width/2), 12.5-(blankPantsImage.bitmap.height/2))
 			let pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
-			archive.append(pantsBuffer, {name: "pants_"+arg.name+".png"})
+			archive.append(pantsBuffer, {name: "pants/pants_"+arg.name+".png"})
 
 			// pants second pass for preview image
 			pantsBase = await Jimp.read(pantsBelow)
@@ -2147,12 +2147,12 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 			let socksBuffer = await socks.getBufferAsync(Jimp.MIME_PNG)
 			await socks.crop(0,0,512,512)
 			await previewImage.blit(socks, 1024, 100)
-			archive.append(socksBuffer, {name: "socks_"+arg.name+".png"})
+			archive.append(socksBuffer, {name: "socks/socks_"+arg.name+".png"})
 
 			// font
 			let fontBase = await Jimp.read(fontCanvas)
 			let fontBuffer = await fontBase.getBufferAsync(Jimp.MIME_PNG)
-			archive.append(fontBuffer, {name: arg.name+".png"})
+			archive.append(fontBuffer, {name: "jersey_fonts/"+arg.name+".png"})
 			await fontBase.resize(512, 512)
 			await previewImage.blit(checkerboard, 1024, 612)
 			await previewImage.blit(fontBase, 1024, 612)
@@ -2207,19 +2207,19 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 			let nameImage = await Jimp.read(nameCanvas)
 			await jerseyBase.composite(nameImage, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 			let jerseyBuffer = await jerseyBase.getBufferAsync(Jimp.MIME_PNG)
-			archive.append(jerseyBuffer, {name: "jerseys_"+arg.name+".png"})
+			archive.append(jerseyBuffer, {name: "jerseys/jerseys_"+arg.name+".png"})
 			//await jerseyBase.write(app.getPath('downloads') + '/jerseys_' + arg.name+'.png')
 			
 			// jersey height map
 			let jerseyHeightMap = await Jimp.read(heightMap)
 			let jerseyHMBuffer = await jerseyHeightMap.getBufferAsync(Jimp.MIME_PNG)
-			archive.append(jerseyHMBuffer, {name: "jerseys_"+arg.name+"_h.png"})
+			archive.append(jerseyHMBuffer, {name: "jerseys/jerseys_"+arg.name+"_h.png"})
 			//await jerseyHeightMap.write(tempDir+"/temp_height_map.jpg")
 
 			// jersey normal map
 			let jerseyNormalMap = await Jimp.read(normalMap)
 			let jerseyNMBUffer = await jerseyNormalMap.getBufferAsync(Jimp.MIME_PNG)
-			archive.append(jerseyNMBUffer, {name: "jerseys_"+arg.name+"_n.png"})
+			archive.append(jerseyNMBUffer, {name: "jerseys/jerseys_"+arg.name+"_n.png"})
 			//await jerseyNormalMap.write(tempDir+"/temp_normal_map.jpg")
 
 			// jersey with baked texture
@@ -2276,7 +2276,7 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 			let nameImageBaked = await Jimp.read(nameCanvas)
 			await jerseyBakedBase.composite(nameImageBaked, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 			let jerseyBakedBuffer = await jerseyBakedBase.getBufferAsync(Jimp.MIME_PNG)
-			archive.append(jerseyBakedBuffer, {name: "jerseys_"+arg.name+"_textured.png"})
+			archive.append(jerseyBakedBuffer, {name: "jerseys/jerseys_"+arg.name+"_textured.png"})
 
 			// jersey with baked texture second pass for preview image
 			jerseyBakedBase = await Jimp.read(jerseyBelow)
