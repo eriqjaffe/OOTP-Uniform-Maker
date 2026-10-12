@@ -24,6 +24,8 @@ const PSD = require('psd');
 const sizeOf = require("image-size")
 const heicConvert = require("heic-convert")
 
+const { generateCap, generatePants, generateSocks, generateFont } = require('./image-generators');
+
 log.initialize();
 log.transports.file.fileName = "uniform_maker.log"
 log.eventLogger.startLogging
@@ -1231,165 +1233,126 @@ ipcMain.on('load-swatches', (event, arg) => {
 	
 })
 
-ipcMain.on('save-pants', (event, arg) => {
-	const pantsLogoCanvas = Buffer.from(arg.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const pantsBelow = Buffer.from(arg.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const text = arg.text
-	const tmpPantsTexture = arg.pantsTexture
+ipcMain.on('save-pants', async (event, arg) => {
+	try {
+		let pantsTexturePath;
+		if (arg.pantsTexture.startsWith("data:image")) {
+            const base64Data = arg.pantsTexture.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
+            pantsTexturePath = path.join(tempDir, "tempCapTexture.png");
+            await fs.writeFile(pantsTexturePath, base64Data, 'base64');
+        } else {
+            pantsTexturePath = path.join(__dirname, "images", arg.pantsTexture);
+        }
 
-	const options = {
-		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.png',{fs: true})
-	}
+		const pantsData = {
+			pantsLogoCanvas: Buffer.from(arg.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
+			pantsBelow: Buffer.from(arg.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
+			pantsTexture: pantsTexturePath,
+			text: arg.text,
+			watermarkColor: arg.pantsWatermarkColor
+		}
 
-	if (tmpPantsTexture.startsWith("data:image")) {
-		fs.writeFileSync(tempDir+"/tempPantsTexture.png", tmpPantsTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
-		var pantsTexture = tempDir+"/tempPantsTexture.png"
-	} else {
-		var pantsTexture = __dirname+"/images/"+tmpPantsTexture
-	}
+		const pantsBuffer = await generatePants(pantsData)
 
-	prepareImages()
+		const defaultPath = increment(
+            path.join(store.get("downloadPath", app.getPath('downloads')), `${arg.name}.png`),
+            { fs: true }
+        );
 
-	async function prepareImages() {
-		let pantsBase = await Jimp.read(pantsBelow)
-		let pantsTextureFile = await Jimp.read(pantsTexture)
-		let pantsOverlay = await Jimp.read(pantsLogoCanvas)
-		let font = await Jimp.loadFont(__dirname+"/fonts/rowdies.fnt")
-		let blankImage = new Jimp(3000, 500)
-		await blankImage.print(font, 10, 10, text)
-		await blankImage.autocrop()
-		await blankImage.scaleToFit(500,15)
-		await blankImage.color([{ apply: "mix", params: [arg.pantsWatermarkColor, 100] }]);
-		await pantsBase.composite(pantsTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
-		await pantsBase.composite(pantsOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		let pantsWM = await Jimp.read(__dirname+"/images/pants_watermark.png")
-		await pantsWM.color([{ apply: "mix", params: [arg.pantsWatermarkColor, 100] }]);
-		await pantsBase.composite(pantsWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		await pantsBase.blit(blankImage, 256-(blankImage.bitmap.width/2), 12.5-(blankImage.bitmap.height/2))
-		let pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
-		let finalImage = Buffer.from(pantsBuffer).toString('base64');
-		dialog.showSaveDialog(null, options).then((result) => {
-			if (!result.canceled) {
-				fs.writeFile(result.filePath, finalImage, 'base64', function(err) {
-					log.error(err)
-				})
-				event.sender.send('save-pants-response', null)
-			} else {
-				event.sender.send('save-pants-response', null)
-			}
-		}).catch((err) => {
-			log.error(err);
-			event.sender.send('save-pants-response', null)
-		});
+		const result = await dialog.showSaveDialog(null, { defaultPath });
+
+        if (!result.canceled && result.filePath) {
+            await fs.promises.writeFile(result.filePath, pantsBuffer); // Directly write the buffer
+        }
+		
+		event.sender.send('save-pants-response', null)
+
+	} catch (err) {
+		log.error(err)
+		event.sender.send('save-pants-response', err.message)
 	}
 })
 
-ipcMain.on('save-socks', (event, arg) => {
-	const buffer = Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+ipcMain.on('save-socks', async (event, arg) => {
+	try {
+		const socksBuffer = await generateSocks(Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'))
 
-    const options = {
-        defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.png',{fs: true})
-	}
-            
-	prepareImages()
+		const defaultPath = increment(
+            path.join(store.get("downloadPath", app.getPath('downloads')), `${arg.name}.png`),
+            { fs: true }
+        );
 
-	async function prepareImages() {
-		let socks = await Jimp.read(buffer)
-		let socksTexture = await Jimp.read(__dirname+"/images/socks_texture.png")
-		await socks.crop(256,0,512,1024).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
-		event.sender.send('save-socks-response', arg)
- 		dialog.showSaveDialog(null, options).then((result) => {
-			if (!result.canceled) {
-				store.set("downloadPath", path.dirname(result.filePath))
-				socks.write(result.filePath)
-				event.sender.send('save-socks-response', arg)
-			} else {
-				event.sender.send('save-socks-response', arg)
-			}
-		}).catch((err) => {
-			log.error(err);
-			event.sender.send('save-socks-response', arg)
-		});
+		const result = await dialog.showSaveDialog(null, { defaultPath });
+
+        if (!result.canceled && result.filePath) {
+            await fs.promises.writeFile(result.filePath, socksBuffer); // Directly write the buffer
+        }
+		
+		event.sender.send('save-socks-response', null)
+	} catch (err) {
+		log.error(err)
+		event.sender.send('save-socks-response', err.message)
 	}
 })
 
-ipcMain.on('save-cap', (event, arg) => {
-	const capLogoCanvas = Buffer.from(arg.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const capBelow = Buffer.from(arg.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
-	const text = arg.text
-	const tmpCapTexture = arg.capTexture
+ipcMain.on('save-cap', async (event, arg) => {
+	try {
+		let capTexturePath;
+        if (arg.capTexture.startsWith("data:image")) {
+            const base64Data = arg.capTexture.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
+            capTexturePath = path.join(tempDir, "tempCapTexture.png");
+            await fs.writeFile(capTexturePath, base64Data, 'base64');
+        } else {
+            capTexturePath = path.join(__dirname, "images", arg.capTexture);
+        }
+	
+		const capData = {
+			capLogoCanvas: Buffer.from(arg.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
+			capBelow: Buffer.from(arg.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
+			capTexture: capTexturePath,
+			text: arg.text,
+			watermarkColor: arg.capWatermarkColor
+		}
+	
+		const capBuffer = await generateCap(capData);
 
-	const options = {
-		defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.png',{fs: true})
-	}
+		const defaultPath = increment(
+            path.join(store.get("downloadPath", app.getPath('downloads')), `${arg.name}.png`),
+            { fs: true }
+        );
 
-	if (tmpCapTexture.startsWith("data:image")) {
-		fs.writeFileSync(tempDir+"/tempCapTexture.png", tmpCapTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
-		var capTexture = tempDir+"/tempCapTexture.png"
-	} else {
-		var capTexture = __dirname+"/images/"+tmpCapTexture
-	}
+		const result = await dialog.showSaveDialog(null, { defaultPath });
 
-	prepareImages()
-
-	async function prepareImages() {
-		let capBase = await Jimp.read(capBelow)
-		let capOverlay = await Jimp.read(capLogoCanvas)
-		let capTextureFile = await Jimp.read(capTexture)
-		let font = await Jimp.loadFont(__dirname+"/fonts/rowdies.fnt")
-		let blankImage = new Jimp(3000, 500)
-		await blankImage.print(font, 10, 10, text)
-		await blankImage.autocrop()
-		await blankImage.scaleToFit(290,15)
-		await blankImage.color([{ apply: "mix", params: [arg.capWatermarkColor, 100] }]);
-		let capWM = await Jimp.read(__dirname+"/images/cap_watermark.png")
-		await capWM.color([{ apply: "mix", params: [arg.capWatermarkColor, 100] }]);
-		await capBase.composite(capTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
-		await capBase.composite(capOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		await capBase.composite(capWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
-		await capBase.blit(blankImage, 357-(blankImage.bitmap.width/2), 120-(blankImage.bitmap.height/2))
-		let capBuffer = await capBase.getBufferAsync(Jimp.MIME_PNG)
-		let finalImage = Buffer.from(capBuffer).toString('base64');
-		dialog.showSaveDialog(null, options).then((result) => {
-			if (!result.canceled) {
-				fs.writeFile(result.filePath, finalImage, 'base64', function(err) {
-					log.error(err)
-				})
-				event.sender.send('save-cap-response', null)
-			} else {
-				event.sender.send('save-cap-response', null)
-			}
-		}).catch((err) => {
-			log.error(err);
-			event.sender.send('save-cap-response', null)
-		});
-	}
+        if (!result.canceled && result.filePath) {
+            await fs.promises.writeFile(result.filePath, capBuffer); // Directly write the buffer
+        }
+		
+		event.sender.send('save-cap-response', null)
+	} catch (err) {
+        log.error(err);
+        event.sender.send('save-cap-response', err.message);
+    }
 })
 
-ipcMain.on('save-font', (event, arg) => {
-	const fontCanvas = Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+ipcMain.on('save-font', async (event, arg) => {
+	try {
+		const fontBuffer = await generateFont(Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'))
 
-    const options = {
-        defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.png',{fs: true})
-	}
-            
-	prepareImages()
+		const defaultPath = increment(
+            path.join(store.get("downloadPath", app.getPath('downloads')), `${arg.name}.png`),
+            { fs: true }
+        );
 
-	async function prepareImages() {
-		dialog.showSaveDialog(null, options).then((result) => {
-			if (!result.canceled) {
-				store.set("downloadPath", path.dirname(result.filePath))
-				fs.writeFile(result.filePath, fontCanvas, 'base64', function(err) {
-					log.error(err)
-				})
-				event.sender.send('save-font-response', null)
-			} else {
-				event.sender.send('save-font-response', null)
-			}
-		}).catch((err) => {
-			log.error(err);
-			event.sender.send('save-font-response', null)
-		});
+		const result = await dialog.showSaveDialog(null, { defaultPath });
+
+        if (!result.canceled && result.filePath) {
+            await fs.promises.writeFile(result.filePath, fontBuffer); // Directly write the buffer
+        }
+		
+		event.sender.send('save-font-response', null)
+	} catch (err) {
+		log.error(err)
+		event.sender.send('save-font-response', err.message)
 	}
 })
 
@@ -1959,6 +1922,8 @@ ipcMain.on('save-uniform-zip', (event, arg) => {
 	const to = (arg.to == null) ? "" : arg.to
 	const lettersVisible = arg.lettersVisible
 	const numbersVisible = arg.numbersVisible
+
+	
 
 	const swatchJSON = {
 		name: arg.name,
