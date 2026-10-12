@@ -72,4 +72,84 @@ async function generateFont(data) {
 
 }
 
-module.exports = { generateCap, generatePants, generateSocks, generateFont };
+async function generateHeightMap(data) {
+    let seamsSrc = null;
+    let seamHMSrc = null;
+    let planketSrc = null;
+
+    if (data.buttonPadSeams == true) {
+        if (data.buttonType != "buttonsHenley") {
+            if (data.seamsOption == "seamsSixties") {
+                seamsSrc = __dirname+"/images/seams/seams_button_pad_sixties.png"
+            } else {
+                seamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+            }
+        } else {
+            if (data.seamsOption == "seamsSixties") {
+                seamsSrc = __dirname+"/images/seams/seams_button_pad_henley_sixties.png"
+            } else {
+                seamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+            }
+        }
+    }
+
+    if (data.seamsVisible == true) {
+        switch (data.seamsOption) {
+            case "seamsStandardToPiping":
+                seamHMSrc = __dirname+"/images/seams/seams_standard_to_piping.png"
+                break;
+            case "seamsStandardToCollar":
+                seamHMSrc = __dirname+"/images/seams/seams_standard_to_collar.png"
+                break;
+            case "seamsRaglanToPiping":
+                seamHMSrc = __dirname+"/images/seams/seams_raglan_to_piping.png"
+                break;
+            case "seamsRaglanToCollar":
+                seamHMSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
+                break;
+            case "seamsSixties":
+                seamHMSrc = __dirname+"/images/seams/seams_sixties.png"
+                break;
+        }
+    }
+
+    if (data.showPlanket == true) {
+        if (data.buttonType != "buttonsHenley") {
+            planketSrc = __dirname+"/images/planket.png"
+        } else {
+            planketSrc = __dirname+"/images/planket_henley.png"
+        }
+    }
+
+    let [jerseyHeightMap, jerseyOverlay, bpHMSeamImg, seamsHMImg, planket] = await Promise.all([
+        Jimp.read(__dirname+"/images/jersey_height_map.png"),
+        Jimp.read(data.jerseyLogoCanvas),
+        seamsSrc ? Jimp.read(seamsSrc) : Promise.resolve(null),
+        seamHMSrc ? Jimp.read(seamHMSrc) : Promise.resolve(null),
+        planketSrc ? Jimp.read(planketSrc) : Promise.resolve(null)
+    ])
+
+    if (bpHMSeamImg) { 
+        bpHMSeamImg.opacity(data.seamOpacity)
+        jerseyHeightMap.composite(bpHMSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+    }
+    if (seamsHMImg) { 
+        seamsHMImg.opacity(data.seamOpacity)
+        jerseyHeightMap.composite(seamsHMImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER}) 
+    
+    }
+    if (planket) { 
+        jerseyHeightMap.composite(planket, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER}) 
+    }
+
+    jerseyOverlay.grayscale()
+    jerseyOverlay.brightness(data.brightness)
+
+    jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+
+    await jerseyHeightMap.write("temp.png")
+    let heightMapBase64 = await jerseyHeightMap.getBase64Async(Jimp.AUTO)
+    return heightMapBase64
+}
+
+module.exports = { generateCap, generatePants, generateSocks, generateFont, generateHeightMap };

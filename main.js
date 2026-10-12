@@ -24,7 +24,7 @@ const PSD = require('psd');
 const sizeOf = require("image-size")
 const heicConvert = require("heic-convert")
 
-const { generateCap, generatePants, generateSocks, generateFont } = require('./image-generators');
+const { generateCap, generatePants, generateSocks, generateFont, generateHeightMap } = require('./image-generators');
 
 log.initialize();
 log.transports.file.fileName = "uniform_maker.log"
@@ -1356,20 +1356,58 @@ ipcMain.on('save-font', async (event, arg) => {
 	}
 })
 
-ipcMain.on('generate-height-map', (event, arg) => {
-	log.info("Generating height map")
-	const jerseyLogoCanvas = Buffer.from(arg.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
+ipcMain.on('generate-height-map', async (event, arg) => {
+	try {
+		log.info("Generating height map")
+		
+		const data = {
+			jerseyLogoCanvas: Buffer.from(arg.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
+			showPlanket: arg.showPlanket,
+			buttonPadSeams: arg.buttonPadSeams,
+			buttonType: arg.buttonType,
+			seamsVisible: arg.seamsVisible,
+			seamsOption: arg.seamsOption,
+			brightness: parseInt(arg.brightness)/100,
+			seamOpacity: parseInt(arg.seamOpacity)/100
+		}
+
+		const heightMap = await generateHeightMap(data)
+
+		log.info("Height map generated")
+			switch (arg.type) {
+				case "jersey":
+					event.sender.send('save-jersey-response', {status: "success", "image": heightMap, args: arg})
+					break;
+				case "uniform":
+					event.sender.send('save-uniform-response', {status: "success", "image": heightMap, args: arg})
+					break;
+				case "install":
+					event.sender.send('install-uniform-response', {status: "success", "image": heightMap, args: arg})
+					break;
+				case "preview":
+					event.sender.send('generate-preview-response', {status: "success", "image": heightMap, args: arg})
+					break;
+			}
+
+	} catch (err) {
+		log.error(err)
+		event.sender.send('error-response', {error: err})
+	}
+
+	
+	
+	/* const jerseyLogoCanvas = Buffer.from(arg.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64');
 	const showPlanket = arg.showPlanket
 	const buttonPadSeams = arg.buttonPadSeams
 	const buttonType = arg.buttonType
 	const seamsVisible = arg.seamsVisible
 	const seamsOption = arg.seamsOption
 	const brightness = parseInt(arg.brightness)/100
-	const seamOpacity = parseInt(arg.seamOpacity)/100
+	const seamOpacity = parseInt(arg.seamOpacity)/100 */
 
-	prepareImages()
+	//prepareImages()
 
-	async function prepareImages() {
+	/* async function prepareImages() {
 		try {
 			let jerseyHeightMap = await Jimp.read(__dirname+"/images/jersey_height_map.png")
 			let jerseyOverlay = await Jimp.read(jerseyLogoCanvas)
@@ -1446,7 +1484,7 @@ ipcMain.on('generate-height-map', (event, arg) => {
 			log.error(err)
 			event.sender.send('error-response', {error: err})
 		}
-	}
+	} */
 })
 
 ipcMain.on('generate-preview-png', (event, arg) => {
