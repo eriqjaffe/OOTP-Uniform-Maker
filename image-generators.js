@@ -1,4 +1,5 @@
 const Jimp = require('jimp')
+const fs = require('fs')
 
 async function generateCap(data) {
     let [capBase, capOverlay, capTextureFile, capWM, font] = await Promise.all([
@@ -73,6 +74,7 @@ async function generateFont(data) {
 }
 
 async function generateHeightMap(data) {
+    console.log(data)
     let seamsSrc = null;
     let seamHMSrc = null;
     let planketSrc = null;
@@ -147,9 +149,86 @@ async function generateHeightMap(data) {
 
     jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 
-    await jerseyHeightMap.write("temp.png")
     let heightMapBase64 = await jerseyHeightMap.getBase64Async(Jimp.AUTO)
     return heightMapBase64
 }
 
-module.exports = { generateCap, generatePants, generateSocks, generateFont, generateHeightMap };
+async function generateDiffuseMap(data) {
+    let diffuseSeamsSrc = null;
+    let diffuseSeamSrc = null;
+
+    let [jerseyBase, jerseyOverlay, jerseyTextureFile, jerseyWM, nameImage] = await Promise.all([
+        Jimp.read(data.jerseyBelow),
+        Jimp.read(data.jerseyLogoCanvas),
+        Jimp.read(data.jerseyTexture),
+        await Jimp.read(__dirname+"/images/jersey_watermark.png"),
+        await Jimp.read(data.nameCanvas)
+    ]);
+
+    if (data.seamsOnDiffuse == true) {
+        if (data.buttonType != "buttonsHenley") {
+            if (data.seamsOption == "seamsSixties") {
+                diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_sixties.png"
+            } else {
+                diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad.png"
+            }	
+        } else {
+            if (seamsOption == "seamsSixties") {
+                diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley_sixties.png"
+            } else {
+                diffuseSeamsSrc = __dirname+"/images/seams/seams_button_pad_henley.png"
+            }
+        }
+        
+        switch (data.seamsOption) {
+            case "seamsStandardToPiping":
+                diffuseSeamSrc = __dirname+"/images/seams/seams_standard_to_piping.png"
+                break;
+            case "seamsStandardToCollar":
+                diffuseSeamSrc = __dirname+"/images/seams/seams_standard_to_collar.png"
+                break;
+            case "seamsRaglanToPiping":
+                diffuseSeamSrc = __dirname+"/images/seams/seams_raglan_to_piping.png"
+                break;
+            case "seamsRaglanToCollar":
+                diffuseSeamSrc = __dirname+"/images/seams/seams_raglan_to_collar.png"
+                break;
+            case "seamsSixties":
+                diffuseSeamSrc = __dirname+"/images/seams/seams_sixties.png"
+                break;
+        }
+
+        if (diffuseSeamsSrc) {
+            let diffuseSeamImg = await Jimp.read(diffuseSeamsSrc)
+            await diffuseSeamImg.opacity(.1)
+            await jerseyBase.composite(diffuseSeamImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+        }
+
+        if (diffuseSeamSrc) {
+            let seamsDiffuseImg = await Jimp.read(diffuseSeamSrc)
+            await seamsDiffuseImg.opacity(.1)
+            await jerseyBase.composite(seamsDiffuseImg, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+        }
+    }
+
+    await jerseyWM.color([{ apply: "mix", params: [data.jerseyWatermarkColor, 100] }]);
+        
+    await jerseyBase.composite(jerseyTextureFile, 0, 0, {mode: Jimp.BLEND_MULTIPLY})	
+                    .composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+                    .composite(jerseyWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+                    .composite(nameImage, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
+
+    let diffuseBuffer = await jerseyBase.getBufferAsync(Jimp.MIME_PNG)
+
+    return diffuseBuffer;
+
+}
+
+module.exports = { 
+    generateCap, 
+    generatePants, 
+    generateSocks, 
+    generateFont, 
+    generateHeightMap,
+    generateDiffuseMap,
+ };
