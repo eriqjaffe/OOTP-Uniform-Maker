@@ -323,6 +323,89 @@ async function generateBakedJersey(data, watermark = true) {
     return bakedBuffer;
 }
 
+async function generatePreview(jerseyPreview, capPreview, pantsPreview, socksPreview, fontPreview, header) {
+    let [jersey, cap, pants, socks, font, checkerboard, headerImg, watermark, fontfile] = await Promise.all([
+        Jimp.read(jerseyPreview),
+        Jimp.read(capPreview),
+        Jimp.read(pantsPreview),
+        Jimp.read(socksPreview),
+        Jimp.read(fontPreview),
+        makeCheckerboard(),
+        Jimp.read(header),
+        Jimp.read(__dirname+"/images/preview_watermark.jpg"),
+        Jimp.loadFont(__dirname+"/fonts/rowdies.fnt")
+    ])
+
+    let previewImage = new Jimp(1536, 1224, "white")
+
+    font.resize(512, 512)
+
+    previewImage.blit(headerImg, 0, 0)
+                .blit(watermark, 0, 1124)
+                .blit(cap, 0, 100)
+                .blit(pants, 0, 612)
+                .blit(socks, 1024, 100)
+                .blit(checkerboard, 1024, 612)
+                .blit(font, 1024, 612)
+                .blit(jersey, 512, 100)
+
+    let previewBuffer = await previewImage.getBufferAsync(Jimp.MIME_JPEG);
+
+    const finalPreview = await compressToSize(previewBuffer, 495);
+
+    return finalPreview;
+}
+
+async function makeCheckerboard(size = 512, square = 32) {
+	const img = new Jimp(size, size);
+  
+	const light = Jimp.rgbaToInt(0xCC, 0xCC, 0xCC, 255); // #CCCCCC
+	const dark  = Jimp.rgbaToInt(0x99, 0x99, 0x99, 255); // #999999
+  
+	for (let y = 0; y < size; y += square) {
+	  for (let x = 0; x < size; x += square) {
+		const isDark = ((x / square) + (y / square)) % 2 === 0;
+		const color = isDark ? dark : light;
+  
+		img.scan(x, y, square, square, function(px, py, idx) {
+		  this.bitmap.data.writeUInt32BE(color, idx);
+		});
+	  }
+	}
+  
+	return img;
+  }
+
+async function compressToSize(inputBuffer, maxKB = 495) {
+	const maxBytes = maxKB * 1024;
+  
+	const baseImage = await Jimp.read(inputBuffer);
+  
+	// Attempt binary search for JPEG quality
+	let low = 1;
+	let high = 100;
+	let bestBuffer = null;
+  
+	while (low <= high) {
+	  const mid = Math.floor((low + high) / 2);
+  
+	  const buf = await baseImage
+		.clone()
+		.quality(mid)
+		.getBufferAsync(Jimp.MIME_JPEG);
+  
+	  if (buf.length <= maxBytes) {
+		bestBuffer = buf;
+		low = mid + 1;       // try higher quality
+	  } else {
+		high = mid - 1;      // reduce quality
+	  }
+	}
+  
+	// If we never got under the size, return the original JPEG buffer
+	return bestBuffer || inputBuffer;
+}
+
 module.exports = { 
     generateCap, 
     generatePants, 
@@ -330,5 +413,6 @@ module.exports = {
     generateFont, 
     generateHeightMap,
     generateDiffuseMap,
-    generateBakedJersey
+    generateBakedJersey,
+    generatePreview
  };
