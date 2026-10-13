@@ -2024,23 +2024,31 @@ ipcMain.on('save-uniform-zip', async (event, arg) => {
 			nameCanvas: nameCanvas
 		}
 
-		let [cap, pants, socks, font, heightMap, normalMap, diffuseMap] = await Promise.all([
-			imageGen.generateCap(capData),
-			imageGen.generatePants(pantsData),
+		let [cap, capPreview, pants, pantsPreview, socks, font, heightMap, normalMap, diffuseMap, bakedJersey, jerseyPreview] = await Promise.all([
+			imageGen.generateCap(capData, true),
+			imageGen.generateCap(capData, false),
+			imageGen.generatePants(pantsData, true),
+			imageGen.generatePants(pantsData, false),
 			imageGen.generateSocks(Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')),
 			imageGen.generateFont(Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')),
 			Buffer.from(arg.heightMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
 			Buffer.from(arg.normalMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
-			imageGen.generateDiffuseMap(jerseyData)
+			imageGen.generateDiffuseMap(jerseyData),
+			imageGen.generateBakedJersey(jerseyData, true),
+			imageGen.generateBakedJersey(jerseyData, false)
 		])
 
 		await fs.promises.writeFile("debug_cap.png", cap)
+		await fs.promises.writeFile("debug_cap_preview.png", capPreview)
 		await fs.promises.writeFile("debug_pants.png", pants)
+		await fs.promises.writeFile("debug_pants_prevew.png", pantsPreview)
 		await fs.promises.writeFile("debug_socks.png", socks)
 		await fs.promises.writeFile("debug_font.png", font)
 		await fs.promises.writeFile("debug_height.png", heightMap)
 		await fs.promises.writeFile("debug_normal.png", normalMap)
 		await fs.promises.writeFile("debug_diffuse.png", diffuseMap)
+		await fs.promises.writeFile("debug_baked.png", bakedJersey)
+		await fs.promises.writeFile("debug_baked_preview.png", jerseyPreview)
 
 		event.sender.send('save-uniform-zip-response', arg)
 
