@@ -1,5 +1,4 @@
 const Jimp = require('jimp')
-const fs = require('fs')
 
 async function generateCap(data, watermark = true) {
     let [capBase, capOverlay, capTextureFile, capWM, font] = await Promise.all([
