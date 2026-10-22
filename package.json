@@ -1,7 +1,7 @@
 {
   "name": "OOTP-Uniform-Maker",
   "productName": "OOTP Uniform Maker",
-  "version": "0.10.14",
+  "version": "0.10.15",
   "description": "OOTP Uniform Maker",
   "main": "main.js",
   "scripts": {
@@ -22,7 +22,7 @@
   "license": "MIT",
   "devDependencies": {
     "electron": "^39.8.5",
-    "electron-builder": "^25.1.8"
+    "electron-builder": "^26.15.3"
   },
   "dependencies": {
     "@alxcube/lens": "^2.0.1",
