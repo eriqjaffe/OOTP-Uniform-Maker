@@ -87,16 +87,7 @@
       "target": [
         "deb",
         "rpm"
-      ],
-      "category": "Games",
-      "description": "A uniform maker for Out of the Park Baseball.",
-      "desktop": {
-        "Name": "OOTP Uniform Maker",
-        "Comment": "Create custom uniforms for Out of the Park Baseball",
-        "Type": "Application",
-        "Terminal": "false",
-        "Categories": "Games;Utility;"
-      }
+      ]
     },
     "deb": {}
   }
