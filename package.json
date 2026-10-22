@@ -4,6 +4,7 @@
   "version": "0.10.15",
   "description": "OOTP Uniform Maker",
   "main": "main.js",
+  "desktopName": "com.ootputilities.uniformmaker",
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
@@ -86,7 +87,16 @@
       "target": [
         "deb",
         "rpm"
-      ]
+      ],
+      "category": "Games",
+      "description": "A uniform maker for Out of the Park Baseball.",
+      "desktop": {
+        "Name": "OOTP Uniform Maker",
+        "Comment": "Create custom uniforms for Out of the Park Baseball",
+        "Type": "Application",
+        "Terminal": "false",
+        "Categories": "Games;Utility;"
+      }
     },
     "deb": {}
   }
