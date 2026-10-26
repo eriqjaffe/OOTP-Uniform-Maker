@@ -150,13 +150,13 @@ ipcMain.on('drop-image', (event, arg) => {
 			case "heic":
 				let inputBuffer = fs.readFileSync(file)
 				let outputBuffer = await heicConvert({buffer: inputBuffer, format: 'PNG'})
-				fs.writeFileSync(os.tmpdir()+"/heicParse.png", outputBuffer)
+				fs.promises.writeFileSync(os.tmpdir()+"/heicParse.png", outputBuffer)
 				fileToRead = os.tmpdir()+"/heicParse.png"
 				break;
 			case "heif":
 				let inputBuffer2 = fs.readFileSync(file)
 				let outputBuffer2 = await heicConvert({buffer: inputBuffer2, format: 'PNG'})
-				fs.writeFileSync(os.tmpdir()+"/heifParse.png", outputBuffer2)
+				fs.promises.writeFileSync(os.tmpdir()+"/heifParse.png", outputBuffer2)
 				fileToRead = os.tmpdir()+"/heifParse.png"
 				break;
 			case "webp":
@@ -398,13 +398,13 @@ ipcMain.on('upload-image', (event, arg) => {
 				case "heic":
 					let inputBuffer = fs.readFileSync(userFile.filePaths[0])
 					let outputBuffer = await heicConvert({buffer: inputBuffer, format: 'PNG'})
-					fs.writeFileSync(os.tmpdir()+"/heicParse.png", outputBuffer)
+					fs.promises.writeFileSync(os.tmpdir()+"/heicParse.png", outputBuffer)
 					fileToRead = os.tmpdir()+"/heicParse.png"
 					break;
 				case "heif":
 					let inputBuffer2 = fs.readFileSync(userFile.filePaths[0])
 					let outputBuffer2 = await heicConvert({buffer: inputBuffer2, format: 'PNG'})
-					fs.writeFileSync(os.tmpdir()+"/heicParse.png", outputBuffer2)
+					fs.promises.writeFileSync(os.tmpdir()+"/heicParse.png", outputBuffer2)
 					fileToRead = os.tmpdir()+"/heicParse.png"
 					break;
 				case "webp":
@@ -876,7 +876,7 @@ ipcMain.on('save-font-position', (event, arg) => {
 	dialog.showSaveDialog(null, options).then((result) => {
 		if (!result.canceled) {
 			store.set("downloadPositionPath", path.dirname(result.filePath))
-			fs.writeFile(result.filePath, JSON.stringify(req.body.json, null, 2), 'utf8', function(err) {
+			fs.promises.writeFile(result.filePath, JSON.stringify(req.body.json, null, 2), 'utf8', function(err) {
 				log.error(err)
 			})
 			event.sender.send('save-font-position-response', 'success')
@@ -1126,7 +1126,7 @@ ipcMain.on('save-swatches', (event, arg) => {
 	dialog.showSaveDialog(null, options).then((result) => {
 		if (!result.canceled) {
 			store.set("downloadSwatchPath", path.dirname(result.filePath))
-			fs.writeFile(result.filePath, JSON.stringify(arg, null, 2), 'utf8', function(err) {
+			fs.promises.writeFile(result.filePath, JSON.stringify(arg, null, 2), 'utf8', function(err) {
 				log.error(err)
 			})
 			event.sender.send('hide-overlay', null)
@@ -1239,7 +1239,7 @@ ipcMain.on('save-pants', async (event, arg) => {
 		if (arg.pantsTexture.startsWith("data:image")) {
             const base64Data = arg.pantsTexture.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
             pantsTexturePath = path.join(tempDir, "tempCapTexture.png");
-            await fs.writeFile(pantsTexturePath, base64Data, 'base64');
+            await fs.promises.writeFile(pantsTexturePath, base64Data, 'base64');
         } else {
             pantsTexturePath = path.join(__dirname, "images", arg.pantsTexture);
         }
@@ -1309,7 +1309,7 @@ ipcMain.on('save-cap', async (event, arg) => {
         if (arg.capTexture.startsWith("data:image")) {
             const base64Data = arg.capTexture.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
             capTexturePath = path.join(tempDir, "tempCapTexture.png");
-            await fs.writeFile(capTexturePath, base64Data, 'base64');
+            await fs.promises.writeFile(capTexturePath, base64Data, 'base64');
         } else {
             capTexturePath = path.join(__dirname, "images", arg.capTexture);
         }
@@ -1412,7 +1412,6 @@ ipcMain.on('generate-height-map', async (event, arg) => {
 })
 
 ipcMain.on('generate-preview-png', async (event, arg) => {
-	console.log(arg.headerText)
 	try {
 		let capTexturePath;
 		let pantsTexturePath;
@@ -1421,7 +1420,7 @@ ipcMain.on('generate-preview-png', async (event, arg) => {
 		if (arg.capTexture.startsWith("data:image")) {
             const base64Data = arg.capTexture.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
             capTexturePath = path.join(tempDir, "tempCapTexture.png");
-            await fs.writeFile(capTexturePath, base64Data, 'base64');
+            await fs.promises.writeFile(capTexturePath, base64Data, 'base64');
         } else {
             capTexturePath = path.join(__dirname, "images", arg.capTexture);
         }
@@ -1429,7 +1428,7 @@ ipcMain.on('generate-preview-png', async (event, arg) => {
 		if (arg.pantsTexture.startsWith("data:image")) {
             const base64Data = arg.pantsTexture.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
             pantsTexturePath = path.join(tempDir, "tempCapTexture.png");
-            await fs.writeFile(pantsTexturePath, base64Data, 'base64');
+            await fs.promises.writeFile(pantsTexturePath, base64Data, 'base64');
         } else {
             pantsTexturePath = path.join(__dirname, "images", arg.pantsTexture);
         }
@@ -1437,9 +1436,9 @@ ipcMain.on('generate-preview-png', async (event, arg) => {
 		if (arg.jerseyTexture.startsWith("data:image")) {
             const base64Data = arg.jerseyTexture.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
             jerseyTexturePath = path.join(tempDir, "tempJerseyTexture.png");
-            await fs.writeFile(jerseyTexturePath, base64Data, 'base64');
+            await fs.promises.writeFile(jerseyTexturePath, base64Data, 'base64');
         } else {
-            jerseyTexturePath = path.join(__dirname, "images", arg.pantsTexture);
+            jerseyTexturePath = path.join(__dirname, "images", arg.jerseyTexture);
         }
 
 		let [capLogoCanvas, capBelow, pantsLogoCanvas, pantsBelow, jerseyLogoCanvas, jerseyBelow, header] = await Promise.all([
@@ -1572,7 +1571,7 @@ ipcMain.on('save-jersey-zip', async (event, arg) => {
 		archive.pipe(output)
 
 		if (arg.jerseyTexture.startsWith("data:image")) {
-			fs.writeFileSync(tempDir+"/tempJerseyTexture.png", arg.jerseyTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
+			fs.promises.writeFileSync(tempDir+"/tempJerseyTexture.png", arg.jerseyTexture.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
 			var jerseyTexture = tempDir+"/tempJerseyTexture.png"
 		} else {
 			var jerseyTexture = __dirname+"/images/"+arg.jerseyTexture
@@ -1603,15 +1602,14 @@ ipcMain.on('save-jersey-zip', async (event, arg) => {
 			imageGen.generateBakedJersey(jerseyData, true)
 		])
 
-		archive.append(diffuseMap, {name: "jerseys_"+arg.name+".png"})
-		archive.append(heightMap, {name: "jerseys_"+arg.name+"_h.png"})
-		archive.append(normalMap, {name: "jerseys_"+arg.name+"_n.png"})
-		archive.append(bakedJersey, {name: "jerseys_"+arg.name+"_textured.png"})
+		archive.append(diffuseMap, {name: arg.name+".png"})
+		archive.append(heightMap, {name: arg.name+"_h.png"})
+		archive.append(normalMap, {name: arg.name+"_n.png"})
+		archive.append(bakedJersey, {name: arg.name+"_textured.png"})
 		archive.finalize()
 	} catch (err) {
 		event.sender.send('error-response', {error: err})
 	}
-	
 })
 
 ipcMain.on('save-uniform-zip', async (event, arg) => {
@@ -1702,7 +1700,7 @@ ipcMain.on('save-uniform-zip', async (event, arg) => {
 		if (arg.capTexture.startsWith("data:image")) {
             const base64Data = arg.capTexture.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
             capTexturePath = path.join(tempDir, "tempCapTexture.png");
-            await fs.writeFile(capTexturePath, base64Data, 'base64');
+            await fs.promises.writeFile(capTexturePath, base64Data, 'base64');
         } else {
             capTexturePath = path.join(__dirname, "images", arg.capTexture);
         }
@@ -1710,7 +1708,7 @@ ipcMain.on('save-uniform-zip', async (event, arg) => {
 		if (arg.pantsTexture.startsWith("data:image")) {
             const base64Data = arg.pantsTexture.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
             pantsTexturePath = path.join(tempDir, "tempCapTexture.png");
-            await fs.writeFile(pantsTexturePath, base64Data, 'base64');
+            await fs.promises.writeFile(pantsTexturePath, base64Data, 'base64');
         } else {
             pantsTexturePath = path.join(__dirname, "images", arg.pantsTexture);
         }
@@ -1718,9 +1716,9 @@ ipcMain.on('save-uniform-zip', async (event, arg) => {
 		if (arg.jerseyTexture.startsWith("data:image")) {
             const base64Data = arg.jerseyTexture.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
             jerseyTexturePath = path.join(tempDir, "tempJerseyTexture.png");
-            await fs.writeFile(jerseyTexturePath, base64Data, 'base64');
+            await fs.promises.writeFile(jerseyTexturePath, base64Data, 'base64');
         } else {
-            jerseyTexturePath = path.join(__dirname, "images", arg.pantsTexture);
+            jerseyTexturePath = path.join(__dirname, "images", arg.jerseyTexture);
         }
 
 		let [capLogoCanvas, capBelow, pantsLogoCanvas, pantsBelow, jerseyLogoCanvas, jerseyBelow, nameCanvas, header, json, readme] = await Promise.all([
@@ -1816,7 +1814,7 @@ ipcMain.on('install-uniform-zip', async (event, arg) => {
 		if (arg.capTexture.startsWith("data:image")) {
             const base64Data = arg.capTexture.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
             capTexturePath = path.join(tempDir, "tempCapTexture.png");
-            await fs.writeFile(capTexturePath, base64Data, 'base64');
+            await fs.promises.writeFile(capTexturePath, base64Data, 'base64');
         } else {
             capTexturePath = path.join(__dirname, "images", arg.capTexture);
         }
@@ -1824,7 +1822,7 @@ ipcMain.on('install-uniform-zip', async (event, arg) => {
 		if (arg.pantsTexture.startsWith("data:image")) {
             const base64Data = arg.pantsTexture.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
             pantsTexturePath = path.join(tempDir, "tempCapTexture.png");
-            await fs.writeFile(pantsTexturePath, base64Data, 'base64');
+            await fs.promises.writeFile(pantsTexturePath, base64Data, 'base64');
         } else {
             pantsTexturePath = path.join(__dirname, "images", arg.pantsTexture);
         }
@@ -1832,9 +1830,9 @@ ipcMain.on('install-uniform-zip', async (event, arg) => {
 		if (arg.jerseyTexture.startsWith("data:image")) {
             const base64Data = arg.jerseyTexture.replace(/^data:image\/(png|gif|jpeg);base64,/, '');
             jerseyTexturePath = path.join(tempDir, "tempJerseyTexture.png");
-            await fs.writeFile(jerseyTexturePath, base64Data, 'base64');
+            await fs.promises.writeFile(jerseyTexturePath, base64Data, 'base64');
         } else {
-            jerseyTexturePath = path.join(__dirname, "images", arg.pantsTexture);
+            jerseyTexturePath = path.join(__dirname, "images", arg.jerseyTexture);
         }
 
 		let [capLogoCanvas, capBelow, pantsLogoCanvas, pantsBelow, jerseyLogoCanvas, jerseyBelow, nameCanvas] = await Promise.all([
