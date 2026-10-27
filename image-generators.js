@@ -99,7 +99,6 @@ async function generateFont(data) {
 }
 
 async function generateHeightMap(data) {
-    console.log(data.seamsOption)
     let seamsSrc = null;
     let seamHMSrc = null;
     let planketSrc = null;
@@ -179,7 +178,6 @@ async function generateHeightMap(data) {
 }
 
 async function generateDiffuseMap(data) {
-    console.log(data.seamsOption)
     let diffuseSeamsSrc = null;
     let diffuseSeamSrc = null;
 
@@ -250,7 +248,6 @@ async function generateDiffuseMap(data) {
 }
 
 async function generateBakedJersey(data, watermark = true) {
-    console.log(data.seamsOption)
     let diffuseSeamsSrc = null;
     let diffuseSeamSrc = null;
 

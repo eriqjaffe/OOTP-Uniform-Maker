@@ -1,7 +1,7 @@
 {
   "name": "OOTP-Uniform-Maker",
   "productName": "OOTP Uniform Maker",
-  "version": "0.10.15",
+  "version": "0.10.16",
   "description": "OOTP Uniform Maker",
   "main": "main.js",
   "desktopName": "com.ootputilities.uniformmaker",
