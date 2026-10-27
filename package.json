@@ -46,6 +46,7 @@
     "replace-color": "^2.3.0",
     "semver": "^7.5.2",
     "tesseract.js": "^4.0.3",
+    "webp-wasm": "^1.0.6",
     "xmlbuilder2": "^3.0.2"
   },
   "build": {

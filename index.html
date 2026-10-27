@@ -16832,7 +16832,7 @@
 				seamsOnDiffuse: ($("#toggleDiffuseSeams").is(":checked")) ? true : false,
 				brightness: $("#preferredHeightMapBrightness").val(),
 				heightMap: heightMap.src,
-				normalMap: normalMap.toDataURL()
+				normalMap: normalMap.toDataURL('image/webp', 1.0)
 			})
 		}
 	})
@@ -17555,7 +17555,7 @@
 				commonPalette: commonPalette,
 				brightness: $("#preferredHeightMapBrightness").val(),
 				heightMap: heightMap.src,		
-				normalMap: normalMap.toDataURL(),
+				normalMap: normalMap.toDataURL('image/webp', 1.0),
 				backgroundColor: $("#teamBGColor").spectrum("get").toHexString().slice(-6),
 				textColor: $("#teamTextColor").spectrum("get").toHexString().slice(-6),
 				jerseyColor1: $("#jerseyColor").spectrum("get").toHexString().slice(-6),
@@ -18003,7 +18003,7 @@
 				commonPalette: commonPalette,
 				brightness: $("#preferredHeightMapBrightness").val(),
 				heightMap: heightMap.src,		
-				normalMap: normalMap.toDataURL(),
+				normalMap: normalMap.toDataURL('image/webp', 1.0),
 				backgroundColor: $("#teamBGColor").spectrum("get").toHexString().slice(-6),
 				textColor: $("#teamTextColor").spectrum("get").toHexString().slice(-6),
 				jerseyColor1: $("#jerseyColor").spectrum("get").toHexString().slice(-6),
@@ -18142,7 +18142,7 @@
 				commonPalette: commonPalette,
 				brightness: $("#preferredHeightMapBrightness").val(),
 				heightMap: heightMap.src,		
-				normalMap: normalMap.toDataURL(),
+				normalMap: normalMap.toDataURL('image/webp', 1.0),
 				backgroundColor: $("#teamBGColor").spectrum("get").toHexString().slice(-6),
 				textColor: $("#teamTextColor").spectrum("get").toHexString().slice(-6),
 				jerseyColor1: $("#jerseyColor").spectrum("get").toHexString().slice(-6),

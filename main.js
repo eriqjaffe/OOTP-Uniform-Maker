@@ -23,6 +23,7 @@ const { Resvg } = require('@resvg/resvg-js')
 const PSD = require('psd');
 const sizeOf = require("image-size")
 const heicConvert = require("heic-convert")
+const webp = require('webp-wasm');
 
 const imageGen = require('./image-generators.js');
 
@@ -1255,7 +1256,7 @@ ipcMain.on('save-pants', async (event, arg) => {
 		const pantsBuffer = await imageGen.generatePants(pantsData)
 
 		const options = {
-        	defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.png',{fs: true})
+        	defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.webp',{fs: true})
 		}
 
 		dialog.showSaveDialog(null, options).then((result) => {
@@ -1281,7 +1282,7 @@ ipcMain.on('save-socks', async (event, arg) => {
 		const socksBuffer = await imageGen.generateSocks(Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'))
 
 		const options = {
-        	defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.png',{fs: true})
+        	defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.webp',{fs: true})
 		}
 
 		dialog.showSaveDialog(null, options).then((result) => {
@@ -1325,7 +1326,7 @@ ipcMain.on('save-cap', async (event, arg) => {
 		const capBuffer = await imageGen.generateCap(capData);
 
 		const options = {
-        	defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.png',{fs: true})
+        	defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.webp',{fs: true})
 		}
 
 		dialog.showSaveDialog(null, options).then((result) => {
@@ -1351,7 +1352,7 @@ ipcMain.on('save-font', async (event, arg) => {
 		const fontBuffer = await imageGen.generateFont(Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'))
 
 		const options = {
-        	defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.png',{fs: true})
+        	defaultPath: increment(store.get("downloadPath", app.getPath('downloads')) + '/' + arg.name+'.webp',{fs: true})
 		}
 
 		dialog.showSaveDialog(null, options).then((result) => {
@@ -1482,8 +1483,8 @@ ipcMain.on('generate-preview-png', async (event, arg) => {
 		let [capPreview, pantsPreview, socks, font, jerseyPreview] = await Promise.all([
 			imageGen.generateCap(capData, false),
 			imageGen.generatePants(pantsData, false),
-			imageGen.generateSocks(Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')),
-			imageGen.generateFont(Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')),
+			imageGen.generateSocks(Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'), false),
+			imageGen.generateFont(Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'), false),
 			imageGen.generateBakedJersey(jerseyData, false)
 		])
 
@@ -1596,16 +1597,16 @@ ipcMain.on('save-jersey-zip', async (event, arg) => {
 		}
 
 		let [heightMap, normalMap, diffuseMap, bakedJersey] = await Promise.all([
-			Buffer.from(arg.heightMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
-			Buffer.from(arg.normalMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
+			Buffer.from(arg.heightMap.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
+			Buffer.from(arg.normalMap.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
 			imageGen.generateDiffuseMap(jerseyData),
 			imageGen.generateBakedJersey(jerseyData, true)
 		])
 
-		archive.append(diffuseMap, {name: arg.name+".png"})
-		archive.append(heightMap, {name: arg.name+"_h.png"})
-		archive.append(normalMap, {name: arg.name+"_n.png"})
-		archive.append(bakedJersey, {name: arg.name+"_textured.png"})
+		archive.append(diffuseMap, {name: arg.name+".webp"})
+		archive.append(heightMap, {name: arg.name+"_h.webp"})
+		archive.append(normalMap, {name: arg.name+"_n.webp"})
+		archive.append(bakedJersey, {name: arg.name+"_textured.webp"})
 		archive.finalize()
 	} catch (err) {
 		event.sender.send('error-response', {error: err})
@@ -1722,14 +1723,14 @@ ipcMain.on('save-uniform-zip', async (event, arg) => {
         }
 
 		let [capLogoCanvas, capBelow, pantsLogoCanvas, pantsBelow, jerseyLogoCanvas, jerseyBelow, nameCanvas, header, json, readme] = await Promise.all([
-			Buffer.from(arg.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
-			Buffer.from(arg.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
-			Buffer.from(arg.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
-			Buffer.from(arg.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
-			Buffer.from(arg.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
-			Buffer.from(arg.jerseyBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
-			Buffer.from(arg.nameCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
-			Buffer.from(arg.headerText.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
+			Buffer.from(arg.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
+			Buffer.from(arg.capBelow.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
+			Buffer.from(arg.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
+			Buffer.from(arg.pantsBelow.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
+			Buffer.from(arg.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
+			Buffer.from(arg.jerseyBelow.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
+			Buffer.from(arg.nameCanvas.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
+			Buffer.from(arg.headerText.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
 			Buffer.from(arg.json, 'utf8'),
 			fs.createReadStream(__dirname+"/images/README.pdf")
 		])
@@ -1762,30 +1763,32 @@ ipcMain.on('save-uniform-zip', async (event, arg) => {
 			nameCanvas: nameCanvas
 		}
 
-		let [cap, capPreview, pants, pantsPreview, socks, font, heightMap, normalMap, diffuseMap, bakedJersey, jerseyPreview] = await Promise.all([
+		let [cap, capPreview, pants, pantsPreview, socks, socksPreview, font, fontPreview, heightMap, normalMap, diffuseMap, bakedJersey, jerseyPreview] = await Promise.all([
 			imageGen.generateCap(capData, true),
 			imageGen.generateCap(capData, false),
 			imageGen.generatePants(pantsData, true),
 			imageGen.generatePants(pantsData, false),
-			imageGen.generateSocks(Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')),
-			imageGen.generateFont(Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')),
-			Buffer.from(arg.heightMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
-			Buffer.from(arg.normalMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
+			imageGen.generateSocks(Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'), true),
+			imageGen.generateSocks(Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'), false),
+			imageGen.generateFont(Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'), true),
+			imageGen.generateFont(Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'), false),
+			Buffer.from(arg.heightMap.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
+			Buffer.from(arg.normalMap.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
 			imageGen.generateDiffuseMap(jerseyData),
 			imageGen.generateBakedJersey(jerseyData, true),
 			imageGen.generateBakedJersey(jerseyData, false)
 		])
 
-		let previewImage = await imageGen.generatePreview(jerseyPreview, capPreview, pantsPreview, socks, font, header)
+		let previewImage = await imageGen.generatePreview(jerseyPreview, capPreview, pantsPreview, socksPreview, fontPreview, header)
 
-		archive.append(cap, {name: "caps_"+arg.name+".png"})
-		archive.append(pants, {name: "pants_"+arg.name+".png"})
-		archive.append(socks, {name: "socks_"+arg.name+".png"})
-		archive.append(font, {name: arg.name+".png"})
-		archive.append(diffuseMap, {name: "jerseys_"+arg.name+".png"})
-		archive.append(heightMap, {name: "jerseys_"+arg.name+"_h.png"})
-		archive.append(normalMap, {name: "jerseys_"+arg.name+"_n.png"})
-		archive.append(bakedJersey, {name: "jerseys_"+arg.name+"_textured.png"})
+		archive.append(cap, {name: "caps_"+arg.name+".webp"})
+		archive.append(pants, {name: "pants_"+arg.name+".webp"})
+		archive.append(socks, {name: "socks_"+arg.name+".webp"})
+		archive.append(font, {name: arg.name+".webp"})
+		archive.append(diffuseMap, {name: "jerseys_"+arg.name+".webp"})
+		archive.append(heightMap, {name: "jerseys_"+arg.name+"_h.webp"})
+		archive.append(normalMap, {name: "jerseys_"+arg.name+"_n.webp"})
+		archive.append(bakedJersey, {name: "jerseys_"+arg.name+"_textured.webp"})
 		archive.append(previewImage, {name: arg.name+"_preview.jpg"})
 		archive.append(xml, {name: arg.name+".xml"});
 		archive.append(JSON.stringify(swatchJSON, null, 2), {name: arg.name+".pal"});
@@ -1836,13 +1839,13 @@ ipcMain.on('install-uniform-zip', async (event, arg) => {
         }
 
 		let [capLogoCanvas, capBelow, pantsLogoCanvas, pantsBelow, jerseyLogoCanvas, jerseyBelow, nameCanvas] = await Promise.all([
-			Buffer.from(arg.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
-			Buffer.from(arg.capBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
-			Buffer.from(arg.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
-			Buffer.from(arg.pantsBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
-			Buffer.from(arg.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
-			Buffer.from(arg.jerseyBelow.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
-			Buffer.from(arg.nameCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')
+			Buffer.from(arg.capLogoCanvas.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
+			Buffer.from(arg.capBelow.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
+			Buffer.from(arg.pantsLogoCanvas.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
+			Buffer.from(arg.pantsBelow.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
+			Buffer.from(arg.jerseyLogoCanvas.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
+			Buffer.from(arg.jerseyBelow.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
+			Buffer.from(arg.nameCanvas.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64')
 		])
 
 		const capData = {
@@ -1876,10 +1879,10 @@ ipcMain.on('install-uniform-zip', async (event, arg) => {
 		let [cap, pants, socks, font, heightMap, normalMap, diffuseMap, bakedJersey] = await Promise.all([
 			imageGen.generateCap(capData, true),
 			imageGen.generatePants(pantsData, true),
-			imageGen.generateSocks(Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')),
-			imageGen.generateFont(Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64')),
-			Buffer.from(arg.heightMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
-			Buffer.from(arg.normalMap.replace(/^data:image\/(png|gif|jpeg);base64,/,''), 'base64'),
+			imageGen.generateSocks(Buffer.from(arg.sockCanvas.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64')),
+			imageGen.generateFont(Buffer.from(arg.fontCanvas.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64')),
+			Buffer.from(arg.heightMap.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
+			Buffer.from(arg.normalMap.replace(/^data:image\/(png|gif|jpeg|webp);base64,/,''), 'base64'),
 			imageGen.generateDiffuseMap(jerseyData),
 			imageGen.generateBakedJersey(jerseyData, true),
 		])
@@ -1887,13 +1890,13 @@ ipcMain.on('install-uniform-zip', async (event, arg) => {
 		dialog.showOpenDialog(null, options).then((result) => {
 			if (!result.canceled) {
 				store.set("OOTPDataPath", result.filePaths[0])
-				fs.promises.writeFile(result.filePaths[0]+"//jerseys//jerseys_"+arg.name+"_h.png", heightMap);
-				fs.promises.writeFile(result.filePaths[0]+"//jerseys//jerseys_"+arg.name+"_n.png", normalMap);
-				fs.promises.writeFile(result.filePaths[0]+"//jerseys//jerseys_"+arg.name+".png", diffuseMap)
-				fs.promises.writeFile(result.filePaths[0]+"//ballcaps//caps_"+arg.name+".png", cap)
-				fs.promises.writeFile(result.filePaths[0]+"//pants//pants_"+arg.name+".png", pants)
-				fs.promises.writeFile(result.filePaths[0]+"//jersey_fonts//"+arg.name+".png", font)
-				fs.promises.writeFile(result.filePaths[0]+"//socks//socks_"+arg.name+".png", socks)
+				fs.promises.writeFile(result.filePaths[0]+"//jerseys//jerseys_"+arg.name+"_h.webp", heightMap);
+				fs.promises.writeFile(result.filePaths[0]+"//jerseys//jerseys_"+arg.name+"_n.webp", normalMap);
+				fs.promises.writeFile(result.filePaths[0]+"//jerseys//jerseys_"+arg.name+".webp", diffuseMap)
+				fs.promises.writeFile(result.filePaths[0]+"//ballcaps//caps_"+arg.name+".webp", cap)
+				fs.promises.writeFile(result.filePaths[0]+"//pants//pants_"+arg.name+".webp", pants)
+				fs.promises.writeFile(result.filePaths[0]+"//jersey_fonts//"+arg.name+".webp", font)
+				fs.promises.writeFile(result.filePaths[0]+"//socks//socks_"+arg.name+".webp", socks)
 				event.sender.send('save-uniform-zip-response', arg)
 			} else {
 				event.sender.send('save-uniform-zip-response', arg)

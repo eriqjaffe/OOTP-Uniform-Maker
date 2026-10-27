@@ -1,6 +1,9 @@
 const Jimp = require('jimp')
+const webp = require('webp-wasm');
 
 async function generateCap(data, watermark = true) {
+    let capBuffer;
+
     let [capBase, capOverlay, capTextureFile, capWM, font] = await Promise.all([
         Jimp.read(data.capBelow),
         Jimp.read(data.capLogoCanvas),
@@ -27,16 +30,34 @@ async function generateCap(data, watermark = true) {
            .composite(capOverlay, 0, 0, { mode: Jimp.BLEND_SOURCE_OVER })
 
     if (watermark) {
-            capBase.composite(capWM, 0, 0, { mode: Jimp.BLEND_SOURCE_OVER })
+        capBase.composite(capWM, 0, 0, { mode: Jimp.BLEND_SOURCE_OVER })
     }
 
     capBase.blit(blankCapImage, 357 - (blankCapImage.bitmap.width / 2), 120 - (blankCapImage.bitmap.height / 2));
 
-    let capBuffer = await capBase.getBufferAsync(Jimp.MIME_PNG);
+    capBuffer = await capBase.getBufferAsync(Jimp.MIME_PNG)
+
+    if (watermark) {
+        const rawImageData = {
+            data: capBase.bitmap.data,         // Jimp's raw RGBA pixel buffer
+            width: capBase.bitmap.width,       // Image width
+            height: capBase.bitmap.height      // Image height
+        };
+
+        const webpArrayBuffer = await webp.encode(rawImageData, {
+            lossless: 1, // Turns on lossless WebP (matches PNG clarity)
+            exact: 1,    // Preserves exact RGB values in transparent areas
+            quality: 100 // Effort level for lossless (100 = max compression effort)
+        });
+
+        capBuffer = Buffer.from(webpArrayBuffer)
+    }
+    
     return capBuffer;
 }
 
 async function generatePants(data, watermark = true) {
+    let pantsBuffer;
     let [pantsBase, pantsTextureFile, pantsOverlay, pantsWM, font, defaultTexture] = await Promise.all([
         Jimp.read(data.pantsBelow),
         Jimp.read(data.pantsTexture),
@@ -75,11 +96,29 @@ async function generatePants(data, watermark = true) {
              
     pantsBase.blit(blankImage, 256-(blankImage.bitmap.width/2), 12.5-(blankImage.bitmap.height/2))
 
-    let pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
+    pantsBuffer = await pantsBase.getBufferAsync(Jimp.MIME_PNG)
+
+    if (watermark) {
+        const rawImageData = {
+            data: pantsBase.bitmap.data,         // Jimp's raw RGBA pixel buffer
+            width: pantsBase.bitmap.width,       // Image width
+            height: pantsBase.bitmap.height      // Image height
+        };
+
+        const webpArrayBuffer = await webp.encode(rawImageData, {
+            lossless: 1, // Turns on lossless WebP (matches PNG clarity)
+            exact: 1,    // Preserves exact RGB values in transparent areas
+            quality: 100 // Effort level for lossless (100 = max compression effort)
+        });
+
+        pantsBuffer = Buffer.from(webpArrayBuffer)
+    }
+
     return pantsBuffer;
 }
 
-async function generateSocks(data) {
+async function generateSocks(data, watermark = true) {
+    let socksBuffer;
     let [socksBase, socksTexture] = await Promise.all([
         Jimp.read(data),
         Jimp.read(__dirname+"/images/socks_texture.png")
@@ -87,15 +126,50 @@ async function generateSocks(data) {
 
     socksBase.crop(256,0,512,1024).composite(socksTexture, 0, 0, {mode: Jimp.BLEND_MULTIPLY})
 
-    let socksBuffer = await socksBase.getBufferAsync(Jimp.MIME_PNG)
+    socksBuffer = await socksBase.getBufferAsync(Jimp.MIME_PNG)
+
+    if (watermark) {
+        const rawImageData = {
+            data: socksBase.bitmap.data,         // Jimp's raw RGBA pixel buffer
+            width: socksBase.bitmap.width,       // Image width
+            height: socksBase.bitmap.height      // Image height
+        };
+
+        const webpArrayBuffer = await webp.encode(rawImageData, {
+            lossless: 1, // Turns on lossless WebP (matches PNG clarity)
+            exact: 1,    // Preserves exact RGB values in transparent areas
+            quality: 100 // Effort level for lossless (100 = max compression effort)
+        });
+
+        socksBuffer = Buffer.from(webpArrayBuffer)
+    }
+
     return socksBuffer;
 }
 
-async function generateFont(data) {
+async function generateFont(data, watermark = true) {
+    let fontBuffer;
     let fontBase = await Jimp.read(data)
-    let fontBuffer = await fontBase.getBufferAsync(Jimp.MIME_PNG)
-    return fontBuffer
+    
+    fontBuffer = await fontBase.getBufferAsync(Jimp.MIME_PNG)
 
+    if (watermark) {
+        const rawImageData = {
+            data: fontBase.bitmap.data,         // Jimp's raw RGBA pixel buffer
+            width: fontBase.bitmap.width,       // Image width
+            height: fontBase.bitmap.height      // Image height
+        };
+
+        const webpArrayBuffer = await webp.encode(rawImageData, {
+            lossless: 1, // Turns on lossless WebP (matches PNG clarity)
+            exact: 1,    // Preserves exact RGB values in transparent areas
+            quality: 100 // Effort level for lossless (100 = max compression effort)
+        });
+
+        fontBuffer = Buffer.from(webpArrayBuffer)
+    }
+
+    return fontBuffer
 }
 
 async function generateHeightMap(data) {
@@ -173,7 +247,23 @@ async function generateHeightMap(data) {
 
     jerseyHeightMap.composite(jerseyOverlay, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 
-    let heightMapBase64 = await jerseyHeightMap.getBase64Async(Jimp.AUTO)
+    const rawImageData = {
+        data: jerseyHeightMap.bitmap.data,
+        width: jerseyHeightMap.bitmap.width,
+        height: jerseyHeightMap.bitmap.height
+    };
+
+    // 2. Encode to lossless WebP buffer
+    const webpBuffer = await webp.encode(rawImageData, {
+        lossless: 1,
+        exact: 1,
+        quality: 100
+    });
+
+    // 3. Convert the buffer to a base64 data URL string
+    const heightMapBase64 = `data:image/webp;base64,${webpBuffer.toString('base64')}`;
+
+    //let heightMapBase64 = await jerseyHeightMap.getBase64Async(Jimp.AUTO)
     return heightMapBase64
 }
 
@@ -242,12 +332,27 @@ async function generateDiffuseMap(data) {
                     .composite(jerseyWM, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
                     .composite(nameImage, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
 
-    let diffuseBuffer = await jerseyBase.getBufferAsync(Jimp.MIME_PNG)
+    const rawImageData = {
+        data: jerseyBase.bitmap.data,         // Jimp's raw RGBA pixel buffer
+        width: jerseyBase.bitmap.width,       // Image width
+        height: jerseyBase.bitmap.height      // Image height
+    };
+
+    const webpArrayBuffer = await webp.encode(rawImageData, {
+        lossless: 1, // Turns on lossless WebP (matches PNG clarity)
+        exact: 1,    // Preserves exact RGB values in transparent areas
+        quality: 100 // Effort level for lossless (100 = max compression effort)
+    });
+
+    const diffuseBuffer = Buffer.from(webpArrayBuffer);
+
+    //let diffuseBuffer = await jerseyBase.getBufferAsync(Jimp.MIME_PNG)
 
     return diffuseBuffer;
 }
 
 async function generateBakedJersey(data, watermark = true) {
+    let bakedBuffer;
     let diffuseSeamsSrc = null;
     let diffuseSeamSrc = null;
 
@@ -317,7 +422,23 @@ async function generateBakedJersey(data, watermark = true) {
                   .composite(nameImage, 0, 0, {mode:Jimp.BLEND_SOURCE_OVER})
     }         
 
-    let bakedBuffer = await jerseyBase.getBufferAsync(Jimp.MIME_PNG)
+    bakedBuffer = await jerseyBase.getBufferAsync(Jimp.MIME_PNG)
+
+    if (watermark) {
+        const rawImageData = {
+            data: jerseyBase.bitmap.data,         // Jimp's raw RGBA pixel buffer
+            width: jerseyBase.bitmap.width,       // Image width
+            height: jerseyBase.bitmap.height      // Image height
+        };
+
+        const webpArrayBuffer = await webp.encode(rawImageData, {
+            lossless: 1, // Turns on lossless WebP (matches PNG clarity)
+            exact: 1,    // Preserves exact RGB values in transparent areas
+            quality: 100 // Effort level for lossless (100 = max compression effort)
+        });
+
+        bakedBuffer = Buffer.from(webpArrayBuffer)
+    }
 
     return bakedBuffer;
 }
