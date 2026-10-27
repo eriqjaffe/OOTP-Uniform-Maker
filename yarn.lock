@@ -1814,10 +1814,10 @@ electron-store@^8.0.1:
     conf "^10.2.0"
     type-fest "^2.17.0"
 
-electron@^42.11.9:
-  version "42.11.9"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-42.11.9.tgz#3f5d349f49c72eb6add797b24dd49abcb0a5126a"
-  integrity sha512-vPTlQws45virTh1jb/dSROz6xGkXgtEcdyT5n+0+etCmHqMtvp4Pgs6Sx5bvna+AEDAMeq10uRcjdMKCTk2Gtw==
+electron@^45.1.0:
+  version "45.1.0"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-45.1.0.tgz#0958d57fdc504123396bfb6ca1563b31e35b67d4"
+  integrity sha512-i7qKVAh/KR5v1pf56NhGGX2QYHcdjvLgS7koL6ui50c+zUDGLRunR95nXcTpHPURKOQ4GDBG8BmXiDgOQ8DD0A==
   dependencies:
     "@electron-internal/extract-zip" "^1.0.1"
     "@electron/get" "^5.0.0"
